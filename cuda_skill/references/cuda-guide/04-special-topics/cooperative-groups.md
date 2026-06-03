@@ -23,7 +23,7 @@ Table 10 Select Member Functions Accessor | Returns
 `thread_index()` | A 3-Dimensional index of the thread within the launched block.  
 `dim_threads()` | The 3D dimensions of the launched block in units of threads.  
   
-A complete list pf member functions is available in the [Cooperative Groups API](../05-appendices/device-callable-apis.html#cg-api-common-header).
+A complete list of member functions is available in the [Cooperative Groups API](../05-appendices/device-callable-apis.html#cg-api-common-header).
 
 ## 4.4.3. Default Behavior / Groupless Execution
 
@@ -61,7 +61,6 @@ Groups are created by partitioning a parent group into subgroups. When a group i
 Table 12 Cooperative Group Partitioning Operations Partition Type | Description  
 ---|---  
 tiled_partition | Divides parent group into a series of fixed-size subgroups arranged in a one-dimensional, row-major format.  
-stride_partition | Divides parent group into equally-sized subgroups where threads are assigned to subgroups in a round-robin manner.  
 labeled_partition | Divides parent group into one-dimensional subgroups based on a conditional label, which can be any integral type.  
 binary_partition | Specialized form of labeled partitioning where label can only be “0” or “1”.  
   
@@ -73,7 +72,7 @@ The following example shows how a tiled partition is created:
     cg::thread_block my_group = cg::this_thread_block();
     
     // Partition the cooperative group into tiles of size 8
-    cg::thread_block_tile<8> my_subgroup = cg::tiled_partition<8>(cta);
+    cg::thread_block_tile<8> my_subgroup = cg::tiled_partition<8>(my_group);
     
     // do work as my_subgroup
     
@@ -90,7 +89,12 @@ Prior to the introduction of Cooperative Groups, the CUDA programming model only
 
 ### 4.4.5.1. Sync
 
-You can synchronize a group by calling the collective `sync()` function. Like `__syncthreads()`, the `sync()` function makes the following guarantees: \- All memory accesses (e.g., reads and writes) made by threads in the group before the synchronization point are visible to all threads in the group after the synchronization point. \- All threads in the group reach the synchronization point before any thread is allowed to proceed beyond it.
+You can synchronize a group by calling the collective `sync()` function. Like `__syncthreads()`, the `sync()` function makes the following guarantees:
+
+  * All memory accesses (e.g., reads and writes) made by threads in the group before the synchronization point are visible to all threads in the group after the synchronization point.
+
+  * All threads in the group reach the synchronization point before any thread is allowed to proceed beyond it.
+
 
 The following example shows a `cooperative_groups::sync()` that is equivalent to `__syncthreads()`.
     
@@ -109,19 +113,33 @@ More information about synchronization is available in the [Cooperative Groups A
 
 ### 4.4.5.2. Barriers
 
-Cooperative Groups provides a barrier API similar to `cuda::barrier` that can be used for more advanced synchronization. Cooperative Groups barrier API differs from `cuda::barrier` in a few key ways: \- Cooperative Groups barriers are automatically initialized \- All threads in the group must arrive and wait at the barrier once per phase. \- `barrier_arrive` returns an `arrival_token` object that must be passed into the corresponding `barrier_wait`, where it is consumed and cannot be used again.
+Cooperative Groups provides a barrier API similar to `cuda::barrier` that can be used for more advanced synchronization. Cooperative Groups barrier API differs from `cuda::barrier` in a few key ways:
 
-Programmers must take care to avoid hazards when using Cooperative Groups barriers: \- No collective operations can be used by a group between after calling `barrier_arrive` and before calling `barrier_wait`. \- `barrier_wait` only guarantees that all threads in the group have called `barrier_arrive`. `barrier_wait` does NOT guarantee that all threads have called `barrier_wait`.
+  * Cooperative Groups barriers are automatically initialized
+
+  * All threads in the group must arrive and wait at the barrier once per phase.
+
+  * `barrier_arrive` returns an `arrival_token` object that must be passed into the corresponding `barrier_wait`, where it is consumed and cannot be used again.
+
+
+Programmers must take care to avoid hazards when using Cooperative Groups barriers:
+
+  * No collective operations can be used by a group after calling `barrier_arrive` and before calling `barrier_wait`.
+
+  * `barrier_wait` only guarantees that all threads in the group have called `barrier_arrive`. `barrier_wait` does NOT guarantee that all threads have called `barrier_wait`.
+
+
     
     
     namespace cg = cooperative_groups;
     
     cg::thread_block my_group = this_block();
+    cg::cluster_group cluster = this_cluster();
     
     auto token = cluster.barrier_arrive();
     
     // Optional: Do some local processing to hide the synchronization latency
-    local_processing(block);
+         local_processing(my_group);
     
     // Make sure all other blocks in the cluster are running and initialized shared data before accessing dsmem
     cluster.barrier_wait(std::move(token));
@@ -159,7 +177,7 @@ The following example shows how to use `cooperative_groups::reduce()` to perform
     
     int val = data[threadIdx.x];
     
-    int sum = cg::reduce(cta, val, cg::plus<int>());
+    int sum = cg::reduce(my_group, val, cg::plus<int>());
     
     // Store the result from the reduction
     if (my_group.thread_rank() == 0) {
@@ -189,7 +207,12 @@ More information about scans is available in the [Cooperative Groups Scan API](.
 
 ### 4.4.6.3. Invoke One
 
-Cooperative Groups provides an `invoke_one` function for use when a single thread must perform a serial portion of work on behalf of a group. \- `invoke_one` selects a single arbitrary thread from the calling group and uses that thread to call the supplied invocable function using the supplied arguments. \- `invoke_one_broadcast` is the same as `invoke_one` except the result of the call is also broadcast to all threads in the group.
+Cooperative Groups provides an `invoke_one` function for use when a single thread must perform a serial portion of work on behalf of a group.
+
+  * `invoke_one` selects a single arbitrary thread from the calling group and uses that thread to call the supplied invocable function using the supplied arguments.
+
+  * `invoke_one_broadcast` is the same as `invoke_one` except the result of the call is also broadcast to all threads in the group.
+
 
 The thread selection mechanism is not guaranteed to be deterministic.
 

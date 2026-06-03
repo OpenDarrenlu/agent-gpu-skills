@@ -12,10 +12,10 @@ This functionality is exposed through two main APIs:
 
   * The CUDA runtime API (starting with CUDA 11.0) provides programmatic control over L2 cache persistence.
 
-  * The `cuda::annotated_ptr` API in the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html) library (starting with CUDA 11.5) annotates pointers in CUDA kernels with memory access properties to achieve a similar effect..
+  * The `cuda::annotated_ptr` API in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html) library (starting with CUDA 11.5) annotates pointers in CUDA kernels with memory access properties to achieve a similar effect..
 
 
-The following sections focus on the CUDA runtime API. For detailed information about the `cuda::annotated_ptr` approach, please refer to the [libcu++ documentation](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html).
+The following sections focus on the CUDA runtime API. For detailed information about the `cuda::annotated_ptr` approach, please refer to the [libcu++ documentation](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html).
 
 ## 4.13.1. L2 Cache Set-Aside for Persisting Accesses
 

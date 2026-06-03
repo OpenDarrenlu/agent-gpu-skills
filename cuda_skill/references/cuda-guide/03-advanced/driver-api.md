@@ -116,7 +116,7 @@ Usage count facilitates interoperability between third party authored code opera
 
 ![Library Context Management](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/library-context-management.png)
 
-Figure 20 Library Context Management
+Figure 23 Library Context Management
 
 ## 3.3.2. Module
 
@@ -225,7 +225,7 @@ Parameters are passed either as an array of pointers (next to last parameter of 
 
 When parameters are passed as an extra option (the `CU_LAUNCH_PARAM_BUFFER_POINTER` option), they are passed as a pointer to a single buffer where parameters are assumed to be properly offset with respect to each other by matching the alignment requirement for each parameter type in device code.
 
-Alignment requirements in device code for the built-in vector types are listed in [Table 42](../05-appendices/cpp-language-extensions.html#vector-types-alignment-requirements-in-device-code). For all other basic types, the alignment requirement in device code matches the alignment requirement in host code and can therefore be obtained using `__alignof()`. The only exception is when the host compiler aligns `double` and `long long` (and `long` on a 64-bit system) on a one-word boundary instead of a two-word boundary (for example, using `gcc`’s compilation flag `-mno-align-double`) since in device code these types are always aligned on a two-word boundary.
+Alignment requirements in device code for the built-in vector types are listed in [Table 43](../05-appendices/cpp-language-extensions.html#vector-types-alignment-requirements-in-device-code). For all other basic types, the alignment requirement in device code matches the alignment requirement in host code and can therefore be obtained using `__alignof()`. The only exception is when the host compiler aligns `double` and `long long` (and `long` on a 64-bit system) on a one-word boundary instead of a two-word boundary (for example, using `gcc`’s compilation flag `-mno-align-double`) since in device code these types are always aligned on a two-word boundary.
 
 `CUdeviceptr` is an integer, but represents a pointer, so its alignment requirement is `__alignof(void*)`.
 

@@ -1,4 +1,4 @@
-# 6.43. Direct3D 11 Interoperability
+# 6.44. Direct3D 11 Interoperability
 
 **Source:** group__CUDA__D3D11.html#group__CUDA__D3D11
 

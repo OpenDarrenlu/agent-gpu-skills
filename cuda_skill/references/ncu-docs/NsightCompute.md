@@ -36,7 +36,7 @@ Nsight Compute
       * [3.5.6. Function Stats](#function-stats)
         * [Accessing Function Stats](#accessing-function-stats)
         * [Basic Workflow](#basic-workflow)
-        * [Understanding the Function Stats Table](#understanding-the-function-stats-table)
+        * [Understanding the Function Stats Tree](#understanding-the-function-stats-tree)
         * [Data Source](#data-source)
         * [Metric Naming](#metric-naming)
       * [3.5.7. NVTX](#nvtx)
@@ -45,8 +45,9 @@ Nsight Compute
         * [Memory Allocations](#memory-allocations)
         * [Graphviz DOT and SVG exports](#graphviz-dot-and-svg-exports)
       * [3.5.10. CUDA Graph Viewer](#cuda-graph-viewer)
-      * [3.5.11. Search](#search)
-      * [3.5.12. Metric Selection](#metric-selection)
+      * [3.5.11. Device Information](#device-information)
+      * [3.5.12. Search](#search)
+      * [3.5.13. Metric Selection](#metric-selection)
     * [3.6. Profiler Report](#profiler-report)
       * [3.6.1. Header](#profiler-report-header)
       * [3.6.2. Report Pages](#report-pages)
@@ -114,6 +115,7 @@ Nsight Compute
         * [Report Details Page](#report-details-page)
         * [Report Source Page](#report-source-page)
         * [API Stream View](#api-stream-view)
+        * [CUDA Graph Viewer](#options-profile-graph-viewer)
       * [3.15.2. Fonts and Colors](#fonts-and-colors)
         * [Fonts](#fonts)
         * [Colors](#colors)
@@ -166,7 +168,7 @@ __[NsightCompute](../index.html)
 
   * [](../index.html) »
   * 3\. Nsight Compute
-  *   * v2026.1.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
+  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
 
 
 * * *
@@ -318,9 +320,9 @@ On the _Details_ page, many sections provide rules with valuable information on 
 
 Use the _Start Activity Dialog_ to launch and attach to applications on your local and remote platforms. Start by selecting the _Target Platform_ for profiling. By default (and if supported) your local platform will be selected. Select the platform on which you would like to start the target application or connect to a running process.
 
-![../_images/connection-dialog.png](https://docs.nvidia.com/nsight-compute/_images/connection-dialog.png)
+[![../_images/connection-dialog.png](https://docs.nvidia.com/nsight-compute/_images/connection-dialog.png)](../_images/connection-dialog.png)
 
-When using a remote platform, you will be asked to select or create a _Connection_ in the top drop down. To create a new connection, select _+_ and enter your connection details. When using the local platform, _localhost_ will be selected as the default and no further connection settings are required. You can still create or select a remote connection, if profiling will be on a remote system of the same platform.
+When using a remote platform, you will be asked to select or create a _Connection_ in the top drop down. To create a new connection, select _+_ and enter your connection details. When using the local platform, _localhost_ will be selected as the default and no further connection settings are required. You can still create or select a remote connection, if profiling will be on a remote system of the same platform. Use the _Device Information_ button to view system and GPU information for the selected device.
 
 Depending on your target platform, select either _Launch_ or _Remote Launch_ to launch an application for profiling on the target. Note that _Remote Launch_ will only be available if supported on the target platform.
 
@@ -609,6 +611,8 @@ nsight-cuprof-report | Nsight Compute Profiler Report (legacy) | Yes
 
     * **Terminate** Disconnect from and terminate the current target application immediately.
 
+    * **Device Information** Open the [Device Information](index.html#tool-window-device-information) tool window to view system and GPU information for the selected device.
+
   * Debug
 
     * **Pause** Pause the target application at the next intercepted API call or launch.
@@ -808,7 +812,7 @@ The body of this tool window displays a table with sub-launch-specific metrics. 
 
 ### 3.5.6. Function Stats
 
-The _Function Stats_ tool window presents a table of all functions in your profile result with top stalls for each function and all stall reasons. This window is connected with the PM Sampling timeline and automatically updates to show data for the selected time range in the timeline.
+The _Function Stats_ tool window presents a hierarchical tree view of all functions in your profile result with top stalls for each function and source line. This window is connected with the PM Sampling timeline and automatically updates to show data for the selected time range in the timeline.
 
 #### Accessing Function Stats
 
@@ -826,35 +830,51 @@ The Function Stats tool window can be opened using:
 
   2. Open the tool window using the **Function Stats** tool bar button.
 
-  3. Sort by a column (default is sorted by **All Samples**).
+  3. Expand a function to see per-source-line statistics.
 
-  4. Click a function to navigate to it on the Source page (if available).
-    
+  4. Sort by a column (default is sorted by **All Samples**).
 
-**Note:** The source view is not updated with the warp sampling data collected with PM sampling.
+  5. Click a function or source line to navigate to it on the Source page (if available).
 
+
+Note
+
+The source view is not updated with the warp sampling data collected with PM sampling.
 
 ![../_images/tool-window-function-stats.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-function-stats.png)
 
 The Function Stats tool window
 
-#### Understanding the Function Stats Table
+#### Understanding the Function Stats Tree
 
-Each row corresponds to a **function**. The columns include:
+The view displays a hierarchical tree with two levels:
 
-**Samples (All)** : Reports the samples collected for this function as % of total samples collected. This also includes all the stall reasons as a stacked bar chart.
+  * **Function entries** (top-level): Each function appears as a parent row showing aggregate statistics across all source lines.
 
-**Samples (Not Issued)** : Reports the samples collected for this function as % of total samples collected where warps were not issued. This also includes all the stall reasons as a stacked bar chart.
+  * **Source line entries** (children): Expand a function to see per-source-line breakdown in `filename:line` format. Up to 10 source lines with the highest sample counts are shown. If a selection results in more than 10 source lines, the remaining ones are aggregated into an **Other** entry.
 
-**Top Stall #1** : Reports the stall reason with the highest incidence for the function.
 
-**Top Stall #2** : Reports the stall reason with the second highest incidence for the function.
+The columns include:
 
-**Top Stall #3** : Reports the stall reason with the third highest incidence for the function.
+**Name** : The function name (for top-level entries) or source location in `filename:line` format (for child entries). Click to navigate to the corresponding location on the Source page.
+
+**Samples (All)** : Reports the samples collected for this entry as % of total samples collected. This also includes all the stall reasons as a stacked bar chart.
+
+**Samples (Not Issued)** : Reports the samples collected for this entry as % of total samples collected where warps were not issued. This also includes all the stall reasons as a stacked bar chart.
+
+**Top Stall #1** : Reports the stall reason with the highest incidence for the entry.
+
+**Top Stall #2** : Reports the stall reason with the second highest incidence for the entry.
+
+**Top Stall #3** : Reports the stall reason with the third highest incidence for the entry.
 
 Note
 
-By default, the table is **sorted by All Samples in decreasing order**.
+By default, the tree is **sorted by All Samples in decreasing order**. When there is only one function in the view, it is automatically expanded to show all source lines.
+
+![../_images/tool-window-function-stats-tree.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-function-stats-tree.png)
+
+The Function Stats tree view with source line links and tooltip
 
 See the _Warp Stall Reasons_ tables in the [Metrics Reference](../ProfilingGuide/index.html#warp-stall-reasons) for a description of the individual warp scheduler states.
 
@@ -948,9 +968,21 @@ Error | Paralellogram | #D9D9D9
   
 ### 3.5.10. CUDA Graph Viewer
 
-The _CUDA Graph Viewer_ provides real-time visualization and inspection of CUDA Graphs during interactive profiling sessions with NVIDIA Nsight Compute. This window becomes available when the target application creates a CUDA Graph while connected to the profiler.
+The _CUDA Graph Viewer_ tool window provides real-time visualization and inspection of CUDA Graphs. Access it through the _CUDA Graph Viewer_ entry in the _Profile_ menu or via the toolbar button.
 
-By default, the viewer opens automatically upon graph creation. To disable this behavior, navigate to _Tools > Options > Profile > CUDA Graph Viewer > Auto-Open Graph Viewer_ and set it to _No_. If the window is closed, you can reopen it by clicking the _CUDA Graph Viewer_ button in _Resources > Graphs: Graphs_ or in any other _Graphs:_ resource from the main menu. The viewer displays the current state of all active CUDA Graphs whenever the target application is suspended.
+The viewer supports two primary workflows:
+
+**Interactive Profiling**
+    
+
+When profiling CUDA Graph workloads in an interactive session, the viewer automatically opens and displays graphs as the target application creates them. Each time execution is suspended, the viewer updates to show the current state of all active CUDA Graphs, including any structural changes or execution progress.
+
+**Profile Report Analysis**
+    
+
+When opening a profile report containing CUDA Graph data, the viewer automatically opens and displays the associated graphs. You can navigate between graphs by clicking on _Kernel_ or _Graph_ results in the [Summary Page](index.html#profiler-report-summary-page) or [Raw Page](index.html#profiler-report-raw-page) tables. The viewer highlights the specific graph node associated with each selected result.
+
+By default, the viewer opens automatically upon graph creation. To disable this behavior, navigate to _Tools > Options > Profile > CUDA Graph Viewer > Auto-Open Graph Viewer_ and set it to _No_.
 
 ![../_images/tool-window-cuda-graph-viewer.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-cuda-graph-viewer.png)
 
@@ -974,7 +1006,35 @@ The viewer provides dynamic execution tracking during both graph construction an
   * When an instantiated graph is launched, the _Instantiated Graph_ tab automatically displays the graph execution state. As you step through the application, the viewer highlights nodes currently being executed and visually distinguishes completed nodes from pending ones. Execution flow through conditional graph and child graph nodes is clearly indicated.
 
 
-### 3.5.11. Search
+### 3.5.11. Device Information
+
+The _Device Information_ tool window displays system and GPU information for the selected device connection. Access it through the _Device Information_ button (info icon) in the [Start Activity Dialog](index.html#connection-dialog) or via _Connection > Device Information_ from the main menu.
+
+[![../_images/connection-menu.png](https://docs.nvidia.com/nsight-compute/_images/connection-menu.png)](../_images/connection-menu.png)
+
+Access Device Information from the Connection menu.
+
+The window provides two tabs for viewing device details:
+
+**System**
+    
+
+Displays operating system information including OS name, CPU architecture, hostname, IP addresses, and collection timestamp.
+
+**GPU**
+    
+
+Shows GPU-related information including driver version, CUDA version, and detailed properties for each detected GPU.
+
+[![../_images/tool-window-device-information.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-device-information.png)](../_images/tool-window-device-information.png)
+
+The Device Information window showing system and GPU information tabs.
+
+Use the connection dropdown at the top to select a different device. Information is automatically collected when you select a device. Use the refresh button to manually update the information for the currently selected device.
+
+The Device Information window supports both local and remote device connections. For remote devices, the system automatically deploys a collector binary via SSH and retrieves the information. Remote Windows targets are not supported.
+
+### 3.5.12. Search
 
 The _Search_ tool window can be opened using the _Search_ entry in the _Tools_ menu, or from the tool bar’s search bar. It can be used to search for terms throughout Nsight Compute.
 
@@ -1001,7 +1061,7 @@ Each result is associated with the original source. While some results are plain
   * Online **Developer Forums** entries
 
 
-### 3.5.12. Metric Selection
+### 3.5.13. Metric Selection
 
 The _Metric Selection_ window can be opened from the main menu using _Profile > Metric Selection_. It tracks all metric sets, sections and rules currently loaded in NVIDIA Nsight Compute, independent from a specific connection or report. The directory to load those files from can be configured in the [Profile](index.html#options-profile) options dialog. It is used to inspect available sets, sections and rules, as well as to configure which should be collected, and which rules should be applied. You can also specify a comma separated list of individual metrics, that should be collected. The window has two views, which can be selected using the dropdown in its header.
 
@@ -1069,6 +1129,8 @@ Each group button to the right of the page tabs opens a context menu that featur
 
     * **Launch Details Windows** opens the [Launch Details](index.html#tool-window-launch-details) tool window. When the window is open and a result containing multiple sub-launches is selected, it displays information about each sub-launch in the result.
 
+    * **CUDA Graph Viewer** opens the [CUDA Graph Viewer](index.html#tool-window-cuda-graph-viewer) tool window. When the window is open and a result containing a CUDA Graph is selected, it displays the graph in the viewer.
+
   * View
 
     * **Show/Hide Rules Output** toggles the visibility of rule results.
@@ -1112,7 +1174,7 @@ The _Summary_ page shows a table of all collected results in the report, as well
 
 Summary page with Summary Table and Prioritized Rules.
 
-The _Summary Table_ gives you a quick comparison overview across all profiled workloads. It contains a number of important, pre-selected metrics which can be customized as explained below. Its columns can be sorted by clicking the column header. You can transpose the table with the _Transpose_ button. Aggregate of all results per each counter metric is shown in the table header along with the column name. You can change the aggregated values by selecting the desired results for multiple metrics simultaneously. When selecting any entry by single-click, a list of its _Prioritized Rules_ will be shown below the table. Double-click any entry to make the result the currently active one and switch to the [Details Page](index.html#profiler-report-details-page) page to inspect its performance data. By default, kernel demangled names are simplified, renamed and shown in an optimized manner. This behavior can be changed with [Rename Demangled Names](index.html#options-profile) option. If an auto-simplified name is not useful, you can rename it through a configuration file. You can also persist the updated names directly in the report by double-clicking on the name, renaming and saving the report. Use [Rename Kernels Config Path](index.html#options-profile) option to specify the configuration file which should be used while importing renamed kernels or exporting demangled names with mappings to rename them. To export names to a new file, click _Export_ button and use _Rename Kernels Config_ option. See [Kernel Renaming](../NsightComputeCli/index.html#kernel-renaming) for more details on configuration file usage.
+The _Summary Table_ gives you a quick comparison overview across all profiled workloads. It contains a number of important, pre-selected metrics which can be customized as explained below. Its columns can be sorted by clicking the column header. You can transpose the table with the _Transpose_ button. Aggregate of all results per each counter metric is shown in the table header along with the column name. You can change the aggregated values by selecting the desired results for multiple metrics simultaneously. When selecting any entry by single-click, a list of its _Prioritized Rules_ will be shown below the table. Double-click any entry to make the result the currently active one and switch to the [Details Page](index.html#profiler-report-details-page) page to inspect its performance data. By default, kernel demangled names are simplified, renamed and shown in an optimized manner. This behavior can be changed with [Rename Demangled Names](index.html#options-profile) option. If an auto-simplified name is not useful, you can rename it through a configuration file. You can also persist the updated names directly in the report by double-clicking on the name, renaming and saving the report. Use [Rename Kernels Config Path](index.html#options-profile) option to specify the configuration file which should be used while importing renamed kernels or exporting demangled names with mappings to rename them. To export names to a new file, click _Export_ button and use _Rename Kernels Config_ option. Hovering over a demangled name cell shows the full name in a tooltip and lets you open the kernel renaming config file from there. See [Kernel Renaming](../NsightComputeCli/index.html#kernel-renaming) for more details on configuration file usage. For results associated with CUDA Graphs, clicking on the result opens the [CUDA Graph Viewer](index.html#tool-window-cuda-graph-viewer) tool window. The viewer displays the instantiated graph structure and automatically highlights the graph node from which the selected kernel was launched, making it easy to understand the execution context within the graph topology.
 
 ![../_images/profiler-report-pages-summary-table.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-pages-summary-table.png)
 
@@ -1521,6 +1583,8 @@ The _Attributed Stalls_ column shows the number of warp stalls from the selectio
   * **Output Scoreboard Dependencies** : The consumers of scoreboards produced by the selection. A scoreboard producer is an operation producing a scoreboard a consumer is waiting on. Use this to understand who is waiting (stalled) on the selection. Note that these lines may wait for other instructions than the current selection, too.
 
 
+Scoreboards are used to synchronize data dependencies, state updates and ensure memory ordering. This includes true data dependencies (read-after-write) and anti-dependencies (write-after-read).
+
 Relative percentage values in these tables are calculated based on the total value of the respective data in the entire view, not just in the selection.
 
 The _Dependencies_ tables show in their _Scoreboards_ columns which of the GPU’s six scoreboards are responsible for the dependency. Use the _Scoreboard Dependencies_ column in the SASS view to see individual scoreboard dependencies between assembly instructions. Lines at the same offset in this column are for the same scoreboard.
@@ -1853,7 +1917,7 @@ Clustering Window
 
   3. **Configure Parameters** (Optional):
 
-     * _Minimum Cluster Size_ : How many reports are needed to form a cluster (default: 3)
+     * _Minimum Cluster Size_ : How many reports are needed to form a cluster (default: 3, minimum allowed: 2)
 
      * _Maximum Cluster Size_ : Maximum reports per cluster (0 = no limit)
 
@@ -2201,6 +2265,14 @@ Configure settings for the API Stream View.
 NVIDIA Nsight Compute API Stream View Options Option Name | Description | Values  
 ---|---|---  
 API Call History | Number of recent API calls shown in API Stream View. | 1..N (Default: 100)  
+  
+#### CUDA Graph Viewer
+
+Configure settings for the CUDA Graph Viewer.
+
+NVIDIA Nsight Compute CUDA Graph Viewer Options Option Name | Description | Values  
+---|---|---  
+Auto-Open Graph Viewer | Automatically open the CUDA Graph Viewer when CUDA graphs are detected during profiling or when opening reports containing CUDA graph results. | Yes (Default)/No  
   
 ### 3.15.2. Fonts and Colors
 

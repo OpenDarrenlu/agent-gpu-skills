@@ -1,4 +1,4 @@
-# 6.43.1. Direct3D 11 Interoperability [DEPRECATED]
+# 6.44.1. Direct3D 11 Interoperability [DEPRECATED]
 
 **Source:** group__CUDA__D3D11__DEPRECATED.html#group__CUDA__D3D11__DEPRECATED
 

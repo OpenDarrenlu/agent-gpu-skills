@@ -28,13 +28,13 @@ The invocation and completion of child grids is properly nested, meaning that th
 
 ![Parent-Child Launch Nesting](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/parent-child-launch-nesting.png)
 
-Figure 54 Parent-Child Launch Nesting
+Figure 57 Parent-Child Launch Nesting
 
 ### 4.18.2.2. Scope of CUDA Primitives
 
 CUDA Dynamic Parallelism relies on the [CUDA Device Runtime](../05-appendices/device-callable-apis.html#cuda-device-runtime), which enables calling a limited set of APIs which are syntactically similar to the CUDA Runtime API, but available in device code. The behavior of the device runtime APIs are similar to their host counterparts, but there are some differences. These differences are captured in the table in section [API Reference](../05-appendices/device-callable-apis.html#device-runtime-api-reference).
 
-On both host and device, the CUDA runtime offers an API for launching kernels and for tracking dependencies between launches via streams and events. On the device, launched kernels and CUDA objects are visible to all threads in the invoking grid. This means, for example, that a stream may be created by one thread and used by any other thread in the same grid. However, CUDA objects such as streams and events which were created on by device API calls are only valid within the grid where they were created.
+On both host and device, the CUDA runtime offers an API for launching kernels and for tracking dependencies between launches via streams and events. On the device, launched kernels and CUDA objects are visible to all threads in the invoking grid. This means, for example, that a stream may be created by one thread and used by any other thread in the same grid. However, CUDA objects such as streams and events which were created by device API calls are only valid within the grid where they were created.
 
 ### 4.18.2.3. Streams and Events
 
@@ -284,7 +284,7 @@ The size of the fixed-size launch pool is configurable by calling `cudaDeviceSet
 
 CDP2 is the default. Functions can be compiled with `-DCUDA_FORCE_CDP1_IF_SUPPORTED` to opt-out of using CDP2 on devices of compute capability less than 9.0.
 
-| Function compiler with CUDA 12.0 and newer (default) | Function compiled with pre-CUDA 12.0 or with CUDA 12.0 and newer with `-DCUDA_FORCE_CDP1_IF_SUPPORTED` specified  
+| Function compiled with CUDA 12.0 and newer (default) | Function compiled with pre-CUDA 12.0 or with CUDA 12.0 and newer with `-DCUDA_FORCE_CDP1_IF_SUPPORTED` specified  
 ---|---|---  
 Compilation | Compile error if device code references `cudaDeviceSynchronize`. | Compile error if code references `cudaStreamTailLaunch` or `cudaStreamFireAndForget`. Compile error if device code references `cudaDeviceSynchronize` and code is compiled for sm_90 or newer.  
 Compute capability < 9.0 | New interface is used. | Legacy interface is used.  
@@ -357,7 +357,7 @@ The following CUDA-level declaration of `cudaGetParameterBuffer()` is mapped to 
     void *cudaGetParameterBuffer(size_t alignment, size_t size);
     
 
-The first parameter specifies the alignment requirement of the parameter buffer and the second parameter the size requirement in bytes. In the current implementation, the parameter buffer returned by `cudaGetParameterBuffer()` is always guaranteed to be 64- byte aligned, and the alignment requirement parameter is ignored. However, it is recommended to pass the correct alignment requirement value - which is the largest alignment of any parameter to be placed in the parameter buffer - to `cudaGetParameterBuffer()` to ensure portability in the future.
+The first parameter specifies the alignment requirement of the parameter buffer and the second parameter the size requirement in bytes. In the current implementation, the parameter buffer returned by `cudaGetParameterBuffer()` is always guaranteed to be 64-byte aligned, and the alignment requirement parameter is ignored. However, it is recommended to pass the correct alignment requirement value - which is the largest alignment of any parameter to be placed in the parameter buffer - to `cudaGetParameterBuffer()` to ensure portability in the future.
 
 ### 4.18.6.2. Parameter Buffer Layout
 

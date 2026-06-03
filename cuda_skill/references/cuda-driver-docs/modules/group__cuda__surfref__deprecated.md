@@ -1,4 +1,4 @@
-# 6.27. Surface Reference Management [DEPRECATED]
+# 6.28. Surface Reference Management [DEPRECATED]
 
 **Source:** group__CUDA__SURFREF__DEPRECATED.html#group__CUDA__SURFREF__DEPRECATED
 

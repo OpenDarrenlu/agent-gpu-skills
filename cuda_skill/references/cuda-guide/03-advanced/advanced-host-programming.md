@@ -8,7 +8,16 @@ This section will cover use of more advanced CUDA APIs and features. These topic
 
 ## 3.1.1. cudaLaunchKernelEx
 
-When the [triple chevron notation](../02-basics/intro-to-cuda-cpp.html#intro-cpp-launching-kernels-triple-chevron) was introduced in first versions of, the [Kernel Configuration](../05-appendices/cpp-language-extensions.html#execution-configuration) of a kernel had only four programmable parameters: \- thread block dimensions \- grid dimensions \- dynamic shared-memory (optional, 0 if unspecified) \- stream (default stream used if unspecified)
+When the [triple chevron notation](../02-basics/intro-to-cuda-cpp.html#intro-cpp-launching-kernels-triple-chevron) was introduced in first versions of, the [Kernel Configuration](../05-appendices/cpp-language-extensions.html#execution-configuration) of a kernel had only four programmable parameters:
+
+  * thread block dimensions
+
+  * grid dimensions
+
+  * dynamic shared-memory (optional, 0 if unspecified)
+
+  * stream (default stream used if unspecified)
+
 
 Some CUDA features can benefit from additional attributes and hints provided with a kernel launch. The `cudaLaunchKernelEx` enables a program to set the above mentioned execution configuration parameters via the `cudaLaunchConfig_t` structure. In addition, the `cudaLaunchConfig_t` structure allows the program to pass in zero or more `cudaLaunchAttributes` to control or suggest other parameters for the kernel launch. For example, the `cudaLaunchAttributePreferredSharedMemoryCarveout` discussed later in this chapter (see [Configuring L1/Shared Memory Balance](advanced-kernel-programming.html#advanced-kernel-l1-shared-config)) is specified using `cudaLaunchKernelEx`. The `cudaLaunchAttributeClusterDimension` attribute, discussed later in this chapter, is used to specify the desired cluster size for the kernel launch.
 
@@ -92,7 +101,7 @@ A kernel can alternatively use the `__block_size__` annotation, which specifies 
     foo<<<dim3(8, 8, 8)>>>();
     
 
-`__block_size__` requires two fields each being a tuple of 3 elements. The first tuple denotes block dimension and second cluster size. The second tuple is assumed to be `(1,1,1)` if it’s not passed. To specify the stream, one must pass `1` and `0` as the second and third arguments within `<<<>>>` and lastly the stream. Passing other values would lead to undefined behavior.
+`__block_size__` requires two fields each being a tuple of 3 elements. The first tuple denotes block dimension and second cluster size. The second tuple is assumed to be `(1,1,1)` if it’s not passed. When specifying a dynamic shared memory size and/or a stream during kernel launch, the second argument in `<<<>>>` must be the placeholder `1`. Any other value results in undefined behavior.
 
 Note that it is illegal for the second tuple of `__block_size__` and `__cluster_dims__` to be specified at the same time. It’s also illegal to use `__block_size__` with an empty `__cluster_dims__`. When the second tuple of `__block_size__` is specified, it implies the “Blocks as Clusters” being enabled and the compiler would recognize the first argument inside `<<<>>>` as the number of clusters instead of thread blocks.
 
@@ -138,7 +147,16 @@ The following code sample obtains the allowable range of priorities for the curr
 
 ### 3.1.3.2. Explicit Synchronization
 
-As previously outlined, there are a number of ways that streams can synchronize with other streams. The following provides common methods at different levels of granularity: \- `cudaDeviceSynchronize()` waits until all preceding commands in all streams of all host threads have completed. \- `cudaStreamSynchronize()`takes a stream as a parameter and waits until all preceding commands in the given stream have completed. It can be used to synchronize the host with a specific stream, allowing other streams to continue executing on the device. \- `cudaStreamWaitEvent()`takes a stream and an event as parameters (see [CUDA Events](../02-basics/asynchronous-execution.html#cuda-events) for a description of events) and makes all the commands added to the given stream after the call to `cudaStreamWaitEvent()`delay their execution until the given event has completed. \- `cudaStreamQuery()`provides applications with a way to know if all preceding commands in a stream have completed.
+As previously outlined, there are a number of ways that streams can synchronize with other streams. The following provides common methods at different levels of granularity:
+
+  * `cudaDeviceSynchronize()` waits until all preceding commands in all streams of all host threads have completed.
+
+  * `cudaStreamSynchronize()`takes a stream as a parameter and waits until all preceding commands in the given stream have completed. It can be used to synchronize the host with a specific stream, allowing other streams to continue executing on the device.
+
+  * `cudaStreamWaitEvent()`takes a stream and an event as parameters (see [CUDA Events](../02-basics/asynchronous-execution.html#cuda-events) for a description of events) and makes all the commands added to the given stream after the call to `cudaStreamWaitEvent()`delay their execution until the given event has completed.
+
+  * `cudaStreamQuery()`provides applications with a way to know if all preceding commands in a stream have completed.
+
 
 ### 3.1.3.3. Implicit Synchronization
 
@@ -254,7 +272,7 @@ Listing 4 Example of Homogeneous Batched Memory Transfer from Pinned Host Memory
     
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
-    std::vector<void *> sizes(batch_size);
+    std::vector<size_t> sizes(batch_size);
     
     // Allocate the source and destination buffers
     // initialize with the stream number
@@ -289,7 +307,7 @@ Listing 5 Example of Heterogeneous Batched Memory Transfer using some Ephemeral 
     
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
-    std::vector<void *> sizes(batch_size);
+    std::vector<size_t> sizes(batch_size);
     
     // Allocate the src and dst buffers
     for (size_t i = 0; i < batch_size - 10; i++) {
@@ -332,7 +350,7 @@ Listing 6 Example of Setting Source and Destination Location Hints
     // Allocate the source and destination buffers
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
-    std::vector<void *> sizes(batch_size);
+    std::vector<size_t> sizes(batch_size);
     
     // cudaMemLocation structures we will use tp provide location hints
     // Device device_id

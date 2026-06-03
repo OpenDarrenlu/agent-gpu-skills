@@ -1,13 +1,13 @@
 # 13. Release Notes
 
 
-This section describes the history of change in the PTX ISA and implementation. The first section describes ISA and implementation changes in the current release of PTX ISA version 9.2, and the remaining sections provide a record of changes in previous releases of PTX ISA versions back to PTX ISA version 2.0.
+This section describes the history of change in the PTX ISA and implementation. The first section describes ISA and implementation changes in the current release of PTX ISA version 9.3, and the remaining sections provide a record of changes in previous releases of PTX ISA versions back to PTX ISA version 2.0.
 
 
-[Table 59](#release-notes-ptx-release-history) shows the PTX release history.
+[Table 62](#release-notes-ptx-release-history) shows the PTX release history.
 
 
-Table 59 PTX Release History PTX ISA Version | CUDA Release | Supported Targets  
+Table 62 PTX Release History PTX ISA Version | CUDA Release | Supported Targets  
 ---|---|---  
 PTX ISA 1.0 | CUDA 1.0 | `sm_{10,11}`  
 PTX ISA 1.1 | CUDA 1.1 | `sm_{10,11}`  
@@ -55,10 +55,11 @@ PTX ISA 8.7 | CUDA 12.8, driver r570 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,3
 PTX ISA 8.8 | CUDA 12.9, driver r575 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,101,101f,101a,103,103f,103a}`, `sm_{120,120f,120a,121,121f,121a}`  
 PTX ISA 9.0 | CUDA 13.0, driver r580 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,88,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,103,103f,103a}`, `sm_{110,110f,110a}`, `sm_{120,120f,120a,121,121f,121a}`  
 PTX ISA 9.1 | CUDA 13.1, driver r590 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,88,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,103,103f,103a}`, `sm_{110,110f,110a}`, `sm_{120,120f,120a,121,121f,121a}`  
-PTX ISA 9.2 | CUDA 13.2, driver r595 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,88,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,103,103f,103a}`, `sm_{110,110f,110a}`, `sm_{120,120f,120a,121,121f,121a}`
+PTX ISA 9.2 | CUDA 13.2, driver r595 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,88,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,103,103f,103a}`, `sm_{110,110f,110a}`, `sm_{120,120f,120a,121,121f,121a}`  
+PTX ISA 9.3 | CUDA 13.3, driver r610 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,35,37}`, `sm_{50,52,53}`, `sm_{60,61,62}`, `sm_{70,72,75}`, `sm_{80,86,87,88,89}`, `sm_{90,90a}`, `sm_{100,100f,100a,103,103f,103a}`, `sm_{110,110f,110a}`, `sm_{120,120f,120a,121,121f,121a}`
 
 
-[Table 60](#release-notes-a-spec-f-spec-ptx-feature-release-history) shows the release history of arch-specific and family-specific PTX instructions. Apart from PTX instructions, other features and constructs that are architecture-specific and family-specific are described in following sections:
+[Table 63](#release-notes-a-spec-f-spec-ptx-feature-release-history) shows the release history of arch-specific and family-specific PTX instructions. Apart from PTX instructions, other features and constructs that are architecture-specific and family-specific are described in following sections:
 
 
   * [Restriction on Tensor Copy instructions](#data-movement-and-conversion-instructions-tensor-copy-restrictions)  
@@ -66,7 +67,7 @@ PTX ISA 9.2 | CUDA 13.2, driver r595 | `sm_{10,11,12,13}`, `sm_20`, `sm_{30,32,3
   * [TensorCore 5th Generation Matrix Shape Target ISA Notes](#tcgen05-matrix-shape-target-isa-note)
 
 
-Table 60 Arch-specific/ Family-specific PTX Features Release History Instruction | Variant | PTX ISA Version | Supported Targets  
+Table 63 Arch-specific/ Family-specific PTX Features Release History Instruction | Variant | PTX ISA Version | Supported Targets  
 ---|---|---|---  
 `tensormap.replace` | Base variant | 8.3 | `sm_90a`  
 8.6 | `sm_100a`, `sm_120a`  
@@ -197,8 +198,40 @@ Kind `.kind::mxf4nvf4` and `.kind::mxf4` | 8.7 | `sm_120a`, `sm_121a`
 `add` | Types `.u16x2`, `.s16x2`, `.u32` with `.sat` qualifier | 9.2 | `sm_120f`
 
 
-##  13.1. [Changes in PTX ISA Version 9.2](#changes-in-ptx-isa-version-9-2)  
+##  13.1. [Changes in PTX ISA Version 9.3](#changes-in-ptx-isa-version-9-3)  
   
+New Features
+
+PTX ISA version 9.3 introduces the following new features:
+
+  * Adds support for `mma_throughput` pragma.
+
+  * Adds support for `clmad` instruction.
+
+  * Adds support for `.phase_type::*` qualifier for `mbarrier.test_wait` and `mbarrier.try_wait` instructions.
+
+  * Adds support for `reportPredicate` and `reportValue` operands for `mbarrier.test_wait` and `mbarrier.try_wait` instructions.
+
+  * Adds support for `.layout` qualifier for mbarrier instructions and support for `mbarrier.check_layout` instruction.
+
+  * Adds support for `multimem.st.async` and `multimem.red.async` instructions.
+
+  * Adds support for `.sem` and `.scope` qualifiers for `cp.async.bulk`, `cp.reduce.async.bulk`, `multimem.cp.async.bulk` and `multimem.cp.reduce.async.bulk` instructions.
+
+  * Adds support for `fabric.try_get`, `fabric.try_put`, `fabric.try_red`, `fabric.try_pullred`, `fabric.wait`, `fabric.submit` instructions.
+
+  * Adds support for `fence.proxy.to_proxykind::from_proxykind_fabric` qualifier for `fence` instruction.
+
+  * Adds support for `.language` directive.
+
+
+Semantic Changes and Clarifications
+
+  * Clarified that `red.async` instruction supports `sys` scope and not `cluster` scope with `.release` qualifier.
+
+
+##  13.2. [Changes in PTX ISA Version 9.2](#changes-in-ptx-isa-version-9-2)
+
 New Features
 
 PTX ISA version 9.2 introduces the following new features:
@@ -219,10 +252,7 @@ Semantic Changes and Clarifications
   * For `wgmma.mma_async` instruction with `.atype` and `.btype` as `.e4m3`/`.e5m2` and `.dtype` as `.f32`, current implementation does accumulation at higher than half precision but lower than single precision.
 
 
-None.
-
-
-##  13.2. [Changes in PTX ISA Version 9.1](#changes-in-ptx-isa-version-9-1)
+##  13.3. [Changes in PTX ISA Version 9.1](#changes-in-ptx-isa-version-9-1)
 
 New Features
 
@@ -244,7 +274,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.3. [Changes in PTX ISA Version 9.0](#changes-in-ptx-isa-version-9-0)
+##  13.4. [Changes in PTX ISA Version 9.0](#changes-in-ptx-isa-version-9-0)
 
 New Features
 
@@ -279,7 +309,7 @@ Semantic Changes and Clarifications
   * All `tcgen05` instructions(`tcgen05.alloc`, `tcgen05.dealloc`, `tcgen05.relinquish_alloc_permit`, `tcgen05.cp`, `tcgen05.shift`, `tcgen05.mma`, `tcgen05.mma.sp`, `tcgen05.mma.ws, tcgen05.mma.ws.sp`, `tcgen05.commit`) within a kernel must specify the same value for the `.cta_group` qualifier.
 
 
-##  13.4. [Changes in PTX ISA Version 8.8](#changes-in-ptx-isa-version-8-8)
+##  13.5. [Changes in PTX ISA Version 8.8](#changes-in-ptx-isa-version-8-8)
 
 New Features
 
@@ -305,9 +335,9 @@ PTX ISA version 8.8 introduces the following new features:
 
   * Extends `ld`, `ld.global.nc` and `st` instructions to support 256b load/store operations.
 
-  * [Table 61](#changes-in-ptx-isa-8-8-family-specific-features) shows the list of features that are supported on family-specific targets:
+  * [Table 64](#changes-in-ptx-isa-8-8-family-specific-features) shows the list of features that are supported on family-specific targets:
 
-Table 61 List of features promoted to family-specific architecture Feature | Supported targets  
+Table 64 List of features promoted to family-specific architecture Feature | Supported targets  
 ---|---  
 `.m16n8`, `.m16n16`, `.m8n16` shapes and `.b8` type for `ldmatrix`/`stmatrix` | `sm_100f`, `sm_101f`, `sm_120f`  
 Shapes for `tcgen05` `.16x64b` `.16x128b`, `.16x256b`, `.16x32bx2`, `.32x32b`, `.4x256b`, `.32x128b`, `.64x128b`, `.128x256b`, `.128x128b`, `.31x256b` | `sm_100f`, `sm_101f`  
@@ -338,7 +368,7 @@ Semantic Changes and Clarifications
   * Clarified the behavior of float-to-integer conversions for `NaN` input.
 
 
-##  13.5. [Changes in PTX ISA Version 8.7](#changes-in-ptx-isa-version-8-7)
+##  13.6. [Changes in PTX ISA Version 8.7](#changes-in-ptx-isa-version-8-7)
 
 New Features
 
@@ -368,7 +398,7 @@ Semantic Changes and Clarifications
   * Updated [Instruction descriptor](#tcgen05-instruction-descriptor) of `tcgen05.mma` instruction to clarify the bits that are reserved for future use.
 
 
-##  13.6. [Changes in PTX ISA Version 8.6](#changes-in-ptx-isa-version-8-6)
+##  13.7. [Changes in PTX ISA Version 8.6](#changes-in-ptx-isa-version-8-6)
 
 New Features
 
@@ -430,7 +460,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.7. [Changes in PTX ISA Version 8.5](#changes-in-ptx-isa-version-8-5)
+##  13.8. [Changes in PTX ISA Version 8.5](#changes-in-ptx-isa-version-8-5)
 
 New Features
 
@@ -444,7 +474,7 @@ Semantic Changes and Clarifications
   * Values `0b0000`, `0b0101`, `0b1010`, `0b1111` for sparsity metadata (operand `e`) of instruction `mma.sp` are invalid and their usage results in undefined behavior.
 
 
-##  13.8. [Changes in PTX ISA Version 8.4](#changes-in-ptx-isa-version-8-4)
+##  13.9. [Changes in PTX ISA Version 8.4](#changes-in-ptx-isa-version-8-4)
 
 New Features
 
@@ -462,7 +492,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.9. [Changes in PTX ISA Version 8.3](#changes-in-ptx-isa-version-8-3)
+##  13.10. [Changes in PTX ISA Version 8.3](#changes-in-ptx-isa-version-8-3)
 
 New Features
 
@@ -482,7 +512,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.10. [Changes in PTX ISA Version 8.2](#changes-in-ptx-isa-version-8-2)
+##  13.11. [Changes in PTX ISA Version 8.2](#changes-in-ptx-isa-version-8-2)
 
 New Features
 
@@ -502,7 +532,7 @@ Semantic Changes and Clarifications
 The `.multicast::cluster` qualifier on `cp.async.bulk` and `cp.async.bulk.tensor` instructions is optimized for target architecture `sm_90a` and may have substantially reduced performance on other targets and hence `.multicast::cluster` is advised to be used with `sm_90a`.
 
 
-##  13.11. [Changes in PTX ISA Version 8.1](#changes-in-ptx-isa-version-8-1)
+##  13.12. [Changes in PTX ISA Version 8.1](#changes-in-ptx-isa-version-8-1)
 
 New Features
 
@@ -534,7 +564,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.12. [Changes in PTX ISA Version 8.0](#changes-in-ptx-isa-version-8-0)
+##  13.13. [Changes in PTX ISA Version 8.0](#changes-in-ptx-isa-version-8-0)
 
 New Features
 
@@ -574,7 +604,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.13. [Changes in PTX ISA Version 7.8](#changes-in-ptx-isa-version-7-8)
+##  13.14. [Changes in PTX ISA Version 7.8](#changes-in-ptx-isa-version-7-8)
 
 New Features
 
@@ -632,7 +662,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.14. [Changes in PTX ISA Version 7.7](#changes-in-ptx-isa-version-7-7)
+##  13.15. [Changes in PTX ISA Version 7.7](#changes-in-ptx-isa-version-7-7)
 
 New Features
 
@@ -646,7 +676,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.15. [Changes in PTX ISA Version 7.6](#changes-in-ptx-isa-version-7-6)
+##  13.16. [Changes in PTX ISA Version 7.6](#changes-in-ptx-isa-version-7-6)
 
 New Features
 
@@ -664,7 +694,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.16. [Changes in PTX ISA Version 7.5](#changes-in-ptx-isa-version-7-5)
+##  13.17. [Changes in PTX ISA Version 7.5](#changes-in-ptx-isa-version-7-5)
 
 New Features
 
@@ -688,7 +718,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.17. [Changes in PTX ISA Version 7.4](#changes-in-ptx-isa-version-7-4)
+##  13.18. [Changes in PTX ISA Version 7.4](#changes-in-ptx-isa-version-7-4)
 
 New Features
 
@@ -712,7 +742,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.18. [Changes in PTX ISA Version 7.3](#changes-in-ptx-isa-version-7-3)
+##  13.19. [Changes in PTX ISA Version 7.3](#changes-in-ptx-isa-version-7-3)
 
 New Features
 
@@ -728,7 +758,7 @@ Semantic Changes and Clarifications
 The unimplemented version of `alloca` from the older PTX ISA specification has been replaced with new stack manipulation instructions in PTX ISA version 7.3.
 
 
-##  13.19. [Changes in PTX ISA Version 7.2](#changes-in-ptx-isa-version-7-2)
+##  13.20. [Changes in PTX ISA Version 7.2](#changes-in-ptx-isa-version-7-2)
 
 New Features
 
@@ -746,7 +776,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.20. [Changes in PTX ISA Version 7.1](#changes-in-ptx-isa-version-7-1)
+##  13.21. [Changes in PTX ISA Version 7.1](#changes-in-ptx-isa-version-7-1)
 
 New Features
 
@@ -770,7 +800,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.21. [Changes in PTX ISA Version 7.0](#changes-in-ptx-isa-version-7-0)
+##  13.22. [Changes in PTX ISA Version 7.0](#changes-in-ptx-isa-version-7-0)
 
 New Features
 
@@ -816,7 +846,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.22. [Changes in PTX ISA Version 6.5](#changes-in-ptx-isa-version-6-5)
+##  13.23. [Changes in PTX ISA Version 6.5](#changes-in-ptx-isa-version-6-5)
 
 New Features
 
@@ -845,7 +875,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.23. [Changes in PTX ISA Version 6.4](#changes-in-ptx-isa-version-6-4)
+##  13.24. [Changes in PTX ISA Version 6.4](#changes-in-ptx-isa-version-6-4)
 
 New Features
 
@@ -877,7 +907,7 @@ Semantic Changes and Clarifications
   * Clarified that in `cvt` instruction, modifier `.ftz` can only be specified when either `.atype` or `.dtype` is `.f32`.
 
 
-##  13.24. [Changes in PTX ISA Version 6.3](#changes-in-ptx-isa-version-6-3)
+##  13.25. [Changes in PTX ISA Version 6.3](#changes-in-ptx-isa-version-6-3)
 
 New Features
 
@@ -907,7 +937,7 @@ Semantic Changes and Clarifications
   * Clarified that atomicity for `{atom/red}.f16x2}` operations is guranteed separately for each of the two `.f16` elements but not guranteed to be atomic as single 32-bit access.
 
 
-##  13.25. [Changes in PTX ISA Version 6.2](#changes-in-ptx-isa-version-6-2)
+##  13.26. [Changes in PTX ISA Version 6.2](#changes-in-ptx-isa-version-6-2)
 
 New Features
 
@@ -932,7 +962,7 @@ Semantic Changes and Clarifications
   * In the memory consistency model, the definition of _morally strong operations_ was updated to exclude fences from the requirement of _complete overlap_ since fences do not access memory.
 
 
-##  13.26. [Changes in PTX ISA Version 6.1](#changes-in-ptx-isa-version-6-1)
+##  13.27. [Changes in PTX ISA Version 6.1](#changes-in-ptx-isa-version-6-1)
 
 New Features
 
@@ -948,7 +978,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.27. [Changes in PTX ISA Version 6.0](#changes-in-ptx-isa-version-6-0)
+##  13.28. [Changes in PTX ISA Version 6.0](#changes-in-ptx-isa-version-6-0)
 
 New Features
 
@@ -994,7 +1024,7 @@ Semantic Changes and Clarifications
   * Support for variadic functions which was unimplemented has been removed from the spec.
 
 
-##  13.28. [Changes in PTX ISA Version 5.0](#changes-in-ptx-isa-version-5-0)
+##  13.29. [Changes in PTX ISA Version 5.0](#changes-in-ptx-isa-version-5-0)
 
 New Features
 
@@ -1022,7 +1052,7 @@ Semantics of cache modifiers on `ld` and `st` instructions were clarified to ref
 Semantics of `volatile` operations on `ld` and `st` instructions were clarified to reflect how `volatile` operations are handled by optimizing compiler.
 
 
-##  13.29. [Changes in PTX ISA Version 4.3](#changes-in-ptx-isa-version-4-3)
+##  13.30. [Changes in PTX ISA Version 4.3](#changes-in-ptx-isa-version-4-3)
 
 New Features
 
@@ -1046,7 +1076,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.30. [Changes in PTX ISA Version 4.2](#changes-in-ptx-isa-version-4-2)
+##  13.31. [Changes in PTX ISA Version 4.2](#changes-in-ptx-isa-version-4-2)
 
 New Features
 
@@ -1066,7 +1096,7 @@ Semantics for parameter passing under ABI were updated to indicate `ld.param` an
 Semantics of `{atom/red}.add.f32` were updated to indicate subnormal inputs and results are flushed to sign-preserving zero for atomic operations on global memory; whereas atomic operations on shared memory preserve subnormal inputs and results and don’t flush them to zero.
 
 
-##  13.31. [Changes in PTX ISA Version 4.1](#changes-in-ptx-isa-version-4-1)
+##  13.32. [Changes in PTX ISA Version 4.1](#changes-in-ptx-isa-version-4-1)
 
 New Features
 
@@ -1086,7 +1116,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.32. [Changes in PTX ISA Version 4.0](#changes-in-ptx-isa-version-4-0)
+##  13.33. [Changes in PTX ISA Version 4.0](#changes-in-ptx-isa-version-4-0)
 
 New Features
 
@@ -1110,7 +1140,7 @@ Semantic Changes and Clarifications
 The `vote` instruction semantics were updated to clearly indicate that an inactive thread in a warp contributes a 0 for its entry when participating in `vote.ballot.b32`.
 
 
-##  13.33. [Changes in PTX ISA Version 3.2](#changes-in-ptx-isa-version-3-2)
+##  13.34. [Changes in PTX ISA Version 3.2](#changes-in-ptx-isa-version-3-2)
 
 New Features
 
@@ -1128,7 +1158,7 @@ Semantic Changes and Clarifications
 The `vavrg2` and `vavrg4` instruction semantics were updated to indicate that instruction adds 1 only if Va[i] + Vb[i] is non-negative, and that the addition result is shifted by 1 (rather than being divided by 2).
 
 
-##  13.34. [Changes in PTX ISA Version 3.1](#changes-in-ptx-isa-version-3-1)
+##  13.35. [Changes in PTX ISA Version 3.1](#changes-in-ptx-isa-version-3-1)
 
 New Features
 
@@ -1160,7 +1190,7 @@ PTX 3.1 redefines the default addressing for global variables in initializers, f
 Instruction `mad.f32` requires a rounding modifier for `sm_20` and higher targets. However for PTX ISA version 3.0 and earlier, ptxas does not enforce this requirement and `mad.f32` silently defaults to `mad.rn.f32`. For PTX ISA version 3.1, ptxas generates a warning and defaults to `mad.rn.f32`, and in subsequent releases ptxas will enforce the requirement for PTX ISA version 3.2 and later.
 
 
-##  13.35. [Changes in PTX ISA Version 3.0](#changes-in-ptx-isa-version-3-0)
+##  13.36. [Changes in PTX ISA Version 3.0](#changes-in-ptx-isa-version-3-0)
 
 New Features
 
@@ -1198,7 +1228,7 @@ PTX modules no longer allow duplicate `.version` directives. This feature was un
 Unimplemented instructions `suld.p` and `sust.p.{u32,s32,f32}` have been removed.
 
 
-##  13.36. [Changes in PTX ISA Version 2.3](#changes-in-ptx-isa-version-2-3)
+##  13.37. [Changes in PTX ISA Version 2.3](#changes-in-ptx-isa-version-2-3)
 
 New Features
 
@@ -1217,7 +1247,7 @@ Bit field extract and insert instructions BFE and BFI now indicate that the `len
 Unimplemented instructions `{atom,red}.{min,max}.f32` have been removed.
 
 
-##  13.37. [Changes in PTX ISA Version 2.2](#changes-in-ptx-isa-version-2-2)
+##  13.38. [Changes in PTX ISA Version 2.2](#changes-in-ptx-isa-version-2-2)
 
 New Features
 
@@ -1234,7 +1264,7 @@ Semantic Changes and Clarifications
 None.
 
 
-##  13.38. [Changes in PTX ISA Version 2.1](#changes-in-ptx-isa-version-2-1)
+##  13.39. [Changes in PTX ISA Version 2.1](#changes-in-ptx-isa-version-2-1)
 
 New Features
 
@@ -1261,7 +1291,7 @@ Semantic Changes and Clarifications
 A warning is emitted if `.minnctapersm` is specified without also specifying `.maxntid`.
 
 
-##  13.39. [Changes in PTX ISA Version 2.0](#changes-in-ptx-isa-version-2-0)
+##  13.40. [Changes in PTX ISA Version 2.0](#changes-in-ptx-isa-version-2-0)
 
 New Features
 

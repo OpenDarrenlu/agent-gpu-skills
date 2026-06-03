@@ -381,11 +381,11 @@ Constructed via:
 
 `T shfl_xor(T var, int delta) const`: Refer to [Warp Shuffle Functions](cpp-language-extensions.html#warp-shuffle-functions), available only for sizes lower or equal to 32.
 
-`int any(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions)
+`int any(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions)
 
-`int all(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions)
+`int all(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions)
 
-`unsigned int ballot(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions), available only for sizes lower or equal to 32.
+`unsigned int ballot(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions), available only for sizes lower or equal to 32.
 
 `unsigned int match_any(T val) const`: Refer to [Warp Match Functions](cpp-language-extensions.html#warp-match-functions), available only for sizes lower or equal to 32.
 
@@ -476,11 +476,11 @@ Constructed via:
 
 `T shfl_down(T var, int delta) const`: Refer to [Warp Shuffle Functions](cpp-language-extensions.html#warp-shuffle-functions)
 
-`int any(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions)
+`int any(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions)
 
-`int all(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions)
+`int all(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions)
 
-`unsigned int ballot(int predicate) const`: Refer to [Warp Vote Functions](index.html#warp-vote-functions)
+`unsigned int ballot(int predicate) const`: Refer to [Warp Vote Functions](cpp-language-extensions.html#warp-vote-functions)
 
 `unsigned int match_any(T val) const`: Refer to [Warp Match Functions](cpp-language-extensions.html#warp-match-functions)
 
@@ -637,7 +637,7 @@ If specified shape or layout of the copy is of type `cuda::aligned_size_t<N>`, a
             // (...)
             //
     
-            // Calculate the amount fo data that was actually copied, for the next iteration.
+            // Calculate the amount of data that was actually copied, for the next iteration.
             copy_count = min(elementsInShared, elementsPerThreadBlock - index);
             index += copy_count;
     
@@ -829,7 +829,7 @@ Asynchronous reduce
 
 `*_async` variants of the API are asynchronously calculating the result to either store to or update a specified destination by one of the participating threads, instead of returning it by each thread. To observe the effect of these asynchronous calls, calling group of threads or a larger group containing them need to be synchronized.
 
-  * In case of the atomic store or update variant, `atomic` argument can be either of `cuda::atomic` or `cuda::atomic_ref` available in [CUDA C++ Standard Library](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives.html). This variant of the API is available only on platforms and devices, where these types are supported by the CUDA C++ Standard Library. Result of the reduction is used to atomically update the atomic according to the specified `op`, eg. the result is atomically added to the atomic in case of `cg::plus()`. Type held by the `atomic` must match the type of `TyArg`. Scope of the atomic must include all the threads in the group and if multiple groups are using the same atomic concurrently, scope must include all threads in all groups using it. Atomic update is performed with relaxed memory ordering.
+  * In case of the atomic store or update variant, `atomic` argument can be either of `cuda::atomic` or `cuda::atomic_ref` available in [CUDA C++ Standard Library](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives.html). This variant of the API is available only on platforms and devices, where these types are supported by the CUDA C++ Standard Library. Result of the reduction is used to atomically update the atomic according to the specified `op`, eg. the result is atomically added to the atomic in case of `cg::plus()`. Type held by the `atomic` must match the type of `TyArg`. Scope of the atomic must include all the threads in the group and if multiple groups are using the same atomic concurrently, scope must include all threads in all groups using it. Atomic update is performed with relaxed memory ordering.
 
   * In case of the pointer store variant, result of the reduction will be weakly stored into the `dst` pointer.
 
@@ -885,7 +885,7 @@ Asynchronous reduce
     TyVal exclusive_scan_update(const TyGroup& group, TyAtomic& atomic, TyVal&& val);
     
 
-`*_scan_update` collectives take an additional argument `atomic` that can be either of `cuda::atomic` or `cuda::atomic_ref` available in [CUDA C++ Standard Library](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives.html). These variants of the API are available only on platforms and devices, where these types are supported by the CUDA C++ Standard Library. These variants will perform an update to the `atomic` according to `op` with value of the sum of input values of all threads in the group. Previous value of the `atomic` will be combined with the result of scan by each thread and returned. Type held by the `atomic` must match the type of `TyVal`. Scope of the atomic must include all the threads in the group and if multiple groups are using the same atomic concurrently, scope must include all threads in all groups using it. Atomic update is performed with relaxed memory ordering.
+`*_scan_update` collectives take an additional argument `atomic` that can be either of `cuda::atomic` or `cuda::atomic_ref` available in [CUDA C++ Standard Library](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives.html). These variants of the API are available only on platforms and devices, where these types are supported by the CUDA C++ Standard Library. These variants will perform an update to the `atomic` according to `op` with value of the sum of input values of all threads in the group. Previous value of the `atomic` will be combined with the result of scan by each thread and returned. Type held by the `atomic` must match the type of `TyVal`. Scope of the atomic must include all the threads in the group and if multiple groups are using the same atomic concurrently, scope must include all threads in all groups using it. Atomic update is performed with relaxed memory ordering.
 
 Following pseudocode illustrates how the update variant of scan works:
     
@@ -1210,7 +1210,7 @@ Kernel launch is a system-level mechanism exposed through the device runtime lib
 
 As with host-side launch, the device-side operator `<<<>>>` maps to underlying kernel launch APIs. This allows users targeting PTX will to perform a launch. The NVCC compiler front-end translates `<<<>>>` into these calls.
 
-Table 60 New Device-only Launch Implementation Functions Runtime API Launch Functions | Description of Difference From Host Runtime Behavior (behavior is identical if no description)  
+Table 61 New Device-only Launch Implementation Functions Runtime API Launch Functions | Description of Difference From Host Runtime Behavior (behavior is identical if no description)  
 ---|---  
 `cudaGetParameterBuffer` | Generated automatically from `<<<>>>`. Note different API to host equivalent.  
 `cudaLaunchDevice` | Generated automatically from `<<<>>>`. Note different API to host equivalent.  
@@ -1234,7 +1234,7 @@ There is no multi-GPU support from the device runtime; the device runtime is onl
 
 The portions of the CUDA Runtime API supported in the device runtime are detailed here. Host and device runtime APIs have identical syntax; semantics are the same except where indicated. The following table provides an overview of the API relative to the version available from the host.
 
-Table 61 Supported API Functions Runtime API Functions | Details  
+Table 62 Supported API Functions Runtime API Functions | Details  
 ---|---  
 `cudaDeviceGetCacheConfig` |   
 `cudaDeviceGetLimit` |   

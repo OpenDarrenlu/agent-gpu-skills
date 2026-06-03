@@ -9,9 +9,7 @@ CUcheckpointGpuPair * gpuPairs
 
 unsigned int gpuPairsCount
 
-char reserved[52-sizeof(CUcheckpointGpuPair *)]
-
-cuuint64_t reserved1
+char reserved[64-sizeof(CUcheckpointGpuPair *)-sizeof(unsigned int)]
 
 
 ### Variables
@@ -26,12 +24,7 @@ unsigned int CUcheckpointRestoreArgs::gpuPairsCount
 
 Number of gpu pairs to remap
 
-char CUcheckpointRestoreArgs::reserved[52-sizeof(CUcheckpointGpuPair *)]
-
-
-Reserved for future use, must be zeroed
-
-cuuint64_t CUcheckpointRestoreArgs::reserved1
+char CUcheckpointRestoreArgs::reserved[64-sizeof(CUcheckpointGpuPair *)-sizeof(unsigned int)]
 
 
 Reserved for future use, must be zeroed

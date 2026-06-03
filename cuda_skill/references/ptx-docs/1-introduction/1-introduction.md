@@ -34,19 +34,29 @@ The goals for PTX include the following:
   * Provide a scalable programming model that spans GPU sizes from a single unit to many parallel units.
 
 
-##  1.3. [PTX ISA Version 9.2](#ptx-isa-version-9-2)
+##  1.3. [PTX ISA Version 9.3](#ptx-isa-version-9-3)
 
-PTX ISA version 9.2 introduces the following new features:
+PTX ISA version 9.3 introduces the following new features:
 
-  * Adds support for `.u8x4` and `.s8x4` instruction types for `add`, `sub`, `min`, `max`, `neg` instructions.
+  * Adds support for `mma_throughput` pragma.
 
-  * Adds support for `add.sat.{u16x2/s16x2/u32}` instruction.
+  * Adds support for `clmad` instruction.
 
-  * Adds support for `.b128` type for `st.async` instruction.
+  * Adds support for `.phase_type::*` qualifier for `mbarrier.test_wait` and `mbarrier.try_wait` instructions.
 
-  * Adds support for `.ignore_oob` qualifier for `cp.async.bulk` instruction.
+  * Adds support for `reportPredicate` and `reportValue` operands for `mbarrier.test_wait` and `mbarrier.try_wait` instructions.
 
-  * Adds support for `.bf16x2` destination type for `cvt` instruction with `.e4m3x2`, `.e5m2x2`, `.e3m2x2`, `.e2m3x2`, `.e2m1x2` source types.
+  * Adds support for `.layout` qualifier for mbarrier instructions and support for `mbarrier.check_layout` instruction.
+
+  * Adds support for `multimem.st.async` and `multimem.red.async` instructions.
+
+  * Adds support for `.sem` and `.scope` qualifiers for `cp.async.bulk`, `cp.reduce.async.bulk`, `multimem.cp.async.bulk` and `multimem.cp.reduce.async.bulk` instructions.
+
+  * Adds support for `fabric.try_get`, `fabric.try_put`, `fabric.try_red`, `fabric.try_pullred`, `fabric.wait`, `fabric.submit` instructions.
+
+  * Adds support for `fence.proxy.to_proxykind::from_proxykind_fabric` qualifier for `fence` instruction.
+
+  * Adds support for `.language` directive.
 
 
 ##  1.4. [Document Structure](#document-structure)

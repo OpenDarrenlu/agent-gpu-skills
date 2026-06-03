@@ -1,4 +1,4 @@
-# 6.31. Peer Context Memory Access
+# 6.32. Peer Context Memory Access
 
 **Source:** group__CUDA__PEER__ACCESS.html#group__CUDA__PEER__ACCESS
 

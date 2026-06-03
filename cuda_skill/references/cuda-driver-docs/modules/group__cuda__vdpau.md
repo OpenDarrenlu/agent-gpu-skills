@@ -1,4 +1,4 @@
-# 6.44. VDPAU Interoperability
+# 6.45. VDPAU Interoperability
 
 **Source:** group__CUDA__VDPAU.html#group__CUDA__VDPAU
 

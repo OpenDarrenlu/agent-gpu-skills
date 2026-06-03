@@ -1,4 +1,4 @@
-# 7.74. CUmemDecompressParams
+# 7.76. CUmemDecompressParams
 
 **Source:** structCUmemDecompressParams.html#structCUmemDecompressParams
 

@@ -32,7 +32,7 @@ Nsight Systems supports two methods of code annotations to limit profile duratio
 
 ### Marking and Labeling Regions
 
-To understand what the application’s CPU threads are doing beyond CUDA function calls, you can use the NVIDIA Tools Extension API (NVTX). When you add NVTX markers and ranges to your application, the Timeline View shows when your CPU threads are executing within those regions. Then the Timeline View will also be projected onto the GPU, allowing you to see what activity on the GPU was launched in that CPU range.
+To understand what the application’s CPU threads are doing beyond CUDA function calls, you can use the [NVIDIA Tools Extension API (NVTX)](https://github.com/NVIDIA/NVTX). When you add NVTX markers and ranges to your application, the Timeline View shows when your CPU threads are executing within those regions. The Timeline View also projects these ranges onto the GPU timeline, allowing you to see what GPU activity was launched within each CPU range.
 
 Using custom names for CPU and CUDA resources can also improve understanding of application behavior, especially for applications that have many host threads, devices, contexts, or streams. You can use the NVIDIA Tools Extension API to assign custom names for your CPU and GPU resources. Your custom names will then be displayed in the Timeline View.
 
@@ -85,6 +85,7 @@ Command | Description
 ---|---  
 analyze | Post process existing Nsight Systems result, either in .nsys-rep or SQLite format, to generate expert systems report.  
 export | Generates an export file from an existing `.nsys-rep` file. For more information about the exported formats see the `/documentation/nsys-exporter` directory in your Nsight Systems installation directory.  
+finalize | Generate report files from deferred collections. When `nsys stop --defer-report` is used, the stop command returns quickly and raw data is retained without generating a report. The `finalize` command processes these deferred collections and produces `.nsys-rep` files.  
 launch | In interactive mode, launches an application in an environment that supports the requested options. The launch command can be executed before or after a start command.  
 profile | A fully formed profiling description requiring and accepting no further input. The command switch options used (see below table) determine when the collection starts, stops, what collectors are used (e.g., API trace, IP sampling, etc.), what processes are monitored, etc.  
 recipe | Post process one or more existing Nsight Systems results to generate statistical information and create various plots. See the **Post-Collection Analysis Guide** for details.  
@@ -109,9 +110,9 @@ Option | Available Parameters (default in bold) | Switch Description
 `--after-collection-start` | < command > | Execute a command after the collection starts. The command will be reused for subsequent starts until it is reset or cleared. Pass the option with no value to clear the previously set command. The executed process receives the following environment variables: `NSYS_SESSION_NAME`, `NSYS_CALLBACK_NAME`. Note NSYS_SESSION_NAME - the current session name NSYS_CALLBACK_NAME - the current callback name Note Available on x86 Linux only.  
 `--after-report-ready` | < command > | Execute a command after the report is ready. The command is reused for subsequent stops until it is reset or cleared. Pass the option with no value to clear the previously set command. The executed process receives the following environment variables: `NSYS_SESSION_NAME`, `NSYS_CALLBACK_NAME`, `NSYS_REPORT_PATH`. Note NSYS_SESSION_NAME - the current session name NSYS_CALLBACK_NAME - the current callback name NSYS_REPORT_PATH - the path to the generated report file Note Available on x86 Linux only.  
 `--auto-report-name` | true, **false** | Derive report file name from collected data using details of the profiled graphics application. Format: `[Process Name][GPU Name][Window Resolution][Graphics API] Timestamp .nsys-rep`. If true, automatically generate report file names.  
-`--backtrace` or `-b` | auto, fp, lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation. The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Lowest overhead option for the CPU is selected by default.  
+`--backtrace` or `-b` | auto, **fp** , lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation (`-fno-omit-frame-pointer`). The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Default is `fp` on Linux.  
 `--capture-range` or `-c` | **none** , cudaProfilerApi, hotkey, nvtx | When `--capture-range` is used, profiling will start only when an appropriate start API or hotkey is invoked. If `--capture-range` is set to none, start/stop API calls and hotkeys will be ignored. Note Hotkey works for graphic applications only.  
-`--capture-range-end` | none, stop, **stop-shutdown** , repeat[:N], repeat-shutdown:N | Default is stop-shutdown. Specify the desired behavior when a capture range ends. Applicable only when used along with the `--capture-range` option. If `none`, capture range end will be ignored. If `stop`, collection will stop at the capture range end. Any subsequent capture ranges will be ignored. The target app will continue running. If `stop-shutdown`, collection will stop at the capture range end and session will be shutdown. If `repeat[:N]`, collection will stop at capture range end and subsequent capture ranges will trigger more collections. The optional `:N` specifies the max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected. If `repeat-shutdown:N`, the same behavior as `repeat:N` but session will be shutdown after N ranges. For `stop-shutdown` and `repeat-shutdown:N`, as always, use the `--kill` option to specify whether the target app should be terminated when shutting down the session.  
+`--capture-range-end` | none, stop, **stop-shutdown** , repeat[:N][:mode], repeat-shutdown:N [:mode] | Default is stop-shutdown. Specify the desired behavior when a capture range ends. Applicable only when used along with the `--capture-range` option. If `none`, capture range end will be ignored. If `stop`, collection will stop at the capture range end. Any subsequent capture ranges will be ignored. The target app will continue running. If `stop-shutdown`, collection will stop at the capture range end and session will be shutdown. If `repeat[:N][:mode]`, collection will stop at capture range end and subsequent capture ranges will trigger more collections. The optional `:N` specifies the max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected. The optional `:mode` specifies how result files are generated. Possible values for mode are: `defer` (default) – Generate result files only after all capture ranges end, when the app exits, or when Ctrl+C is pressed, whichever comes first. `sync` – Generate the result file immediately after each range and block the application thread until complete. `async` – Generate the result file immediately after each range without blocking the application thread. If `repeat-shutdown:N[:mode]`, the same behavior as `repeat:N[:mode]` but session will be shutdown after N ranges. For `stop-shutdown` and `repeat-shutdown:N`, use the `--kill` option to specify the signal to be sent to the target app when shutting down the session.  
 `--clock-frequency-changes` | true, **false** | Collect clock frequency changes. Available only in Nsight Systems Embedded Platforms Edition and Arm server (SBSA) platforms.  
 `--command-file` | < filename >, **none** | Open a file that contains profile switches and parse the switches. Note additional switches on the command line will override switches in the file. This flag can be specified more than once.  
 `--cpu-cluster-events` | 0x16, 0x17, …, **none** | Collect per-cluster Uncore PMU counters. Multiple values can be selected, separated by commas only (no spaces). Use the `--cpu-cluster-events=help` switch to see the full list of values. Available in Nsight Systems Embedded Platforms Edition only.  
@@ -179,6 +180,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--isr` | true, **false** | Trace Interrupt Service Routines (ISRs) and Deferred Procedure Calls (DPCs). Requires administrative privileges. Available only on Windows devices.  
 `--kill` | none, sigkill, **sigterm** , signal number | Send signal to the target application’s process group. Can be used with `--duration` or range markers.  
 `--mpi-impl` | **openmpi** , mpich | When using `--trace=mpi` to trace MPI APIs, use `--mpi-impl` to specify which MPI implementation the application is using. If no MPI implementation is specified, nsys tries to automatically detect it based on the dynamic linker’s search path. If this fails, `openmpi` is used. Calling `--mpi-impl` without `--trace=mpi` is not supported.  
+`--nccl-trace` | none, all, **api** , api-coll, api-group, api-p2p, ce-batch, **ce-coll** , ce-sync, coll, default, rt, **gpu** , **group** , kernel-launch, p2p, proxy-counters, proxy-op, proxy-step | Comma-separated list of NCCL events to record, takes priority over `--trace`. Default is `api`, `ce-coll`, `group`, `gpu` if `nccl` is in `--trace`, otherwise `none`. All proxy events are experimental, `proxy-op` and `proxy-step` are only for specialized analysis and thus not included in `all`.  
 `--nic-metrics` | lf, hf, **none** | Collect metrics from NIC/HCA devices. The ‘hf’ option collects high frequency metrics but lacks RoCE, IPoIB, and ‘Send Waits’ metrics. The ‘lf’ option collects all available metrics but at a lower sampling frequency. The deprecated ‘true’ option is accepted for backwards compatibility and corresponds to ‘lf’. The ‘true’ option will be removed in a future release. System scope. Not available on Nsight Systems Embedded Platforms Edition.  
 `--nvtx-capture` or `-p` | range@domain, range, range@*, **none** | Specify NVTX range and domain to trigger the profiling session. This option is applicable only when used along with `--capture-range=nvtx`.  
 `--nvtx-domain-exclude` | default, <domain_names> | Choose to exclude NVTX events from a comma separated list of domains. `default` excludes NVTX events without a domain. A domain with this name or commas in a domain name must be escaped with `\\`. Note Only one of `--nvtx-domain-include` and `--nvtx-domain-exclude` can be used. This option is only applicable when `--trace=nvtx` is specified.  
@@ -196,7 +198,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--python-functions-trace` | <json_file> | Specify the path to the JSON file containing the requested NVTX annotations.  
 `--python-sampling` | true, **false** | Collect Python backtrace sampling events. This option is supported on Arm server (SBSA) platforms, x86 Linux and Windows targets. Note: When profiling Python-only workflows, consider disabling the CPU sampling option to reduce overhead.  
 `--python-sampling` `-frequency` | 1 < integers < 2000, **1000** | The `--python-sampling-frequency` option specifies the Python sampling frequency. The minimum supported frequency is 1Hz. The maximum supported frequency is 2KHz. This option is ignored if the `--python-sampling` option is set to false.  
-`--pytorch` | autograd-nvtx, autograd-shapes-nvtx, functions-trace, **none** | Enable automatic annotations of PyTorch functions.  
+`--pytorch` | autograd-nvtx, autograd-shapes-nvtx, functions-trace, functions-trace, functions-trace- shapes, **none** | Enable automatic annotations of PyTorch functions.  
 `--dask` | functions-trace, **none** | Enable automatic annotations of Dask functions  
 `--qnx-kernel-events` | class/event,event, class/event:mode, class:mode,help, **none** | Multiple values can be selected, separated by commas only (no spaces). See the `--qnx-kernel-events-mode` switch description for `:mode` format. Use the `--qnx-kernel-events=help` switch to see the full list of values. Example: `--qnx-kernel-events=8/1:system:wide,_NTO_TRACE_THREAD:process:fast, \_NTO_TRACE_KERCALLENTER/\__KER_BAD,_NTO_TRACE_COMM,13`. Collect QNX kernel events.  
 `--qnx-kernel` `-events-mode` | system,process,fast, wide, **system:fast** | The `--qnx-kernel-events-mode` option specifies the mode for QNX kernel events collection. Default is system:fast. Values are separated by a colon (`:`) only (no spaces). `system` and `process` cannot be specified at the same time. `fast` and `wide` cannot be specified at the same time. Check the QNX documentation to determine when to select `fast` or `wide` mode.  
@@ -219,7 +221,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--stats` | true, **false** | Generate summary statistics after the collection. Warning When set to true, an SQLite database will be created after the collection. If the collection captures a large amount of data, creating the database file may take several minutes to complete.  
 `--stop-on-exit` or `-x` | **true** , false | If true, stop collecting automatically when the launched process has exited or when the duration expires - whichever occurs first. If false, duration must be set and the collection stops only when the duration expires. Nsight Systems does not officially support runs longer than 5 minutes.  
 `--syscall` (beta) | process-tree, pid-namespace, **none** | Collect system calls. The value defines the collection scope: `process-tree` makes it tracing the application processes only, `pid-namespace` \- all processes in the current PID namespace and its child namespaces (similar to the `system-wide` mode of other features).  
-`--trace` or `-t` | **cuda** , **opengl** , **nvtx** , **osrt** , cuda-sw, cudnn, cublas, cusolver, cublas-verbose, cusparse-verbose, cudla, cudla-verbose, cusolver-verbose, dx11, dx12, openacc, dx11-annotations, dx12-annotations, opengl-annotations, openmp, mpi, nvvideo, tegra-accelerators, ucx, openxr, oshmem, openxr-annotations, python-gil, gds, s3, s3-verbose, wddm, vulkan-annotations, vulkan, none | Select the API(s) to be traced. The osrt switch controls the OS runtime libraries tracing. Multiple APIs can be selected, separated by commas only (no spaces). Since OpenACC and cuXXX APIs are tightly linked with CUDA, selecting one of those APIs will automatically enable CUDA tracing. cublas, cudla, cusparse and cusolver all have XXX-verbose options available. Reflex SDK latency markers will be automatically collected when DX or vulkan API trace is enabled. See information on `--mpi-impl` option below if mpi is selected. If `<api>-annotations` is selected, the corresponding API will also be traced. If the none option is selected, no APIs are traced and no other API can be selected. Note cuDNN is not available on Windows target. Note The `cuda` option uses the Hardware Event System which is available for GPUs beginning with Blackwell. This is a more performant technology. If the tool needs to it can fall back to software based legacy trace, `cuda-sw`. In this case the tool will generate a diagnostic message in the Diagnostics Summary report page.  
+`--trace` or `-t` | **cuda** , **opengl** , **nvtx** , **osrt** , cuda-sw, cudnn, cublas, cusolver, cublas-verbose, cusparse-verbose, cudla, cudla-verbose, cusolver-verbose, dx11, dx12, openacc, dx11-annotations, dx12-annotations, opengl-annotations, openmp, mpi, nccl, tegra-accelerators, ucx, openxr, oshmem, openxr-annotations, python-gil, gds, s3, s3-verbose, wddm, vulkan-annotations, vulkan, nvvideo, none | Select the API(s) to be traced. The osrt switch controls the OS runtime libraries tracing. Multiple APIs can be selected, separated by commas only (no spaces). Since OpenACC and cuXXX APIs are tightly linked with CUDA, selecting one of those APIs will automatically enable CUDA tracing. cublas, cudla, cusparse and cusolver all have XXX-verbose options available. Reflex SDK latency markers will be automatically collected when DX or vulkan API trace is enabled. See information on `--mpi-impl` option below if mpi is selected. If `<api>-annotations` is selected, the corresponding API will also be traced. If the none option is selected, no APIs are traced and no other API can be selected. Note cuDNN is not available on Windows target. Note The `cuda` option uses the Hardware Event System which is available for GPUs beginning with Blackwell. This is a more performant technology. If the tool needs to it can fall back to software based legacy trace, `cuda-sw`. In this case the tool will generate a diagnostic message in the Diagnostics Summary report page.  
 `--trace-fork-before-exec` | true, **false** | If true, trace any child process after fork and before they call one of the exec functions. Beware, tracing in this interval relies on undefined behavior and might cause your application to crash or deadlock. This option is only available on Linux target platforms.  
 `--vsync` | true, **false** | Collect vsync events. If collection of vsync events is enabled, display/display_scanline ftrace events will also be captured. Available in Nsight Systems Embedded Platforms Edition only.  
 `--vulkan-gpu-workload` | true, false, batch, ,none **individual** | Default is individual. If individual or true, trace each Vulkan workload’s GPU activity individually. If batch, trace Vulkan workloads’ GPU activity in `vkQueueSubmit` call batches. If none or false, do not trace Vulkan workloads’ GPU activity. Note that this switch is applicable only when `--trace=vulkan` is specified. This option is not supported on QNX.  
@@ -296,6 +298,37 @@ While many events have both a start and end time, some events only have a single
 `--ts-normalize` | true, **false** | If true, all timestamp values in the report will be shifted to UTC wall-clock time, as defined by the UNIX epoch. This option can be used in conjunction with the `--ts-shift` option, in which case both adjustments will be applied. If this option is used to align a series of reports from a cluster or distributed system, the accuracy of the alignment is limited by the synchronization precision of the system clocks. For detailed analysis, the use of PTP or another high-precision synchronization methodology is recommended. NTP is unlikely to produce desirable results. This option only applies to SQLite, HDF5, Arrow, and Arrow/Parquet directory exports.  
 `--ts-shift` | signed integer, in nanoseconds **0** | If given, all timestamp values in the report will be shifted by the given amount. This option can be used in conjunction with the `--ts-normalize` option, in which case both adjustments will be applied. be applied. This option can be used to “hand-align” report files captured at different times, or reports captured on distributed systems with poorly synchronized system clocks. This option only applies to SQLite, HDF5, Arrow, and Arrow/Parquet directory exports.  
   
+#### CLI Finalize Command Switch Options
+
+After choosing the `finalize` command switch, the following options are available. Usage:
+    
+    
+    nsys [global-options] finalize [options] [subcommand]
+    
+
+Option | Available Parameters (default in bold) | Switch Description  
+---|---|---  
+`--discard` | all, <uuid> | Discard deferred collections without generating reports. Use `all` to discard all deferred collections, or specify a UUID to discard a specific one. Use `nsys finalize list` to see available UUIDs.  
+`--force-overwrite` or `-f` | true, **false** | If true, overwrite existing report files when finalizing. Default is false.  
+`--help` | <tag> | Print the help message. The option can take one optional argument that will be used as a tag. If a tag is provided, only options relevant to the tag will be printed.  
+`--id` | <uuid> | Finalize a specific deferred collection identified by its UUID. Use `nsys finalize list` to see available UUIDs.  
+`--output` or `-o` | directory path | Output directory for finalized report files. The original filename is retained. By default, reports are placed in the directory specified during collection.  
+`--session` | session name | Filter deferred collections by session name.  
+  
+##### CLI Finalize List Subcommand
+
+The `finalize list` subcommand displays pending deferred collections. Usage:
+    
+    
+    nsys [global-options] finalize list [options]
+    
+
+Option | Available Parameters (default in bold) | Switch Description  
+---|---|---  
+`--output-format` or `-f` | **plain** , json | Controls the output format.  
+`--session` | session name | Filter deferred collections by session name.  
+`--show-header` or `-p` | **true** , false | Controls whether a header should appear in the output.  
+  
 #### CLI Launch Command Switch Options
 
 After choosing the `launch` command switch, the following options are available. Usage:
@@ -306,7 +339,7 @@ After choosing the `launch` command switch, the following options are available.
 
 Option | Available Parameters (default in bold) | Switch Description  
 ---|---|---  
-`--backtrace` or `-b` | auto, fp, lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation. The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Lowest overhead option for the CPU is selected by default.  
+`--backtrace` or `-b` | auto, **fp** , lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation (`-fno-omit-frame-pointer`). The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Default is `fp` on Linux.  
 `--clock-frequency-changes` | true, **false** | Collect clock frequency changes. Available only in Nsight Systems Embedded Platforms Edition and Arm server (SBSA) platforms.  
 `--cpu-cluster-events` | 0x16, 0x17, …, **none** | Collect per-cluster Uncore PMU counters. Multiple values can be selected, separated by commas only (no spaces). Use the `--cpu-cluster-events=help` switch to see the full list of values. Available in Nsight Systems Embedded Platforms Edition only.  
 `--command-file` | < filename >, **none** | Open a file that contains profile switches and parse the switches. Note additional switches on the command line will override switches in the file. This flag can be specified more than once.  
@@ -336,6 +369,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--injection-use-detours` | **true** , false | Use detours for injection. If false, process injection will be performed by windows hooks which allows it to bypass anti-cheat software.  
 `--isr` | true, **false** | Trace Interrupt Service Routines (ISRs) and Deferred Procedure Calls (DPCs). Requires administrative privileges. Available only on Windows devices.  
 `--mpi-impl` | **openmpi** , mpich | When using `--trace=mpi` to trace MPI APIs, use `--mpi-impl` to specify which MPI implementation the application is using. If no MPI implementation is specified, nsys tries to automatically detect it based on the dynamic linker’s search path. If this fails, `openmpi` is used. Calling `--mpi-impl` without `--trace=mpi` is not supported.  
+`--nccl-trace` | none, all, **api** , api-coll, api-group, api-p2p, ce-batch, **ce-coll** , ce-sync, coll, default, rt, **gpu** , **group** , kernel-launch, p2p, proxy-counters, proxy-op, proxy-step | Comma-separated list of NCCL events to record, takes priority over `--trace`. Default is `api`, `ce-coll`, `group`, `gpu` if `nccl` is in `--trace`, otherwise `none`. All proxy events are experimental, `proxy-op` and `proxy-step` are only for specialized analysis and thus not included in `all`.  
 `--nvtx-capture` or `-p` | range@domain, range, range@*, **none** | Specify NVTX range and domain to trigger the profiling session. This option is applicable only when used along with `--capture-range=nvtx`.  
 `--nvtx-domain-exclude` | default, <domain_names> | Choose to exclude NVTX events from a comma separated list of domains. `default` excludes NVTX events without a domain. A domain with this name or commas in a domain name must be escaped with `\\`. Note Only one of `--nvtx-domain-include` and `--nvtx-domain-exclude` can be used. This option is only applicable when `--trace=nvtx` is specified.  
 `--nvtx-domain-include` | default, <domain_names> | Choose to only include NVTX events from a comma separated list of domains. `default` filters the NVTX default domain. A domain with this name or commas in a domain name must be escaped with `\\`. Note Only one of `--nvtx-domain-include` and `--nvtx-domain-exclude` can be used. This option is only applicable when `--trace=nvtx` is specified.  
@@ -350,7 +384,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--python-backtrace` | cuda, **none** | Collect Python backtrace event when tracing the selected API’s trigger. This option is supported on Arm server (SBSA) platforms and x86 Linux targets. Note: tracing and backtraces of the selected API and CPU sampling must be enabled. For example, `--cudabacktrace` must be set when using `--python-backtrace=cuda`.  
 `--python-sampling` | true, **false** | Collect Python backtrace sampling events. This option is supported on Arm server (SBSA) platforms, x86 Linux and Windows targets. Note: When profiling Python-only workflows, consider disabling the CPU sampling option to reduce overhead.  
 `--python-sampling` `-frequency` | 1 < integers < 2000, **1000** | The `--python-sampling-frequency` option specifies the Python sampling frequency. The minimum supported frequency is 1Hz. The maximum supported frequency is 2KHz. This option is ignored if the `--python-sampling` option is set to false.  
-`--pytorch` | autograd-nvtx, autograd-shapes-nvtx, functions-trace, **none** | Enable automatic annotations of PyTorch functions.  
+`--pytorch` | autograd-nvtx, autograd-shapes-nvtx, functions-trace, functions-trace- shapes, **none** | Enable automatic annotations of PyTorch functions.  
 `--dask` | functions-trace, **none** | Enable automatic annotations of Dask functions  
 `--qnx-kernel-events` | class/event,event, class/event:mode, class:mode,help, **none** | Multiple values can be selected, separated by commas only (no spaces). See the `--qnx-kernel-events-mode` switch description for `:mode` format. Use the `--qnx-kernel-events=help` switch to see the full list of values. Example: `--qnx-kernel-events=8/1:system:wide,_NTO_TRACE_THREAD:process:fast, \_NTO_TRACE_KERCALLENTER/\__KER_BAD,_NTO_TRACE_COMM,13`. Collect QNX kernel events.  
 `--qnx-kernel` `-events-mode` | system,process,fast, wide, **system:fast** | The `--qnx-kernel-events-mode` option specifies the mode for QNX kernel events collection. Default is system:fast. Values are separated by a colon (`:`) only (no spaces). `system` and `process` cannot be specified at the same time. `fast` and `wide` cannot be specified at the same time. Check the QNX documentation to determine when to select `fast` or `wide` mode.  
@@ -366,7 +400,7 @@ Option | Available Parameters (default in bold) | Switch Description
 `--session` | session identifier, **none** | Launch the application in the indicated session. The option argument must represent a valid session name or ID as reported by `nsys sessions list`. Any `%q{ENV_VAR}` pattern will be substituted with the value of the environment variable. Any `%h` pattern will be substituted with the hostname of the system. Any `%%` pattern will be substituted with `%`.  
 `--session-new` | [a-Z][0-9,a-Z,spaces] | Default is profile-<id>-<application>. Name the session created by the command. Name must start with an alphabetical character followed by printable or space characters. Any `%q{ENV_VAR}` pattern will be substituted with the value of the environment variable. Any `%h` pattern will be substituted with the hostname of the system. Any `%%` pattern will be substituted with `%`.  
 `--show-output` or `-w` | **true** , false | If true, send the target process’s stdout and stderr streams to both the console and stdout/stderr files which are added to the report file. If false, only send the target process stdout and stderr streams to the stdout/stderr files which are added to the report file.  
-`--trace` or `-t` | **cuda** , **opengl** , **nvtx** , **osrt** , cuda-sw, cudnn, cublas, cusolver, cublas-verbose, cusparse-verbose, cudla, cudla-verbose, cusolver-verbose, dx11, dx12, openacc, dx11-annotations, dx12-annotations, opengl-annotations, openmp, mpi, nvvideo, tegra-accelerators, ucx, openxr, oshmem, openxr-annotations, python-gil, gds, s3, s3-verbose, wddm, vulkan-annotations, vulkan, none | Select the API(s) to be traced. The osrt switch controls the OS runtime libraries tracing. Multiple APIs can be selected, separated by commas only (no spaces). Since OpenACC and cuXXX APIs are tightly linked with CUDA, selecting one of those APIs will automatically enable CUDA tracing. cublas, cudla, cusparse and cusolver all have XXX-verbose options available. Reflex SDK latency markers will be automatically collected when DX or vulkan API trace is enabled. See information on `--mpi-impl` option below if mpi is selected. If `<api>-annotations` is selected, the corresponding API will also be traced. If the none option is selected, no APIs are traced and no other API can be selected. Note cuDNN is not available on Windows target. Note The `cuda` option uses the Hardware Event System which is available for GPUs beginning with Blackwell. This is a more performant technology. If the tool needs to it can fall back to software based legacy trace, `cuda-sw`. In this case the tool will generate a diagnostic message in the Diagnostics Summary report page.  
+`--trace` or `-t` | **cuda** , **opengl** , **nvtx** , **osrt** , cuda-sw, cudnn, cublas, cusolver, cublas-verbose, cusparse-verbose, cudla, cudla-verbose, cusolver-verbose, dx11, dx12, openacc, dx11-annotations, dx12-annotations, opengl-annotations, openmp, mpi, nccl, tegra-accelerators, ucx, openxr, oshmem, openxr-annotations, python-gil, gds, s3, s3-verbose, wddm, vulkan-annotations, vulkan, nvvideo, none | Select the API(s) to be traced. The osrt switch controls the OS runtime libraries tracing. Multiple APIs can be selected, separated by commas only (no spaces). Since OpenACC and cuXXX APIs are tightly linked with CUDA, selecting one of those APIs will automatically enable CUDA tracing. cublas, cudla, cusparse and cusolver all have XXX-verbose options available. Reflex SDK latency markers will be automatically collected when DX or vulkan API trace is enabled. See information on `--mpi-impl` option below if mpi is selected. If `<api>-annotations` is selected, the corresponding API will also be traced. If the none option is selected, no APIs are traced and no other API can be selected. Note cuDNN is not available on Windows target. Note The `cuda` option uses the Hardware Event System which is available for GPUs beginning with Blackwell. This is a more performant technology. If the tool needs to it can fall back to software based legacy trace, `cuda-sw`. In this case the tool will generate a diagnostic message in the Diagnostics Summary report page.  
 `--trace-fork-before-exec` | true, **false** | If true, trace any child process after fork and before they call one of the exec functions. Beware, tracing in this interval relies on undefined behavior and might cause your application to crash or deadlock. This option is only available on Linux target platforms.  
 `--vulkan-gpu-workload` | true, false, batch, ,none **individual** | Default is individual. If individual or true, trace each Vulkan workload’s GPU activity individually. If batch, trace Vulkan workloads’ GPU activity in `vkQueueSubmit` call batches. If none or false, do not trace Vulkan workloads’ GPU activity. Note that this switch is applicable only when `--trace=vulkan` is specified. This option is not supported on QNX.  
 `--wait` | primary, **all** | If `primary`, the CLI will wait on the application process termination. If `all`, the CLI will additionally wait on re-parented processes created by the application.  
@@ -427,9 +461,9 @@ Option | Available Parameters (default in bold) | Switch Description
 `--accelerator-trace` | **none** , tegra-accelerators | Collect other accelerators workload trace from the hardware engine units. Available in Nsight Systems Embedded Platforms Edition only. This option will also enable collection of hardware accelerator related ftrace events.  
 `--after-collection-start` | < command > | Execute a command after the collection starts. The command will be reused for subsequent starts until it is reset or cleared. Pass the option with no value to clear the previously set command. The executed process receives the following environment variables: `NSYS_SESSION_NAME`, `NSYS_CALLBACK_NAME`. Note NSYS_SESSION_NAME - the current session name NSYS_CALLBACK_NAME - the current callback name Note Available on x86 Linux only.  
 `--after-report-ready` | < command > | Execute a command after the report is ready. The command is reused for subsequent stops until it is reset or cleared. Pass the option with no value to clear the previously set command. The executed process receives the following environment variables: `NSYS_SESSION_NAME`, `NSYS_CALLBACK_NAME`, `NSYS_REPORT_PATH`. Note NSYS_SESSION_NAME - the current session name NSYS_CALLBACK_NAME - the current callback name NSYS_REPORT_PATH - the path to the generated report file Note Available on x86 Linux only.  
-`--backtrace` or `-b` | auto, fp, lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation. The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Lowest overhead option for the CPU is selected by default.  
+`--backtrace` or `-b` | auto, **fp** , lbr, dwarf, none | Select the backtrace method to use while sampling. The option `lbr` uses Intel(c) Corporation’s Last Branch Record registers, available only with Intel(c) CPUs codenamed Haswell and later. The option `fp` is frame pointer and assumes that frame pointers were enabled during compilation (`-fno-omit-frame-pointer`). The option `dwarf` uses DWARF’s CFI (Call Frame Information). Setting the value to `none` can reduce collection overhead. Default is `fp` on Linux.  
 `--capture-range` or `-c` | **none** , cudaProfilerApi, hotkey, nvtx | When `--capture-range` is used, profiling will start only when an appropriate start API or hotkey is invoked. If `--capture-range` is set to none, start/stop API calls and hotkeys will be ignored. Note Hotkey works for graphic applications only.  
-`--capture-range-end` | none, stop, **stop-shutdown** , repeat[:N], repeat-shutdown:N | Default is stop-shutdown. Specify the desired behavior when a capture range ends. Applicable only when used along with the `--capture-range` option. If `none`, capture range end will be ignored. If `stop`, collection will stop at the capture range end. Any subsequent capture ranges will be ignored. The target app will continue running. If `stop-shutdown`, collection will stop at the capture range end and session will be shutdown. If `repeat[:N]`, collection will stop at capture range end and subsequent capture ranges will trigger more collections. The optional `:N` specifies the max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected. If `repeat-shutdown:N`, the same behavior as `repeat:N` but session will be shutdown after N ranges. For `stop-shutdown` and `repeat-shutdown:N`, as always, use the `--kill` option to specify whether the target app should be terminated when shutting down the session.  
+`--capture-range-end` | none, stop, **stop-shutdown** , repeat[:N][:mode], repeat-shutdown:N [:mode] | Default is stop-shutdown. Specify the desired behavior when a capture range ends. Applicable only when used along with the `--capture-range` option. If `none`, capture range end will be ignored. If `stop`, collection will stop at the capture range end. Any subsequent capture ranges will be ignored. The target app will continue running. If `stop-shutdown`, collection will stop at the capture range end and session will be shutdown. If `repeat[:N][:mode]`, collection will stop at capture range end and subsequent capture ranges will trigger more collections. The optional `:N` specifies the max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected. The optional `:mode` specifies how result files are generated. Possible values for mode are: `defer` (default) – Generate result files only after all capture ranges end, when the app exits, or when Ctrl+C is pressed, whichever comes first. `sync` – Generate the result file immediately after each range and block the application thread until complete. `async` – Generate the result file immediately after each range without blocking the application thread. If `repeat-shutdown:N[:mode]`, the same behavior as `repeat:N[:mode]` but session will be shutdown after N ranges. For `stop-shutdown` and `repeat-shutdown:N`, use the `--kill` option to specify the signal to be sent to the target app when shutting down the session.  
 `--cpu-core-events` (Nsight Systems Embedded Platforms Edition) | 0x11,0x13,…, **none** | Collect per-core PMU counters. Multiple values can be selected, separated by commas only (no spaces). Use the `--cpu-core-events=help` switch to see the full list of values.  
 `--cpu-core-events` (not Nsight Systems Embedded Platforms Edition) | ‘help’ or the end users selected events in the format ‘x,y’, **2** | Default is Instructions Retired. Select the CPU Core events to sample. Use the `--cpu-core-events=help` switch to see the full list of events and the number of events that can be collected simultaneously. Multiple values can be selected, separated by commas only (no spaces). Use the `--event-sample` switch to enable.  
 `--cpu-core-metrics` | 0,1,2,…, **none** | Collect metrics on the CPU core. Multiple values can be selected, separated by commas only (no spaces). Use the `--cpu-core-metrics=help` switch to see the full list of values. Use the `--event-sample` switch to enable. Note Only available on Grace.  
@@ -562,6 +596,7 @@ After choosing the `stop` command switch, the following options are available. U
 
 Option | Available Parameters (default in bold) | Switch Description  
 ---|---|---  
+`--defer-report` |  | Defer the generation of the report file so that the stop command returns quickly. The raw data will be retained in a temporary location. Use `nsys finalize` to generate the report file later. This is useful when performing multiple start/stop cycles on a long-running application.  
 `--help` | <tag> | Print the help message. The option can take one optional argument that will be used as a tag. If a tag is provided, only options relevant to the tag will be printed.  
 `--keep` | time in seconds | Indicate how many seconds of collected data previous to the stop command should be retained in the result file. Zero is treated as a special setting that retains all of the data.  
 `--session` | session identifier | Stop the indicated session. The option argument must represent a valid session name or ID as reported by `nsys sessions list`. Any `%q{ENV_VAR}` pattern will be substituted with the value of the environment variable. Any `%h` pattern will be substituted with the hostname of the system. Any `%%` pattern will be substituted with `%`.  
@@ -810,12 +845,12 @@ Effect: Launch a Python script and start profiling it 60 seconds after the launc
 **Typical case: profile a Python script that uses PyTorch and CUDA**
     
     
-    nsys profile --trace=cuda,cudnn,cublas,osrt,nvtx --pytorch=functions-trace,autograd-nvtx
+    nsys profile --trace=cuda,cudnn,cublas,osrt,nvtx --pytorch=functions-trace-shapes,autograd-nvtx
         --cudabacktrace=all --python-backtrace=cuda --python-sampling=true
         --delay=60 python my_torch_script.py
     
 
-Effect: Launch a Python script and start profiling it 60 seconds after the launch, tracing CUDA, cuDNN, cuBLAS, OS runtime APIs, and NVTX as well as collecting CPU IP and Python call stack samples and thread scheduling information. PyTorch functions are traced, and tensor shapes are collected via `--pytorch=functions-trace` to provide detailed information about the structure and execution of the neural network model. CUDA and Python call stacks are also collected on CUDA API calls.
+Effect: Launch a Python script and start profiling it 60 seconds after the launch, tracing CUDA, cuDNN, cuBLAS, OS runtime APIs, and NVTX as well as collecting CPU IP and Python call stack samples and thread scheduling information. PyTorch functions are traced, and tensor shapes are collected via `--pytorch=functions-trace-shapes` to provide detailed information about the structure and execution of the neural network model. CUDA and Python call stacks are also collected on CUDA API calls.
 
 **Typical case: profile an app that uses Vulkan**
     
@@ -947,6 +982,36 @@ The interactive CLI supports multiple sequential collections per launch.
 
 Effect: Create interactive CLI and launch an application set up for default analysis. Send application output to the terminal. No data is collected until the start command is executed. Collect data from start until stop requested, generate `report#.qstrm` in the current working directory. Collect data from second start until the second stop request, generate `report#.nsys-rep` (incremented by one) in the current working directory. Shutdown the interactive CLI and send sigkill to the target application’s process group.
 
+**Collect multiple regions of interest, defer report generation**
+    
+    
+    nsys launch --trace=cuda,nvtx <application> [application-arguments]
+    nsys start -o region_1
+    nsys stop --defer-report
+    nsys start -o region_2
+    nsys stop --defer-report
+    nsys start -o region_3
+    nsys stop --defer-report
+    nsys shutdown
+    nsys finalize list
+    nsys finalize
+    
+
+Effect: Launch a long-running application and collect multiple regions of interest. Each `stop --defer-report` returns quickly because report generation is deferred, allowing the next `start` to begin without delay. After all collections are complete, use `nsys finalize list` to see the pending deferred collections and `nsys finalize` to generate the `.nsys-rep` report files. Output name substitution patterns (`%h`, `%q{}`, `%p`, `%n`, `%%`) are supported.
+
+To finalize a specific collection, pass its UUID from the list output:
+    
+    
+    nsys finalize --id <uuid-from-list>
+    
+
+To discard deferred collections without generating reports:
+    
+    
+    nsys finalize --discard=all
+    nsys finalize --discard=<uuid>
+    
+
 ### Example Stats Command Sequences
 
 **Display default statistics**
@@ -1023,7 +1088,7 @@ Recipes for these statistics as well as documentation on how to create your own 
 
 On Windows, Nsight Systems can trace certain APIs (currently supported: DX11, DX12 and Vulkan) in already-running applications, by way of system-wide API trace from the CLI.
 
-To initiate system-wide API tracing, run the Nsight Systems CLI with the `--trace` option including one or more of the supported APIs, the `--system-wide``option set to ``true`, and without specifying a target application. System-wide API tracing may be combined with trace types that are always system-wide such as `--trace=wddm`.
+To initiate system-wide API tracing, run the Nsight Systems CLI with the `--trace` option including one or more of the supported APIs, the `--system-wide` option set to `true`, and without specifying a target application. System-wide API tracing may be combined with trace types that are always system-wide such as `--trace=wddm`.
 
 To trace a DX11 or DX12 target application, it must gain the system focus, the user must either click on the application window or use Alt+Tab to select it.
 
@@ -1599,6 +1664,280 @@ A self-hosted NVIDIA Nsight Systems GUI running inside a Docker container enable
 
 For more information and instructions on running the container, visit: [Nsight Streamer for Nsight Systems on NGC](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/devtools/containers/nsight-streamer-nsys).
 
+### Profiling Slurm Jobs Running in Containers (Enroot/Pyxis or OCI)
+
+When jobs are launched through Slurm and executed inside a container runtime — either Pyxis/Enroot (common on NVIDIA and HPC clusters) or a generic OCI runtime (Docker, containerd, Podman, CRI-O) - Nsight Systems can still be used to profile the workload, but the CLI (`nsys`) itself must be made available _inside_ the container that Slurm launches, not just on the host.
+
+The recommended pattern is **“inject, don’t rebuild”** : keep `nsys` installed once on the bare-metal compute node and bind-mount it into the container at launch time, then wrap the in-container command with `nsys profile` exactly as you would in a non-containerized MPI/Slurm job. This avoids baking Nsight Systems into every container image and makes it easy to upgrade the profiler independently of the workload.
+
+There are three steps, regardless of the container runtime:
+
+  1. Install Nsight Systems (examples below use `2026.2.1`) on the bare-metal Slurm compute nodes.
+
+  2. Bind-mount that install into the container at the same absolute path via the container runtime’s configuration.
+
+  3. Invoke `nsys profile` by absolute path (or, if you prefer, extend the container’s `PATH` without replacing it). A wrapper script is only needed when you want per-rank logic.
+
+
+See also the “Handling Application Launchers (mpirun, deepspeed, etc)” and “Enable Docker Collection” sections — the same rules about rank-based wrapper scripts, `%q{...}` output templates, and `perf_event_open` apply here.
+
+#### Install Nsight Systems on the Target Compute Nodes
+
+Install the same Nsight Systems build on every compute node that the Slurm job may be scheduled on, and use an identical path on all nodes, e.g.:
+    
+    
+    /opt/nvidia/nsight-systems/2026.2.1
+    
+
+A shared filesystem (NFS, Lustre, GPFS) works as well, as long as the path is readable on every node and on the container’s mount namespace after the bind mount is applied.
+
+Verify on one node:
+    
+    
+    $ /opt/nvidia/nsight-systems/2026.2.1/bin/nsys --version
+    
+
+and confirm the printed version matches what you expect to bind-mount into the container.
+
+Note
+
+**Keep CLI and UI versions aligned.** The Nsight Systems GUI / `nsys-ui` used to open a report should be the **same or newer** than the CLI that produced it. Reports from a newer CLI opened in an older GUI are the common failure mode. The `.qdrep` → `.nsys-rep` format change was in 2021.4, so any 2021.4-or-newer GUI can at least load the file; whether all timeline features render correctly still depends on the GUI being ≥ CLI version. Pin one version across all compute nodes so the bind mount resolves consistently.
+
+##### Host kernel requirements
+
+Profiling from inside a container still depends on the host kernel, so make sure the host satisfies the normal Nsight Systems requirements:
+
+  * `perf_event_paranoid` is permissive enough on the host (typically `<= 2`). You can verify readiness from inside the container with `nsys status --environment`.
+
+  * The container has access to `perf_event_open` — see “Enable Docker Collection” above. For OCI runtimes this means `--cap-add=SYS_ADMIN`, `--privileged`, or a custom seccomp profile that allows `perf_event_open`. Enroot launches containers unprivileged and, by default, does not install Docker’s restrictive seccomp profile on top of the host policy, so `perf_event_open` is typically usable without extra flags — but verify with `nsys status --environment` inside the container before assuming it.
+
+  * CUDA/NVIDIA driver libraries are already made available in the container by the runtime (NVIDIA Container Toolkit for OCI, `--container-mounts` \+ the NVIDIA hook for Pyxis/Enroot). The Nsight Systems bind mount does not change that.
+
+
+#### Make `nsys` Visible Inside the Container
+
+##### Option A — Pyxis/Enroot via `srun --container-mounts`
+
+Pyxis (the Slurm SPANK plugin for Enroot) exposes Enroot container launches as `srun` flags. The `--container-mounts` flag accepts `SRC:DST[:FLAGS][,SRC:DST...]` (multiple flags are joined with `+`, e.g. `ro+rprivate`). Bind-mount the host install into the container and invoke `nsys` by absolute path so nothing in the image environment is modified:
+    
+    
+    srun \
+      --container-image=nvcr.io#nvidia/pytorch:<tag> \
+      --container-mounts=/opt/nvidia/nsight-systems/2026.2.1:/opt/nvidia/nsight-systems/2026.2.1:ro \
+      /opt/nvidia/nsight-systems/2026.2.1/bin/nsys profile \
+        -t cuda,nvtx,mpi \
+        -o /reports/run_%q{SLURM_PROCID}_%p \
+        python train.py
+    
+
+Key points:
+
+  * `--container-mounts=<host>:<container>:ro` bind-mounts the host install read-only. `ro` is enough — the profiler does not write inside its own install tree.
+
+  * Calling `nsys` via its absolute in-container path avoids touching the image’s `PATH` at all. If you prefer `nsys` on `PATH` (for example for interactive use), append it _inside_ the container rather than replacing the image `PATH`:
+        
+        srun \
+          --container-image=nvcr.io#nvidia/pytorch:<tag> \
+          --container-mounts=/opt/nvidia/nsight-systems/2026.2.1:/opt/nvidia/nsight-systems/2026.2.1:ro \
+          --export=ALL,NSYS_PATH=/opt/nvidia/nsight-systems/2026.2.1/bin \
+          --container-env=NSYS_PATH \
+          bash -lc 'PATH="$PATH:$NSYS_PATH"; nsys profile -o /reports/run_%q{SLURM_PROCID}_%p python train.py'
+        
+
+  * If you need `nsys` reports to land on a shared filesystem, also bind-mount the output directory (e.g. `--container-mounts=...,/scratch/$USER/reports:/reports:rw`) and pass `-o /reports/...` to `nsys profile`.
+
+
+Before adding `nsys` to the command line, do a quick container-runtime preflight:
+    
+    
+    srun --container-image=nvcr.io#nvidia/pytorch:<tag> /bin/true
+    
+
+If this fails, fix the base Pyxis/Enroot launch path first, then add `--container-mounts` and profiling.
+
+##### Option B — Enroot `mounts.d` \+ `environ.d` (recommended, image-independent)
+
+When you do not control the `srun` invocation (for example a fleet-wide Slurm setup), Enroot can inject the mount and extend `PATH` via its standard configuration directories under `ENROOT_SYSCONF_PATH` (default `/etc/enroot`). This is the idiomatic Enroot approach and does not require a custom hook script.
+
+`/etc/enroot/mounts.d/nsys.fstab`:
+    
+    
+    # Bind-mount the host |product-name| install into every Enroot container.
+    /opt/nvidia/nsight-systems/2026.2.1 /opt/nvidia/nsight-systems/2026.2.1 none bind,ro,nosuid,nodev 0 0
+    
+
+`/etc/enroot/environ.d/nsys.env`:
+    
+    
+    # Make `nsys` visible on PATH inside every Enroot container.
+    PATH=/opt/nvidia/nsight-systems/2026.2.1/bin:${PATH}
+    
+
+Both files are applied automatically to every container launched via Enroot (and therefore via Pyxis). No image changes are needed.
+
+##### Option C — Enroot pre-start hook (only if you need logic)
+
+Use a hook script only when you need conditional behavior (for example, pick a different Nsight Systems install based on the image or the host’s GPU family). Hooks live in `/etc/enroot/hooks.d/` with a `.sh` extension and run with full capabilities before the container switches to its final root. They receive `ENROOT_ROOTFS`, `ENROOT_MOUNTS`, and `ENROOT_ENVIRON`.
+
+`/etc/enroot/hooks.d/50-nsys.sh`:
+    
+    
+    #!/usr/bin/env bash
+    # Append a bind mount for |product-name| to the container's mount file,
+    # and add it to PATH via the environ file. Prefer mounts.d / environ.d
+    # unless you actually need logic here.
+    
+    set -euo pipefail
+    
+    : "${ENROOT_MOUNTS:?not set}"
+    : "${ENROOT_ENVIRON:?not set}"
+    
+    NSYS_HOST_PREFIX="/opt/nvidia/nsight-systems/2026.2.1"
+    NSYS_IN_CONTAINER="/opt/nvidia/nsight-systems/2026.2.1"
+    
+    echo "${NSYS_HOST_PREFIX} ${NSYS_IN_CONTAINER} none bind,ro,nosuid,nodev 0 0" \
+        >> "${ENROOT_MOUNTS}"
+    echo "PATH=${NSYS_IN_CONTAINER}/bin:\${PATH}" >> "${ENROOT_ENVIRON}"
+    
+
+##### Option D — OCI runtime (Docker / Podman / containerd / CRI-O)
+
+For containers launched through an OCI runtime under Slurm (for example via `srun --container-...` wired to a Docker or container orchestrator, or via a site-specific launcher), declare the bind mount in the container configuration and invoke `nsys` by its absolute in-container path so the image’s own `PATH` and other environment variables are preserved.
+
+Docker / Podman flags on the launch command:
+    
+    
+    docker run --rm --gpus all \
+      --cap-add=SYS_ADMIN \
+      -v /opt/nvidia/nsight-systems/2026.2.1:/opt/nvidia/nsight-systems/2026.2.1:ro \
+      my-workload:latest \
+      /opt/nvidia/nsight-systems/2026.2.1/bin/nsys profile \
+        -t cuda,nvtx,mpi \
+        -o /reports/run_%p \
+        python train.py
+    
+
+Or in the OCI runtime `config.json` (for a container spec consumed by `runc`/`crun`):
+    
+    
+    {
+      "process": {
+        "args": [
+          "/opt/nvidia/nsight-systems/2026.2.1/bin/nsys",
+          "profile",
+          "-t", "cuda,nvtx,mpi",
+          "-o", "/reports/run_%p",
+          "python", "train.py"
+        ]
+      },
+      "mounts": [
+        {
+          "destination": "/opt/nvidia/nsight-systems/2026.2.1",
+          "type": "bind",
+          "source": "/opt/nvidia/nsight-systems/2026.2.1",
+          "options": ["rbind", "ro"]
+        }
+      ]
+    }
+    
+
+Notes for OCI runtimes:
+
+  * Add `--cap-add=SYS_ADMIN` (or the custom seccomp profile described in “Enable Docker Collection”) so `perf_event_open` is not blocked.
+
+  * Calling `nsys` by absolute path means the image’s own `PATH` (and any other `ENV` set by the image) is preserved. If you’d rather have `nsys` on `PATH`, append inside the container (`PATH="$PATH:/opt/nvidia/nsight-systems/2026.2.1/bin"`) instead of replacing `PATH` via `-e` / `process.env`.
+
+  * GPU exposure is still the runtime’s responsibility (`--gpus all` / NVIDIA Container Toolkit hook / `nvidia.com/gpu` device plugin). The Nsight Systems mount does not change that.
+
+  * If `-o` writes to a host directory, add a second bind mount for it (`-v /scratch/$USER/reports:/reports:rw` or a corresponding `mounts` entry) — the profiler cannot write through a read-only mount.
+
+
+#### Wrap the In-Container Command with `nsys profile`
+
+Once the Nsight Systems install is bind-mounted, the invocation is identical to the non-container Slurm + MPI pattern. In multi-node jobs, the launcher runs outside the profiler and `nsys profile` wraps the per-rank program:
+    
+    
+    srun [srun args] \
+      --container-image=... --container-mounts=... \
+      /opt/nvidia/nsight-systems/2026.2.1/bin/nsys profile -t cuda,nvtx,mpi \
+        -o /reports/run_%q{SLURM_PROCID}_%p \
+        ./myapp [app args]
+    
+
+Use `%q{SLURM_PROCID}` (Slurm) / `%q{OMPI_COMM_WORLD_RANK}` (Open MPI) / `%q{PMI_RANK}` (MPICH) or `%p` in `-o` so concurrent ranks do not clobber each other’s report file. `%h` (hostname) and `%%` (literal `%`) are also supported.
+
+Warning
+
+An error will occur if several processes want to write to the same report file at the same time.
+
+##### Profiling only a subset of ranks
+
+To reduce trace volume, profile just a representative rank. Put a wrapper script inside the container (or bind-mounted in) and call it instead of the binary. Example `nsys_profile.sh` for Slurm:
+    
+    
+    #!/bin/bash
+    # Profile only the node-local rank 0. Use $SLURM_PROCID for global rank 0.
+    NSYS_PATH="${NSYS_PATH:-/opt/nvidia/nsight-systems/2026.2.1/bin}"
+    PATH="${PATH}:${NSYS_PATH}"
+    if [ "${SLURM_LOCALID}" -eq 0 ]; then
+      nsys profile -t cuda,nvtx,mpi \
+        -e NSYS_MPI_STORE_TEAMS_PER_RANK=1 \
+        -o /reports/run_%q{SLURM_PROCID}_%p \
+        "$@"
+    else
+      "$@"
+    fi
+    
+
+Launch:
+    
+    
+    srun --container-image=... \
+         --container-mounts=/opt/nvidia/nsight-systems/2026.2.1:/opt/nvidia/nsight-systems/2026.2.1:ro,/scratch/$USER/reports:/reports:rw \
+         --export=ALL,NSYS_PATH=/opt/nvidia/nsight-systems/2026.2.1/bin \
+         --container-env=NSYS_PATH \
+         ./nsys_profile.sh python train.py
+    
+
+Note
+
+If only a subset of MPI ranks is profiled, set `NSYS_MPI_STORE_TEAMS_PER_RANK=1` so all members of custom MPI communicators are stored per rank. Otherwise the run may hang or fail with an MPI error. If communicator tracking itself is the problem, it can be disabled with `NSYS_MPI_DISABLE_COMMUNICATOR_TRACKING=1`.
+
+##### GPU and NIC metrics with multiple ranks per node
+
+As in the non-container case, if more than one rank per node would enable GPU/NIC metric collection, restrict it to one rank to avoid contention:
+    
+    
+    #!/bin/bash
+    if [ "${SLURM_LOCALID}" -eq 0 ]; then
+      nsys profile --nic-metrics=lf --gpu-metrics-devices=all "$@"
+    else
+      nsys profile "$@"
+    fi
+    
+
+Or one rank per GPU, with metrics scoped to that GPU:
+    
+    
+    #!/bin/bash
+    nsys profile -e CUDA_VISIBLE_DEVICES=${SLURM_LOCALID} \
+                 --gpu-metrics-devices=${SLURM_LOCALID} "$@"
+    
+
+#### Troubleshooting checklist
+
+Symptom | Likely cause | Fix  
+---|---|---  
+`nsys: command not found` inside container | Bind mount missing, or `nsys` not on `PATH` | Verify `ls /opt/nvidia/nsight-systems/<ver>/bin/nsys` inside the container. Prefer calling `nsys` by absolute path; if you need it on `PATH`, append inside the container (`PATH="$PATH:.../bin"`).  
+`nsys --version` reports an unexpected release | Wrong host install picked up, or a floating symlink | Mount an explicit versioned prefix (`/opt/nvidia/nsight-systems/2026.2.1`), not `/opt/nvidia/nsight-systems/current`.  
+`nsys status --environment` reports sampling disabled, or `Failed to create perf event` | `perf_event_open` blocked by container or host | OCI: add `--cap-add=SYS_ADMIN` or the seccomp profile from “Enable Docker Collection”. Enroot: ensure host `perf_event_paranoid <= 2` and no site seccomp is shadowing it.  
+Reports not visible after the job ends | Output path is container-only | Point `-o` at a writable bind mount (e.g. `/reports` backed by `/scratch/$USER/reports`).  
+Several ranks overwrite the same `.nsys-rep` | `-o` not rank-templated | Use `%q{SLURM_PROCID}` / `%q{OMPI_COMM_WORLD_RANK}` / `%q{PMI_RANK}` / `%p` in `-o`.  
+Profiler version mismatch across nodes | Different host installs per node | Pin the same version at the same path on every node, or use a shared filesystem.  
+`pyxis: failed to import docker image` with `mkdir: cannot create directory '/run/enroot': Permission denied` | Enroot runtime dir not provisioned or not writable for the job user | Ensure `/run/enroot` exists and is world-traversable with a per-user `/run/enroot/user-<uid>`, or set `ENROOT_RUNTIME_PATH` to a writable path. Quick dev setup: `sudo install -d -m 1777 /run/enroot && sudo install -d -m 700 -o "$USER" -g "$USER" /run/enroot/user-$(id -u)`.  
+`enroot`/`pyxis` import fails with `Could not process JSON input` | Registry endpoint resolved to a web page (e.g. `docker.io` redirects to `www.docker.com`) | Use an explicit registry: `docker://registry-1.docker.io/library/ubuntu:22.04` or Pyxis form `registry-1.docker.io#library/ubuntu:22.04`.  
+GUI refuses to open a report produced by the container | GUI older than the CLI that recorded the report | Upgrade the Nsight Systems GUI to match or exceed the CLI version.  
+  
 ## Custom ETW Trace
 
 Use the custom ETW trace feature to enable and collect any manifest-based ETW log. The collected events are displayed on the timeline on dedicated rows for each event type.
@@ -3189,9 +3528,11 @@ Long running (more than 80 microseconds) syscalls are also collected with their 
 
 The NVIDIA Tools Extension Library (NVTX) is a powerful mechanism that allows users to manually instrument their application. Nsight Systems can then collect the information and present it on the timeline.
 
+NVTX is shipped as a C-based, header-only library. NVIDIA also supports and provides library-specific wrappers for C++, Python, and Rust. See the [NVTX GitHub repository](https://nvidia.github.io/NVTX/).
+
 Nsight Systems supports version 3.0 of the NVTX specification.
 
-The following features are supported:
+The most commonly used features:
 
   * Domains
         
@@ -3280,7 +3621,78 @@ Note
 
 Range annotations should be matched carefully. If many ranges are opened but not closed, Nsight Systems has no meaningful way to visualize it. A rule of thumb is to not have more than a couple dozen ranges open at any point in time. Nsight Systems does not support reports with many unclosed ranges.
 
-**NVTX Payloads and Counters (Preview)**
+**Sample with C++ Wrapper**
+
+The following example uses the NVTX C++ wrapper to create a range around `some_function()` and a nested range for each loop iteration.
+    
+    
+    #include <nvtx3/nvtx3.hpp>
+    #include <thread>
+    #include <chrono>
+    
+    void some_function()
+    {
+        NVTX3_FUNC_RANGE();  // Range around the whole function
+    
+        for (int i = 0; i < 6; ++i) {
+            nvtx3::scoped_range loop{"loop range"};  // Range for iteration
+    
+            // Make each iteration last for one second
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+        }
+    }
+    
+
+A complete program that calls `some_function()` does not require linking to an NVTX library. Compile the program as usual.
+    
+    
+    g++ -o example example.cpp
+    
+
+Run the executable with `nsys` to collect and view the data.
+    
+    
+    nsys profile ./example
+    nsys-ui report1.nsys-rep
+    
+
+The NVTX C++ header is available in the `<target-platform-folder>/nvtx/include` directory of the Nsight Systems installation.
+    
+    
+    export NSYS_NVTX_PATH=<nsys_install_dir>/<target-platform-folder>/nvtx
+    g++ -o example example.cpp -I${NSYS_NVTX_PATH}/include
+    
+
+Using the NVTX C API, the following example creates the same function and loop ranges.
+    
+    
+    #include <nvtx3/nvToolsExt.h>
+    #include <thread>
+    #include <chrono>
+    
+    void some_function()
+    {
+        nvtxRangePush(__func__);
+    
+        for (int i = 0; i < 6; ++i) {
+            nvtxRangePush("loop range");
+    
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+    
+            nvtxRangePop();
+        }
+    
+        nvtxRangePop();
+    }
+    
+
+![NVTX range from a simple C++ example shown in Nsight Systems](https://docs.nvidia.com/nsight-systems/_images/nvtx-simple-cpp-example-range.png)
+
+The NVTX row shows the function’s name “some_function” in the top-level range and the “loop range” message in the nested ranges. The loop iterations each last for the expected one second.
+
+If the function returns or throws before calling `nvtxRangePop`, the range is left unclosed and tool behavior is undefined. The C++ API is safer because the range object ends the range from its destructor.
+
+**NVTX Payloads and Counters**
 
 NVTX Extended Payloads and NVTX Counters increase the flexibility of NVTX annotations by allowing users to pass arbitrary structured data to NVTX events. This then will allow users to define the layout of this data in the Nsight Systems UI without additional data conversion.
 
@@ -3925,6 +4337,55 @@ Sample power and temperature on all available GPUs every 10ms.
 
 
 For general information on Nsight Systems plugins please refer to [Nsight Systems Plugins](#nsight-systems-plugins) system.
+
+### DCGM
+
+NVIDIA Data Center GPU Manager (DCGM) is a suite of tools for managing and monitoring NVIDIA Datacenter GPUs in cluster environments. It includes active health monitoring, comprehensive diagnostics, system alerts, and governance policies including power and clock management. Infrastructure teams can use it standalone and in addition easily integrate it into cluster management tools, resource scheduling, and monitoring products from NVIDIA partners. For more information, see [DCGM Documentation](https://docs.nvidia.com/datacenter/dcgm/latest/index.html)
+
+Nsight Systems can now directly access metrics from DCGM and integrate them with other data collected, displaying on the timeline or making available for further analysis.
+
+Supported arguments are:
+
+Option | Available Parameters (default in bold) | Switch Description  
+---|---|---  
+`--cpu` | all, help, dcgm:<ID> dcgm:<ID1-ID2> | Indicate which CPU(s) you are interested in or all. If you want to build a combination of CPUs, you can build a comma-separated combo like `dcgm:0,dcgm:2-4`. Help will give a list of available CPUs.  
+`--gpu` | all, cuda-visible, help, dcgm:<ID>, dcgm:<ID1-ID2> | Indicate which GPUs you are interested in, or all. If you want to build a combination of GPUs, you can build a comma-separated combo like `dcgm:0,dcgm:2-4`. Help will give a list of available GPUs.  
+`--hostengine-addr` | host:port | Address of the DCGM hostengine (host:port) or UDS path. When not specified, the plugin connects to localhost:5555 and falls back to embedded DCGM if that connection fails.  
+`--metrics` | comma-separated list of metric names or help | Give the list of DCGM metrics that you would like to collect, help will give the list of available metrics for your platform. If no metrics are selected, the tool will collect summary data for the CPUs, GPUs, and nvswitches on the system. See default metric options below.  
+`--nic` | all, help, dcgm:<ID> dcgm:<ID1-ID2> | Indicate which NIC(s) you are interested in or all. If you want to build a combination of NICs, you can build a comma-separated combo like `dcgm:0,dcgm:2-4`. Help will give a list of available NICs.  
+`--nvswitch` | all, help, dcgm:<ID> dcgm:<ID1-ID2> | Indicate which nvswitch(es) you are interested in or all. If you want to build a combination of nvswitch(es), you can build a comma-separated combo like `dcgm:0,dcgm:2-4`. Help will give a list of available nvswitch(es).  
+`--sampling-period` | milliseconds | Sampling period in milliseconds. Minimum allowed value is 100ms.  
+  
+Note
+
+Unlike in most Nsight Systems collectors, the output from this command will not be sent to the standard CLI output, but rather to the output location for DCGM.
+
+**Example 1 - Specifying Metrics**
+    
+    
+    nsys profile --enable=dcgm,--metrics=gpu_temp,power_usage_instant,sm_active,
+       cpu_power_utilization,cpu_temp,--cpu=dcgm:0,--gpu=dcgm:0,--sampling-period=100
+       appname
+    
+
+Screenshot:
+
+![DCGM screenshot](https://docs.nvidia.com/nsight-systems/_images/dcgm-example.png)
+
+**Example 2 - Using Presets**
+
+The `s-` prefix selects preset metric groups defined in counter_groups.yaml; available presets are `gpu`, `gpu-perf`, `cpu`, `nvswitch`, and `power_smoothing` (for example, `s-gpu-perf` or `s-nvswitch`).
+    
+    
+    nsys profile --enable=dcgm,--metrics=s-gpu-perf,s-nvswitch
+       ./nccl-tests/build/alltoall_perf -g 8 -n 100 -b 1M -e 32G -f 2
+    
+
+Screenshot:
+
+![DCGM screenshot](https://docs.nvidia.com/nsight-systems/_images/dcgm-example2.png)
+
+For general information on Nsight Systems plugins please refer to [Nsight Systems Plugins](#nsight-systems-plugins).
 
 ## SoC Metrics
 
@@ -5434,6 +5895,10 @@ For general information on Nsight Systems plugins please refer to [Nsight System
 
 Nsight Systems can profile several major storage / remote storage protocols. It also ships with the `storage_util_map` and `file_access_sum` recipes for post-collection analysis. See [Post-Collection Analysis Guide](../AnalysisGuide/index.html#id1)
 
+Note
+
+Storage metrics profiling requires additional kernel support and is tailored for HPC systems. This feature is not relevant to Nsight Systems Embedded Platforms Edition.
+
 To activate this feature, use the Nsight Systems CLI `--storage-metrics` option, followed by a comma-separated list of the desired arguments.
 
 **Available arguments:**
@@ -5535,7 +6000,15 @@ The following S3 client libraries are supported:
 
 Note
 
-Requires aws-c-s3 version 0.10.0 or newer. The profiled process must also dynamically link with the CRT library.
+Requires aws-c-s3 version 0.9.3 or newer for tracing S3 operations. HTTP transaction tracing requires aws-c-s3 version 0.10.0 or newer. The profiled process must also dynamically link with the CRT library.
+
+  * **AWS CPP SDK** — C++ applications that use the AWS C++ SDK (`aws-cpp-sdk`) for S3 operations can be traced. Nsight Systems traces both the S3 Client and the S3Crt Client.
+
+Note
+
+Tracing S3Client requires aws-cpp-sdk version 1.11.0 or newer. Tracing S3CrtClient also requires aws-c-s3 version 0.9.3 or newer (bundled in aws-cpp-sdk version 1.11.715 or newer).
+
+The profiled process must dynamically link with the CPP SDK library.
 
   * **Boto3** — Python applications that use the `boto3` library for S3 operations can be traced. The following operations are traced across Client, Bucket, and Object S3 resource types:
         
@@ -5570,7 +6043,7 @@ Two levels of detail are available:
 
   * `--trace=s3` — Collects S3 operation ranges, with core attributes, including bytes transferred, bucket name, key name, file path, and result status.
 
-  * `--trace=s3-verbose` — In addition to everything collected by `s3`, Nsight Systems will collect additional per-request metadata and breakdown of individual HTTP transactions. This additional data is intended for in-depth low-level analysis of transfer behavior, but may increase trace volume and processing overhead. This mode only affects tracing of AWS CRT and Boto3 applications.
+  * `--trace=s3-verbose` — In addition to everything collected by `s3`, Nsight Systems will collect additional per-request metadata and breakdown of individual HTTP transactions. This additional data is intended for in-depth low-level analysis of transfer behavior, but may increase trace volume and processing overhead. This mode only affects tracing of AWS CRT, AWS CPP SDK, and Boto3 applications.
 
 
 ![S3 trace verbose view example](https://docs.nvidia.com/nsight-systems/_images/s3-trace-verbose.png)
@@ -5638,6 +6111,85 @@ If your GDS libraries are installed in a custom location:
 `./nsys profile --gds-metrics --gds-libs-path=/custom/path/to/gds/libs <target-application>`
 
 ![GDS user-space report example](https://docs.nvidia.com/nsight-systems/_images/gds_counters_overview.png)
+
+### SCADA Metrics Profiling
+
+NVIDIA SCADA (SCaled Accelerated Data Access) is a storage I/O architecture where GPUs directly initiate and control storage operations, removing CPU involvement from both the control path and the data path. It is optimized for AI workloads that require high-throughput, fine-grained accesses (< 4 KB) from thousands of parallel GPU threads to NVMe storage. A SCADA deployment consists of a client library on the GPU side and a server daemon that manages the NVMe drives.
+
+Nsight Systems can periodically sample performance counters and histograms from a running SCADA server and display them on the timeline in the GUI. This enables developers to monitor SCADA server activity and correlate it with GPU and CPU events.
+
+SCADA metrics profiling is supported on Linux x64 and SBSA operating systems.
+
+#### Enabling SCADA Metrics Collection
+
+To enable SCADA metrics collection, add the following option to the nsys `profile` or `start` commands:
+    
+    
+    --enable scada_metrics[,--sampling-frequency=<value>]
+    
+
+There are no spaces following the `scada_metrics` plugin name. It is followed by a comma-separated list of arguments or argument=value pairs.
+
+Note
+
+A SCADA server must be running on the target system before starting the profiling session. The plugin communicates with the server through a Unix Domain Socket at `/tmp/scada_profiler_socket`. If the server is not running, the plugin will report an error and exit.
+
+Supported arguments are:
+
+Name | Possible Values | Default | Description  
+---|---|---|---  
+`-s` / `--sampling-frequency` | 1 – 1000 | 1000 | Sampling frequency in Hz. Controls how often the plugin requests a new metrics sample from the SCADA server.  
+  
+**Usage Examples**
+
+  * `nsys profile --enable scada_metrics <target-application>`
+    
+
+Collect SCADA metrics at the default sampling frequency of 1000 Hz.
+
+  * `nsys profile --enable scada_metrics,-s,100 <target-application>`
+    
+
+Collect SCADA metrics at 100 Hz.
+
+  * `nsys profile --enable scada_metrics,--sampling-frequency=10 <target-application>`
+    
+
+Collect SCADA metrics at 10 Hz (one sample every 100 ms).
+
+
+For general information on Nsight Systems plugins please refer to [Nsight Systems Plugins](#nsight-systems-plugins) system.
+
+#### Viewing SCADA Metrics in the Report
+
+In the report file, under **Timeline view** , SCADA metrics appear in the **SCADA Metrics** section. Each counter is plotted as a time-series graph and each histogram is displayed with its bucketed distribution over time.
+
+![SCADA metrics in the Timeline view](https://docs.nvidia.com/nsight-systems/_images/scada-metrics-report-timeline.png)
+
+The `stdout` and `stderr` log files for the SCADA metrics collection process can be viewed under the **Files** section, which may assist in debugging connectivity or sampling issues.
+
+![SCADA metrics log files](https://docs.nvidia.com/nsight-systems/_images/scada-metrics-report-files.png)
+
+#### Available Metrics
+
+The specific metrics collected by the plugin are determined entirely by the SCADA server. At the start of each profiling session, the plugin fetches a **metrics schema** from the server that describes the available metrics — their names, units, and histogram bin definitions. Different SCADA server configurations may expose different sets of metrics.
+
+There are two types of metrics:
+
+  * **Counters** — Scalar values sampled at each collection interval (e.g. total received buffers, average latency). Each counter is plotted as a time-series graph on the timeline.
+
+  * **Histograms** — Distribution metrics with predefined bins (e.g. latency distribution, commands-per-buffer distribution). Each histogram is displayed with its bucketed distribution over time.
+
+
+The following screenshots show example metrics from a particular server configuration:
+
+**Counters**
+
+![Example SCADA counters in the Timeline view](https://docs.nvidia.com/nsight-systems/_images/scada-metrics-counters.png)
+
+**Histograms**
+
+![Example SCADA histograms in the Timeline view](https://docs.nvidia.com/nsight-systems/_images/scada-metrics-histograms.png)
 
 ## Python Profiling
 
@@ -5723,13 +6275,19 @@ To enable PyTorch [autograd nvtx](https://pytorch.org/docs/stable/autograd.html#
 
 Set `--pytorch=autograd-nvtx` for enabling `torch.autograd.profiler.emit_nvtx(record_shapes=False)` or `--pytorch=autograd-shapes-nvtx` for enabling `torch.autograd.profiler.emit_nvtx(record_shapes=True)` (implies `--trace=nvtx`).
 
-Set `--pytorch=functions-trace` for automatically annotating PyTorch operations like [forward operations](https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module.forward), [backward operations](https://pytorch.org/docs/stable/autograd.html#torch.autograd.backward), [step operations](https://docs.pytorch.org/docs/stable/optim.html#taking-an-optimization-step), etc. with execution time ranges. These ranges include the input and output tensors shapes. `--pytorch=functions-trace` also implies `--python-functions-trace=<nsys_install_dir>/<target-arch>/PythonFunctionsTrace/pytorch.json`.
+Set `--pytorch=functions-trace` for automatically annotating PyTorch operations like [forward operations](https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module.forward), [backward operations](https://pytorch.org/docs/stable/autograd.html#torch.autograd.backward), [step operations](https://docs.pytorch.org/docs/stable/optim.html#taking-an-optimization-step), etc. with execution time ranges.
 
-`autograd-nvtx` and `autograd-shapes-nvtx` options can be combined with the `functions-trace` option by adding them separated by a comma.
+Set `--pytorch=functions-trace-shapes` to attach additional data to each annotated range, such as tensor shapes, training parameters, etc. `functions-trace` and `functions-trace-shapes` are mutually exclusive.
 
-Example screenshot:
+Both `--pytorch=functions-trace` and `--pytorch=functions-trace-shapes` imply `--python-functions-trace=<nsys_install_dir>/<target-arch>/PythonFunctionsTrace/pytorch.json`.
 
-![PyTorch Autograd NVTX](https://docs.nvidia.com/nsight-systems/_images/pytorch-profiling.png)
+`autograd-nvtx` and `autograd-shapes-nvtx` options can be combined with `functions-trace` or `functions-trace-shapes` by adding them separated by a comma.
+
+When profiling a [vLLM](https://docs.vllm.ai/en/stable/) application, the `functions-trace` option also automatically annotates vLLM-specific methods such as `AsyncLLM.generate()`, `Worker.execute_model()`, and `Worker.sample_tokens()` under a dedicated _vLLM_ NVTX domain. These annotations include correlated request IDs for tracking individual requests across the inference pipeline.
+
+Example screenshots:
+
+![PyTorch Autograd NVTX](https://docs.nvidia.com/nsight-systems/_images/pytorch-profiling.png) ![PyTorch Functions Trace with vLLM](https://docs.nvidia.com/nsight-systems/_images/pytorch-vllm.png)
 
 ### Dask Profiling
 
@@ -6615,6 +7173,15 @@ The CPU utilization timelines are colored based on the CPU operating mode:
   * Kernel mode - Red
 
   * Other (for example system-wide processes) - Black
+
+
+**CPU Activity Computation Notes**
+
+CPU usage and thread-state ranges in Timeline are computed from the best available source:
+
+  * If CPU scheduling events are available, they are used as the primary source.
+
+  * If scheduling events are not available (for example, `--cpuctxsw=none`), and OS Runtime trace data is present, thread states are estimated from OSRT events.
 
 
 **Exporting from Timeline**
@@ -7517,7 +8084,7 @@ Please note that in some cases, debug logging can significantly slow down the pr
 
 To enable verbose logging of the Nsight Systems CLI and the target application’s injection behavior:
 
-  1. In the target-linux-x64 directory, rename thenvlog.config.template file tonvlog.config.
+  1. In the target-linux-x64 directory, rename the nvlog.config.template file to nvlog.config.
 
   2. Inside that file, change the line:
          
@@ -7529,8 +8096,15 @@ to:
          $ nsys-agent.log
          
 
-  3. Run a collection and the `target-linux.x64` directory should include a file named `nsys-agent.log`.
+  3. Run a collection, either explicitly giving the path to the config file or with the config file in the same directory with the application. The `target-linux-x64` directory will then include a file named `nsys-agent.log`.
 
+
+    
+    
+    nsys profile --trace=osrt \
+       --env-var=NVLOG_CONFIG_FILE="<install-dir>/target-linux-x64/nvlog.config" \
+       sleep 1
+    
 
 Note
 

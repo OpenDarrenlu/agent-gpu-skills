@@ -1,4 +1,4 @@
-# 6.24. Graph Management
+# 6.25. Graph Management
 
 **Source:** group__CUDA__GRAPH.html#group__CUDA__GRAPH
 

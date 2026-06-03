@@ -1,4 +1,4 @@
-# 6.37. CUDA Checkpointing
+# 6.38. CUDA Checkpointing
 
 **Source:** group__CUDA__CHECKPOINT.html#group__CUDA__CHECKPOINT
 

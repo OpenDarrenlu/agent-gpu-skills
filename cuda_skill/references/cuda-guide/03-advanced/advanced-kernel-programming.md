@@ -19,7 +19,7 @@ _Parallel Thread Execution_ (PTX), the virtual machine instruction set architect
 
 `cuda::ptx` **namespace**
 
-One way to use PTX directly in your code is to use the `cuda::ptx` namespace from [libcu++](https://nvidia.github.io/cccl/libcudacxx/). This namespace provides C++ functions that map directly to PTX instructions, simplifying their use within a C++ application. For more information, please refer to the [cuda::ptx namespace](https://nvidia.github.io/cccl/libcudacxx/ptx_api.html) documentation.
+One way to use PTX directly in your code is to use the `cuda::ptx` namespace from [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/). This namespace provides C++ functions that map directly to PTX instructions, simplifying their use within a C++ application. For more information, please refer to the [cuda::ptx namespace](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) documentation.
 
 **Inline PTX**
 
@@ -74,7 +74,7 @@ The total number of warps in a block is defined as follows:
 
 [![A thread block is partitioned into warps of 32 threads.](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/warps-in-a-block.png) ](../_images/warps-in-a-block.png)
 
-Figure 19 A thread block is partitioned into warps of 32 threads.
+Figure 22 A thread block is partitioned into warps of 32 threads.
 
 The execution context (program counters, registers, etc.) for each warp processed by an SM is maintained on-chip throughout the warp’s lifetime. Therefore, switching between warps incurs no cost. At each instruction issue cycle, a warp scheduler selects a warp with threads ready to execute its next instruction (the [active threads](#simt-architecture-notes) of the warp) and issues the instruction to those threads.
 
@@ -82,7 +82,7 @@ Each SM has a set of 32-bit registers that are partitioned among the warps, and 
 
 ### 3.2.2.3. Asynchronous Execution Features
 
-Recent NVIDIA GPU generations have included asynchronous execution capabilities to allow more overlap of data movement, computation, and synchronization within the GPU. These capabilities enable certain operations invoked from GPU code to execute asynchronously to other GPU code in the same thread block. This asynchronous execution should not be confused with asynchronous CUDA APIs discussed in [Section 2.3](../02-basics/asynchronous-execution.html#asynchronous-execution), which enable GPU kernel launches or memory operations to operate asynchronously to each other or to the CPU.
+Recent NVIDIA GPU generations have included asynchronous execution capabilities to allow more overlap of data movement, computation, and synchronization within the GPU. These capabilities enable certain operations invoked from GPU code to execute asynchronously to other GPU code in the same thread block. This asynchronous execution should not be confused with asynchronous CUDA APIs discussed in [Section 2.5](../02-basics/asynchronous-execution.html#asynchronous-execution), which enable GPU kernel launches or memory operations to operate asynchronously to each other or to the CPU.
 
 Compute capability 8.0 (The NVIDIA Ampere GPU Architecture) introduced hardware-accelerated asynchronous data copies from global to shared memory and asynchronous barriers (see [NVIDIA A100 Tensor Core GPU Architecture](https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf) ).
 
@@ -108,7 +108,7 @@ For more details on these concepts, see the [PTX ISA](https://docs.nvidia.com/cu
 
 CUDA threads form a [Thread Hierarchy](../02-basics/writing-cuda-kernels.html#writing-cuda-kernels-thread-hierarchy-review), and using this hierarchy is essential for writing both correct and performant CUDA kernels. Within this hierarchy, the visibility and synchronization scope of memory operations can vary. To account for this non-uniformity, the CUDA programming model introduces the concept of _thread scopes_. A thread scope defines which threads can observe a thread’s loads and stores and specifies which threads can synchronize with each other using synchronization primitives such as atomic operations and barriers. Each scope has an associated point of coherency in the memory hierarchy.
 
-Thread scopes are exposed in [CUDA PTX](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html?highlight=thread%2520scopes#scope) and are also available as extensions in the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#thread-scopes) library. The following table defines the thread scopes available:
+Thread scopes are exposed in [CUDA PTX](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html?highlight=thread%2520scopes#scope) and are also available as extensions in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#thread-scopes) library. The following table defines the thread scopes available:
 
 CUDA C++ Thread Scope | CUDA PTX Thread Scope | Description | Point of Coherency in Memory Hierarchy  
 ---|---|---|---  
@@ -133,7 +133,7 @@ This section introduces three families of synchronization primitives:
 
 ### 3.2.4.1. Scoped Atomics
 
-[Section 5.4.5](../05-appendices/cpp-language-extensions.html#atomic-functions) gives an overview of atomic functions available in CUDA. In this section, we will focus on _scoped_ atomics that support [C++ standard atomic memory](https://en.cppreference.com/w/cpp/atomic/memory_order.html) semantics, available through the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives.html) library or through compiler built-in functions. Scoped atomics provide the tools for efficient synchronization at the appropriate level of the CUDA thread hierarchy, enabling both correctness and performance in complex parallel algorithms.
+[Section 5.4.5](../05-appendices/cpp-language-extensions.html#atomic-functions) gives an overview of atomic functions available in CUDA. In this section, we will focus on _scoped_ atomics that support [C++ standard atomic memory](https://en.cppreference.com/w/cpp/atomic/memory_order.html) semantics, available through the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives.html) library or through compiler built-in functions. Scoped atomics provide the tools for efficient synchronization at the appropriate level of the CUDA thread hierarchy, enabling both correctness and performance in complex parallel algorithms.
 
 #### 3.2.4.1.1. Thread Scope and Memory Ordering
 
@@ -270,7 +270,7 @@ An asynchronous barrier differs from a typical single-stage barrier (`__syncthre
 
 Asynchronous barriers are available on devices of compute capability 7.0 or higher. Devices of compute capability 8.0 or higher provide hardware acceleration for asynchronous barriers in shared-memory and a significant advancement in synchronization granularity, by allowing hardware-accelerated synchronization of any subset of CUDA threads within the block. Previous architectures only accelerate synchronization at a whole-warp (`__syncwarp()`) or whole-block (`__syncthreads()`) level.
 
-The CUDA programming model provides asynchronous barriers via `cuda::std::barrier`, an ISO C++-conforming barrier available in the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/barrier.html) library. In addition to implementing [std::barrier](https://en.cppreference.com/w/cpp/thread/barrier.html), the library offers CUDA-specific extensions to select a barrier’s thread scope to improve performance and exposes a lower-level [cuda::ptx](https://nvidia.github.io/cccl/libcudacxx/ptx_api.html) API. A `cuda::barrier` can interoperate with `cuda::ptx` by using the `friend` function `cuda::device::barrier_native_handle()` to retrieve the barrier’s native handle and pass it to `cuda::ptx` functions. CUDA also provides a [primitives API](../05-appendices/device-callable-apis.html#async-barriers-primitives-api) for asynchronous barriers in shared memory at thread-block scope.
+The CUDA programming model provides asynchronous barriers via `cuda::std::barrier`, an ISO C++-conforming barrier available in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/barrier.html) library. In addition to implementing [std::barrier](https://en.cppreference.com/w/cpp/thread/barrier.html), the library offers CUDA-specific extensions to select a barrier’s thread scope to improve performance and exposes a lower-level [cuda::ptx](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) API. A `cuda::barrier` can interoperate with `cuda::ptx` by using the `friend` function `cuda::device::barrier_native_handle()` to retrieve the barrier’s native handle and pass it to `cuda::ptx` functions. CUDA also provides a [primitives API](../05-appendices/device-callable-apis.html#async-barriers-primitives-api) for asynchronous barriers in shared memory at thread-block scope.
 
 The following table gives an overview of asynchronous barriers available for synchronizing at different thread scopes.
 
@@ -455,7 +455,7 @@ For a comprehensive guide on how to use asynchronous barriers, see [Asynchronous
 
 The CUDA programming model provides the pipeline synchronization object as a coordination mechanism to sequence asynchronous memory copies into multiple stages, facilitating the implementation of double- or multi-buffering producer-consumer patterns. A pipeline is a double-ended queue with a _head_ and a _tail_ that processes work in a first-in first-out (FIFO) order. Producer threads commit work to the pipeline’s head, while consumer threads pull work from the pipeline’s tail.
 
-Pipelines are exposed through the `cuda::pipeline` API in the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/pipeline.html) library, as well as through a [primitives API](../05-appendices/device-callable-apis.html#pipeline-primitives-interface). The following tables describe the main functionality of the two APIs.
+Pipelines are exposed through the `cuda::pipeline` API in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/pipeline.html) library, as well as through a [primitives API](../05-appendices/device-callable-apis.html#pipeline-primitives-interface). The following tables describe the main functionality of the two APIs.
 
 `cuda::pipeline` API | Description  
 ---|---  
@@ -577,7 +577,7 @@ With asynchronous data copies, data movement from global memory to shared memory
 
 The [cooperative_groups::memcpy_async](../05-appendices/device-callable-apis.html#cg-api-async-memcpy) function copies `block.size()` elements from global memory to the `shared` data. This operation happens as-if performed by another thread, which synchronizes with the current thread’s call to [cooperative_groups::wait](../05-appendices/device-callable-apis.html#cg-api-async-wait) after the copy has completed. Until the copy operation completes, modifying the global data or reading or writing the shared data introduces a data race.
 
-This example illustrates the fundamental concept behind all asynchronous copy operations: they decouple memory transfer initiation from completion, allowing threads to perform other work while data moves in the background. The CUDA programming model provides several APIs to access these capabilities, including `memcpy_async` functions available in [Cooperative Groups](../05-appendices/device-callable-apis.html#cg-api-async-memcpy) and the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html) library, as well as lower-level `cuda::ptx` and primitives APIs. These APIs share similar semantics: they copy objects from source to destination as-if performed by another thread which, on completion of the copy, can be synchronized using different completion mechanisms.
+This example illustrates the fundamental concept behind all asynchronous copy operations: they decouple memory transfer initiation from completion, allowing threads to perform other work while data moves in the background. The CUDA programming model provides several APIs to access these capabilities, including `memcpy_async` functions available in [Cooperative Groups](../05-appendices/device-callable-apis.html#cg-api-async-memcpy) and the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html) library, as well as lower-level `cuda::ptx` and primitives APIs. These APIs share similar semantics: they copy objects from source to destination as-if performed by another thread which, on completion of the copy, can be synchronized using different completion mechanisms.
 
 Modern GPU architectures provide multiple hardware mechanisms for asynchronous data movement.
 

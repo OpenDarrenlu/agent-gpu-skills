@@ -74,7 +74,7 @@ x86_64 or Arm SBSA
 
   * OS (64 bit only)
 
-    * Ubuntu 22.04, and 24.04
+    * Ubuntu 22.04, 24.04, and 26.04
 
     * CentOS 8.0 and RedHat Enterprise Linux 8+
 

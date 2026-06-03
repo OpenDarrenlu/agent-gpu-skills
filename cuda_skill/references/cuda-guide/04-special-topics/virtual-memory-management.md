@@ -4,7 +4,7 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/virtu
 
 # 4.16. Virtual Memory Management
 
-In the CUDA programming model, memory allocation calls (such as `cudaMalloc()`) return a memory address that in GPU memory. The address can be used with any CUDA API or inside a device kernel. Developers can enable peer device access to that memory allocations by using `cudaEnablePeerAccess`. By doing so, kernels on different devices can access the same data. However, all past and future user allocations are also mapped to the target peer device. This can lead to users unintentionally paying a runtime cost for mapping all `cudaMalloc` allocations to peer devices. In most situations, applications communicate by sharing only a few allocations with another device. It is usually not necessary to map all allocations to all devices. In addition, extending this approach to multi-node settings becomes inherently difficult.
+In the CUDA programming model, memory allocation calls (such as `cudaMalloc()`) return a memory address in GPU memory. The address can be used with any CUDA API or inside a device kernel. Developers can enable peer device access to that memory allocations by using `cudaEnablePeerAccess`. By doing so, kernels on different devices can access the same data. However, all past and future user allocations are also mapped to the target peer device. This can lead to users unintentionally paying a runtime cost for mapping all `cudaMalloc` allocations to peer devices. In most situations, applications communicate by sharing only a few allocations with another device. It is usually not necessary to map all allocations to all devices. In addition, extending this approach to multi-node settings becomes inherently difficult.
 
 CUDA provides a _virtual memory management_ (VMM) API to give developers explicit, low-level control over this process.
 
@@ -12,7 +12,7 @@ Virtual memory allocation, a complex process managed by the operating system and
 
 CUDA’s VMM API brings a similar concept to GPU memory management by allowing developers to explicitly reserve a virtual address range and then later map it to physical GPU memory. With VMM, applications can specifically choose certain allocations to be accessible by other devices.
 
-The VMM API lets complex applications to manage memory more efficiently across multiple GPUs (and CPU cores). By enabling manual control over memory reservation, mapping, and access permissions, the VMM API enables advanced techniques like fine-grained data sharing, zero-copy transfers, and custom memory allocators. The CUDA VMM API expose fine grained control to the user for managing the GPU memory in applications.
+The VMM API lets complex applications manage memory more efficiently across multiple GPUs (and CPU cores). By enabling manual control over memory reservation, mapping, and access permissions, the VMM API enables advanced techniques like fine-grained data sharing, zero-copy transfers, and custom memory allocators. The CUDA VMM API exposes fine-grained control to the user for managing the GPU memory in applications.
 
 Developers can benefit from the VMM API in several key ways:
 
@@ -24,7 +24,7 @@ Developers can benefit from the VMM API in several key ways:
 
   * Enhancements to developer productivity and application performance by providing low-level APIs that allow building sophisticated memory allocators and cache management systems, such as dynamically managing key-value caches in large language models, improving throughput and latency.
 
-  * The CUDA VMM API is highly valuable in distributed multi-GPU settings as it enables efficient memory sharing and access across multiple GPUs. By decoupling virtual addresses from physical memory, the API allows developers to create a unified virtual address space where data can be dynamically mapped to different GPUs. This optimizes memory usage and reduces data transfer overhead. For instance, NVIDIA’s libraries like NCCL, and NVShmem actively uses VMM.
+  * The CUDA VMM API is highly valuable in distributed multi-GPU settings as it enables efficient memory sharing and access across multiple GPUs. By decoupling virtual addresses from physical memory, the API allows developers to create a unified virtual address space where data can be dynamically mapped to different GPUs. This optimizes memory usage and reduces data transfer overhead. For instance, NVIDIA’s libraries like NCCL and NVSHMEM actively use VMM.
 
 
 In summary, the CUDA VMM API gives developers advanced tools for fine-tuned, efficient, flexible, and scalable GPU memory management beyond traditional malloc-like abstractions, which is important for high-performance and large-memory applications
@@ -39,7 +39,7 @@ The suite of APIs described in this section require a system that supports UVA. 
 
 **Fabric Memory:** Fabric memory refers to memory that is accessible over a high-speed interconnect fabric such as NVIDIA’s NVLink and NVSwitch. This fabric provides a memory coherence and high-bandwidth communication layer between multiple GPUs or nodes, enabling them to share memory efficiently as if the memory is attached to a unified fabric rather than isolated on individual devices.
 
-CUDA 12.4 and later have a VMM allocation handle type `CU_MEM_HANDLE_TYPE_FABRIC`. On supported platforms and provided the NVIDIA IMEX daemon is running, this allocation handle type enables sharing allocations not only intra-node with any communication mechanism, e.g. MPI, but also inter-node. This allows GPUs in a multi-node NVLink system to map the memory of all other GPUs part of the same NVLink fabric even if they are in different nodes.
+CUDA 12.4 and later have a VMM allocation handle type `CU_MEM_HANDLE_TYPE_FABRIC`. On supported platforms and provided the NVIDIA IMEX daemon is running, this allocation handle type enables sharing allocations not only intra-node with any communication mechanism, e.g. MPI, but also inter-node. This allows GPUs in a multi-node NVLink system to map the memory of all other GPUs that are part of the same NVLink fabric even if they are in different nodes.
 
 **Memory Handles:** In VMM, handles are opaque identifiers that represent physical memory allocations. These handles are central to managing memory in the low-level CUDA VMM API. They enable flexible control over physical memory objects that can be mapped into virtual address spaces. A handle uniquely identifies a physical memory allocation. Handles serve as an abstract reference to memory resources without exposing direct pointers. Handles allow operations like exporting and importing memory across processes or devices, facilitating memory sharing and virtualization.
 
@@ -53,7 +53,7 @@ IMEX channels are directly related to the fabric handle and has to be enabled in
 
 ### 4.16.1.2. Query for Support
 
-Applications should query for feature support before attempting to use them, as their availability can vary depending on the GPU architecture, driver version, and specific software libraries being used. The following sections detail how to programmatically check for the necessary support.
+Applications should query if features are supported before attempting to use them, as their availability can vary depending on the GPU architecture, driver version, and specific software libraries being used. The following sections detail how to programmatically check for the necessary support.
 
 **VMM Support** Before attempting to use VMM APIs, applications must ensure that the devices they want to use support CUDA virtual memory management. The following code sample shows querying for VMM support:
     
@@ -75,7 +75,7 @@ Applications should query for feature support before attempting to use them, as 
     }
     
 
-Aside from using `CU_MEM_HANDLE_TYPE_FABRIC` as handle type and not requiring OS native mechanisms for inter-process communication to exchange sharable handles, there is no difference in using fabric memory compared to other allocation handle types.
+Aside from using `CU_MEM_HANDLE_TYPE_FABRIC` as the handle type and not requiring OS native mechanisms for inter-process communication to exchange shareable handles, there is no difference in using fabric memory compared to other allocation handle types.
 
 **IMEX Channels Support** Within an IMEX domain, IMEX channels enable secure memory sharing in multi-user environments. The NVIDIA driver implements this by creating a character device, `nvidia-caps-imex-channels`. To use fabric handle-based sharing, users should verify two things:
 
@@ -122,11 +122,20 @@ By default, the driver can create channel0 if the NVreg_CreateImexChannel0 modul
 
 The VMM API provides developers with granular control over virtual memory management. VMM, being a very low-level API, requires use of the [CUDA Driver API](../03-advanced/driver-api.html#driver-api) directly. This versatile API can be used in both single-node and multi-node environments.
 
-To use VMM effectively, developers must have a solid grasp of a few key concepts in memory management: \- Knowledge of the operating system’s virtual memory fundamentals, including how it handles pages and address spaces \- An understanding of memory hierarchy and hardware characteristics is necessary \- Familiarity with inter-process communication (IPC) methods, such as sockets or message passing, \- A basic knowledge of security for memory access rights
+To use VMM effectively, developers must have a solid grasp of a few key concepts in memory management:
+
+  * Knowledge of the operating system’s virtual memory fundamentals, including how it handles pages and address spaces
+
+  * An understanding of memory hierarchy and hardware characteristics is necessary
+
+  * Familiarity with inter-process communication (IPC) methods, such as sockets or message passing,
+
+  * A basic knowledge of security for memory access rights
+
 
 [![VMM Usage Overview Diagram](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/vmm-overview-diagram.png) ](../_images/vmm-overview-diagram.png)
 
-Figure 52 VMM Usage Overview. This diagram outlines the series of steps required for VMM utilization. The process begins by evaluating the environmental setup. Based on this assessment, the user must make a critical initial decision: whether to utilize fabric memory handles or OS-specific handles. A distinct series of subsequent steps must be taken based on the initial handle choice. However, the final memory management operations—specifically mapping, reserving, and setting access rights of the allocated memory—are identical to the type of handle that was selected.
+Figure 55 VMM Usage Overview. This diagram outlines the series of steps required for VMM utilization. The process begins by evaluating the environmental setup. Based on this assessment, the user must make a critical initial decision: whether to utilize fabric memory handles or OS-specific handles. A distinct series of subsequent steps must be taken based on the initial handle choice. However, the final memory management operations—specifically mapping, reserving, and setting access rights of the allocated memory—are identical, regardless of the type of handle that was selected.
 
 The VMM API workflow involves a sequence of steps for memory management, with a key focus on sharing memory between different devices or processes. Initially, a developer must allocate physical memory on the source device. To facilitate sharing, the VMM API utilizes handles to convey necessary information to the target device or process. The user must export a handle for sharing, which can be either an OS-specific handle or a fabric-specific handle. OS-specific handles are limited to inter-process communication on a single node, while fabric-specific handles offer greater versatility and can be used in both single-node and multi-node environments. It’s important to note that using fabric-specific handles requires the enablement of IMEX channels.
 
@@ -138,7 +147,7 @@ Sharing GPU memory can happen on one machine with multiple GPUs or across a netw
 
   * Allocate and Export: A CUDA program on one GPU allocates memory and gets a sharable handle for it.
 
-  * Share and Import: The handle is then sent to other programs on the node using IPC, MPI, or NCCL etc. In the receiving GPUs, the CUDA driver imports the handle, creates the necessary memory objects
+  * Share and Import: The handle is then sent to other programs on the node using IPC, MPI, or NCCL etc. In the receiving GPUs, the CUDA driver imports the handle and creates the necessary memory objects.
 
   * Reserve and Map: The driver creates a mapping from the program’s Virtual Address (VA) to the GPU’s Physical Address (PA) to its network Fabric Address (FA).
 
@@ -149,7 +158,7 @@ Sharing GPU memory can happen on one machine with multiple GPUs or across a netw
 
 [![Unicast Memory Sharing Example](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/unicast-memory-sharing.png) ](../_images/unicast-memory-sharing.png)
 
-Figure 53 Unicast Memory Sharing Example
+Figure 56 Unicast Memory Sharing Example
 
 ### 4.16.3.1. Allocate and Export
 
@@ -401,7 +410,7 @@ Receive: Fabric IPC
     MPI_Recv(&fh, sizeof(CUmemFabricHandle), MPI_BYTE, 1, 0, MPI_COMM_WORLD);
     
 
-**Importing Memory Handle** Again, the user can import handles for OS-specific IPC or fabric-specific IPC. OS-specific IPC handles can only be used on a single-node. Fabric-specific handles can be used for single or multi node.
+**Importing Memory Handle** Again, the user can import handles for OS-specific IPC or fabric-specific IPC. OS-specific IPC handles can only be used on a single-node. Fabric-specific handles can be used for single- or multi-node.
 
 OS-Specific Handle (Linux)
     
@@ -423,7 +432,7 @@ Fabric Handle
 
 Since notions of address and memory are distinct in VMM, applications must carve out an address range that can hold the memory allocations made by `cuMemCreate`. The address range reserved must be at least as large as the sum of the sizes of all the physical memory allocations the user plans to place in them.
 
-Applications can reserve a virtual address range by passing appropriate parameters to `cuMemAddressReserve`. The address range obtained will not have any device or host physical memory associated with it. The reserved virtual address range can be mapped to memory chunks belonging to any device in the system, thus providing the application a continuous VA range backed and mapped by memory belonging to different devices. Applications are expected to return the virtual address range back to CUDA using `cuMemAddressFree`. Users must ensure that the entire VA range is unmapped before calling `cuMemAddressFree`. These functions are conceptually similar to `mmap` and `munmap` on Linux or `VirtualAlloc` AND `VirtualFree` on Windows. The following code snippet illustrates the usage for the function:
+Applications can reserve a virtual address range by passing appropriate parameters to `cuMemAddressReserve`. The address range obtained will not have any device or host physical memory associated with it. The reserved virtual address range can be mapped to memory chunks belonging to any device in the system, thus providing the application a continuous VA range backed and mapped by memory belonging to different devices. Applications are expected to return the virtual address range back to CUDA using `cuMemAddressFree`. Users must ensure that the entire VA range is unmapped before calling `cuMemAddressFree`. These functions are conceptually similar to `mmap` and `munmap` on Linux or `VirtualAlloc` and `VirtualFree` on Windows. The following code snippet illustrates the usage for the function:
     
     
     CUdeviceptr ptr;
@@ -433,7 +442,7 @@ Applications can reserve a virtual address range by passing appropriate paramete
 
 **Mapping Memory**
 
-The allocated physical memory and the carved out virtual address space from the previous two sections represent the memory and address distinction introduced by the VMM APIs. For the allocated memory to be useable, the user must map the memory to the address space. The address range obtained from `cuMemAddressReserve` and the physical allocation obtained from `cuMemCreate` or `cuMemImportFromShareableHandle` must be associated with each other by using `cuMemMap`.
+The allocated physical memory and the carved out virtual address space from the previous two sections represent the memory and address distinction introduced by the VMM APIs. For the allocated memory to be usable, the user must map the memory to the address space. The address range obtained from `cuMemAddressReserve` and the physical allocation obtained from `cuMemCreate` or `cuMemImportFromShareableHandle` must be associated with each other by using `cuMemMap`.
 
 Users can associate allocations from multiple devices to reside in contiguous virtual address ranges as long as they have carved out enough address space. To decouple the physical allocation and the address range, users must unmap the address of the mapping with `cuMemUnmap`. Users can map and unmap memory to the same address range as many times as they want, so long as they ensure that they don’t attempt to create mappings on VA range reservations that are already mapped. The following code snippet illustrates the usage for the function:
     
@@ -466,7 +475,7 @@ The `vectorAddMMAP` [sample](https://github.com/NVIDIA/cuda-samples/tree/master/
 
 ### 4.16.3.5. Releasing the Memory
 
-To release the allocated memory and address space, both the source and target processes should use cuMemUnmap, cuMemRelease, and cuMemAddressFree functions in that order. The cuMemUnmap function un-maps a previously mapped memory region from an address range, effectively detaching the physical memory from the reserved virtual address space. Next, cuMemRelease deallocates the physical memory that was previously created, returning it to the system. Finally, cuMemAddressFree frees a virtual address range that was previously reserved, making it available for future use. This specific order ensures a clean and complete deallocation of both the physical memory and the virtual address space.
+To release the allocated memory and address space, both the source and target processes should use `cuMemUnmap`, `cuMemRelease`, and `cuMemAddressFree` functions in that order. The `cuMemUnmap` function un-maps a previously mapped memory region from an address range, effectively detaching the physical memory from the reserved virtual address space. Next, `cuMemRelease` deallocates the physical memory that was previously created, returning it to the system. Finally, `cuMemAddressFree` frees a virtual address range that was previously reserved, making it available for future use. This specific order ensures a clean and complete deallocation of both the physical memory and the virtual address space.
     
     
     cuMemUnmap(ptr, size);
@@ -476,15 +485,15 @@ To release the allocated memory and address space, both the source and target pr
 
 Note
 
-In the OS-specific case, the exported handle must be closed using fclose. This step is not applicable to the fabric-based case.
+In the OS-specific case, the exported handle must be closed using `fclose`. This step is not applicable to the fabric-based case.
 
 ## 4.16.4. Multicast Memory Sharing
 
-The [Multicast Object Management APIs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST/) provide a way for the application to create multicast objects and, in combination with the [Virtual Memory Management APIs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html) described above, allow applications to leverage NVLink SHARP on supported NVLink connected GPUs connected with NVSwitch. NVLink SHARP allows CUDA applications to leverage in-fabric computing to accelerate operations like broadcast and reductions between GPUs connected with NVSwitch. For this to work, multiple NVLink connected GPUs form a multicast team and each GPU from the team backs up a multicast object with physical memory. So a multicast team of N GPUs has N physical replicas of a multicast object, each local to one participating GPU. The [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem-ld-reduce-multimem-st-multimem-red/) using mappings of multicast objects work with all replicas of the multicast object.
+The [Multicast Object Management APIs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST) provide a way for the application to create multicast objects and, in combination with the [Virtual Memory Management APIs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html) described above, allow applications to leverage NVLink SHARP on supported NVLink connected GPUs connected with NVSwitch. NVLink SHARP allows CUDA applications to leverage in-fabric computing to accelerate operations like broadcast and reductions between GPUs connected with NVSwitch. For this to work, multiple NVLink connected GPUs form a multicast team and each GPU from the team backs up a multicast object with physical memory. So a multicast team of N GPUs has N physical replicas of a multicast object, each local to one participating GPU. The [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem) using mappings of multicast objects work with all replicas of the multicast object.
 
 To work with multicast objects, an application needs to
 
-  * Query multicast support
+  * Query multicast support.
 
   * Create a multicast handle with `cuMulticastCreate`.
 
@@ -494,9 +503,9 @@ To work with multicast objects, an application needs to
 
   * For each participating GPU, bind physical memory allocated with `cuMemCreate` as described above to the multicast handle. All devices need to be added to the multicast team before binding memory on any device.
 
-  * Reserve an address range, map the multicast handle and set access rights as described above for regular unicast mappings. Unicast and multicast mappings to the same physical memory are possible. See the [Virtual Aliasing Support](#virtual-aliasing-support) section above on how to ensure consistency between multiple mappings to the same physical memory.
+  * Reserve an address range, map the multicast handle and set access rights as described above for regular unicast mappings. Unicast and multicast mappings to the same physical memory are possible. See the [Virtual Aliasing Support](#virtual-aliasing-support) section on how to ensure consistency between multiple mappings to the same physical memory.
 
-  * Use the [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem-ld-reduce-multimem-st-multimem-red/) with the multicast mappings.
+  * Use the [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem) with the multicast mappings.
 
 
 The `multi_node_p2p` example in the [Multi GPU Programming Models](https://github.com/NVIDIA/multi-gpu-programming-models/) GitHub repository contains a complete example using fabric memory including multicast objects to leverage NVLink SHARP. Please note that this example is for developers of libraries like NCCL or NVSHMEM. It shows how higher-level programming models like NVSHMEM work internally within a (multi-node) NVLink domain. Application developers generally should use the higher-level MPI, NCCL, or NVSHMEM interfaces instead of this API.
@@ -547,7 +556,7 @@ After a multicast object has been created and all participating devices have bee
 
 ### 4.16.4.4. Use Multicast Mappings
 
-To use multicast mappings in CUDA C++, it is necessary to use the [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem-ld-reduce-multimem-st-multimem-red/) with inline PTX:
+To use multicast mappings in CUDA C++, it is necessary to use the [multimem PTX instructions](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-multimem) with inline PTX:
     
     
     __global__ void all_reduce_norm_barrier_kernel(float* l2_norm,
@@ -593,7 +602,7 @@ VMM also provides a mechanism for applications to allocate special types of memo
 
 ### 4.16.5.2. Compressible Memory
 
-Compressible memory can be used to accelerate accesses to data with unstructured sparsity and other compressible data patterns. Compression can save DRAM bandwidth, L2 read bandwidth, and L2 capacity depending on the data. Applications that want to allocate compressible memory on devices that support compute data compression can do so by setting `CUmemAllocationProp::allocFlags::compressionType` to `CU_MEM_ALLOCATION_COMP_GENERIC`. Users must query if device supports Compute Data Compression by using `CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED`. The following code snippet illustrates querying compressible memory support `cuDeviceGetAttribute`.
+Compressible memory can be used to accelerate accesses to data with unstructured sparsity and other compressible data patterns. Compression can save DRAM bandwidth, L2 read bandwidth, and L2 capacity depending on the data. Applications that want to allocate compressible memory on devices that support compute data compression can do so by setting `CUmemAllocationProp::allocFlags::compressionType` to `CU_MEM_ALLOCATION_COMP_GENERIC`. Users must query if device supports Compute Data Compression by using `CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED`. The following code snippet illustrates querying compressible memory support using `cuDeviceGetAttribute`.
     
     
     int compressionSupported = 0;
@@ -606,7 +615,7 @@ On devices that support compute data compression, users must opt in at allocatio
     prop.allocFlags.compressionType = CU_MEM_ALLOCATION_COMP_GENERIC;
     
 
-For a variety of reasons such as limited hardware resources, the allocation may not have compression attributes. To verify that the flags worked, the user query the properties of the allocated memory using `cuMemGetAllocationPropertiesFromHandle`.
+For a variety of reasons such as limited hardware resources, the allocation may not have compression attributes. To verify that the flags worked, users should query the properties of the allocated memory using `cuMemGetAllocationPropertiesFromHandle`.
     
     
     CUmemAllocationProp allocationProp = {};
@@ -657,7 +666,7 @@ The following is defined behavior, assuming these two kernels are ordered monoto
                                                 // to complete before proceeding
     
 
-If accessing same allocation through different “proxies” is required in the same kernel, a `fence.proxy.alias` can be used between the two accesses. The above example can thus be made legal with inline PTX assembly:
+If accessing the same allocation through different “proxies” is required in the same kernel, a `fence.proxy.alias` can be used between the two accesses. The above example can thus be made legal with inline PTX assembly:
     
     
     __global__ void foo(char *A, char *B) {
@@ -669,7 +678,7 @@ If accessing same allocation through different “proxies” is required in the 
 
 ### 4.16.5.4. OS-Specific Handle Details for IPC
 
-With `cuMemCreate`, users have can indicate at allocation time that they have earmarked a particular allocation for inter-process communication or graphics interop purposes. Applications can do this by setting `CUmemAllocationProp::requestedHandleTypes` to a platform-specific field. On Windows, when `CUmemAllocationProp::requestedHandleTypes` is set to `CU_MEM_HANDLE_TYPE_WIN32` applications must also specify an LPSECURITYATTRIBUTES attribute in `CUmemAllocationProp::win32HandleMetaData`. This security attribute defines the scope of which exported allocations may be transferred to other processes.
+With `cuMemCreate`, users can indicate at allocation time that they have earmarked a particular allocation for inter-process communication or graphics interop purposes. Applications can do this by setting `CUmemAllocationProp::requestedHandleTypes` to a platform-specific field. On Windows, when `CUmemAllocationProp::requestedHandleTypes` is set to `CU_MEM_HANDLE_TYPE_WIN32` applications must also specify an LPSECURITYATTRIBUTES attribute in `CUmemAllocationProp::win32HandleMetaData`. This security attribute defines the scope of which exported allocations may be transferred to other processes.
 
 Users must ensure they query for support of the requested handle type before attempting to export memory allocated with `cuMemCreate`. The following code snippet illustrates query for handle type support in a platform-specific way.
     

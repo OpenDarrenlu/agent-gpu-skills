@@ -1,4 +1,4 @@
-# 6.26. Texture Reference Management [DEPRECATED]
+# 6.27. Texture Reference Management [DEPRECATED]
 
 **Source:** group__CUDA__TEXREF__DEPRECATED.html#group__CUDA__TEXREF__DEPRECATED
 

@@ -1,4 +1,4 @@
-# 6.19. Event Management
+# 6.20. Event Management
 
 **Source:** group__CUDA__EVENT.html#group__CUDA__EVENT
 

@@ -1,4 +1,4 @@
-# 6.35. Green Contexts
+# 6.36. Green Contexts
 
 **Source:** group__CUDA__GREEN__CONTEXTS.html#group__CUDA__GREEN__CONTEXTS
 
@@ -44,18 +44,20 @@ enum CUdevSmResourceGroup_flags
 
 enum CUdevWorkqueueConfigScope
 
+enum CUgreenCtxCreate_flags
+
 
 ### Functions
 
 CUresult cuCtxFromGreenCtx ( CUcontext* pContext, CUgreenCtx hCtx )
 
 
-Converts a green context into the primary context.
+Returns a CUcontext handle for a green context.
 
 ######  Parameters
 
 `pContext`
-    Returned primary context with green context resources
+    Returned CUcontext with green context resources
 `hCtx`
     Green context to convert
 
@@ -65,9 +67,18 @@ CUDA_SUCCESS, CUDA_ERROR_DEINITIALIZED, CUDA_ERROR_NOT_INITIALIZED, CUDA_ERROR_I
 
 ###### Description
 
-The API converts a green context into the primary context returned in `pContext`. It is important to note that the converted context `pContext` is a normal primary context but with the resources of the specified green context `hCtx`. Once converted, it can then be used to set the context current with cuCtxSetCurrent or with any of the CUDA APIs that accept a CUcontext parameter.
+This API returns in `pContext` a CUcontext handle that represents the specified green context `hCtx`. The returned handle can be passed to CUDA APIs that accept a CUcontext and will be treated as if it were a primary context, while still honoring the resources and configuration associated with `hCtx` as applicable.
 
-Users are expected to call this API before calling any CUDA APIs that accept a CUcontext. Failing to do so will result in the APIs returning CUDA_ERROR_INVALID_CONTEXT.
+Applications that wish to use a green context with CUDA APIs that require a CUcontext must use this API to obtain a handle to a CUcontext representing the green context. Otherwise, passing a green context to such APIs will fail with CUDA_ERROR_INVALID_CONTEXT.
+
+The CUcontext returned by cuCtxFromGreenCtx may be passed to CUDA Driver APIs that accept a CUcontext.
+
+  * For APIs whose semantics are independent of green context resources, the operation is performed identically to how it would perform with a primary context.
+
+  * For APIs whose behavior depends on green context resources (for example, kernel launch), the operation is performed using the resources and configuration of the specified green context `hCtx`.
+
+
+This call does not create a new independent context and does not change the underlying context lifetime. The validity of the returned `pContext` is tied to `hCtx`, and no additional destruction or release is required beyond correctly managing `hCtx` with the green context APIs. Destroying `pContext` via cuCtxDestroy is undefined behavior.
 
 CUresult cuCtxGetDevResource ( CUcontext hCtx, CUdevResource* resource, CUdevResourceType type )
 
@@ -194,7 +205,7 @@ A groupParams array element is defined in the following order:
     ‎// Example 2
           // Assuming the device has 10+ SMs, the result will have 10 SMs that are co-scheduled in groups of 2 SMs.
           // The rest is placed in the optional remainder.
-          CU_DEV_SM_RESOURCE_GROUP_PARAMS params { 10, 2, 0, 0};
+          CU_DEV_SM_RESOURCE_GROUP_PARAMS params { 10, 2, 0, 0 };
           // Setting the coscheduledSmCount to 2 guarantees that we can always have a valid result
           // as long as the SM count is less than or equal to the input resource SM count.
 
@@ -302,7 +313,7 @@ Creates a green context with a specified set of resources.
 `dev`
     \- Device on which to create the green context.
 `flags`
-    \- One of the supported green context creation flags. `CU_GREEN_CTX_DEFAULT_STREAM` is required.
+    \- One of the supported green context creation flags.
 
 ###### Returns
 
@@ -318,7 +329,9 @@ Note: The API is not supported on 32-bit platforms.
 
 The supported flags are:
 
-  * `CU_GREEN_CTX_DEFAULT_STREAM` : Creates a default stream to use inside the green context. Required.
+  * `CU_GREEN_CTX_NONE` : Default behavior.
+
+  * `CU_GREEN_CTX_DEFAULT_STREAM` : Creates a default stream to use inside the green context.
 
 
 CUresult cuGreenCtxDestroy ( CUgreenCtx hCtx )

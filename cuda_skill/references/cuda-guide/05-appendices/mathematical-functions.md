@@ -302,13 +302,13 @@ These aspects are also important when comparing the results between CPU and GPU.
 
 **Taking Advantage of the CUDA Libraries** :
 
-> The [CUDA Math Libraries](https://developer.nvidia.com/gpu-accelerated-libraries), [C Standard Library Mathematical functions](https://docs.nvidia.com/cuda/cuda-math-api/index.html), and [C++ Standard Library Mathematical functions](https://nvidia.github.io/cccl/libcudacxx/standard_api.html) are designed to boost developer productivity for common functionalities, particularly for floating-point math and numerics-intensive routines. These functionalities provide a consistent high-level interface, are optimized, and are widely tested across platforms and edge cases. Users are encouraged to take full advantage of these libraries and avoid tedious manual reimplementations.
+> The [CUDA Math Libraries](https://developer.nvidia.com/gpu-accelerated-libraries), [C Standard Library Mathematical functions](https://docs.nvidia.com/cuda/cuda-math-api/index.html), and [C++ Standard Library Mathematical functions](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api.html) are designed to boost developer productivity for common functionalities, particularly for floating-point math and numerics-intensive routines. These functionalities provide a consistent high-level interface, are optimized, and are widely tested across platforms and edge cases. Users are encouraged to take full advantage of these libraries and avoid tedious manual reimplementations.
 
 ## 5.5.2. Floating-Point Data Types
 
 CUDA supports the Bfloat16, half-, single-, double-, and quad-precision floating-point data types. The following table summarizes the supported floating-point data types in CUDA and their requirements.
 
-Table 43 Supported Floating-Point Types Precision / Name | Data Type | IEEE-754 | Header / Built-in | Requirements  
+Table 44 Supported Floating-Point Types Precision / Name | Data Type | IEEE-754 | Header / Built-in | Requirements  
 ---|---|---|---|---  
 Bfloat16 | `__nv_bfloat16` | ❌ | `<cuda_bf16.h>` | Compute Capability 8.0 or higher.  
 Half Precision | `__half` | ✅ | `<cuda_fp16.h>` |   
@@ -324,7 +324,7 @@ The following figure reports the mantissa and exponent sizes of the supported fl
 
 The following table reports the ranges of the supported floating-point data types.
 
-Table 44 Supported Floating-Point Types Properties Precision / Name | Largest Value | Smallest Positive Value | Smallest Positive Denormal | Epsilon  
+Table 45 Supported Floating-Point Types Properties Precision / Name | Largest Value | Smallest Positive Value | Smallest Positive Denormal | Epsilon  
 ---|---|---|---|---  
 Bfloat16 | \\(\approx 2^{128}\\) | \\(\approx 3.39 \cdot 10^{38}\\) | \\(2^{-126}\\) | \\(\approx 1.18 \cdot 10^{-38}\\) | \\(2^{-133}\\) | \\(2^{-7}\\)  
 Half Precision | \\(\approx 2^{16}\\) | \\(65504\\) | \\(2^{-14}\\) | \\(\approx 6.1 \cdot 10^{-5}\\) | \\(2^{-24}\\) | \\(2^{-10}\\)  
@@ -338,7 +338,7 @@ The [CUDA C++ Standard Library](cpp-language-support.html#cpp-standard-library) 
 
 **Complex numbers support:**
 
-  * The [CUDA C++ Standard Library](cpp-language-support.html#cpp-standard-library) supports complex numbers with the [cuda::std::complex](https://en.cppreference.com/w/cpp/numeric/complex) type in the `<cuda/std/complex>` header. See also the [libcu++ documentation](https://nvidia.github.io/cccl/libcudacxx/standard_api/numerics_library/complex.html) for more details.
+  * The [CUDA C++ Standard Library](cpp-language-support.html#cpp-standard-library) supports complex numbers with the [cuda::std::complex](https://en.cppreference.com/w/cpp/numeric/complex) type in the `<cuda/std/complex>` header. See also the [libcu++ documentation](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api/numerics_library/complex.html) for more details.
 
   * CUDA also provides basic support for complex numbers with the `cuComplex` and `cuDoubleComplex` types in the `cuComplex.h` header.
 
@@ -525,7 +525,7 @@ The mathematical functions supported by CUDA are exposed through the following m
   * Their behavior is not affected by the `nvcc` [floating-point optimization flags](../02-basics/nvcc.html#optimization-options) `-prec-div=false`, `-prec-sqrt=false`, and `-fmad=true`. The only exception is `-ftz=true`, which is also included in `-use_fast_math`.
 
 
-Table 45 Summary of Math Functionality Features Functionality | Supported Types | Host | Device | Affected by Floating-Point Optimization Flags   
+Table 46 Summary of Math Functionality Features Functionality | Supported Types | Host | Device | Affected by Floating-Point Optimization Flags   
 (only for `float` and `double`)  
 ---|---|---|---|---  
 [Built-in C/C++ language arithmetic operators](#builtin-math-operators) | `float`, `double`, `__half`, `__nv_bfloat16`, `__float128/_Float128`, `cuda::std::complex` | ✅ | ✅ | ✅  
@@ -579,7 +579,7 @@ The following sections specify the mapping with the [CUDA Math APIs](https://doc
 
 All the following functions have a maximum ULP error of zero.
 
-Table 46 C++ Mathematical Standard Library Functions   
+Table 47 C++ Mathematical Standard Library Functions   
 C Math API Mapping   
 **Basic Operations** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -599,7 +599,7 @@ C Math API Mapping
 
 [CUDA Math API](https://docs.nvidia.com/cuda/cuda-math-api/index.html) for exponential functions are available in both host and device code only for `float` and `double` types.
 
-Table 47 C++ Mathematical Standard Library Functions   
+Table 48 C++ Mathematical Standard Library Functions   
 C Math API Mapping and Accuracy (Maximum ULP)   
 **Exponential Functions** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -697,7 +697,7 @@ N/A | [log1pf(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group
 
 [CUDA Math API](https://docs.nvidia.com/cuda/cuda-math-api/index.html) for power functions are available in both host and device code only for `float` and `double` types.
 
-Table 48 C++ Mathematical Standard Library Functions   
+Table 49 C++ Mathematical Standard Library Functions   
 C Math API Mapping and Accuracy (Maximum ULP)   
 **Power Functions** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -756,7 +756,7 @@ N/A | [hypotf(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/gr
 
 [CUDA Math API](https://docs.nvidia.com/cuda/cuda-math-api/index.html) for trigonometric functions are available in both host and device code only for `float` and `double` types.
 
-Table 49 C++ Mathematical Standard Library Functions   
+Table 50 C++ Mathematical Standard Library Functions   
 C Math API Mapping and Accuracy (Maximum ULP)   
 **Trigonometric Functions** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -847,7 +847,7 @@ N/A
 
 [CUDA Math API](https://docs.nvidia.com/cuda/cuda-math-api/index.html) for hyperbolic functions are available in both host and device code only for `float` and `double` types.
 
-Table 50 C++ Mathematical Standard Library Functions   
+Table 51 C++ Mathematical Standard Library Functions   
 C Math API Mapping and Accuracy (Maximum ULP)   
 **Hyperbolic Functions** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -928,7 +928,7 @@ N/A | [atanhf(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group
 
 Error and Gamma functions are not natively available for CUDA-extended floating-point types, such as `__half` and `__nv_bfloat16`. In these cases, the functions are emulated by converting to a `float` type and then converting the result back.
 
-Table 51 C++ Mathematical Standard Library Functions   
+Table 52 C++ Mathematical Standard Library Functions   
 C Math API Mapping and Accuracy (Maximum ULP)   
 **Error and Gamma Functions** `cuda::std` Function | Meaning | `float` | `double`  
 ---|---|---|---  
@@ -969,7 +969,7 @@ C Math API Mapping and Accuracy (Maximum ULP)
 
 All the following functions have a maximum ULP error of zero.
 
-Table 52 C++ Mathematical Standard Library Functions   
+Table 53 C++ Mathematical Standard Library Functions   
 C Math API Mapping   
 **Nearest Integer Floating-Point Operations** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -998,7 +998,7 @@ Floating-point manipulation functions are not natively available for CUDA-extend
 
 All the following functions have a maximum ULP error of zero.
 
-Table 53 C++ Mathematical Standard Library Functions   
+Table 54 C++ Mathematical Standard Library Functions   
 C Math API Mapping   
 **Floating-Point Manipulation Functions** `cuda::std` Function | Meaning | `float` | `double` | `__float128`  
 ---|---|---|---|---  
@@ -1018,7 +1018,7 @@ C Math API Mapping
 
 All the following functions have a maximum ULP error of zero.
 
-Table 54 C++ Mathematical Standard Library Functions   
+Table 55 C++ Mathematical Standard Library Functions   
 C Math API Mapping   
 **Classification and Comparison Functions** `cuda::std` Function | Meaning | `__nv_bfloat16` | `__half` | `float` | `double` | `__float128`  
 ---|---|---|---|---|---|---  
@@ -1028,10 +1028,10 @@ C Math API Mapping
 [isnan(x)](https://en.cppreference.com/w/cpp/numeric/math/isnan.html) | Check if \\(x\\) is NaN | [__hisnan(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv48__hisnanK13__nv_bfloat16) | [__hisnan(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv48__hisnanK6__half) | [isnan(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__SINGLE.html#_CPPv45isnanf) | [isnan(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__DOUBLE.html#_CPPv45isnand) | [__nv_fp128_isnan(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__QUAD.html#_CPPv416__nv_fp128_isnang)  
 [isnormal(x)](https://en.cppreference.com/w/cpp/numeric/math/isnormal.html) | Check if \\(x\\) is normal | N/A | N/A | N/A | N/A | N/A  
 [signbit(x)](https://en.cppreference.com/w/cpp/numeric/math/signbit.html) | Check if sign bit is set | N/A | N/A | [signbit(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__SINGLE.html#_CPPv47signbitf) | [signbit(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__DOUBLE.html#_CPPv47signbitd) | N/A  
-[isgreater(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isgreater.html) | Check if \\(x > y\\) | [__hgt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hgtK13__nv_bfloat16K13__nv_bfloat16) | [__hgt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hgt6__half6__half) | N/A | N/A | N/A  
-[isgreaterequal(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isgreaterequal.html) | Check if \\(x \geq y\\) | [__hge(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hgeK13__nv_bfloat16K13__nv_bfloat16) | [__hge(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hge6__half6__half) | N/A | N/A | N/A  
-[isless(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isless.html) | Check if \\(x < y\\) | [__hlt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hltK13__nv_bfloat16K13__nv_bfloat16) | [__hlt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hlt6__half6__half) | N/A | N/A | N/A  
-[islessequal(x, y)](https://en.cppreference.com/w/cpp/numeric/math/islessequal.html) | Check if \\(x \leq y\\) | [__hle(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hleK13__nv_bfloat16K13__nv_bfloat16) | [__hle(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hle6__half6__half) | N/A | N/A | N/A  
+[isgreater(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isgreater.html) | Check if \\(x > y\\) | [__hgt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hgtK13__nv_bfloat16K13__nv_bfloat16) | [__hgt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hgtK6__halfK6__half) | N/A | N/A | N/A  
+[isgreaterequal(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isgreaterequal.html) | Check if \\(x \geq y\\) | [__hge(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hgeK13__nv_bfloat16K13__nv_bfloat16) | [__hge(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hgeK6__halfK6__half) | N/A | N/A | N/A  
+[isless(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isless.html) | Check if \\(x < y\\) | [__hlt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hltK13__nv_bfloat16K13__nv_bfloat16) | [__hlt(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hltK6__halfK6__half) | N/A | N/A | N/A  
+[islessequal(x, y)](https://en.cppreference.com/w/cpp/numeric/math/islessequal.html) | Check if \\(x \leq y\\) | [__hle(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hleK13__nv_bfloat16K13__nv_bfloat16) | [__hle(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hleK6__halfK6__half) | N/A | N/A | N/A  
 [islessgreater(x, y)](https://en.cppreference.com/w/cpp/numeric/math/islessgreater.html) | Check if \\(x < y\\) or \\(x > y\\) | [__hne(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____BFLOAT16__COMPARISON.html#_CPPv45__hneK13__nv_bfloat16K13__nv_bfloat16) | [__hne(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH____HALF__COMPARISON.html#_CPPv45__hneK6__halfK6__half) | N/A | N/A | N/A  
 [isunordered(x, y)](https://en.cppreference.com/w/cpp/numeric/math/isunordered.html) | Check if \\(x\\), \\(y\\), or both are NaN | N/A | N/A | N/A | N/A | [__nv_fp128_isunordered(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__QUAD.html#_CPPv422__nv_fp128_isunorderedgg)  
   
@@ -1048,7 +1048,7 @@ This section specifies the error bounds of each function when executed on the de
   * The error bounds are derived from extensive, though not exhaustive, testing. Therefore, they are not guaranteed.
 
 
-Table 55 **Non-standard CUDA Mathematical functions**   
+Table 56 **Non-standard CUDA Mathematical functions**   
 `float` and `double`   
 Mapping and Accuracy (Maximum ULP) Meaning | `float` | `double`  
 ---|---|---  
@@ -1219,7 +1219,7 @@ For \\(|x| > 1.5n\\), the maximum absolute error \\(= 5 \cdot 10^{-12}\\)
   
 Non-standard CUDA Mathematical functions for `__half`, `__nv_bfloat16`, and `__float128/_Float128` are only available in device code.
 
-Table 56 **Non-standard CUDA Mathematical functions**   
+Table 57 **Non-standard CUDA Mathematical functions**   
 `__nv_bfloat16`, `__half`, `__float128/_Float128`   
 Mapping and Accuracy (Maximum ULP) Meaning | `__nv_bfloat16` | `__half` | `__float128/_Float128`  
 ---|---|---|---  
@@ -1281,7 +1281,7 @@ The `__fadd_[rn,rz,ru,rd]()`, `__dadd_[rn,rz,ru,rd]()`, `__fmul_[rn,rz,ru,rd]()`
 
 The following table lists the single- and double-precision floating-point intrinsic functions. All of them have a maximum ULP error of 0 and are IEEE-compliant.
 
-Table 57 Single- and Double-Precision Floating-Point Intrinsic Functions Meaning | `float` | `double`  
+Table 58 Single- and Double-Precision Floating-Point Intrinsic Functions Meaning | `float` | `double`  
 ---|---|---  
 \\(x + y\\) | [__fadd_[rn,rz,ru,rd](x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SINGLE.html#_CPPv49__fadd_rnff) | [__dadd_[rn,rz,ru,rd](x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__DOUBLE.html#_CPPv49__dadd_rndd)  
 \\(x - y\\) | [__fsub_[rn,rz,ru,rd](x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SINGLE.html#_CPPv49__fsub_rnff) | [__dsub_[rn,rz,ru,rd](x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__DOUBLE.html#_CPPv49__dsub_rndd)  
@@ -1300,7 +1300,7 @@ The following table lists the single-precision floating-point intrinsic function
   * The error bounds are derived from extensive, though not exhaustive, testing. Therefore, they are not guaranteed.
 
 
-Table 58 **Single-Precision Only Floating-Point Intrinsic Functions**   
+Table 59 **Single-Precision Only Floating-Point Intrinsic Functions**   
 Mapping and Accuracy (Maximum ULP) Function | Meaning | Maximum ULP Error  
 ---|---|---  
 [__fdividef(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SINGLE.html#_CPPv410__fdividefff) | \\(\dfrac{x}{y}\\) | \\(2\\) for \\(|y| \in [2^{-126}, 2^{126}]\\)  
@@ -1329,7 +1329,7 @@ The `nvcc` compiler flag `--use_fast_math` translates a subset of [CUDA Math API
 
 > A more robust approach is to selectively replace mathematical function calls with intrinsic versions only where the performance gains justify it and where the changed properties, such as reduced accuracy and different special-case handling, are acceptable.
 
-Table 59 Functions Directly Affected by `--use_fast_math` Device Function | Intrinsic Function  
+Table 60 Functions Directly Affected by `--use_fast_math` Device Function | Intrinsic Function  
 ---|---  
 [x/y, fdividef(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__SINGLE.html#_CPPv48fdividefff) | [__fdividef(x, y)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SINGLE.html#_CPPv410__fdividefff)  
 [sinf(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__SINGLE.html#_CPPv44sinff) | [__sinf(x)](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SINGLE.html#_CPPv46__sinff)  

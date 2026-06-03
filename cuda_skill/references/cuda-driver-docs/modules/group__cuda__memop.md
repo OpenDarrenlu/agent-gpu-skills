@@ -1,4 +1,4 @@
-# 6.21. Stream Memory Operations
+# 6.22. Stream Memory Operations
 
 **Source:** group__CUDA__MEMOP.html#group__CUDA__MEMOP
 

@@ -1,4 +1,4 @@
-# 6.30. Tensor Map Object Managment
+# 6.31. Tensor Map Object Managment
 
 **Source:** group__CUDA__TENSOR__MEMORY.html#group__CUDA__TENSOR__MEMORY
 

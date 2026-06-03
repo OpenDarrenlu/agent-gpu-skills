@@ -91,9 +91,9 @@ Target architectures with suffix “`a`”, such as `sm_90a`, include architectu
 
 Target architectures with suffix “`f`”, such as `sm_100f`, include family-specific features that are supported only within the same architecture family. Therefore, PTX code generated for such targets can run only on later generation devices in the same family. Family-specific features can be used with f-targets as well as a-targets of later generation devices in the same family.
 
-[Table 58](#architecture-family-definition) defines the architecture families.
+[Table 61](#architecture-family-definition) defines the architecture families.
 
-Table 58 Architecture Families Family | Target SM architectures included  
+Table 61 Architecture Families Family | Target SM architectures included  
 ---|---  
 sm_10x family | sm_100f, sm_103f, future targets in sm_10x family  
 sm_11x family | sm_110f, sm_101f, future targets in sm_11x family  
@@ -1695,6 +1695,8 @@ PTX provides the following miscellaneous directives:
 
   * `.blocksareclusters`
 
+  * `.language`
+
 
 ###  11.8.1. [Miscellaneous Directives: `.blocksareclusters`](#miscellaneous-directives-blocksareclusters)
 
@@ -1730,4 +1732,58 @@ Examples
     
     
     .entry foo .reqntid 32, 32, 1 .reqnctapercluster 32, 32, 1 .blocksareclusters { ... }
+    
+
+###  11.8.2. [Miscellaneous Directives: `.language`](#miscellaneous-directives-language)
+
+`.language`
+
+Specify the source language(s) used to generate the kernel or function.
+
+Syntax
+    
+    
+    .language lang-list   // comma separated list of strings or integers
+    
+
+Description
+
+The `.language` directive declares the source language(s) from which the code for the corresponding `.entry` or `.func` function was generated. The directive accepts a comma-separated list of language codes, specified as either quoted string names or unsigned integer values.
+
+The `.language` directive is allowed for both `.entry` and `.func` functions and must appear between the function directive and its body.
+
+If the `.language` directive is not specified, the language defaults to `"ptx"`.
+
+Multiple languages may be specified for a single function, indicating mixed-language origins. Language names are case-insensitive.
+
+Language codes specified as unsigned integers must be in the range `[0..10]`. The mapping between string names and integer codes is:
+
+Code | String  
+---|---  
+0 | “unknown”  
+1 | Reserved  
+2 | Reserved  
+3 | “ptx”  
+4 | “nvvm”  
+5 | “cuda c++”  
+6 | “cuda c++ tile”  
+7 | “tile ir”  
+8 | “python-cutile”  
+9 | “fortran”  
+10 | “optix”  
+  
+PTX ISA Notes
+
+Introduced in PTX ISA version 9.3.
+
+Target ISA Notes
+
+Supported on all target architectures.
+
+Examples
+    
+    
+    .entry foo () .language "ptx"                    { ... }
+    .func bar ()  .language "nvvm", "ptx"            { ... }
+    .entry baz () .language "ptx", "cuda c++", 0x7   { ... }
     

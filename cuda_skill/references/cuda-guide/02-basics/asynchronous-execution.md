@@ -2,9 +2,9 @@
 url: https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/asynchronous-execution.html
 ---
 
-# 2.3. Asynchronous Execution
+# 2.5. Asynchronous Execution
 
-## 2.3.1. What is Asynchronous Concurrent Execution?
+## 2.5.1. What is Asynchronous Concurrent Execution?
 
 CUDA allows concurrent, or overlapping, execution of multiple tasks, specifically:
 
@@ -25,7 +25,7 @@ The concurrency is expressed via an asynchronous interface, where a dispatching 
 
 [![Asynchronous Concurrent Execution with CUDA streams](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/cuda_streams.png) ](../_images/cuda_streams.png)
 
-Figure 17 Asynchronous COncurrent Execution with CUDA streams
+Figure 20 Asynchronous COncurrent Execution with CUDA streams
 
 In general, asynchronous interfaces typically provide three main ways to synchronize with the dispatched operation
 
@@ -44,7 +44,7 @@ The core API components for asynchronous execution in CUDA are **CUDA Streams** 
 
 A related topic is that of **CUDA Graphs** , which allow a graph of asynchronous operations to be defined up front, which can then be executed repeatedly with minimal overhead. We cover CUDA Graphs in a very introductory level in section [2.4.9.2 Introduction to CUDA Graphs with Stream Capture](#async-execution-cuda-graphs), and a more comprehensive discussion is provided in section [4.1 CUDA Graphs](../04-special-topics/cuda-graphs.html#cuda-graphs).
 
-## 2.3.2. CUDA Streams
+## 2.5.2. CUDA Streams
 
 At the most basic level, a CUDA stream is an abstraction which allows the programmer to express a sequence of operations. A stream operates like a work-queue into which programs can add operations, such as memory copies or kernel launches, to be executed in order. Operations at the front of the queue for a given stream are executed and then dequeued allowing the next queued operation to come to the front and to be considered for execution. The order of execution of operations in a stream is sequential and the operations are executed in the order they are enqueued into the stream.
 
@@ -54,7 +54,7 @@ The API function calls and kernel-launches operating in a stream are asynchronou
 
 CUDA has a default stream, and operations and kernel launches without a specific stream are queued into this default stream. Code examples which do not specify a stream are using this default stream implicitly. The default stream has some specific semantics which are discussed in subsection [Blocking and non-blocking streams and the default stream](#async-execution-blocking-non-blocking-default-stream).
 
-### 2.3.2.1. Creating and Destroying CUDA Streams
+### 2.5.2.1. Creating and Destroying CUDA Streams
 
 CUDA streams can be created using the `cudaStreamCreate()` function. The function call initializes the stream handle which can be used to identify the stream in subsequent function calls.
     
@@ -69,7 +69,7 @@ CUDA streams can be created using the `cudaStreamCreate()` function. The functio
 
 If the device is still doing work in stream `stream` when the application calls `cudaStreamDestroy()`, the stream will complete all the work in the stream before being destroyed.
 
-### 2.3.2.2. Launching Kernels in CUDA Streams
+### 2.5.2.2. Launching Kernels in CUDA Streams
 
 The usual triple-chevron syntax for launching a kernel can also be used to launch a kernel into a specific stream. The stream is specified as an extra parameter to the kernel launch. In the following example the kernel named `kernel` is launched into the stream with handle `stream`, which is of type `cudaStream_t` and has been assumed to have been created previously:
     
@@ -79,7 +79,7 @@ The usual triple-chevron syntax for launching a kernel can also be used to launc
 
 The kernel launch is asynchronous and the function call returns immediately. Assuming that the kernel launch is successful, the kernel will execute in the stream `stream` and the application is free to perform other tasks on the CPU or in other streams on the GPU while the kernel is executing.
 
-### 2.3.2.3. Launching Memory Transfers in CUDA Streams
+### 2.5.2.3. Launching Memory Transfers in CUDA Streams
 
 To launch a memory transfer into a stream, we can use the function `cudaMemcpyAsync()`. This function is similar to the `cudaMemcpy()` function, but it takes an additional parameter specifying the stream to use for the memory transfer. The function call in the code block below copies `size` bytes from the host memory pointed to by `src` to the device memory pointed to by `dst` in the stream `stream`.
     
@@ -96,7 +96,7 @@ Note
 
 In order for memory copies involving CPU memory to be carried out asynchronously, the host buffers must be pinned and page-locked. `cudaMemcpyAsync()` will function correctly if host memory which is not pinned and page-locked is used, but it will revert to a synchronous behavior which will not overlap with other work. This can inhibit the performance benefits of using asynchronous memory transfers. It is recommended programs use `cudaMallocHost()` to allocate buffers which will be used to send or receive data from GPUs.
 
-### 2.3.2.4. Stream Synchronization
+### 2.5.2.4. Stream Synchronization
 
 The simplest way to synchronize with a stream is to wait for the stream to be empty of tasks. This can be done in two ways, using the `cudaStreamSynchronize()` function or the `cudaStreamQuery()` function.
 
@@ -110,7 +110,7 @@ The `cudaStreamSynchronize()` function will block until all the work in the stre
     // and we can access the results of stream operations safely
     
 
-If we prefer not to block, but just need a quick check to see if the steam is empty we can use the `cudaStreamQuery()` function.
+If we prefer not to block, but just need a quick check to see if the stream is empty we can use the `cudaStreamQuery()` function.
     
     
     // Have a peek at the stream
@@ -133,15 +133,15 @@ If we prefer not to block, but just need a quick check to see if the steam is em
     };
     
 
-## 2.3.3. CUDA Events
+## 2.5.3. CUDA Events
 
 CUDA events are a mechanism for inserting markers into a CUDA stream. They are essentially like tracer particles that can be used to track the progress of tasks in a stream. Imagine launching two kernels into a stream. Without such tracking events, we would only be able to determine whether the stream is empty or not. If we had an operation that was dependent on the output of the first kernel, we would not be able to start that operation safely until we knew the stream was empty by which time both kernels would have completed.
 
 Using CUDA Events we can do better. By enqueuing an event into a stream directly after the first kernel, but before the second kernel, we can wait for this event to come to the front of the stream. Then, we can safely start our dependent operation knowing that the first kernel has completed, but before the second kernel has started. Using CUDA events in this way can build up a graph of dependencies between operations and streams. This graph analogy translates directly into the later discussion of [CUDA graphs](#async-execution-cuda-graphs).
 
-CUDA streams also keep time information which can be used to time kernel launches and memory transfers.
+CUDA events also keep time information which can be used to time kernel launches and memory transfers.
 
-### 2.3.3.1. Creating and Destroying CUDA Events
+### 2.5.3.1. Creating and Destroying CUDA Events
 
 CUDA Events can be created and destroyed using the `cudaEventCreate()` and `cudaEventDestroy()` functions.
     
@@ -160,7 +160,7 @@ CUDA Events can be created and destroyed using the `cudaEventCreate()` and `cuda
 
 The application is responsible for destroying events when they are no longer needed.
 
-### 2.3.3.2. Inserting Events into CUDA Streams
+### 2.5.3.2. Inserting Events into CUDA Streams
 
 CUDA Events can be inserted into a stream using the `cudaEventRecord()` function.
     
@@ -175,7 +175,7 @@ CUDA Events can be inserted into a stream using the `cudaEventRecord()` function
     cudaEventRecord(event, stream);
     
 
-### 2.3.3.3. Timing Operations in CUDA Streams
+### 2.5.3.3. Timing Operations in CUDA Streams
 
 CUDA events can be used to time the execution of various stream operations including kernels. When an event reaches the front of a stream it records a timestamp. By surrounding a kernel in a stream with two events we can get an accurate timing of the duration of the kernel execution as is shown in the code snippet below:
     
@@ -214,7 +214,7 @@ CUDA events can be used to time the execution of various stream operations inclu
     cudaStreamDestroy(stream);
     
 
-### 2.3.3.4. Checking the Status of CUDA Events
+### 2.5.3.4. Checking the Status of CUDA Events
 
 Like in the case of checking the status of streams, we can check the status of events in either a blocking or a non-blocking way.
 
@@ -256,7 +256,7 @@ The `cudaEventSynchronize()` function will block until the event has completed. 
     cudaStreamDestroy(stream);
     
 
-CUDA Events can be checked for completion in a non-blocking way using the `cudaEventQuery()` function. In the example below we launch 2 kernels into a stream. The first kernel, kernel1 generates some data which we would like to copy to the host, however we also have some CPU side work to do. In the code below, we enqueue kernel1 followed by an event (event) and then kernel2 into stream stream1. We then go into a CPU work loop, but occasionally take a peek to see if the event has completed indicating that kernel1 is done. If so, we launch a host to device copy into stream stream2. This approach allows the overlap of the CPU work with the GPU kernel execution and the device to host copy.
+CUDA Events can be checked for completion in a non-blocking way using the `cudaEventQuery()` function. In the example below we launch 2 kernels into a stream. The first kernel, kernel1 generates some data which we would like to copy to the host, however we also have some CPU side work to do. In the code below, we enqueue kernel1 followed by an event (event) and then kernel2 into stream stream1. We then go into a CPU work loop, but occasionally take a peek to see if the event has completed indicating that kernel1 is done. If so, we launch a device to host copy into stream stream2. This approach allows the overlap of the CPU work with the GPU kernel execution and the device to host copy.
     
     
     cudaEvent_t event;
@@ -264,11 +264,12 @@ CUDA Events can be checked for completion in a non-blocking way using the `cudaE
     cudaStream_t stream2;
     
     size_t size = LARGE_NUMBER;
-    float *d_data;
+    float* d_data;
+    float* h_data;
     
     // Create some data
     cudaMalloc(&d_data, size);
-    float *h_data = (float *)malloc(size);
+    cudaMallocHost(&h_data, size);
     
     // create the streams
     cudaStreamCreate(&stream1);   // Processing stream
@@ -316,7 +317,7 @@ CUDA Events can be checked for completion in a non-blocking way using the `cudaE
     free(h_data);
     
 
-## 2.3.4. Callback Functions from Streams
+## 2.5.4. Callback Functions from Streams
 
 CUDA provides a mechanism for launching functions on the host from within a stream. There are currently two functions available for this purpose: `cudaLaunchHostFunc()` and `cudaAddCallback()`. However, `cudaAddCallback()` is slated for deprecation, so applications should use `cudaLaunchHostFunc()`.
 
@@ -345,9 +346,18 @@ The host function itself is a simple C function with the signature:
 
 with the `data` parameter pointing to a user defined data structure which the function can interpret. There are some caveats to keep in mind when using callback functions like this. In particular, the host function may not call any CUDA APIs.
 
-For the purposes of being used with unified memory, the following execution guarantees are provided: \- The stream is considered idle for the duration of the function’s execution. Thus, for example, the function may always use memory attached to the stream it was enqueued in. \- The start of execution of the function has the same effect as synchronizing an event recorded in the same stream immediately prior to the function. It thus synchronizes streams which have been “joined” prior to the function. \- Adding device work to any stream does not have the effect of making the stream active until all preceding host functions and stream callbacks have executed. Thus, for example, a function might use global attached memory even if work has been added to another stream, if the work has been ordered behind the function call with an event. \- Completion of the function does not cause a stream to become active except as described above. The stream will remain idle if no device work follows the function, and will remain idle across consecutive host functions or stream callbacks without device work in between. Thus, for example, stream synchronization can be done by signaling from a host function at the end of the stream.
+For the purposes of being used with unified memory, the following execution guarantees are provided:
 
-### 2.3.4.1. Using `cudaStreamAddCallback()`
+  * The stream is considered idle for the duration of the function’s execution. Thus, for example, the function may always use memory attached to the stream it was enqueued in.
+
+  * The start of execution of the function has the same effect as synchronizing an event recorded in the same stream immediately prior to the function. It thus synchronizes streams which have been “joined” prior to the function.
+
+  * Adding device work to any stream does not have the effect of making the stream active until all preceding host functions and stream callbacks have executed. Thus, for example, a function might use global attached memory even if work has been added to another stream, if the work has been ordered behind the function call with an event.
+
+  * Completion of the function does not cause a stream to become active except as described above. The stream will remain idle if no device work follows the function, and will remain idle across consecutive host functions or stream callbacks without device work in between. Thus, for example, stream synchronization can be done by signaling from a host function at the end of the stream.
+
+
+### 2.5.4.1. Using `cudaStreamAddCallback()`
 
 Note
 
@@ -387,7 +397,7 @@ where the function is now passed
 
 In particular the `status` parameter will contain the current error status of the stream, which may have been set by previous operations. Similarly to the `cudaLaunchHostFunc()` func case, the stream will not be active and advance to tasks until the host-function has completed, and no CUDA functions may be called from within the callback function.
 
-### 2.3.4.2. Asynchronous Error Handling
+### 2.5.4.2. Asynchronous Error Handling
 
 In a cuda stream, errors may originate from any operation in the stream, including for kernel launches and memory transfers. These errors may not be propagated back to the user at run-time until the stream is synchronized, for example, by waiting for an event or calling `cudaStreamSynchronize()`. There are two ways to find out about errors which may have occurred in a stream.
 
@@ -435,13 +445,13 @@ Tip
 
 When an error appears at a synchronization, especially in a stream with many operations, it is often difficult to pinpoint exactly where in the stream the error may have occurred. To debug such a situation a useful trick may be to set the environment variable `CUDA_LAUNCH_BLOCKING=1` and then run the application. The effect of this environment variable is to synchronize after every single kernel launch. This can aid in tracking down which kernel, or transfer caused the error. Synchronization can be expensive; applications may run substantially slower when this environment variable is set.
 
-## 2.3.5. CUDA Stream Ordering
+## 2.5.5. CUDA Stream Ordering
 
-Now that we have discussed the basic mechanisms of streams, events and callback functions it is important to consider the ordering semantics of asynchronous operations in a stream. These semantics are to allow application programmers to think about the ordering of operations in a stream in a safe way. There are some special cases where these semantics may be relaxed for purposes of performance optimization such as in the case of a _Programmatic Dependent Kernel Launch_ scenario, which allows the overlap of two kernels through the use of special attributes and kernel launch mechanisms, or in the case of batching memory transfers using the `cudaMemcpyBatchAsync()` function when the runtime can perform non-overlapping batch copies concurrently. We will discuss these optimizations later on _link needed_.
+Now that we have discussed the basic mechanisms of streams, events and callback functions it is important to consider the ordering semantics of asynchronous operations in a stream. These semantics are to allow application programmers to think about the ordering of operations in a stream in a safe way. There are some special cases where these semantics may be relaxed for purposes of performance optimization such as in the case of a [programmatic dependent kernel launch](../04-special-topics/programmatic-dependent-launch.html#programmatic-dependent-launch-and-synchronization), which allows the overlap of two kernels through the use of special attributes and kernel launch mechanisms, or in the case of batching memory transfers using the [asynchronous batched memory copy functions](../03-advanced/advanced-host-programming.html#advanced-host-batched-memory-transfers), when the runtime can perform non-overlapping batch copies concurrently.
 
 Most importantly CUDA streams are what are known as in-order streams. This means that the order of execution of the operations in a stream is the same as the order in which those operations were enqueued. An operation in a stream cannot leap-frog other operations. Memory operations (such as copies) are tracked by the runtime and will always complete before the next operation in order to allow dependent kernels safe access to the data being transferred.
 
-## 2.3.6. Blocking and non-blocking streams and the default stream
+## 2.5.6. Blocking and non-blocking streams and the default stream
 
 In CUDA there are two types of streams: blocking and non-blocking. The name can be a little misleading as the blocking and non-blocking semantics refer only to how the streams synchronize with the default stream. By default, streams created with `cudaStreamCreate()` are blocking streams. In order to create a non-blocking stream, the `cudaStreamCreateWithFlags()` function must be used with the `cudaStreamNonBlocking` flag:
     
@@ -452,7 +462,7 @@ In CUDA there are two types of streams: blocking and non-blocking. The name can 
 
 and non-blocking streams can be destroyed in the usual way with `cudaStreamDestroy()`.
 
-### 2.3.6.1. Legacy Default Stream
+### 2.5.6.1. Legacy Default Stream
 
 The key difference between the blocking and non-blocking streams is how they synchronize with the **default stream**. CUDA provides a legacy default stream ( also known as the NULL stream or the stream with stream ID 0) which is used when no stream is specified in kernel launches or in blocking `cudaMemcpy()` calls. This default stream, which was shared amongst all host threads, is a blocking stream. When an operation is launched into this default stream, it will synchronize with all other blocking streams, in other words it will wait for all other blocking streams to complete before it can execute.
     
@@ -482,11 +492,11 @@ The default stream behavior means that in the above code snippet above, kernel2 
     cudaDeviceSynchronize();
     
 
-### 2.3.6.2. Per-thread Default Stream
+### 2.5.6.2. Per-thread Default Stream
 
 Starting in CUDA-7, CUDA allows for each host thread to have its own independent default stream, rather than the shared legacy default stream. In order to enable this behavior one must either use the nvcc compiler option `--default-stream per-thread` or define the `CUDA_API_PER_THREAD_DEFAULT_STREAM` preprocessor macro. When this behavior is enabled, each host thread will have its own independent default stream which will not synchronize with other streams in the same way the legacy default stream does. In such a situation the [legacy default stream example](#legacy-default-stream-example) will now exhibit the same synchronization behavior as the [non-blocking stream example](#non-blocking-stream-example).
 
-## 2.3.7. Explicit Synchronization
+## 2.5.7. Explicit Synchronization
 
 There are various ways to explicitly synchronize streams with each other.
 
@@ -498,7 +508,7 @@ There are various ways to explicitly synchronize streams with each other.
 
 `cudaStreamQuery()`provides applications with a way to know if all preceding commands in a stream have completed.
 
-## 2.3.8. Implicit Synchronization
+## 2.5.8. Implicit Synchronization
 
 Two operations from different streams cannot run concurrently if any CUDA operation on the NULL stream is submitted in-between them, unless the streams are non-blocking streams (created with the `cudaStreamNonBlocking` flag).
 
@@ -509,9 +519,9 @@ Applications should follow these guidelines to improve their potential for concu
   * Synchronization of any kind should be delayed as long as possible.
 
 
-## 2.3.9. Miscellaneous and Advanced topics
+## 2.5.9. Miscellaneous and Advanced topics
 
-### 2.3.9.1. Stream Prioritization
+### 2.5.9.1. Stream Prioritization
 
 As mentioned previously, developers can assign priorities to CUDA streams. Prioritized streams need to be created using the `cudaStreamCreateWithPriority()` function. The function takes two parameters: the stream handle and the priority level. The general scheme is that lower numbers correspond to higher priorities. The given priority range for a given device and context can be queried using the `cudaDeviceGetStreamPriorityRange()` function. The default priority of a stream is 0.
     
@@ -532,7 +542,7 @@ As mentioned previously, developers can assign priorities to CUDA streams. Prior
 
 We should note that a priority of a stream is only a hint to the runtime and generally applies primarily to kernel launches, and may not be respected for memory transfers. Stream priorities will not preempt already executing work, or guarantee any specific execution order.
 
-### 2.3.9.2. Introduction to CUDA Graphs with Stream Capture
+### 2.5.9.2. Introduction to CUDA Graphs with Stream Capture
 
 CUDA streams allow programs to specify a sequence of operations, kernels or memory copies, in order. Using multiple streams and cross-stream dependencies with `cudaStreamWaitEvent`, an application can specify a full directed acyclic graph (DAG) of operations. Some applications may have a sequence or DAG of operations that needs to be run many times throughout execution.
 
@@ -591,7 +601,7 @@ Listing 2 The stages of capturing, instantiating and executing a simple linear g
 
 Much more detail on CUDA graph is provided in [CUDA Graphs](../04-special-topics/cuda-graphs.html#cuda-graphs).
 
-## 2.3.10. Summary of Asynchronous Execution
+## 2.5.10. Summary of Asynchronous Execution
 
 The key points of this section are:
 

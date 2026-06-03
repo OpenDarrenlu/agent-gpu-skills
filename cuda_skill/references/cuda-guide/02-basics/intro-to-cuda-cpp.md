@@ -153,7 +153,7 @@ The number of thread blocks which are needed can be calculated as the ceiling of
     vecAdd<<<blocks, threads>>>(devA, devB, devC, vectorLength);
     
 
-The [CUDA Core Compute Library (CCCL)](https://nvidia.github.io/cccl/) provides a convenient utility, `cuda::ceil_div`, for doing this ceiling divide to calculate the number of blocks needed for a kernel launch. This utility is available by including the header `<cuda/cmath>`.
+The [CUDA Core Compute Library (CCCL)](https://nvidia.github.io/cccl/unstable/) provides a convenient utility, `cuda::ceil_div`, for doing this ceiling divide to calculate the number of blocks needed for a kernel launch. This utility is available by including the header `<cuda/cmath>`.
     
     
     // vectorLength is an integer storing number of elements in the vector
@@ -298,7 +298,14 @@ Explicitly managing memory allocation and data migration between memory spaces c
     }
     
 
-The CUDA API `cudaMemcpy` is used to copy data from a buffer residing on the CPU to a buffer residing on the GPU. Along with the destination pointer, source pointer, and size in bytes, the final parameter of `cudaMemcpy` is a `cudaMemcpyKind_t`. This can have values such as `cudaMemcpyHostToDevice` for copies from the CPU to a GPU, `cudaMemcpyDeviceToHost` for copies from the CPU to the GPU, or `cudaMemcpyDeviceToDevice` for copies within a GPU or between GPUs.
+The CUDA API `cudaMemcpy` is used to copy data from a buffer residing on the CPU to a buffer residing on the GPU. Along with the destination pointer, source pointer, and size in bytes, the final parameter of `cudaMemcpy` is a `cudaMemcpyKind_t`. This can have values such as:
+
+  * `cudaMemcpyHostToDevice` for copies from the CPU to a GPU
+
+  * `cudaMemcpyDeviceToHost` for copies from the GPU to the CPU
+
+  * `cudaMemcpyDeviceToDevice` for copies within a GPU or between GPUs
+
 
 In this example, `cudaMemcpyDefault` is passed as the last argument to `cudaMemcpy`. This causes CUDA to use the value of the source and destination pointers to determine the type of copy to perform.
 
@@ -586,7 +593,9 @@ In these examples, all threads are doing independent work and do not need to coo
 
 The most basic mechanism for synchronization at the block level is the `__syncthreads()` intrinsic, which acts as a barrier at which all threads in the block must wait before any threads are allowed to proceed. [Shared Memory](writing-cuda-kernels.html#writing-cuda-kernels-shared-memory) gives an example of using shared memory.
 
-For efficient cooperation, shared memory is expected to be a low-latency memory near each processor core (much like an L1 cache) and `__syncthreads()` is expected to be lightweight. `__syncthreads()` only synchronizes the threads within a single thread block. Synchronization between blocks is not supported by the CUDA programming model. [Cooperative Groups](../04-special-topics/cooperative-groups.html#cooperative-groups) provides mechanism to set synchronization domains other than a single thread block.
+For efficient cooperation, shared memory is expected to be a low-latency memory near each processor core (much like an L1 cache) and `__syncthreads()` is expected to be lightweight. `__syncthreads()` only synchronizes the threads within a single thread block.
+
+Synchronization between blocks is only supported in certain circumstances. For example, [thread block clusters](../01-introduction/programming-model.html#programming-model-thread-block-clusters) allow blocks within a cluster to synchronize, and [the cooperative Groups APIs](../04-special-topics/cooperative-groups.html#cooperative-groups) provide mechanisms to create cross-block synchronization domains.
 
 Best performance is usually achieved when synchronization is kept within a thread block. Thread blocks can still work on common results using [atomic memory functions](writing-cuda-kernels.html#writing-cuda-kernels-atomics), which will be covered in coming sections.
 
@@ -643,13 +652,13 @@ It is important to note that the error state returned from any CUDA API call can
 
 ### 2.1.7.1. Error State
 
-The CUDA runtime maintains a `cudaError_t` state for each host thread. The value defaults to `cudaSuccess` and is overwritten whenever an error occurs. `cudaGetLastError` returns current error state and then resets it to `cudaSuccess`. Alternatively, `cudaPeekLastError` returns error state without resetting it.
+The CUDA runtime maintains a `cudaError_t` state for each host thread. The value defaults to `cudaSuccess` and is overwritten whenever an error occurs. `cudaGetLastError` returns current error state and then resets it to `cudaSuccess`. Alternatively, `cudaPeekAtLastError` returns error state without resetting it.
 
 Kernel launches using [triple chevron notation](#intro-cpp-launching-kernels-triple-chevron) do not return a `cudaError_t`. It is good practice to check the error state immediately after kernel launches to detect immediate errors in the kernel launch or [asynchronous errors](#intro-cpp-error-checking-asynchronous) prior to the kernel launch. A value of `cudaSuccess` when checking the error state immediately after a kernel launch does not mean the kernel has executed successfully or even started execution. It only verifies that the kernel launch parameters and execution configuration passed to the runtime did not trigger any errors and that the error state is not a previous or asynchronous error before the kernel started.
 
 ### 2.1.7.2. Asynchronous Errors
 
-CUDA kernel launches and many runtime APIs are asynchronous. Asynchronous CUDA runtime APIs will be discussed in detail in [Asynchronous Execution](asynchronous-execution.html#asynchronous-execution). The CUDA error state is set and overwritten whenever an error occurs. This means that errors which occur during the execution of asynchronous operations will only be reported when the error state is examined next. As noted, this may be a call to `cudaGetLastError`, `cudaPeekLastError`, or it could be any CUDA API which returns `cudaError_t`.
+CUDA kernel launches and many runtime APIs are asynchronous. Asynchronous CUDA runtime APIs will be discussed in detail in [Asynchronous Execution](asynchronous-execution.html#asynchronous-execution). The CUDA error state is set and overwritten whenever an error occurs. This means that errors which occur during the execution of asynchronous operations will only be reported when the error state is examined next. As noted, this may be a call to `cudaGetLastError`, `cudaPeekAtLastError`, or it could be any CUDA API which returns `cudaError_t`.
 
 When errors are returned by CUDA runtime API functions, the error state is not cleared. This means that error code from an asynchronous error, such as an invalid memory access by a kernel, will be returned by every CUDA runtime API until the error state has been cleared by calling `cudaGetLastError`.
     
@@ -669,7 +678,7 @@ The `cudaError_t` value `cudaErrorNotReady`, which may be returned by `cudaStrea
 
 ### 2.1.7.3. `CUDA_LOG_FILE`
 
-Another good way to identify CUDA errors is with the `CUDA_LOG_FILE` environment variable. When this environment variable is set, the CUDA driver will write error messages encountered out to a file whose path is specified in the environment variable. For example, take the following incorrect CUDA code, which attemtps to launch a thread block which is larger than the maximum supported by any architecture.
+Another good way to identify CUDA errors is with the `CUDA_LOG_FILE` environment variable. When this environment variable is set, the CUDA driver will write error messages encountered out to a file whose path is specified in the environment variable. For example, take the following incorrect CUDA code, which attempts to launch a thread block which is larger than the maximum supported by any architecture.
     
     
     __global__ void k()

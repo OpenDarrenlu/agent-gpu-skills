@@ -12,7 +12,7 @@ Traditionally, the only indication of a failed CUDA API call is the return of a 
 
 ## 4.8.2. Activation
 
-Set the _CUDA_LOG_FILE_ environment variable. Acceptable values are _stdout_ , _stderr_ , or a valid path on the system to write a file. The log buffer can be dumped via API even if _CUDA_LOG_FILE_ was not set before program execution. NOTE: An error-free execution may not print any logs.
+Set the _CUDA_LOG_FILE_ environment variable. Acceptable values are _stdout_ , _stderr_ , or a valid path on the system to write a file. The log buffer can be dumped via API even if _CUDA_LOG_FILE_ was not set before program execution. Note that an error-free execution might not print any logs.
 
 ## 4.8.3. Output
 

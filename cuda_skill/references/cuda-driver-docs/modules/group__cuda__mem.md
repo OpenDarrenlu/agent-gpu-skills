@@ -9,12 +9,12 @@ struct
 
 CUmemDecompressParams
 
-     Structure describing the parameters that compose a single decompression operation.
+    Structure describing the parameters that compose a single decompression operation.
 
 ### Enumerations
 
 enum CUmemDecompressAlgorithm
-     Bitmasks for CU_DEVICE_ATTRIBUTE_MEM_DECOMPRESS_ALGORITHM_MASK.
+    Bitmasks for CU_DEVICE_ATTRIBUTE_MEM_DECOMPRESS_ALGORITHM_MASK.
 
 ### Functions
 
@@ -929,6 +929,10 @@ Users must ensure the `dptr` and `size` are aligned to the host page size.
 The `handle` will be interpreted as a pointer to an integer to store the dma_buf file descriptor. Users must ensure the entire address range is backed and mapped when the address range is allocated by cuMemAddressReserve. All the physical allocations backing the address range must be resident on the same device and have identical allocation properties. Users are also expected to retrieve a new handle every time the underlying physical allocation(s) corresponding to a previously queried VA range are changed.
 
 For CUmemRangeHandleType::CU_MEM_RANGE_HANDLE_TYPE_DMA_BUF_FD, users may set flags to CU_MEM_RANGE_FLAG_DMA_BUF_MAPPING_TYPE_PCIE. Which when set on a supported platform, will give a DMA_BUF handle mapped via PCIE BAR1 or will return an error otherwise.
+
+If the device attribute CU_DEVICE_ATTRIBUTE_DMA_BUF_MMAP_SUPPORTED is set and a CUmemRangeHandleType::CU_MEM_RANGE_HANDLE_TYPE_DMA_BUF_FD is requested for a device memory range then the returned dmabuf file descriptor may be passed as the file descriptor argument to the mmap() system call.
+
+For device memory on x86 systems the mapping will be a write combined mapping. On coherent ARM platforms these mappings will be regular cached memory. On all other platforms these mappings will be uncached.
 
 CUresult cuMemGetInfo ( size_t* free, size_t* total )
 

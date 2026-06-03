@@ -22,7 +22,7 @@ When communicating with the host CPU, certain strong operations with system scop
 
 The fundamental storage unit in the PTX memory model is a byte, consisting of 8 bits. Each state space available to a PTX program is a sequence of contiguous bytes in memory. Every byte in a PTX state space has a unique address relative to all threads that have access to the same state space.
 
-Each PTX memory instruction specifies an address operand and a data type. The address operand contains a virtual address that gets converted to a physical address during memory access. The physical address and the size of the data type together define a physical memory location, which is the range of bytes starting from the physical address and extending up to the size of the data type in bytes.
+Each PTX memory instruction specifies an address operand and a data type. The address operand contains a virtual address that gets converted to a physical address during memory access. The physical address and the size of the data type together define a physical memory location, which is the range of bytes starting from the physical address and extending up to the size of the data type in bytes. Analogously, the address operand together with the size of the data type define the range of virtual memory addresses accessed by the memory operation.
 
 The memory consistency model specification uses the terms “address” or “memory address” to indicate a virtual address, and the term “memory location” to indicate a physical memory location.
 
@@ -30,7 +30,7 @@ Each PTX memory instruction also specifies the operation — either a read, a wr
 
 ###  8.2.1. [Overlap](#overlap)
 
-Two memory locations are said to overlap when the starting address of one location is within the range of bytes constituting the other location. Two memory operations are said to overlap when they specify the same virtual address and the corresponding memory locations overlap. The overlap is said to be complete when both memory locations are identical, and it is said to be partial otherwise.
+Two memory locations are said to overlap when the starting address of one location is within the range of bytes constituting the other location. Two memory operations are said to overlap when the range of virtual addresses accessed by the two operations intersect. The overlap is said to be complete when both memory locations are identical, and it is said to be partial otherwise.
 
 ###  8.2.2. [Aliases](#aliases)
 
@@ -129,9 +129,41 @@ Note that the warp is not a _scope_ ; the CTA is the smallest collection of thre
 
 A _memory proxy_ , or a _proxy_ is an abstract label applied to a method of memory access. When two memory operations use distinct methods of memory access, they are said to be different _proxies_.
 
-Memory operations as defined in [Operation types](#operation-types) use _generic_ method of memory access, i.e. a _generic proxy_. Other operations such as textures and surfaces all use distinct methods of memory access, also distinct from the _generic_ method.
-
 A _proxy fence_ is required to synchronize memory operations across different _proxies_. Although virtual aliases use the _generic_ method of memory access, since using distinct virtual addresses behaves as if using different _proxies_ , they require a _proxy fence_ to establish memory ordering.
+
+Unless otherwise specified, memory operations as defined in [Operation types](#operation-types) use _generic_ method of memory access, i.e. a _generic proxy_. Operations using methods of access distinct from the _generic_ method include:
+
+  * textures and surface accesses,
+
+  * accesses to the same location via the same proxy using distinct virtual memory addresses,
+
+  * async-proxy and tensormap-proxy accesses by .async.bulk operations,
+
+  * fabric-proxy accesses by fabric operations.
+
+
+###  8.6.1. [Strong Proxy Accesses](#strong-proxy-accesses)
+
+Strong modifications through
+
+  * generic-proxy,
+
+  * async-proxy,
+
+  * tensormap-proxy,
+
+  * fabric-proxy,
+
+
+eventually become observable by strong accesses to the same location performed via a different proxy in that list, if modification and access are:
+
+  * system-scope - even if these used distinct memory addresses - or
+
+  * gpu-scope if the different proxies involved are in the following list:
+
+    * async-proxy,
+
+    * generic-proxy.
 
 
 ##  8.7. [Morally strong operations](#morally-strong-operations)
@@ -182,6 +214,14 @@ E.g.: `st.release [M]`; `st.relaxed [M];`
 
 E.g.: `fence.release; st.relaxed [M];` or `fence.release; atom.relaxed [M];`
 
+  4. Or a _release_ or _acquire-release memory fence_ followed in _program order_ by an asynchronous operation that performs a _strong_ write on M
+
+E.g.: `fence.release; cp.async.bulk.global.shared.relaxed.sys.b128 [M];`
+
+  5. Or a _release_ asynchronous operation that performs a _strong_ write on M
+
+E.g.: `st.async.release.sys [M];`
+
 
 Any _memory synchronization_ established by a _release_ pattern only affects operations occurring in _program order_ before the first instruction in that pattern.
 
@@ -198,6 +238,10 @@ E.g.: `ld.relaxed [M]; ld.acquire [M];`
   3. Or a _strong_ read on M followed by an acquire _memory fence_ in _program order_
 
 E.g.: `ld.relaxed [M]; fence.acquire;` or `atom.relaxed [M]; fence.acquire;`
+
+  4. Or first observing completion of an asynchronous operation that performs a _strong_ read on M and then this observation is followed by an _acquire_ memory fence in _program order_
+
+E.g.: `cp.async.bulk.mbarrier::complete_tx::bytes.relaxed.sys.b128 [dst], [M], size, [barrier];` // strong read on M `mbarrier.try_wait.relaxed p, [barrier];` // observes completion of async op that performs strong read on M `@p fence.acquire;` // acquire fence in program order after observing completion
 
 
 Any _memory synchronization_ established by an _acquire_ pattern only affects operations occurring in _program order_ after the last instruction in that pattern.

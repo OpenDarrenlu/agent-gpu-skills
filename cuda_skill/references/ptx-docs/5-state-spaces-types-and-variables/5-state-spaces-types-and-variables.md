@@ -251,6 +251,15 @@ Variables declared in `.shared` state space refer to the memory addresses in the
 
 Shared memory typically has some optimizations to support the sharing. One example is broadcast; where all threads read from the same address. Another is sequential access from sequential threads.
 
+Maximum capacity for statically allocated shared memory is 48 KB per CTA. Architecture specific targets such as `sm_90a`, support extended shared memory capacity beyond 48 KB per CTA as described below:
+
+Target architecture | Maximum shared memory size  
+---|---  
+`sm_90a` | 228 KB  
+`sm_100a`, `sm_103a` | 228 KB  
+`sm_110a` | 228 KB  
+`sm_120a`, `sm_121a` | 100 KB  
+  
 ###  5.1.8. [Texture State Space (deprecated)](#texture-state-space-deprecated)
 
 The texture (`.tex`) state space is global memory accessed via the texture instruction. It is shared by all threads in a context. Texture memory is read-only and cached, so accesses to texture memory are not coherent with global memory stores to the texture image.

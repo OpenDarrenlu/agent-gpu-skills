@@ -8,14 +8,16 @@ Nsight Compute
 
   * [1\. Release Notes](#)
     * [1.1. Release Notes](#id1)
-      * [1.1.1. Updates in 2026.1](#updates-in-2026-1)
-      * [1.1.2. Updates in 2025.4.1](#updates-in-2025-4-1)
-      * [1.1.3. Updates in 2025.4](#updates-in-2025-4)
-      * [1.1.4. Updates in 2025.3.1](#updates-in-2025-3-1)
-      * [1.1.5. Updates in 2025.3](#updates-in-2025-3)
-      * [1.1.6. Updates in 2025.2.1](#updates-in-2025-2-1)
-      * [1.1.7. Updates in 2021.2.9](#updates-in-2021-2-9)
-      * [1.1.8. Older Versions](#older-versions)
+      * [1.1.1. Updates in 2026.2](#updates-in-2026-2)
+      * [1.1.2. Updates in 2026.1.1](#updates-in-2026-1-1)
+      * [1.1.3. Updates in 2026.1](#updates-in-2026-1)
+      * [1.1.4. Updates in 2025.4.1](#updates-in-2025-4-1)
+      * [1.1.5. Updates in 2025.4](#updates-in-2025-4)
+      * [1.1.6. Updates in 2025.3.1](#updates-in-2025-3-1)
+      * [1.1.7. Updates in 2025.3](#updates-in-2025-3)
+      * [1.1.8. Updates in 2025.2.1](#updates-in-2025-2-1)
+      * [1.1.9. Updates in 2021.2.9](#updates-in-2021-2-9)
+      * [1.1.10. Older Versions](#older-versions)
         * [Updates in 2025.2](#updates-in-2025-2)
         * [Updates in 2025.1.1](#updates-in-2025-1-1)
         * [Updates in 2025.1](#updates-in-2025-1)
@@ -113,7 +115,7 @@ __[NsightCompute](../index.html)
 
   * [](../index.html) »
   * 1\. Release Notes
-  *   * v2026.1.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
+  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
 
 
 * * *
@@ -126,7 +128,65 @@ Release notes, including new features and important bug fixes. Supported platfor
 
 ## 1.1. Release Notes
 
-### 1.1.1. Updates in 2026.1
+### 1.1.1. Updates in 2026.2
+
+**General**
+
+  * Added support for CUDA 13.3.
+
+  * Added metrics for the size of [SASS instructions](../ProfilingGuide/index.html#sass-unit-level-instructions-executed-metrics).
+
+  * Added profiling support for previously unsupported SKUs, with reduced metric support, including GPUs such as RTX 6000D BSE (GB202-891), RTX 5090DD (GB202-240), and RTX 5090D (GB202-250). For more details, refer to [ERR_NVGPU](https://developer.nvidia.com/ERR_NVGPU).
+
+
+**NVIDIA Nsight Compute**
+
+  * Updated the overall layout to pin several [tool windows](../NsightCompute/index.html#tool-windows) by default.
+
+  * Improved CUDA Tile support on the Source page.
+
+  * Added a progress indicator for long-running source comparisons.
+
+  * The [Function Statistics](../NsightCompute/index.html#function-stats) tool window now shows per high-level source line data and the represented time range.
+
+  * The _Instruction Statistics_ section now shows warp-can’t issue stall samples per [HW warp ID slot](../ProfilingGuide/index.html#warp-stalls-per-warp-id).
+
+  * Added a _Device Information_ tool window to show information for local and remote systems from the [Start Activity Dialog](../NsightCompute/index.html#start-activity-dialog) or the [Connection menu](../NsightCompute/index.html#id2).
+
+  * Improved the [Report Merge Tool](../NsightCompute/index.html#report-merge-tool) dialog UI.
+
+  * The [CUDA Graph Viewer](../NsightCompute/index.html#cuda-graph-viewer) now shows the source of each graph. It also updates in the background without blocking the UI and provides progress information.
+
+  * The _Demangled Name_ column tooltip now always shows the full demangled name.
+
+
+**Resolved Issues**
+
+  * Improved the performance to first result when loading reports in the [Python Report Interface](../PythonReportInterface/index.html).
+
+  * Fixed several issues when merging reports.
+
+  * Fixed UI crashes on Linux (aarch64 sbsa) platforms.
+
+  * Fixed the `achieved_fp32` formula in the SOL roofline rules.
+
+  * Fixed an issue on the Source page that blank lines were highlighted in some cases for inlined functions.
+
+  * Fixed failing SSH connections when the OpenSSH config contained unsupported escape sequences.
+
+
+### 1.1.2. Updates in 2026.1.1
+
+**Resolved Issues**
+
+  * Fixed an issue where metric colors in a timeline row could differ from those shown in the corresponding tooltip.
+
+  * Fixed an incorrect calculation in the Roofline Analysis rule that prevented it from triggering in all expected cases.
+
+  * Fixed an issue where the High Pipe Utilization rule might not analyze all pipelines.
+
+
+### 1.1.3. Updates in 2026.1
 
 **General**
 
@@ -198,7 +258,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed issues in node-level profiling of CUDA device launchable graphs.
 
 
-### 1.1.2. Updates in 2025.4.1
+### 1.1.4. Updates in 2025.4.1
 
 **General**
 
@@ -228,7 +288,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed a crash when instantiating device-side graphs with memory nodes.
 
 
-### 1.1.3. Updates in 2025.4
+### 1.1.5. Updates in 2025.4
 
 **General**
 
@@ -253,7 +313,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Added support for collecting Warp sampling metrics with PM sampling allowing user to see function-level warp stalls for the selected time range in the timeline. See the [Function Stats tool window](../NsightCompute/index.html#tool-window-function-stats) for details.
 
 
-### 1.1.4. Updates in 2025.3.1
+### 1.1.6. Updates in 2025.3.1
 
 **General**
 
@@ -277,7 +337,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed several rules to not show non-actionable warnings for unsupported, missing metrics when profiling on mobile chips.
 
 
-### 1.1.5. Updates in 2025.3
+### 1.1.7. Updates in 2025.3
 
 **General**
 
@@ -335,7 +395,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed an error when profiling a CUDA graph kernel node doing a cluster launch on driver 580 or newer.
 
 
-### 1.1.6. Updates in 2025.2.1
+### 1.1.8. Updates in 2025.2.1
 
 **Resolved Issues**
 
@@ -344,14 +404,14 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed an issue that caused the Device Memory table of the Memory Workload Analysis section to show up empty for chips of type GB100 and GB102
 
 
-### 1.1.7. Updates in 2021.2.9
+### 1.1.9. Updates in 2021.2.9
 
 **NVIDIA Nsight Compute**
 
   * Clarify when not all metrics for the roofline chart could be collected on the current chip.
 
 
-### 1.1.8. Older Versions
+### 1.1.10. Older Versions
 
 #### Updates in 2025.2
 
@@ -2435,7 +2495,7 @@ For example, specifying only option `--quiet` extracts the installer archive wit
 
   * Other issues concerning remote connections are discussed in the documentation for [remote connections](../NsightCompute/index.html#remote-connections).
 
-  * Local connections between NVIDIA Nsight Compute and the launched target application might not work on some ppc64le or aarch64 (sbsa) systems configured to only support IPv6. On these platforms, the [NV_COMPUTE_PROFILER_LOCAL_CONNECTION_OVERRIDE=uds](../NsightComputeCli/index.html#environment-variables) environment variable can be set to use _Unix Domain Sockets_ instead of _TCP_ for local connections to workaround the problem. On x86_64 Linux, Unix Domain Sockets are used by default, but local TCP connections can be forced using [NV_COMPUTE_PROFILER_LOCAL_CONNECTION_OVERRIDE=tcp](../NsightComputeCli/index.html#environment-variables).
+  * On x86_64 and aarch64 (sbsa) Linux, Unix Domain Sockets are used by default, but local TCP connections can be forced using [NV_COMPUTE_PROFILER_LOCAL_CONNECTION_OVERRIDE=tcp](../NsightComputeCli/index.html#environment-variables). Local connections between NVIDIA Nsight Compute and the launched target application might not work on some aarch64 (sbsa) systems configured to only support IPv6 when connection mode is set to _TCP_. On these platforms, the [NV_COMPUTE_PROFILER_LOCAL_CONNECTION_OVERRIDE=uds](../NsightComputeCli/index.html#environment-variables) environment variable can be set to use _Unix Domain Sockets_ instead of _TCP_ for local connections.
 
 
 **Profiling and Metrics**
@@ -2485,7 +2545,7 @@ For example, specifying only option `--quiet` extracts the installer archive wit
   * On the Tegra platforms, when profiling multi-process applications, the mcc_* metrics may sometimes fail to be collected.
 
 
-  * Profiling kernel nodes of a device-side graph can cause hang in some cases on drivers older than 595. Use [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode instead.
+  * On drivers older than 595, profiling CUDA graph nodes that are part of a graph launched from the device might cause hangs. Use [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode instead.
 
   * Profiling in [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode is performed on the context that is specified by the stream handle for the graph launch. Only kernel nodes executing on this context are profiled.
 
@@ -2519,7 +2579,7 @@ For example, specifying only option `--quiet` extracts the installer archive wit
 
   * Attempting to use the `--clock-control` option to set the GPU clocks will fail when profiling on a MIG GPU partition. Please use `nvidia-smi` (installed with NVIDIA display driver) to control the clocks for the entire GPU. This will require administrative privileges when the GPU is partitioned.
 
-  * `--clock-control` option is not supported on Linux (aarch64 sbsa) with GB10b (Thor) GPUs. Attempting to lock or reset the clocks has no effect.
+  * `--clock-control` option is not supported on Linux (aarch64 sbsa) with GA10b (Orin) and GB10b (Thor) GPUs. Attempting to lock or reset the clocks has no effect.
 
   * On Linux aarch64, NVIDIA Nsight Compute does not work if the _HOME_ environment variable is not set.
 
@@ -2636,7 +2696,13 @@ The following feature set is supported per OptiX API version:
   
 #### CUDA Tile
 
-CUDA Tile profiling is supported with driver versions 590 and above.
+CUDA Tile profiling is supported with driver versions 580.126.09+ on Linux and 582.16+ on Windows.
+
+A new Tile section has been added to provide a detailed summary of tile dimensions and pipeline utilization.
+
+Tile section is displayed when tile profiling is enabled and a tile workload is being analyzed.
+
+Tile section is part of the `full` and `detailed` section sets.
 
 cuTile Python Profile Support Feature | Current Support | Future Support  
 ---|---|---  

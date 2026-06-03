@@ -69,7 +69,7 @@ __[NsightCompute](../index.html)
 
   * [](../index.html) »
   * 4\. Nsight Compute CLI
-  *   * v2026.1.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
+  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
 
 
 * * *
@@ -707,17 +707,17 @@ devices | List the GPU devices to enable profiling on, separated by comma. [1](#
 filter-mode | Set the filtering mode for kernel launches. Available modes:
 
   * **global:** Apply provided launch filters on kernel launches collectively.
-  * **per-gpu:** Apply provided launch filters on kernel launches separately on each device. Effective launch filters for this mode are `--launch-count` and `--launch-skip`
-  * **per-launch-config:** Apply kernel filters and launch filters on kernel launches separately for each GPU launch parameter i.e. Grid Size, Block Size and Shared Memory.
+  * **per-gpu:** Apply provided launch filters on kernel launches separately on each device.
+  * **per-launch-config:** Apply kernel filters and launch filters on kernel launches separately for each unique combination of GPU launch parameters i.e. Grid Size, Block Size and Shared Memory.
 
-| global  
+Effective launch filters for all modes include e.g. `--launch-count`, `--launch-skip`, and `--kernel-id`. | global See [Filter Options](../Training/index.html#filter-options) for examples.  
 kernel-id | Set the identifier to use for matching kernels. If the kernel does not match the identifier, it will be ignored for profiling. The identifier must be of the following format: _context-id:stream-id:[name-operator:]kernel-name:invocation-nr_
 
   * **context-id** is the CUDA context ID or regular expression of context id, NVTX name.
   * **stream-id** is the CUDA stream ID or regular expression of stream id, NVTX name.
   * **name-operator** is an optional operator to _kernel-name_. Currently, _regex_ is the only supported operator.
   * **kernel-name** is the expression to match the kernel name. By default, this is a full, literal match to what is specified by `--kernel-name-base`. When specifying the optional _regex_ name operator, this is a partial regular expression match to what is specified by `--kernel-name-base`.
-  * **invocation-nr** is the N’th invocation of matching kernel filter i.e. ctx id, stream id, kernel name, grid dimensions, block dimensions and shared memory bytes are all considered for invocation count. If ctx id or stream id is not provided then respective id is not considered for invocation count. If Multiple invocations can also be specified using regular expressions. Multiple invocations can also be specified using regular expressions.
+  * **invocation-nr** is the N’th invocation of matching kernel. In the default `global` filter mode, invocations are counted per unique kernel name (and per context/stream ID, if provided). To count invocations separately on each device, use `--filter-mode per-gpu`. To count invocations separately for each unique launch configuration (i.e. Grid Size, Block Size, and Shared Memory), use `--filter-mode per-launch-config`. Multiple invocations can also be specified using regular expressions.
 
 If the context/stream ID is a positive number, it will be strictly matched against the CUDA context/stream ID. Otherwise it will be treated as a regular expression and matched against the context/stream name specified using the NVTX library. [1](#fn1) | **Examples** `--kernel-id ::foo:2` For kernel “foo”, match the second invocation. `--kernel-id :::".*5|3"` For all kernels, match the third invocation, and all for which the invocation number ends in “5”. `--kernel-id ::regex:^.*foo$:` Match all kernels ending in “foo”. `--kernel-id ::regex:^(?!foo):` Match all kernels except those starting with “foo”. Note that depending on your OS and shell, ` you might need to quote the expression, e.g. using single quotes in Linux _bash_ : `--kernel-id ::regex:'^(?!foo)':` `--kernel-id 1|5:2::7` Match all seventh kernel invocations of kernels lauched from context 1 + stream 2, and context 5 + stream 2.  
 k,kernel-name | Set the expression to use when matching kernel names.
@@ -885,7 +885,7 @@ clock-control | Control the behavior of the GPU clocks during profiling. Allowed
   * **none:** No GPC or memory frequencies are changed during profiling.
   * **reset:** Reset GPC and memory clocks for all or the selected devices and exit. Use if a previous, killed execution of ncu left the GPU clocks in a locked state.
 
-This has no impact on thermal throttling. Note that actual clocks might still vary, depending on the level of driver support for this feature. As an alternative, use `nvidia-smi` to lock the clocks externally and set this option to `none`. | boost  
+See also the documentation on [Clock Control](../ProfilingGuide/index.html#clock-control) for more details. | boost  
 pipeline-boost-state | Control the Tensor Core boost state. Setting stable Tensor Core boosting is recommended for application performance profiling ensuring predictive run to run performance. Allowed values:
 
   * **stable:** Set the Tensor Core boost state to stable.

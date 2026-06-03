@@ -1,4 +1,4 @@
-# 6.28. Texture Object Management
+# 6.29. Texture Object Management
 
 **Source:** group__CUDA__TEXOBJECT.html#group__CUDA__TEXOBJECT
 

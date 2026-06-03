@@ -4,7 +4,7 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/environme
 
 # 5.2. CUDA Environment Variables  
   
-The following section lists the CUDA environment variables. Those related to the Multi-Process Service (MPS) are documented in the [GPU Deployment and Management Guide](https://docs.nvidia.com/deploy/mps/index.html#environment-variables).
+The following section lists the CUDA environment variables. Those related to the Multi-Process Service (MPS) are documented in the [GPU Deployment and Management Guide](https://docs.nvidia.com/deploy/mps/appendix-tools-and-interface-reference.html#environment-variables).
 
 ## 5.2.1. Device Enumeration and Properties
 

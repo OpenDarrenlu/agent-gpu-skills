@@ -181,9 +181,9 @@ A more scalable alternative to enabling peer memory access for all device memory
 
 ### 3.4.2.3. Peer-to-Peer Memory Consistency
 
-Synchronization operations must be used to enforce the ordering and correctness of memory accesses by concurrently executing threads in grids distributed across multiple devices. Threads synchronizing across devices operate at the `thread_scope_system` [synchronization scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#thread-scopes). Similarly, memory operations fall within the `thread_scope_system` [memory synchronization domain](https://docs.nvidia.com/cuda/cuda-c-programming-guide/#memory-synchronization-domains).
+Synchronization operations must be used to enforce the ordering and correctness of memory accesses by concurrently executing threads in grids distributed across multiple devices. Threads synchronizing across devices operate at the `thread_scope_system` [synchronization scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#thread-scopes). Similarly, memory operations fall within the `thread_scope_system` [memory synchronization domain](https://docs.nvidia.com/cuda/cuda-c-programming-guide/#memory-synchronization-domains).
 
-CUDA ref::atomic-functions can perform read-modify-write operations on an object in peer device memory when only a single GPU is accessing that object. The requirements and limitations for peer atomicity are described in the CUDA memory model [atomicity requirements](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#atomicity) discussion.
+CUDA ref::atomic-functions can perform read-modify-write operations on an object in peer device memory when only a single GPU is accessing that object. The requirements and limitations for peer atomicity are described in the CUDA memory model [atomicity requirements](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#atomicity) discussion.
 
 ### 3.4.2.4. Multi-Device Managed Memory
 

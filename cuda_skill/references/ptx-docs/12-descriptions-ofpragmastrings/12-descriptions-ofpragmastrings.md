@@ -4,8 +4,8 @@
 This section describes the `.pragma` strings defined by ptxas.
 
 
-##  12.1. [Pragma Strings: `"nounroll"`](#pragma-strings-nounroll)
-
+##  12.1. [Pragma Strings: `"nounroll"`](#pragma-strings-nounroll)  
+  
 `"nounroll"`
 
 Disable loop unrolling in the optimizing backend compiler.
@@ -212,5 +212,45 @@ Examples
     {
         .pragma "frequency 32";
         ...
+    }
+    
+
+
+##  12.5. [Pragma Strings: `"mma_throughput"`](#pragma-strings-mma-throughput)
+
+`"mma_throughput"`
+
+Enable compiler loop optimizations for mma operations.
+
+Syntax
+    
+    
+    .pragma "mma_throughput";
+    
+
+Description
+
+The `"mma_throughput" pragma` is a directive to enable loop optimizations in compiler for mma operations.
+
+This pragma is only allowed at entry-function scope. Compiler optimizations are enabled for the entry function specifying the pragma.
+
+PTX ISA Notes
+
+Introduced in PTX ISA version 9.3.
+
+Target ISA Notes
+
+Supported on all target architectures.
+
+Examples
+    
+    
+    .entry test_kernel()
+    {
+        ....
+        ....
+        .pragma "mma_throughput";
+        ....
+        ....
     }
     

@@ -1,13 +1,12 @@
 # CUDA Driver API Documentation Index
 
-**Modules:** 49  
-**Data structures:** 81  
+**Modules:** 48  
+**Data structures:** 83  
 
 ## Modules
 
 - [Group__Cuda__Checkpoint](modules/group__cuda__checkpoint.md)
 - [Group__Cuda__Coredump](modules/group__cuda__coredump.md)
-- [Group__Cuda__Ctx](modules/group__cuda__ctx.md)
 - [Group__Cuda__Ctx__Deprecated](modules/group__cuda__ctx__deprecated.md)
 - [Group__Cuda__D3D10](modules/group__cuda__d3d10.md)
 - [Group__Cuda__D3D10__Deprecated](modules/group__cuda__d3d10__deprecated.md)
@@ -31,8 +30,8 @@
 - [Group__Cuda__Green__Contexts](modules/group__cuda__green__contexts.md)
 - [Group__Cuda__Initialize](modules/group__cuda__initialize.md)
 - [Group__Cuda__Library](modules/group__cuda__library.md)
+- [Group__Cuda__Logical__Endpoint](modules/group__cuda__logical__endpoint.md)
 - [Group__Cuda__Logs](modules/group__cuda__logs.md)
-- [Group__Cuda__Malloc__Async](modules/group__cuda__malloc__async.md)
 - [Group__Cuda__Mem](modules/group__cuda__mem.md)
 - [Group__Cuda__Memop](modules/group__cuda__memop.md)
 - [Group__Cuda__Module](modules/group__cuda__module.md)
@@ -124,6 +123,8 @@
 - [Structculaunchattribute](data-structures/structculaunchattribute.md)
 - [Structculaunchconfig](data-structures/structculaunchconfig.md)
 - [Structculaunchmemsyncdomainmap](data-structures/structculaunchmemsyncdomainmap.md)
+- [Structculogicalendpointfabrichandle](data-structures/structculogicalendpointfabrichandle.md)
+- [Structculogicalendpointprop](data-structures/structculogicalendpointprop.md)
 - [Structcumemaccessdesc__V1](data-structures/structcumemaccessdesc__v1.md)
 - [Structcumemallocationprop__V1](data-structures/structcumemallocationprop__v1.md)
 - [Structcumemcpy3Doperand__V1](data-structures/structcumemcpy3doperand__v1.md)

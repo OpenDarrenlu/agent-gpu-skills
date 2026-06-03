@@ -1,4 +1,4 @@
-# 6.42.1. Direct3D 10 Interoperability [DEPRECATED]
+# 6.43.1. Direct3D 10 Interoperability [DEPRECATED]
 
 **Source:** group__CUDA__D3D10__DEPRECATED.html#group__CUDA__D3D10__DEPRECATED
 

@@ -8,19 +8,21 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/cpp-langu
 
 ### 5.4.1.1. Execution Space Specifiers
 
-The execution space specifiers `__host__`, `__device__`, and `__global__` indicate whether a function executes on the host or the device.
+The execution space specifiers `__host__`, `__device__`, `__tile__`, `__global__`, and `__tile_global__` indicate whether a function executes in the host, SIMT, or tile context.
 
-Table 38 Execution Space Specifier Execution Space Specifier | Executed on | Callable from  
+Table 39 Execution Space Specifier Execution Space Specifier | Executed in | Callable from  
 ---|---|---  
-Host | Device | Host | Device  
-`__host__`, no specifier | ✅ | ❌ | ✅ | ❌  
-`__device__` | ❌ | ✅ | ❌ | ✅  
-`__global__` | ❌ | ✅ | ✅ | ✅  
-`__host__ __device__` | ✅ | ✅ | ✅ | ✅  
+Host | SIMT | Tile | Host | SIMT | Tile  
+`__host__`, no specifier | ✅ | ❌ | ❌ | ✅ | ❌ | ❌  
+`__device__` | ❌ | ✅ | ❌ | ❌ | ✅ | ❌  
+`__global__` | ❌ | ✅ | ❌ | ✅ | ✅ | ❌  
+`__tile__` | ❌ | ❌ | ✅ | ❌ | ❌ | ✅  
+`__tile_global__` | ❌ | ❌ | ✅ | ✅ | ❌ | ❌  
+`__host__ __device__ __tile__` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅  
   
 * * *
 
-Constraints for `__global__` functions:
+Constraints for `__global__` and `__tile_global__` functions:
 
   * Must return `void`.
 
@@ -33,11 +35,11 @@ Constraints for `__global__` functions:
   * Refer to `__global__` [function parameters](cpp-language-support.html#global-function-parameters) for additional restrictions.
 
 
-Calls to a `__global__` function are asynchronous. They return to the host thread before the device completes execution.
+Calls to a `__global__` and `__tile_global__` function are asynchronous. They return to the host thread before the device completes execution.
 
 * * *
 
-Functions declared with `__host__ __device__` are compiled for both the host and the device. The `__CUDA_ARCH__` [macro](#cuda-arch-macro) can be used to differentiate host and device code paths:
+Functions declared with multiple execution spaces (for example, `__host__ __device__`) are compiled for each context. The `__CUDA_ARCH__` [macro](#cuda-arch-macro) can be used to differentiate the host and device code paths:
     
     
     __host__ __device__ void func() {
@@ -51,13 +53,14 @@ Functions declared with `__host__ __device__` are compiled for both the host and
 
 ### 5.4.1.2. Memory Space Specifiers
 
-The memory space specifiers `__device__`, `__managed__`, `__constant__`, and `__shared__` indicate the storage location of a variable on the device.
+The memory space specifiers `__device__`, `__tile__`, `__managed__`, `__constant__`, and `__shared__` indicate the storage location of a variable on the device.
 
 The following table summarizes the memory space properties:
 
-Table 39 Memory Space Specifier Memory Space Specifier | Location | Accessible by | Lifetime | Unique instance  
+Table 40 Memory Space Specifier Memory Space Specifier | Location | Accessible by | Lifetime | Unique instance  
 ---|---|---|---|---  
 `__device__` | Device global memory | Device Threads (grid) / CUDA Runtime API | Program/[CUDA context](../03-advanced/driver-api.html#driver-api-context) | Per device  
+`__tile__` | Device global memory | Tile blocks / CUDA Runtime API | Program/[CUDA context](../03-advanced/driver-api.html#driver-api-context) | Per device  
 `__constant__` | Device constant memory | Device Threads (grid) / CUDA Runtime API | Program/[CUDA context](../03-advanced/driver-api.html#driver-api-context) | Per device  
 `__managed__` | Host and Device (automatic) | Host/Device Threads | Program | Per program  
 `__shared__` | Device (streaming multiprocessor) | Block Threads | Block | Block  
@@ -65,7 +68,7 @@ no specifier | Device (registers) | Single Thread | Single Thread | Single Threa
   
 * * *
 
-  * Both `__device__` and `__constant__` variables can be accessed from the host using the [CUDA Runtime API](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html) functions `cudaGetSymbolAddress()`, `cudaGetSymbolSize()`, `cudaMemcpyToSymbol()`, and `cudaMemcpyFromSymbol()`.
+  * `__device__`, `__tile__` and `__constant__` variables can be accessed from the host using the [CUDA Runtime API](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html) functions `cudaGetSymbolAddress()`, `cudaGetSymbolSize()`, `cudaMemcpyToSymbol()`, and `cudaMemcpyFromSymbol()`.
 
   * `__constant__` variables are read-only in device code and can only be modified from the host using the [CUDA Runtime API](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html).
 
@@ -195,6 +198,61 @@ Here are examples of legal and illegal uses of `__managed__` variables:
     }
     
 
+#### 5.4.1.2.3. `__tile__` Variables
+
+The `__tile__` memory space specifier is similar to `__device__`. Variables marked with `__tile__` are allocated in device global memory and can be accessed by CUDA Runtime API functions. Unlike `__device__` variables, a `__tile__` variable is directly accessible from tile code.
+
+In general, `__device__` variables may not be directly accessed by name from `__tile__` or `__tile_global__` code and `__tile__` variables may not be directly accessed by name from `__device__` or `__global__` code. However, both variables are allocated in device global memory and pointers to that memory may be accessed in either context.
+
+The following example shows legal and illegal uses of tile variables:
+    
+    
+    __device__ int x_device = 0;
+    __tile__   int x_tile = 0;
+    
+    // ERROR: Variable cannot be both device and tile
+    __device__ __tile__ int x_device_tile = 0;
+    
+    __global__ void simt_function(int* in) {
+      x_device = 1; // OK: __device__ variable accessed from SIMT code
+      x_tile = 1;   // ERROR: __tile__ variable accessed from SIMT code
+    
+      *in = 1; // OK: May point to any device global memory, including x_tile.
+    }
+    
+    __tile_global__ void tile_function(int* in) {
+      x_device = 1; // ERROR: __device__ variable accessed from tile code
+      x_tile = 1;   // OK: __tile__ variable accessed from tile code
+    
+      *in = 1; // OK: May point to any device global memory, including x_device.
+    }
+    
+    int main() {
+      int* x_device_ptr;
+      cudaGetSymbolAddress((void**) &x_device_ptr, x_device);    // Gets address of x_device
+    
+      int* x_tile_ptr;
+      cudaGetSymbolAddress((void**) &x_tile_ptr, x_tile);        // Gets address of x_tile
+    
+      // OK: Passing pointer to tile variable into SIMT kernel
+      simt_function<<<1,1>>>(x_tile_ptr);
+      cudaDeviceSynchronize();
+    
+      // OK: Passing pointer to device variable into tile kernel
+      tile_function<<<1,1>>>(x_device_ptr);
+      cudaDeviceSynchronize();
+    }
+    
+
+A `__tile__` variable may not contain a subobject of pointer or reference type. For example:
+    
+    
+    __tile__ int* ptr; // ERROR
+    
+    struct S1 { int* ptr; };
+    __tile__ S1 val; // ERROR
+    
+
 ### 5.4.1.3. Inlining Specifiers
 
 The following specifiers can be used to control inlining for `__host__` and `__device__` functions:
@@ -206,7 +264,7 @@ The following specifiers can be used to control inlining for `__host__` and `__d
   * `__inline_hint__`: Enables aggressive inlining across translation units when using [Link-Time Optimization](../02-basics/nvcc.html#nvcc-link-time-optimization).
 
 
-These specifiers are mutually exclusive.
+These specifiers are mutually exclusive. These specifiers are ignored when applied to `__tile__` functions.
 
 ### 5.4.1.4. `__restrict__` Pointers
 
@@ -313,6 +371,8 @@ Requirements:
 
   * Function template instantiations must also match the primary template declaration with respect to any `__grid_constant__` parameters.
 
+  * The `__grid_constant__` annotation is ignored in `__tile_global__` function parameters.
+
 
 Examples:
     
@@ -339,7 +399,7 @@ See the example on [Compiler Explorer](https://godbolt.org/z/Goq9jrEeo).
 
 The following table summarizes the CUDA annotations and reports which execution space each annotation applies to and where it is valid.
 
-Table 40 Annotation Summary Annotation | `__host__` / `__device__` / `__host__ __device__` | `__global__`  
+Table 41 Annotation Summary Annotation | `__host__` / `__device__` / `__host__ __device__` | `__global__`  
 ---|---|---  
 [__noinline__](#inline-specifiers), [__forceinline__](#inline-specifiers), [__inline_hint__](#inline-specifiers) | Function | ❌  
 [__restrict__](#restrict) | Pointer Parameter | Pointer Parameter  
@@ -365,6 +425,8 @@ The use of non-standard arithmetic types is permitted by CUDA, as long as the ho
   * `_Complex` [types](https://www.gnu.org/software/c-intro-and-ref/manual/html_node/Complex-Data-Types.html) are only supported in host code.
 
 
+The 128-bit integer and floating point types are not supported in tile code.
+
 ### 5.4.2.2. Built-in Variables
 
 The values used to specify and retrieve the kernel configuration for the grid and blocks along the x, y, and z dimensions are of type `dim3`. The variables used to obtain the block and thread indices are of type `uint3`. Both `dim3` and `uint3` are trivial structures consisting of three unsigned values named `x`, `y`, and `z`. In C++11 and later, the default value of all components of `dim3` is 1.
@@ -382,11 +444,13 @@ Built-in device-only variables:
   * `int warpSize` : A run-time value defined as the number of threads in a warp, commonly `32`. See also [Warps and SIMT](../01-introduction/programming-model.html#programming-model-warps-simt) for the definition of a warp.
 
 
+These variables are not supported in tile code. To retrieve the block ID or grid size in tile code, use the `cuda::tiles::bid()` and `cuda::tiles::num_blocks()` APIs.
+
 ### 5.4.2.3. Built-in Types
 
 CUDA provides vector types derived from basic integer and floating-point types that are supported for both the host and the device. The following table shows the available vector types.
 
-Table 41 Vector Types C++ Fundamental Type | Vector X1 | Vector X2 | Vector X3 | Vector X4  
+Table 42 Vector Types C++ Fundamental Type | Vector X1 | Vector X2 | Vector X3 | Vector X4  
 ---|---|---|---|---  
 `signed char` | `char1` | `char2` | `char3` | `char4`  
 `unsigned char` | `uchar1` | `uchar2` | `uchar3` | `uchar4`  
@@ -407,7 +471,7 @@ Note that `long4`, `ulong4`, `longlong4`, `ulonglong4`, and `double4` have been 
 
 The following table details the byte size and alignment requirements of the vector types:
 
-Table 42 Alignment Requirements Type | Size | Alignment  
+Table 43 Alignment Requirements Type | Size | Alignment  
 ---|---|---  
 `char1`, `uchar1` | 1 | 1  
 `char2`, `uchar2` | 2 | 2  
@@ -468,13 +532,13 @@ If host code is not compiled with `nvcc`, the vector types and related functions
 
 ## 5.4.3. Kernel Configuration
 
-Any call to a `__global__` function must specify an _execution configuration_ for that call. This execution configuration defines the dimensions of the grid and blocks that will be used to execute the function on the device, as well as the associated [stream](../02-basics/asynchronous-execution.html#cuda-streams).
+Any call to a `__global__` or `__tile_global__` function must specify an _execution configuration_ for that call. This execution configuration defines the dimensions of the grid and blocks that will be used to execute the function on the device, as well as the associated [stream](../02-basics/asynchronous-execution.html#cuda-streams).
 
 The execution configuration is specified by inserting an expression in the form `<<<grid_dim, block_dim, dynamic_smem_bytes, stream>>>` between the function name and the parenthesized argument list, where:
 
-  * `grid_dim` is of type [dim3](#built-in-variables) and specifies the dimension and size of the grid, such that `grid_dim.x * grid_dim.y * grid_dim.z` equals the number of blocks being launched;
+  * `grid_dim` is of type [dim3](#built-in-variables) and specifies the dimension and size of the grid, such that `grid_dim.x * grid_dim.y * grid_dim.z` equals the number of blocks being launched.
 
-  * `block_dim` is of type [dim3](#built-in-variables) and specifies the dimension and size of each block, such that `block_dim.x * block_dim.y * block_dim.z` equals the number of threads per block;
+  * `block_dim` is of type [dim3](#built-in-variables) and specifies the dimension and size of each block, such that `block_dim.x * block_dim.y * block_dim.z` equals the number of threads per block. For `__tile_global__` kernels, the `block_dim` must be `1` because the compiler will decide how many threads to schedule when launching the tile kernel.
 
   * `dynamic_smem_bytes` is an optional `size_t` argument that defaults to zero. It specifies the number of bytes in shared memory that are dynamically allocated per block for this call in addition to the statically allocated memory. This memory is used by `extern __shared__` arrays (see [__shared__ Memory](#shared-memory-specifier)).
 
@@ -501,7 +565,7 @@ Compute capability 9.0 and higher allow users to specify compile-time thread blo
     __global__ void __cluster_dims__(2, 1, 1) kernel(float* parameter);
     
 
-The default form of `__cluster_dims__()` specifies that a kernel is to be launched as a grid cluster. If a cluster dimension is not specified, the user can specify it at launch time. Failing to specify a dimension at launch time will result in a launch-time error.
+The default form of `__cluster_dims__()` specifies that a kernel is to be launched as a grid cluster. If a cluster dimension is not specified, the user can specify it at launch time. Failing to specify a dimension at launch time will result in a launch-time error. The `__cluster_dims__` attribute may not be specified on `__tile_global__` kernels because the compiler decides how to schedule tile kernels across clusters.
 
 The dimensions of the thread block cluster can also be specified at runtime, and the kernel with the cluster can be launched using the `cudaLaunchKernelEx` API. This API takes a configuration argument of type `cudaLaunchConfig_t`, a kernel function pointer, and kernel arguments. The example below shows runtime kernel configuration.
     
@@ -661,11 +725,18 @@ The intrinsics have the following semantics:
 The following example shows how to use `__syncthreads()` to synchronize threads within a thread block and safely sum the elements of an array shared among the threads:
     
     
+    #include <cuda_runtime_api.h>
+    #include <memory.h>
+    #include <cstdlib>
+    #include <ctime>
+    #include <stdio.h>
+    
+    
     // assuming blockDim.x is 128
-    __global__ void example_syncthreads(int* input_data, int* output_data) {
+    __global__ void example_syncthreads(int* input_data, int* output_data) 
+    {
         __shared__ int shared_data[128];
-        // Every thread writes to a distinct element of 'shared_data':
-        shared_data[threadIdx.x] = input_data[threadIdx.x];
+        shared_data[threadIdx.x] = input_data[blockDim.x*blockIdx.x + threadIdx.x];
     
         // All threads synchronize, guaranteeing all writes to 'shared_data' are ordered 
         // before any thread is unblocked from '__syncthreads()':
@@ -673,12 +744,66 @@ The following example shows how to use `__syncthreads()` to synchronize threads 
     
         // A single thread safely reads 'shared_data':
         if (threadIdx.x == 0) {
-            int sum = 0;
+            float sum = 0;
             for (int i = 0; i < blockDim.x; ++i) {
                 sum += shared_data[i];
             }
             output_data[blockIdx.x] = sum;
         }
+    }
+    
+    
+    void initArray(int* A, int length)
+    {
+         std::srand(std::time({}));
+        for(int i=0; i<length; i++)
+        {
+            A[i] = int(10.f * (rand() / (float)RAND_MAX));
+        }
+    }
+    
+    
+    int main(int argc, char** arg)
+    {
+        constexpr int block_size = 128;
+        constexpr int input_length = 1024;
+        constexpr int output_length = input_length / block_size;
+    
+        // Pointers to memory vectors
+        int* input = nullptr;
+        int* output = nullptr;
+        int* comparisonResult = (int*)malloc(output_length*sizeof(int));
+    
+        // Use unified memory to allocate buffers
+        cudaMallocManaged(&input, input_length*sizeof(int));
+        cudaMallocManaged(&output, output_length*sizeof(int));
+        
+        initArray(input, input_length);
+        int grid_size = input_length / block_size;
+    
+        example_syncthreads<<<grid_size, block_size>>>(input, output);
+        cudaDeviceSynchronize();
+    
+        for(int i=0; i<output_length; i++)
+        {
+            comparisonResult[i] = 0;
+            for(int j=0; j < block_size; j++)
+            {
+                comparisonResult[i] += input[i*block_size + j];
+            }
+        }
+        
+        for(int i=0; i< output_length; i++)
+        {
+            if(output[i] != comparisonResult[i])
+            {
+                printf("Results do not match at index %d: %d != %d\n", i, output[i], comparisonResult[i]);
+                exit(-1);
+            }
+        }
+        printf("Test passed\n");
+    
+        return 0;
     }
     
 
@@ -797,11 +922,11 @@ In the following example, thread 1 executes `writeXY()`, while thread 2 executes
 
 The two threads simultaneously read and write to the same memory locations, `X` and `Y`. Any data race results in undefined behavior and has no defined semantics. Therefore, the resulting values for `A` and `B` can be anything.
 
-Memory fence and synchronization functions enforce a [sequentially consistent ordering](https://en.cppreference.com/w/cpp/atomic/memory_order) of memory accesses. These functions differ in the [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#thread-scopes) in which orderings are enforced, but are independent of the accessed memory space, including shared memory, global memory, page-locked host memory, and the memory of a peer device.
+Memory fence and synchronization functions enforce a [sequentially consistent ordering](https://en.cppreference.com/w/cpp/atomic/memory_order) of memory accesses. These functions differ in the [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#thread-scopes) in which orderings are enforced, but are independent of the accessed memory space, including shared memory, global memory, page-locked host memory, and the memory of a peer device.
 
 Hint
 
-It is suggested to use `cuda::atomic_thread_fence` provided by [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic/atomic_thread_fence.html) whenever possible for safety and portability reasons.
+It is suggested to use `cuda::atomic_thread_fence` provided by [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic/atomic_thread_fence.html) whenever possible for safety and portability reasons.
 
 **Block-level memory fence**
 
@@ -1003,16 +1128,16 @@ In the code sample below, the visibility of the memory operations on the `result
 
 Atomic functions perform read-modify-write operations on shared data, making them appear to execute in a single step. Atomicity ensures that each operation either completes fully or not at all, providing all participating threads with a consistent view of the data.
 
-CUDA provides atomic functions in four ways:
+CUDA provides atomic functions in five ways:
 
-Extended CUDA C++ atomic functions, [cuda::atomic](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic.html) and [cuda::atomic_ref](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic_ref.html).
+Extended CUDA C++ atomic functions, [cuda::atomic](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic.html) and [cuda::atomic_ref](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic_ref.html).
     
 
   * They are allowed in both host and device code.
 
   * They follow the [C++ standard atomic operations](https://en.cppreference.com/w/cpp/atomic/atomic.html) semantics.
 
-  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
+  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
 
 
 Standard C++ atomic functions, [cuda::std::atomic](https://en.cppreference.com/w/cpp/atomic/atomic.html) and [cuda::std::atomic_ref](https://en.cppreference.com/w/cpp/atomic/atomic_ref.html).
@@ -1022,7 +1147,7 @@ Standard C++ atomic functions, [cuda::std::atomic](https://en.cppreference.com/w
 
   * They follow the [C++ standard atomic operations](https://en.cppreference.com/w/cpp/atomic/atomic.html) semantics.
 
-  * They do not allow specifying the [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
+  * They do not allow specifying the [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
 
 
 Compiler [built-in atomic functions](#built-in-atomic-functions), `__nv_atomic_<op>()`.
@@ -1034,11 +1159,23 @@ Compiler [built-in atomic functions](#built-in-atomic-functions), `__nv_atomic_<
 
   * They follow the [C++ standard atomic memory order](https://en.cppreference.com/w/cpp/atomic/memory_order.html) semantics.
 
-  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
+  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations.
 
   * They have the same memory ordering semantics as [C++ standard atomic operations](https://en.cppreference.com/w/cpp/atomic/atomic.html).
 
   * They support a subset of the data types allowed by [cuda::std::atomic](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic.html) and [cuda::std::atomic_ref](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic_ref.html), except for 128-bit data types.
+
+  * They are not supported in tile code.
+
+
+CUDA Tile C++ atomic functions (for example, `cuda::tiles::atomic_load`):
+    
+
+  * They are allowed only in tile code.
+
+  * They follow the [C++ standard atomic memory order](https://en.cppreference.com/w/cpp/atomic/memory_order.html) semantics.
+
+  * They allow specifying a thread scope through `cuda::tiles::thread_scope`.
 
 
 [Legacy atomic functions](#legacy-atomic-functions), `atomic<Op>()`.
@@ -1048,7 +1185,7 @@ Compiler [built-in atomic functions](#built-in-atomic-functions), `__nv_atomic_<
 
   * They only support `memory_order_relaxed` [C++ atomic memory semantics](https://en.cppreference.com/w/cpp/atomic/memory_order.html).
 
-  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations as part of the function name.
+  * They allow specifying the [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes) of the atomic operations as part of the function name.
 
   * Unlike [built-in atomic functions](#built-in-atomic-functions), legacy atomic functions only ensure atomicity and do not introduce synchronization points (fences).
 
@@ -1057,7 +1194,7 @@ Compiler [built-in atomic functions](#built-in-atomic-functions), `__nv_atomic_<
 
 Hint
 
-Using the [Extended CUDA C++ atomic functions](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives.html) provided by `libcu++` is recommended for efficiency, safety, and portability.
+Using the [Extended CUDA C++ atomic functions](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives.html) provided by `libcu++` is recommended for efficiency, safety, and portability.
 
 ### 5.4.5.1. Legacy Atomic Functions
 
@@ -1068,13 +1205,13 @@ Legacy atomic functions perform atomic read-modify-write operations on a 32-, 64
   * For vector types such as `__half2`, `__nv_bfloat162`, `float2`, and `float4`, the read-modify-write operation is performed on each element of the vector. The entire vector is not guaranteed to be atomic in a single access.
 
 
-The atomic functions described in this section have a [memory ordering](https://en.cppreference.com/w/cpp/atomic/memory_order) of `cuda::std::memory_order_relaxed` and are only atomic at a particular [thread scope](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#thread-scopes):
+The atomic functions described in this section have a [memory ordering](https://en.cppreference.com/w/cpp/atomic/memory_order) of `cuda::std::memory_order_relaxed` and are only atomic at a particular [thread scope](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#thread-scopes):
 
   * Atomic APIs without a suffix, for example `atomicAdd`, are atomic at scope `cuda::thread_scope_device`.
 
   * Atomic APIs with the `_block` suffix, for example, `atomicAdd_block`, are atomic at scope `cuda::thread_scope_block`.
 
-  * Atomic APIs with the `_system` suffix, for example, `atomicAdd_system`, are atomic at scope `cuda::thread_scope_system` if they meet particular [conditions](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#atomicity).
+  * Atomic APIs with the `_system` suffix, for example, `atomicAdd_system`, are atomic at scope `cuda::thread_scope_system` if they meet particular [conditions](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#atomicity).
 
 
 The following example shows the CPU and GPU atomically updating an integer value at address `addr`:
@@ -1398,11 +1535,11 @@ The C++ template function `atomicCAS()` supports 128-bit types with the followin
 
 ### 5.4.5.2. Built-in Atomic Functions
 
-CUDA 12.8 and later support CUDA compiler built-in functions for atomic operations, following the same memory ordering semantics as [C++ standard atomic operations](https://en.cppreference.com/w/cpp/atomic/atomic.html) and the CUDA [thread scopes](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes). The functions follow the [GNU’s atomic built-in function signature](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html) with an extra argument for thread scope.
+CUDA 12.8 and later support CUDA compiler built-in functions for atomic operations, following the same memory ordering semantics as [C++ standard atomic operations](https://en.cppreference.com/w/cpp/atomic/atomic.html) and the CUDA [thread scopes](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes). The functions follow the [GNU’s atomic built-in function signature](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html) with an extra argument for thread scope.
 
 `nvcc` defines the macro `__CUDACC_DEVICE_ATOMIC_BUILTINS__` when built-in atomic functions are supported.
 
-Below are listed the raw enumerators for the [memory orders](https://en.cppreference.com/w/cpp/atomic/atomic.html) and [thread scopes](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes), which are used as the `order` and `scope` arguments of the built-in atomic functions:
+Below are listed the raw enumerators for the [memory orders](https://en.cppreference.com/w/cpp/atomic/atomic.html) and [thread scopes](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#libcudacxx-extended-api-memory-model-thread-scopes), which are used as the `order` and `scope` arguments of the built-in atomic functions:
     
     
     // atomic memory orders
@@ -1429,7 +1566,7 @@ Below are listed the raw enumerators for the [memory orders](https://en.cpprefer
 
   * The memory order corresponds to [C++ standard atomic operations’ memory order](https://en.cppreference.com/w/cpp/atomic/memory_order).
 
-  * The thread scope follows the `cuda::thread_scope` [definition](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html#thread-scopes).
+  * The thread scope follows the `cuda::thread_scope` [definition](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory_model.html#thread-scopes).
 
   * `__NV_ATOMIC_CONSUME` memory order is currently implemented using stronger `__NV_ATOMIC_ACQUIRE` memory order.
 
@@ -1780,7 +1917,7 @@ The following section describes the warp functions that allow threads within a w
 
 Hint
 
-It is suggested to use the `CUB` [Warp-Wide “Collective” Primitives](https://nvidia.github.io/cccl/cub/api_docs/warp_wide.html#warp-wide-collective-primitives) to perform warp operations whenever possible for efficiency, safety, and portability reasons.
+It is suggested to use the `CUB` [Warp-Wide “Collective” Primitives](https://nvidia.github.io/cccl/unstable/cub/api_docs/warp_wide.html#warp-wide-collective-primitives) to perform warp operations whenever possible for efficiency, safety, and portability reasons.
 
 ### 5.4.6.1. Warp Active Mask
     
@@ -1848,7 +1985,7 @@ These intrinsics do not provide any memory ordering.
 
 Hint
 
-It is suggested to use the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/warp/warp_match_all.html) `cuda::device::warp_match_all()` function as a generalized and safer alternative to `__match_all_sync` function.
+It is suggested to use the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/warp/warp_match_all.html) `cuda::device::warp_match_all()` function as a generalized and safer alternative to `__match_all_sync` function.
     
     
     unsigned __match_any_sync(unsigned mask, T value);
@@ -1879,7 +2016,7 @@ These intrinsics do not provide any memory ordering.
 
 Hint
 
-It is suggested to use the `CUB` [Warp-Wide “Collective” Primitives](https://nvidia.github.io/cccl/cub/api/classcub_1_1WarpReduce.html#_CPPv4I0_iEN3cub10WarpReduceE) to perform a Warp Reduction whenever possible for efficiency, safety, and portability reasons.
+It is suggested to use the `CUB` [Warp-Wide “Collective” Primitives](https://nvidia.github.io/cccl/unstable/cub/api/classcub_1_1WarpReduce.html#_CPPv4I0_iEN3cub10WarpReduceE) to perform a Warp Reduction whenever possible for efficiency, safety, and portability reasons.
 
 Supported by devices of compute capability 8.x or higher.
     
@@ -1915,7 +2052,7 @@ These intrinsics do not provide any memory ordering.
 
 Hint
 
-It is suggested to use the [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/warp/warp_shuffle.html#libcudacxx-extended-api-warp-warp-shuffle) `cuda::device::warp_shuffle()` functions as a generalized and safer alternative to `__shfl_sync()` and `__shfl_<op>_sync()` intrinsics.
+It is suggested to use the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/warp/warp_shuffle.html#libcudacxx-extended-api-warp-warp-shuffle) `cuda::device::warp_shuffle()` functions as a generalized and safer alternative to `__shfl_sync()` and `__shfl_<op>_sync()` intrinsics.
     
     
     T __shfl_sync     (unsigned mask, T value, int      srcLane,  int width=warpSize);
@@ -2084,7 +2221,7 @@ Example 2: Inclusive plus-scan across sub-partitions of 8 threads
 
 Hint
 
-It is suggested to use the [cub::WarpScan](https://nvidia.github.io/cccl/cub/api/classcub_1_1WarpScan.html) function for efficient and generalized warp scan functions.
+It is suggested to use the [cub::WarpScan](https://nvidia.github.io/cccl/unstable/cub/api/classcub_1_1WarpScan.html) function for efficient and generalized warp scan functions.
 
 CUDA C++
     
@@ -2143,7 +2280,7 @@ Example 3: Reduction across a warp
 
 Hint
 
-It is suggested to use the [cub::WarpReduce](https://nvidia.github.io/cccl/cub/api/classcub_1_1WarpReduce.html) function for efficient and generalized warp reduction functions.
+It is suggested to use the [cub::WarpReduce](https://nvidia.github.io/cccl/unstable/cub/api/classcub_1_1WarpReduce.html) function for efficient and generalized warp reduction functions.
 
 CUDA C++
     
@@ -2345,7 +2482,7 @@ Example:
     }
     
 
-**2.** If a `__global__` function template is instantiated and launched from the host, then it must be instantiated with the same template arguments, regardless of whether `__CUDA_ARCH__` is defined or its value.
+**2.** Instantiations of `__global__` function templates must not depend on whether `__CUDA_ARCH__` is defined or its value. That is, the same instantiations, with equivalent template arguments, must be present in _all_ device programs and the host program (irrespective of whether any of those instantiations are ever launched at runtime).
 
 Example:
     
@@ -2370,6 +2507,8 @@ Example:
         return 0;
     }
     
+
+This issue can be avoided by instead moving the computation proper from the `__global__` function into a `__device__` function template that is invoked by the former. Within the `__global__` function, `__CUDA_ARCH__` can then be used to conditionally instantiate the `__device__` function template with different arguments.
 
 **3.** In separate compilation mode, the presence or absence of a function or variable definition with external linkage shall not depend on the definition of `__CUDA_ARCH__` or on its value.
 
@@ -2500,7 +2639,7 @@ Address space predicate functions are used to determine the address space of a p
 
 Hint
 
-It is suggested to use the `cuda::device::is_address_from()` and `cuda::device::is_object_from()` functions provided by [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/memory/is_address_from.html) as a portable and safer alternative to Address Space Predicate intrinsic functions.
+It is suggested to use the `cuda::device::is_address_from()` and `cuda::device::is_object_from()` functions provided by [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/memory/is_address_from.html) as a portable and safer alternative to Address Space Predicate intrinsic functions.
     
     
     __device__ unsigned __isGlobal      (const void* ptr);
@@ -2606,7 +2745,7 @@ The functions perform a store using the cache operator specified in the [PTX ISA
 
 Hint
 
-It is suggested to use the `cuda::std::terminate()` function provided by [libcu++](https://nvidia.github.io/cccl/libcudacxx/standard_api.html) ([C++ reference](https://en.cppreference.com/w/cpp/error/terminate.html)) as a portable alternative to `__trap()`.
+It is suggested to use the `cuda::std::terminate()` function provided by [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api.html) ([C++ reference](https://en.cppreference.com/w/cpp/error/terminate.html)) as a portable alternative to `__trap()`.
 
 A trap operation can be initiated by calling the `__trap()` function from any device thread.
     
@@ -2736,7 +2875,7 @@ Fused addition and minimum/maximum:
     unsigned __viaddmin_s16x2_relu(unsigned, unsigned, unsigned);
     
 
-These instructions are hardware-accelerated or software emulated depending on compute capability. See [Arithmetic Instructions](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions) section for the compute capability requirements.
+These instructions are hardware-accelerated or software emulated depending on compute capability. See [Arithmetic Instructions](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#throughput-of-native-arithmetic-instructions) section for the compute capability requirements.
 
 The full API can be found in [CUDA Math API documentation](https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__SIMD.html).
 
@@ -2850,7 +2989,7 @@ See the example on [Compiler Explorer](https://godbolt.org/z/fPMK55PxE).
 
 Hint
 
-It is suggested to use the `cuda::std::assume_aligned()` function provided by [libcu++](https://nvidia.github.io/cccl/libcudacxx/standard_api.html) ([C++ reference](https://en.cppreference.com/w/cpp/memory/assume_aligned.html)) as a portable and safer alternative to the built-in functions.
+It is suggested to use the `cuda::std::assume_aligned()` function provided by [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api.html) ([C++ reference](https://en.cppreference.com/w/cpp/memory/assume_aligned.html)) as a portable and safer alternative to the built-in functions.
     
     
     void* __builtin_assume_aligned(const void* ptr, size_t align)
@@ -3012,12 +3151,29 @@ When applied to a device function’s declaration or definition, the pragma modi
 
 Note that a program is ill-formed if the pragma arguments for a function declaration and its corresponding definition do not match.
 
+### 5.4.9.7. MMA Throughput Pragma
+
+The `nv_mma_throughput` pragma is a directive to enable compiler optimizations specifically tuned for matrix multiply–accumulate operations. It is valid only at entry-function scope, that is, on a `__global__` function. Effects may extend into `__device__` functions invoked from that entry function by optimizations propagated along call paths.
+
+Example:
+    
+    
+    #pragma nv_mma_throughput
+    __global__  void kernel(){
+    ...
+    }
+    
+
+Note
+
+The `nv_mma_throughput` pragma is still experimental. The settings it enables were tuned on a limited set of internal NVIDIA workloads. Improved performance is not guaranteed for every kernel.
+
 ## 5.4.10. Debugging and Diagnostics
 
 ### 5.4.10.1. Assertion
     
     
-    void assert(int expression);
+    #define assert(expression) /* unspecified */
     
 
 The `assert()` macro stops kernel execution if `expression` is equal to zero. If the program is run within a debugger, a breakpoint is triggered, allowing the debugger to be used to inspect the current state of the device. Otherwise, each thread for which `expression` is equal to zero prints a message to stderr after synchronizing with the host via `cudaDeviceSynchronize()`, `cudaStreamSynchronize()`, or `cudaEventSynchronize()`. The format of this message is as follows:
@@ -3063,6 +3219,8 @@ will output:
     
 
 Assertions are intended for debugging purposes. Since they can affect performance, it is recommended that they be disabled in production code. They can be disabled at compile time by defining the `NDEBUG` preprocessor macro before including `assert.h` or `<cassert>`, or by using the compiler flag `-DNDEBUG`. Note that the expression should not have side effects; otherwise, disabling the assertion will affect the functionality of the code.
+
+The `assert()` macro is available in both `__device__` and `__tile__` code.
 
 ### 5.4.10.2. Breakpoint Function
 

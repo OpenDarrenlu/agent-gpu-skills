@@ -34,7 +34,7 @@ For example, in convolution kernels, a prologue for calculating convolution coef
 
 [![Cluster Launch Control Flow](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/cluster_launch_control.png) ](../_images/cluster_launch_control.png)
 
-Figure 51 Cluster Launch Control Flow
+Figure 54 Cluster Launch Control Flow
 
 With cluster launch control, a thread block attempts to cancel the launch of another thread block that has not started executing yet. If the cancellation request succeeds, it “steals” the other thread block’s work by using its index to perform the task. The cancellation will fail if there are no more thread block indices available or for other reasons, such as a higher-priority kernel being scheduled. In the latter case, if a thread block exits after a cancellation failure, the scheduler can start executing the higher-priority kernel, after which it will continue scheduling the remaining thread blocks of the current kernel for execution. The [figure](#cluster-launch-control-diagram) above presents the execution flow of this procedure.
 
@@ -50,7 +50,7 @@ Load balancing |  **\\(\textcolor{lime}{\textbf{V}}\\)** |  **\\(\textcolor{red}
 
 Cancelling a thread block via the cluster launch control API is done asynchronously and synchronized using a shared memory barrier, following a programming pattern similar to [asynchronous data copies](../03-advanced/advanced-kernel-programming.html#advanced-kernels-async-copies).
 
-The API, available through [libcu++](https://nvidia.github.io/cccl/libcudacxx/ptx_api.html), provides:
+The API, available through [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html), provides:
 
   * A request instruction that writes encoded cancellation results to a `__shared__` variable.
 
@@ -184,7 +184,7 @@ The three kernels below demonstrate the _Fixed Work per Thread Block_ , _Fixed N
                 data[i] *= alpha;
         }
         
-        // Launch: kernel_fixed_work<<<1024, (n + 1023) / 1024>>>(data, n);
+        // Launch: kernel_fixed_work<<<(n + 1023) / 1024, 1024>>>(data, n);
         
 
   * Fixed Number of Thread Blocks:
@@ -203,7 +203,7 @@ The three kernels below demonstrate the _Fixed Work per Thread Block_ , _Fixed N
             }
         }
         
-        // Launch: kernel_fixed_blocks<<<1024, SM_COUNT>>>(data, n);
+        // Launch: kernel_fixed_blocks<<<SM_COUNT, 1024>>>(data, n);
         
 
   * Cluster Launch Control:
@@ -267,7 +267,7 @@ The three kernels below demonstrate the _Fixed Work per Thread Block_ , _Fixed N
             }
         }
         
-        // Launch: kernel_cluster_launch_control<<<1024, (n + 1023) / 1024>>>(data, n);
+        // Launch: kernel_cluster_launch_control<<<(n + 1023) / 1024, 1024>>>(data, n);
         
 
 
@@ -352,4 +352,4 @@ The kernel below demonstrates the cluster launch control approach using thread b
         }
     }
     
-    // Launch: kernel_cluster_launch_control<<<1024, (n + 1023) / 1024>>>(data, n);
+    // Launch: kernel_cluster_launch_control<<<(n + 1023) / 1024, 1024>>>(data, n);

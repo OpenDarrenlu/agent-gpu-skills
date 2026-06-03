@@ -1,4 +1,4 @@
-# 6.40. OpenGL Interoperability
+# 6.41. OpenGL Interoperability
 
 **Source:** group__CUDA__GL.html#group__CUDA__GL
 

@@ -1,4 +1,4 @@
-# 7.82. CUstreamCigCaptureParams
+# 7.84. CUstreamCigCaptureParams
 
 **Source:** structCUstreamCigCaptureParams.html#structCUstreamCigCaptureParams
 

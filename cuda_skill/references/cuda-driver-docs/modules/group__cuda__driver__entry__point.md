@@ -1,4 +1,4 @@
-# 6.33. Driver Entry Point Access
+# 6.34. Driver Entry Point Access
 
 **Source:** group__CUDA__DRIVER__ENTRY__POINT.html#group__CUDA__DRIVER__ENTRY__POINT
 

@@ -1,4 +1,4 @@
-# 6.41.1. Direct3D 9 Interoperability [DEPRECATED]
+# 6.42.1. Direct3D 9 Interoperability [DEPRECATED]
 
 **Source:** group__CUDA__D3D9__DEPRECATED.html#group__CUDA__D3D9__DEPRECATED
 

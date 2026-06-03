@@ -1,4 +1,4 @@
-# 6.41. Direct3D 9 Interoperability
+# 6.42. Direct3D 9 Interoperability
 
 **Source:** group__CUDA__D3D9.html#group__CUDA__D3D9
 

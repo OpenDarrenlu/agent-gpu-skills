@@ -1,4 +1,4 @@
-# 7.72. CUmemcpy3DOperand_v1
+# 7.74. CUmemcpy3DOperand_v1
 
 **Source:** structCUmemcpy3DOperand__v1.html#structCUmemcpy3DOperand__v1
 

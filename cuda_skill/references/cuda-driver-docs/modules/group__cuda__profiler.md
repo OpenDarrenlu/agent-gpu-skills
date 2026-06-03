@@ -1,4 +1,4 @@
-# 6.39. Profiler Control
+# 6.40. Profiler Control
 
 **Source:** group__CUDA__PROFILER.html#group__CUDA__PROFILER
 

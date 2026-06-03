@@ -1,4 +1,4 @@
-# 6.38. Profiler Control [DEPRECATED]
+# 6.39. Profiler Control [DEPRECATED]
 
 **Source:** group__CUDA__PROFILER__DEPRECATED.html#group__CUDA__PROFILER__DEPRECATED
 

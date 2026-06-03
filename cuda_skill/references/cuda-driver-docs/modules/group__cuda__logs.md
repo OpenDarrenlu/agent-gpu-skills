@@ -1,4 +1,4 @@
-# 6.36. Error Log Management Functions
+# 6.37. Error Log Management Functions
 
 **Source:** group__CUDA__LOGS.html#group__CUDA__LOGS
 

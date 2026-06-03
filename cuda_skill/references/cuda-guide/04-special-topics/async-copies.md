@@ -23,7 +23,10 @@ Table 18 Asynchronous copies with possible source and destination memory spaces 
 Source | Destination | Completion Mechanism | API  
 global | global |  |   
 shared::cta | global |  |   
-global | shared::cta | shared memory barrier, pipeline | [cuda::memcpy_async](https://nvidia.github.io/cccl/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html), [cooperative_groups::memcpy_async](../05-appendices/device-callable-apis.html#cg-api-async-memcpy), [__pipeline_memcpy_async](../05-appendices/device-callable-apis.html#pipeline-primitives-interface)  
+global | shared::cta | shared memory barrier, pipeline | 
+
+[cuda::memcpy_async](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html),
+    [cooperative_groups::memcpy_async](../05-appendices/device-callable-apis.html#cg-api-async-memcpy), [__pipeline_memcpy_async](../05-appendices/device-callable-apis.html#pipeline-primitives-interface)  
 global | shared::cluster |  |   
 shared::cluster | shared::cta |  |   
 shared::cta | shared::cta |  |   
@@ -498,7 +501,7 @@ CUDA C primitives
   
 The `cuda::memcpy_async` implementation demonstrates the API with the highest level of abstraction with `cuda::memcpy_async` and a `cuda::pipeline` with 2 stages. It uses a partitioned pipeline (see [Pipelines](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-pipelines)) where the first warp serves as a producer and the remaining warps as consumers. Producers initially fill both pipeline stages. Then, in the main processing loop, while consumers process the current batch, producers fetch data for future batches, maintaining a steady flow of work.
 
-The CUDA C primitives implementation based on primitives combines `__pipeline_memcpy_async()` with [shared memory barriers](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers) as the completion mechanism to coordinate the asynchronous memory transfers. The `__pipeline_arrive_on()` function associates the memory copy with the barrier. It increments the barrier arrival count by one and when all asynchronous operations sequenced before it have completed, the arrival count is automatically decremented by one and hence the net effect on the arrival count is zero. For this reason, we also need to explicitly wait on the barrier with `__mbarrier_arrive()`.
+The CUDA C primitives implementation based on primitives combines `__pipeline_memcpy_async()` with [shared memory barriers](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers) as the completion mechanism to coordinate the asynchronous memory transfers. The `__pipeline_arrive_on()` function associates the memory copy with the barrier. It increments the barrier arrival count by one and when all asynchronous operations sequenced before it have completed, the arrival count is automatically decremented by one and hence the net effect on the arrival count is zero. For this reason, we also need to explicitly arrive at the barrier with `__mbarrier_arrive()`.
 
 ## 4.11.2. Using the Tensor Memory Accelerator (TMA)
 
@@ -530,13 +533,13 @@ Table 20 Asynchronous copies with possible source and destination memory spaces 
 ---|---  
 Source | Destination | Completion Mechanism | API  
 global | global |  |   
-shared::cta | global | bulk async-group | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk.html)  
-global | shared::cta | shared memory barrier | [cuda::memcpy_async](https://nvidia.github.io/cccl/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html), [cuda::device::memcpy_async_tx](https://nvidia.github.io/cccl/libcudacxx/extended_api/asynchronous_operations/memcpy_async_tx.html), [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk.html)  
-global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk.html)  
-shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk.html)  
+shared::cta | global | bulk async-group | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
+global | shared::cta | shared memory barrier | [cuda::memcpy_async](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/asynchronous_operations/memcpy_async.html), [cuda::device::memcpy_async_tx](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/asynchronous_operations/memcpy_async_tx.html), [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
+global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
+shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
 shared::cta | shared::cta |  |   
   
-Some functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/libcudacxx/ptx_api.html) library. The availability of these wrappers can be checked with the following code:
+Some functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) library. The availability of these wrappers can be checked with the following code:
     
     
     #if defined(__CUDA_MINIMUM_ARCH__) && __CUDA_MINIMUM_ARCH__ < 900
@@ -659,7 +662,7 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
 
 **TMA read**. The bulk-asynchronous copy instruction directs the hardware to copy a large chunk of data into shared memory, and to update the [transaction count](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#parallel-synchronization-and-communication-instructions-mbarrier-tracking-async-operations) of the shared memory barrier after completing the read. In general, issuing as few bulk copies with as big a size as possible results in the best performance. Because the copy can be performed asynchronously by the hardware, it is not necessary to split the copy into smaller chunks.
 
-The thread that initiates the bulk-asynchronous copy operation also tells the barrier how many transactions (tx) are expected to arrive. In this case, the transactions are counted in bytes. This is automatically performed by `cuda::memcpy_async`, but not by `cuda::device::memcpy_async_tx` and `cuda::ptx::cp_async_bulk` after which we need to explicitly call `cuda::ptx::mbarrier_expect_tx`. If multiple threads update the transaction count, the expected transaction will be the sum of the updates. The barrier will only flip once all threads have arrived **and** all bytes have arrived. Once the barrier has flipped, the bytes are safe to read from shared memory, both by the threads as well as by subsequent bulk-asynchronous copies. More information about barrier transaction accounting can be found in [Tracking Asynchronous Memory Operations](async-barriers.html#asynchronous-barriers-tracking).
+The thread that initiates the bulk-asynchronous copy operation also tells the barrier how many transactions (tx) are expected to arrive. In this case, the transactions are counted in bytes. This is automatically performed by `cuda::memcpy_async`, but not by `cuda::device::memcpy_async_tx` and `cuda::ptx::cp_async_bulk` after which we need to explicitly call `cuda::ptx::mbarrier_expect_tx`. If multiple threads update the transaction count, the expected transaction count will be the sum of the updates. The barrier will only flip once all threads have arrived **and** all bytes have arrived. Once the barrier has flipped, the bytes are safe to read from shared memory, both by the threads as well as by subsequent bulk-asynchronous copies. More information about barrier transaction accounting can be found in [Tracking Asynchronous Memory Operations](async-barriers.html#asynchronous-barriers-tracking).
 
 **Barrier wait**. Waiting for the barrier to flip is done using tokens with `bar.wait()`. It can be more efficient to use explicit phase tracking of the barrier (see [Explicit Phase Tracking](async-barriers.html#asynchronous-barriers-explicit-phase)).
 
@@ -800,13 +803,13 @@ Table 22 Asynchronous copies with possible source and destination memory spaces 
 ---|---  
 Source | Destination | Completion Mechanism | API  
 global | global |  |   
-shared::cta | global | bulk async-group | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
-global | shared::cta | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
-global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
-shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
+shared::cta | global | bulk async-group | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
+global | shared::cta | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
+global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
+shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
 shared::cta | shared::cta |  |   
   
-All functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/libcudacxx/ptx_api.html) library.
+All functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) library.
 
 In the following, we describe how to create a tensor map using the CUDA driver API, how to pass it to the device, and how to use it on the device.
 
@@ -1095,13 +1098,13 @@ The following sections describe the high-level steps. Throughout the examples, t
 
 The recommended process of encoding a tensor map in global memory proceeds as follows.
 
-  1. Pass an existing tensor map, the `template_tensor_map`, to the kernel. In contrast to kernels that use the tensor map in a `cp.async.bulk.tensor` instruction, this may be done in any way: a pointer to global memory, kernel parameter, a `__const___` variable, and so on.
+  1. Pass an existing tensor map, the `template_tensor_map`, to the kernel. In contrast to kernels that use the tensor map in a `cp.async.bulk.tensor` instruction, this may be done in any way: a pointer to global memory, kernel parameter, a `__constant___` variable, and so on.
 
   2. Copy-initialize a tensor map in shared memory with the template_tensor_map value.
 
-  3. Modify the tensor map in shared memory using the [cuda::ptx::tensormap_replace](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/tensormap_replace.html) functions. These functions wrap the [tensormap.replace](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-tensormap-replace) PTX instruction, which can be used to modify any field of a tiled-type tensor map, including the base address, size, stride, and so on.
+  3. Modify the tensor map in shared memory using the [cuda::ptx::tensormap_replace](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/tensormap_replace.html) functions. These functions wrap the [tensormap.replace](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-tensormap-replace) PTX instruction, which can be used to modify any field of a tiled-type tensor map, including the base address, size, stride, and so on.
 
-  4. Using the [cuda::ptx::tensormap_copy_fenceproxy](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/tensormap_cp_fenceproxy.html#tensormap-cp-fenceproxy) function, copy the modified tensor map from shared memory to global memory and perform any necessary fencing.
+  4. Using the [cuda::ptx::tensormap_copy_fenceproxy](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/tensormap_cp_fenceproxy.html#tensormap-cp-fenceproxy) function, copy the modified tensor map from shared memory to global memory and perform any necessary fencing.
 
 
 The following code contains a kernel that follows these steps. For completeness, it modifies all the fields of the tensor map. Typically, a kernel will modify just a few fields.
@@ -1110,7 +1113,7 @@ In this kernel, `template_tensor_map` is passed as a kernel parameter. This is t
 
 Note
 
-The format of the tensor map may change over time. Therefore, the [cuda::ptx::tensormap_replace](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/tensormap_replace.html) functions and corresponding [tensormap.replace.tile](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-tensormap-replace) PTX instructions are marked as specific to sm_90a. To use them, compile using `nvcc -arch sm_90a ....`.
+The format of the tensor map may change over time. Therefore, the [cuda::ptx::tensormap_replace](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/tensormap_replace.html) functions and corresponding [tensormap.replace.tile](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-tensormap-replace) PTX instructions are marked as specific to sm_90a. To use them, compile using `nvcc -arch sm_90a ....`.
 
 Tip
 
@@ -1188,9 +1191,9 @@ On-device modification is only supported for tiled-type tensor maps; other tenso
 
 In contrast to using a tensor map that is passed as a `const __grid_constant__` kernel parameter, using a tensor map in global memory requires explicitly establishing a release-acquire pattern in the tensor map proxy between the threads that modify the tensor map and the threads that use it.
 
-The release part of the pattern was shown in the previous section. It is accomplished using the [cuda::ptx::tensormap.cp_fenceproxy](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/tensormap_cp_fenceproxy.html) function.
+The release part of the pattern was shown in the previous section. It is accomplished using the [cuda::ptx::tensormap.cp_fenceproxy](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/tensormap_cp_fenceproxy.html) function.
 
-The acquire part is accomplished using the [cuda::ptx::fence_proxy_tensormap_generic](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/fence.html) function that wraps the [fence.proxy.tensormap::generic.acquire](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#parallel-synchronization-and-communication-instructions-membar-fence) instruction. If the two threads participating in the release-acquire pattern are on the same device, the `.gpu` scope suffices. If the threads are on different devices, the `.sys` scope must be used. Once a tensor map has been acquired by one thread, it can be used by other threads in the block after sufficient synchronization, for example, using `__syncthreads()`. The thread that uses the tensor map and the thread that performs the fence must be in the same block. That is, if the threads are in, for example, two different thread blocks of the same cluster, the same grid, or a different kernel, synchronization APIs such as `cooperative_groups::cluster` or `grid_group::sync()` or stream-order synchronization do not suffice to establish ordering for tensor map updates, that is, threads in these other thread blocks still need to acquire the tensor map proxy at the right scope before using the updated tensor map. If there are no intermediate modifications, the fence does not have to be repeated before each `cp.async.bulk.tensor` instruction.
+The acquire part is accomplished using the [cuda::ptx::fence_proxy_tensormap_generic](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/fence.html) function that wraps the [fence.proxy.tensormap::generic.acquire](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#parallel-synchronization-and-communication-instructions-membar) instruction. If the two threads participating in the release-acquire pattern are on the same device, the `.gpu` scope suffices. If the threads are on different devices, the `.sys` scope must be used. Once a tensor map has been acquired by one thread, it can be used by other threads in the block after sufficient synchronization, for example, using `__syncthreads()`. The thread that uses the tensor map and the thread that performs the fence must be in the same block. That is, if the threads are in, for example, two different thread blocks of the same cluster, the same grid, or a different kernel, synchronization APIs such as `cooperative_groups::cluster` or `grid_group::sync()` or stream-order synchronization do not suffice to establish ordering for tensor map updates, that is, threads in these other thread blocks still need to acquire the tensor map proxy at the right scope before using the updated tensor map. If there are no intermediate modifications, the fence does not have to be repeated before each `cp.async.bulk.tensor` instruction.
 
 The `fence` and subsequent use of the tensor map is shown in the following example.
     
@@ -1278,15 +1281,15 @@ In the example, we load an 8x8 matrix of type `int4`, stored as row major in glo
 
 To avoid bank conflicts, the `CU_TENSOR_MAP_SWIZZLE_128B` layout can be used. This layout matches the 128 bytes row length and changes the shared memory layout in a way that both the column wise and row wise access don’t require the same banks per transaction.
 
-The two tables, [Figure 48](#figure-swizzle-example1) and [Figure 49](#figure-swizzle-example2), below show the normal and the swizzled shared memory layout of the 8x8 matrix of type `int4` and its transpose matrix. The colors indicate which of the eight groups of four banks the matrix element is mapped to, and the margin row and margin column list the global memory row and column indices. The entries show the shared memory indices of the 16-byte matrix elements.
+The two tables, [Figure 51](#figure-swizzle-example1) and [Figure 52](#figure-swizzle-example2), below show the normal and the swizzled shared memory layout of the 8x8 matrix of type `int4` and its transpose matrix. The colors indicate which of the eight groups of four banks the matrix element is mapped to, and the margin row and margin column list the global memory row and column indices. The entries show the shared memory indices of the 16-byte matrix elements.
 
 [![The shared memory data layout without swizzle](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/swizzle-example1.png) ](../_images/swizzle-example1.png)
 
-Figure 48 In the shared memory data layout without swizzle, the shared memory indices are equivalent to the global memory indices. Per load instruction, one row is read and stored in a column of the transpose buffer. Since all matrix elements of the column in the transpose fall in the same bank, the store must be serialized, resulting in eight store transactions, giving an eight-way bank conflict per stored column.
+Figure 51 In the shared memory data layout without swizzle, the shared memory indices are equivalent to the global memory indices. Per load instruction, one row is read and stored in a column of the transpose buffer. Since all matrix elements of the column in the transpose fall in the same bank, the store must be serialized, resulting in eight store transactions, giving an eight-way bank conflict per stored column.
 
 [![The shared memory data layout with CU_TENSOR_MAP_SWIZZLE_128B swizzle.](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/swizzle-example2.png) ](../_images/swizzle-example2.png)
 
-Figure 49 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzle. One row is stored in a column, each matrix element is from a different bank for both the rows and columns, and so without any bank conflicts.
+Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzle. One row is stored in a column, each matrix element is from a different bank for both the rows and columns, and so without any bank conflicts.
     
     
     __global__ void kernel_tma(const __grid_constant__ CUtensorMap tensor_map) {
@@ -1397,7 +1400,7 @@ Figure 49 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
 
 **Remark.** This example is supposed to show the use of swizzle and ‘as-is’ is not performant nor does it scale beyond the given dimensions.
 
-**Explanation.** During data transfer, the TMA engine shuffles the data according to the swizzle pattern, as described in the following tables. These swizzle patterns define the mapping of the 16-byte chunks along the swizzle width to subgroups of four banks. It is of type `CUtensorMapSwizzle` and has four options: none, 32 bytes, 64 bytes and 128 bytes. Note that the shared memory box’s inner dimension must be less or equal to the span of the swizzle pattern.
+**Explanation.** During data transfer, the TMA engine shuffles the data according to the swizzle pattern, as described in the following tables. These swizzle patterns define the mapping of the 16-byte chunks along the swizzle width to subgroups of four banks. It is of type `CUtensorMapSwizzle` and has four options: none, 32 bytes, 64 bytes and 128 bytes. Note that the shared memory box’s inner dimension must be less than or equal to the span of the swizzle pattern.
 
 The Swizzle Modes
 
@@ -1405,7 +1408,7 @@ As previously mentioned, there are four swizzle modes. The following tables show
 
 [![An Overview of TMA Swizzle Patterns](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/swizzle-pattern.png) ](../_images/swizzle-pattern.png)
 
-Figure 50 An Overview of TMA Swizzle Patterns
+Figure 53 An Overview of TMA Swizzle Patterns
 
 **Considerations.** When applying a TMA swizzle pattern, it is crucial to adhere to specific memory requirements:
 
@@ -1426,7 +1429,7 @@ CU_TENSOR_MAP_SWIZZLE_128B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%8` | 
 CU_TENSOR_MAP_SWIZZLE_64B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%4` | `smem[y][x] <-> smem[y][((y+offset)%4)^x]`  
 CU_TENSOR_MAP_SWIZZLE_32B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%2` | `smem[y][x] <-> smem[y][((y+offset)%2)^x]`  
   
-In [Figure 50](#figure-swizzle-overview), this offset represents the initial row offset, thus, in the swizzle index calculation, it is added to the row index `y`. The following snippet shows how to access the swizzled shared memory in the `CU_TENSOR_MAP_SWIZZLE_128B` mode.
+In [Figure 53](#figure-swizzle-overview), this offset represents the initial row offset, thus, in the swizzle index calculation, it is added to the row index `y`. The following snippet shows how to access the swizzled shared memory in the `CU_TENSOR_MAP_SWIZZLE_128B` mode.
     
     
     data_t* smem_ptr = &smem[0][0];
@@ -1445,7 +1448,7 @@ CU_TENSOR_MAP_SWIZZLE_NONE (default) |  |  |  | 128 bytes | 16 bytes
   
 ## 4.11.3. Using STAS
 
-CUDA applications using [thread block clusters](../02-basics/intro-to-cuda-cpp.html#thread-block-clusters) may need to move small data elements between thread blocks within the cluster. STAS instructions (CC 9.0+, see [PTX documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-st-async)) enable asynchronous data copies directly from registers to distributed shared memory. STAS is only exposed through a lower-level `cuda::ptx::st_async` API available in the [libcu++](https://nvidia.github.io/cccl/libcudacxx/ptx/instructions/st_async.html?highlight=st_async#) library.
+CUDA applications using [thread block clusters](../02-basics/intro-to-cuda-cpp.html#thread-block-clusters) may need to move small data elements between thread blocks within the cluster. STAS instructions (CC 9.0+, see [PTX documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-st-async)) enable asynchronous data copies directly from registers to distributed shared memory. STAS is only exposed through a lower-level `cuda::ptx::st_async` API available in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/st_async.html?highlight=st_async#) library.
 
 **Dimensions**. STAS supports copying 4, 8 or 16 bytes.
 

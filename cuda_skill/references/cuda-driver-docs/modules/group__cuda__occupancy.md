@@ -1,4 +1,4 @@
-# 6.25. Occupancy
+# 6.26. Occupancy
 
 **Source:** group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY
 

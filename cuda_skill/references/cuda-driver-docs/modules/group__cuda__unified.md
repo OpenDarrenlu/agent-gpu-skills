@@ -1,4 +1,4 @@
-# 6.17. Unified Addressing
+# 6.18. Unified Addressing
 
 **Source:** group__CUDA__UNIFIED.html#group__CUDA__UNIFIED
 

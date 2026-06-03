@@ -16,6 +16,8 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/cpp-langu
 
   * **C++20** (ISO/IEC 14882:2020), `--std=c++20` flag.
 
+  * **C++23** (ISO/IEC 14882:2024), `--std=c++23` flag.
+
 
 Passing `nvcc` `-std=c++<version>` flag turns on all C++ features related to the specified version and also invokes the host preprocessor, compiler and linker with the corresponding C++ dialect option.
 
@@ -162,6 +164,10 @@ DR 727, In-class explicit instantiations | [CWG727](https://cplusplus.github.io/
 
 GCC version ≥ 10.0, Clang version ≥ 10.0, Microsoft Visual Studio ≥ 2022, and nvc++ version ≥ 20.7.
 
+Note
+
+Entries prefixed with “DR:” are Defect Report resolutions. They correct the standard and apply to earlier C++ standard modes (e.g., C++17) as well; they are listed here for completeness and are not specific to C++20.
+
 Table 37 C++20 Language Features Supported by NVCC for device code Language Feature | C++20 Proposal | NVCC/CUDA Toolkit 12.x  
 ---|---|---  
 Default member initializers for bit-fields | [P0683R1](https://wg21.link/p0683r1) | ✅  
@@ -264,9 +270,68 @@ DR: Checking for abstract class types | [P0929R2](https://wg21.link/p0929r2) | �
 DR: More implicit moves | [P1825R0](https://wg21.link/p1825r0) | ✅  
 DR: Pseudo-destructors end object lifetimes | [P0593R6](https://wg21.link/p0593r6) | ✅  
   
-## 5.3.5. CUDA C++ Standard Library
+## 5.3.5. C++23 Language Features
 
-CUDA provides an implementation of the C++ Standard Library (STL), called [libcu++](https://nvidia.github.io/cccl/libcudacxx/standard_api.html). The library presents the following benefits:
+GCC version ≥ 14.0, Clang version ≥ 18.0, Microsoft Visual Studio (Not Supported), and nvc++ version ≥ 24.3.
+
+Note
+
+Entries prefixed with “DR:” are Defect Report resolutions. They correct the standard and apply to earlier C++ standard modes (e.g., C++17, C++20) as well; they are listed here for completeness and are not specific to C++23.
+
+Note
+
+**N/A** in the NVCC column indicates that the feature is not applicable to device code (e.g., removal of unused standard wording such as garbage collection support, or host-defined behavior).
+
+Table 38 C++23 Language Features Supported by NVCC for device code Language Feature | C++23 Proposal | NVCC/CUDA Toolkit  
+---|---|---  
+Proposed resolution for core issues 411, 1656, and 2333; numeric and universal character escapes in character and string literals | [P2029R4](https://wg21.link/p2029r4) | ✅  
+Literal Suffix for (signed) size_t | [P0330R8](https://wg21.link/p0330r8) | ✅  
+Make () more optional for lambdas (Down with ()!) | [P1102R2](https://wg21.link/p1102r2) | ✅  
+if consteval | [P1938R3](https://wg21.link/p1938r3) | ✅  
+Removing Garbage Collection Support | [P2186R2](https://wg21.link/p2186r2) | N/A  
+DR: C++ Identifier Syntax using Unicode Standard Annex 31 | [P1949R7](https://wg21.link/p1949r7) | ✅  
+DR: Allow Duplicate Attributes | [P2156R1](https://wg21.link/p2156r1) | ✅  
+Narrowing contextual conversions to bool | [P1401R5](https://wg21.link/p1401r5) | ❌  
+Trimming whitespaces before line splicing | [P2223R2](https://wg21.link/p2223r2) | ✅  
+Make declaration order layout mandated | [P1847R4](https://wg21.link/p1847r4) | ✅  
+Mixed string literal concatenation | [P2201R1](https://wg21.link/p2201r1) | N/A  
+Non-literal variables (and labels and gotos) in constexpr functions | [P2242R3](https://wg21.link/p2242r3) | ✅  
+Deducing this | [P0847R7](https://wg21.link/p0847r7) | ✅  
+Consistent character literal encoding | [P2316R2](https://wg21.link/p2316r2) | ✅  
+Add support for preprocessing directives elifdef and elifndef | [P2334R1](https://wg21.link/p2334r1) | ✅  
+Character encoding of diagnostic text | [P2246R1](https://wg21.link/p2246r1) | ✅  
+Extend init-statement to allow alias-declaration | [P2360R0](https://wg21.link/p2360r0) | ✅  
+Change scope of lambda trailing-return-type | [P2036R3](https://wg21.link/p2036r3) | ✅  
+Multidimensional subscript operator | [P2128R6](https://wg21.link/p2128r6) | ✅  
+Character sets and encodings | [P2314R4](https://wg21.link/p2314r4) | ✅  
+auto(x) and auto {x} | [P0849R8](https://wg21.link/p0849r8) | ✅  
+Missing feature test macros for C++20 core papers | [P2493R0](https://wg21.link/p2493r0) | ✅  
+Attributes on lambda expression | [P2173R1](https://wg21.link/p2173r1) | ✅  
+Support for #warning | [P2437R1](https://wg21.link/p2437r1) | ✅  
+Remove non-encodable wide character literals and multicharacter wide character literals | [P2362R3](https://wg21.link/p2362r3) | ✅  
+Labels at the end of compound statements (C compatibility) | [P2324R2](https://wg21.link/p2324r2) | ✅  
+Delimited escape sequences | [P2290R3](https://wg21.link/p2290r3) | ✅  
+Relaxing some constexpr restrictions | [P2448R2](https://wg21.link/p2448r2) | ❌  
+Simpler implicit move | [P2266R3](https://wg21.link/p2266r3) | ✅  
+Named universal character escapes | [P2071R2](https://wg21.link/p2071r2) | ✅  
+static operator() | [P1169R4](https://wg21.link/p1169r4) | ✅  
+static operator[] | [P2589R1](https://wg21.link/p2589r1) | ✅  
+Extended floating-point types and standard names | [P1467R9](https://wg21.link/p1467r9) | ✅  
+Portable assumptions `[[assume]]` | [P1774R8](https://wg21.link/p1774r8) | ✅  
+Support for UTF-8 as a portable source file encoding | [P2295R6](https://wg21.link/p2295r6) | ✅  
+DR: char8_t Compatibility and Portability Fix | [P2513R4](https://wg21.link/p2513r4) | ✅  
+DR: De-deprecating volatile bitwise compound assignment operations | [P2327R1](https://wg21.link/p2327r1) | ❌  
+DR: Relax requirements on wchar_t to match existing practices | [P2460R2](https://wg21.link/p2460r2) | N/A  
+DR: Using unknown pointers and references in constant expressions | [P2280R4](https://wg21.link/p2280r4) | ❌  
+DR: The Equality Operator You Are Looking For | [P2468R2](https://wg21.link/p2468r2) | ❌  
+Permitting static constexpr variables in constexpr functions | [P2647R1](https://wg21.link/p2647r1) | ✅  
+Extending the lifetime of temporaries in range-based for loop initializer | [P2644R1](https://wg21.link/p2644r1)   
+[P2718R0](https://wg21.link/p2718r0) | ✅  
+DR: consteval needs to propagate up | [P2564R3](https://wg21.link/p2564r3) | ✅  
+  
+## 5.3.6. CUDA C++ Standard Library
+
+CUDA provides an implementation of the C++ Standard Library (STL), called [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api.html). The library presents the following benefits:
 
   * The functionalities are available on both host and device.
 
@@ -283,13 +348,13 @@ CUDA provides an implementation of the C++ Standard Library (STL), called [libcu
   * Highly optimized for device code.
 
 
-In addition, `libcu++` provides [extended features](https://nvidia.github.io/cccl/libcudacxx/extended_api.html) that are not available in the C++ Standard Library to improve productivity and application performance. Such features include mathematical functions, memory operations, synchronization primitives, container extensions, high-level abstractions of CUDA intrinsics, C++ PTX wrappers, and more.
+In addition, `libcu++` provides [extended features](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api.html) that are not available in the C++ Standard Library to improve productivity and application performance. Such features include mathematical functions, memory operations, synchronization primitives, container extensions, high-level abstractions of CUDA intrinsics, C++ PTX wrappers, and more.
 
-`libcu++` is available as part of the [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads), as well as part of the open-source [CCCL](https://nvidia.github.io/cccl/) repository.
+`libcu++` is available as part of the [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads), as well as part of the open-source [CCCL](https://nvidia.github.io/cccl/unstable/) repository.
 
-## 5.3.6. C Standard Library Functions
+## 5.3.7. C Standard Library Functions
 
-### 5.3.6.1. `clock()` and `clock64()`
+### 5.3.7.1. `clock()` and `clock64()`
     
     
     __host__ __device__ clock_t   clock();
@@ -302,13 +367,13 @@ Hint
 
   * The corresponding [CUDA C++ function](https://en.cppreference.com/w/cpp/chrono/c/clock.html) `cuda::std::clock()` is provided in the `<cuda/std/ctime>` header.
 
-  * A portable [C++](https://en.cppreference.com/w/cpp/header/chrono) `<chrono>` implementation is also provided in the `<cuda/std/chrono>` [header](https://nvidia.github.io/cccl/libcudacxx/standard_api/time_library.html#libcudacxx-standard-api-time) for similar purposes.
+  * A portable [C++](https://en.cppreference.com/w/cpp/header/chrono) `<chrono>` implementation is also provided in the `<cuda/std/chrono>` [header](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api/time_library.html#libcudacxx-standard-api-time) for similar purposes.
 
 
-### 5.3.6.2. `printf()`
+### 5.3.7.2. `printf()`
     
     
-    int printf(const char* format[, arg, ...]);
+    __host__ __device__ __tile__ int printf(const char* format[, arg, ...]);
     
 
 The function prints formatted output from a kernel to a host-side output stream.
@@ -320,6 +385,17 @@ The `printf()` command is executed like any other device-side function: per thre
 Unlike the C standard `printf()`, which returns the number of characters printed, CUDA’s `printf()` returns the number of arguments parsed. If no arguments follow the format string, 0 is returned. If the format string is `NULL`, `-1` is returned. If an internal error occurs, -2 is returned.
 
 Internally, `printf()` uses a shared data structure, so it is possible that calling `printf()` may alter the execution order of threads. In particular, a thread that calls `printf()` might take a longer execution path than a thread that does not call `printf()`, and the length of that path depends on the parameters of `printf()`. However, note that CUDA makes no guarantees about the order of thread execution except at explicit `__syncthreads()` barriers. Therefore, it is impossible to tell whether the order of execution has been modified by `printf()` or by other scheduling behaviors in the hardware.
+
+The `printf()` function behaves differently in tile code than in SIMT device code. In tile code,
+
+  * The arguments may be tiles in addition to scalars. When passing a tile argument, each element of the tile is printed according to the corresponding format specifier.
+
+  * The return value is always the number of arguments provided even if the format string is `NULL` or an internal error occurs.
+
+  * The format string must be a literal.
+
+  * An error is issued if the number of arguments does not match the number of format specifiers. In SIMT device code, this scenario results in a warning.
+
 
 * * *
 
@@ -443,25 +519,53 @@ Clearly, the `if()` statement limits which threads call `printf()`, so only one 
 
 See the example on [Compiler Explorer](https://cuda.godbolt.org/z/YqEss81sf).
 
-### 5.3.6.3. `memcpy()` and `memset()`
+* * *
+
+The following code sample:
     
     
-    __host__ __device__ void* memcpy(void* dest, const void* src, size_t size);
+    #include "cuda_tile.h"
+    #include <cstdio>
+    
+    namespace ct = cuda::tiles;
+    
+    __tile_global__ void kernel() {
+      auto ints = ct::iota<ct::tile<int, ct::shape<4, 4>>>();
+      printf("%i\n", ints);
+    }
+    
+    int main() {
+      kernel<<<1,1>>>();
+      cudaDeviceSynchronize();
+      return 0;
+    }
+    
+
+will output:
+    
+    
+    [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+    
+
+### 5.3.7.3. `memcpy()` and `memset()`
+    
+    
+    __host__ __device__ __tile__ void* memcpy(void* dest, const void* src, size_t size);
     
 
 The function copies `size` bytes from the memory location pointed by `src` to the memory location pointed by `dest`.
     
     
-    __host__ __device__ void* memset(void* ptr, int value, size_t size);
+    __host__ __device__ __tile__ void* memset(void* ptr, int value, size_t size);
     
 
 The function sets `size` bytes of memory block pointed by `ptr` to `value`, interpreted as an `unsigned char`.
 
 Hint
 
-It is suggested to use the `cuda::std::memcpy()` and `cuda::std::memset()` functions provided in the `<cuda/std/cstring>` [header](https://nvidia.github.io/cccl/libcudacxx/standard_api/c_library/cstring.html#libcudacxx-standard-api-cstring) as safer versions of `memcpy` and `memset`.
+It is suggested to use the `cuda::std::memcpy()` and `cuda::std::memset()` functions provided in the `<cuda/std/cstring>` [header](https://nvidia.github.io/cccl/unstable/libcudacxx/standard_api/c_library/cstring.html#libcudacxx-standard-api-cstring) as safer versions of `memcpy` and `memset`.
 
-### 5.3.6.4. `malloc()` and `free()`
+### 5.3.7.4. `malloc()` and `free()`
     
     
     __host__ __device__ void* malloc(size_t size);
@@ -656,7 +760,7 @@ Allocation Persisting Between Kernel Launches example:
 
 See the example on [Compiler Explorer](https://cuda.godbolt.org/z/h7r6G3dGP).
 
-### 5.3.6.5. `alloca()`
+### 5.3.7.5. `alloca()`
     
     
     __host__ __device__ void* alloca(size_t size);
@@ -678,7 +782,7 @@ Example:
     }
     
 
-## 5.3.7. Lambda Expressions
+## 5.3.8. Lambda Expressions
 
 The compiler determines the execution space of a lambda expression or closure type (C++11) by associating it with the execution space of the innermost enclosing function scope. If there is no enclosing function scope, the execution space is specified as `__host__`.
 
@@ -690,20 +794,28 @@ Examples:
     auto global_lambda = [](){ return 0; }; // __host__
     
     void host_function() {
-        auto lambda1 = [](){ return 1; };   // __host__
-        [](){ return 3; };                  // __host__, closure type (body of a lambda expression)
+      auto lambda1 = [](){ return 1; };   // __host__
+      [](){ return 3; };                  // __host__, closure type (body of a lambda expression)
     }
     
     __device__ void device_function() {
-        auto lambda2 = [](){ return 2; };   // __device__
+      auto lambda2 = [](){ return 2; };   // __device__
     }
     
     __global__ void kernel_function(void) {
-        auto lambda3 = [](){ return 3; };   // __device__
+      auto lambda3 = [](){ return 3; };   // __device__
     }
     
     __host__ __device__ void host_device_function() {
-        auto lambda4 = [](){ return 4; };   // __host__ __device__
+      auto lambda4 = [](){ return 4; };   // __host__ __device__
+    }
+    
+    __tile__ void tile_function() {
+      auto lambda5 = [](){ return 5; };   // __tile__
+    }
+    
+    __tile__ __device__ void tile_device_function() {
+      auto lambda6 = [](){ return 6; };   // __tile__ __device__
     }
     
     using function_ptr_t = int (*)();
@@ -714,7 +826,7 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/scv4vcczr).
 
-### 5.3.7.1. Lambda Expressions and `__global__` Function Parameters
+### 5.3.8.1. Lambda Expressions and `__global__` Function Parameters
 
 A lambda expression or a closure type can only be used as an argument to a `__global__` function if its execution space is `__device__` or `__host__ __device__`. Global or namespace scope lambda expressions cannot be used as arguments in a `__global__` function.
 
@@ -743,7 +855,7 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/ajrsn5z5Y).
 
-### 5.3.7.2. Extended Lambdas
+### 5.3.8.2. Extended Lambdas
 
 The `nvcc` flag `--extended-lambda` allows explicit annotations of execution spaces in a lambda expression. These annotations should appear after the lambda introducer and before the optional lambda declarator.
 
@@ -788,7 +900,7 @@ Example:
                                                      // within a __host__ or __host__ __device__ function
     
 
-### 5.3.7.3. Extended Lambda Type Traits
+### 5.3.8.3. Extended Lambda Type Traits
 
 The compiler provides type traits to detect closure types for extended lambdas at compile time.
     
@@ -866,7 +978,7 @@ Example:
     }
     
 
-### 5.3.7.4. Extended Lambda Restrictions
+### 5.3.8.4. Extended Lambda Restrictions
 
 Before invoking the host compiler, the CUDA compiler replaces an extended lambda expression with an instance of a placeholder type defined in namespace scope. The placeholder type’s template argument requires taking the address of a function that encloses the original extended lambda expression. This is necessary for correctly executing any `__global__` function template whose template argument involves the closure type of an extended lambda. The enclosing function is computed as follows.
 
@@ -1291,13 +1403,13 @@ Examples:
 
 The CUDA compiler will generate compiler diagnostics for a subset of cases described in `1-12`; no diagnostic will be generated for cases `13-17`, but the host compiler may fail to compile the generated code.
 
-### 5.3.7.5. Host-Device Lambda Optimization Notes
+### 5.3.8.5. Host-Device Lambda Optimization Notes
 
 Unlike device-only lambdas, host-device lambdas can be called from host code. As previously mentioned, the CUDA compiler replaces an extended lambda expression defined in host code with an instance of a named placeholder type. The placeholder type for an extended host-device lambda invokes the original lambda’s `operator()` with an indirect function call. The traits will always return false if extended lambda mode is not active.
 
 The presence of an indirect function call may cause the host compiler to optimize an extended host-device lambda less than lambdas that are implicitly or explicitly `__host__` only. In the latter case, the host compiler can easily inline the lambda body into the calling context. However, when it encounters an extended host-device lambda, the host compiler may not be able to easily inline the original lambda body.
 
-### 5.3.7.6. `*this` Capture By-Value
+### 5.3.8.6. `*this` Capture By-Value
 
 According to C++11/C++14 rules, when a lambda is defined within a non-`static` class member function and the lambda’s body refers to a class member variable, the `this` pointer of the class must be captured by value rather than the referenced member variable. If the lambda is an extended device-only or host-device lambda defined in a host function and executed on the GPU, accessing the referenced member variable on the GPU will cause a runtime error if the `this` pointer points to host memory.
 
@@ -1412,7 +1524,7 @@ Here’s the above example modified to use `*this` capture mode:
     };
     
 
-### 5.3.7.7. Argument Dependent Lookup (ADL)
+### 5.3.8.7. Argument Dependent Lookup (ADL)
 
 As previously mentioned, the CUDA compiler replaces an extended lambda expression with a placeholder type before invoking the host compiler. One template argument of the placeholder type uses the address of the function that encloses the original lambda expression. This may cause additional namespaces to participate in [Argument-Dependent Lookup (ADL)](https://en.cppreference.com/w/cpp/language/adl.html) for any host function call whose argument types involve the closure type of the extended lambda expression. Consequently, an incorrect function may be selected by the host compiler.
 
@@ -1452,7 +1564,7 @@ Example:
 
 In the above example, the CUDA compiler replaced the extended lambda with a placeholder type involving the `N1` namespace. Consequently, the `N1` namespace participates in the ADL lookup for `my_function(in)` in the body of `N2::run()`, resulting in a host compilation failure due to the discovery of multiple overload candidates: `N1::my_function` and `N2::my_function`.
 
-## 5.3.8. Polymorphic Function Wrappers
+## 5.3.9. Polymorphic Function Wrappers
 
 The `nvfunctional` header provides a polymorphic function wrapper class template, `nvstd::function`. Instances of this class template can store, copy, and invoke any callable target, such as lambda expressions. `nvstd::function` can be used in both host and device code.
 
@@ -1590,9 +1702,9 @@ Examples of invalid cases:
     } // namespace nvstd
     
 
-## 5.3.9. C/C++ Language Restrictions
+## 5.3.10. C/C++ Language Restrictions
 
-### 5.3.9.1. Unsupported Features
+### 5.3.10.1. Unsupported Features
 
   * Run-Time Type Information (RTTI) and exceptions are not supported in device code:
 
@@ -1609,7 +1721,7 @@ Examples of invalid cases:
   * User-defined `operator new`, `operator new[]`, `operator delete`, or `operator delete[]` cannot be used to replace the corresponding built-ins provided by the compiler, and it is considered undefined behavior on both host and device.
 
 
-### 5.3.9.2. Namespace Reservations
+### 5.3.10.2. Namespace Reservations
 
 Unless otherwise noted, adding definitions to top-level namespaces `cuda::`, `nv::`, or `cooperative_groups::`, or to any nested namespace within them, is undefined behavior. We allow `cuda::` as a subnamespace as depicted below:
 
@@ -1641,7 +1753,7 @@ Examples:
     using namespace utils;
     
 
-### 5.3.9.3. Pointers and Memory Addresses
+### 5.3.10.3. Pointers and Memory Addresses
 
 Pointer dereferencing (`*pointer`, `pointer->member`, `pointer[0]`) is allowed only in the same execution space where the associated memory resides. The following cases result in undefined behavior, most often a segmentation fault and application termination.
 
@@ -1659,11 +1771,11 @@ The following restrictions apply to functions:
 
 The address of a `__device__` or `__constant__` variable obtained through `cudaGetSymbolAddress()` as described in the [Memory Space Specifiers](cpp-language-extensions.html#memory-space-specifiers) section can only be used in host code.
 
-### 5.3.9.4. Variables
+### 5.3.10.4. Variables
 
-#### 5.3.9.4.1. Local Variables
+#### 5.3.10.4.1. Local Variables
 
-The `__device__`, `__shared__`, `__managed__`, and `__constant__` memory space specifiers are not allowed on non-`extern` variable declarations within a function that executes on the host.
+The `__device__`, `__tile__`, `__shared__`, `__managed__`, and `__constant__` memory space specifiers are not allowed on non-`extern` variable declarations within a function that executes on the host.
 
 Examples:
     
@@ -1671,14 +1783,15 @@ Examples:
     __host__ void host_function() {
         int x;                   // CORRECT, __host__ variable
         __device__   int y;      // ERROR,   __device__ variable declaration within a host function
-        __shared__   int z;      // ERROR,   __shared__ variable declaration within a host function
-        __managed__  int w;      // ERROR,   __managed__ variable  declaration within a host function
-        __constant__ int h;      // ERROR,   __constant__ variable declaration within a host function
-        extern __device__ int k; // CORRECT, extern __device__ variable
+        __tile__     int z;      // ERROR,   __tile__ variable declaration within a host function
+        __shared__   int w;      // ERROR,   __shared__ variable declaration within a host function
+        __managed__  int h;      // ERROR,   __managed__ variable  declaration within a host function
+        __constant__ int i;      // ERROR,   __constant__ variable declaration within a host function
+        extern __device__ int j; // CORRECT, extern __device__ variable
     }
     
 
-The `__device__`, `__constant__`, and `__managed__` memory space specifiers are not allowed on variable declarations that are neither `extern` nor `static` within a function that executes on the device.
+The `__device__`, `__tile__`, `__constant__`, and `__managed__` memory space specifiers are not allowed on variable declarations that are neither `extern` nor `static` within a function that executes on the device.
     
     
     __device__ void device_function() {
@@ -1691,9 +1804,9 @@ The `__device__`, `__constant__`, and `__managed__` memory space specifiers are 
 
 see also the [static variables](#static-variables) section.
 
-#### 5.3.9.4.2. `const`-qualified Variables
+#### 5.3.10.4.2. `const`-qualified Variables
 
-A `const`-qualified variable without memory space annotations (`__device__` or `__constant__`) declared at global, namespace, or class scope is considered to be a host variable. Device code cannot contain a reference or take the address of the variable.
+A `const`-qualified variable without memory space annotations (`__device__`, `__tile__`, or `__constant__`) declared at global, namespace, or class scope is considered to be a host variable. Device code cannot contain a reference or take the address of the variable.
 
 The variable may be directly used in device code, if
 
@@ -1741,7 +1854,7 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/eWG8KxK94).
 
-#### 5.3.9.4.3. `volatile`-qualified Variables
+#### 5.3.10.4.3. `volatile`-qualified Variables
 
 Note
 
@@ -1754,9 +1867,11 @@ Reading and writing to `volatile`-qualified objects are not atomic and are compi
   * that the number of memory operations performed by the hardware matches the number of PTX instructions.
 
 
+In tile code, the `volatile` keyword has no effect on the behavior of memory accesses.
+
 CUDA C++ `volatile` is NOT suitable for:
 
-  * **Inter-Thread Synchronization** : Use atomic operations via [cuda::atomic_ref](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic_ref.html), [cuda::atomic](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives/atomic.html), or [Atomic Functions](cpp-language-extensions.html#atomic-functions) instead.
+  * **Inter-Thread Synchronization** : Use atomic operations via [cuda::atomic_ref](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic_ref.html), [cuda::atomic](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic.html), or [Atomic Functions](cpp-language-extensions.html#atomic-functions) instead.
 
 Atomic memory operations provide inter-thread synchronization guarantees and deliver better performance than `volatile` operations. However, CUDA C++ `volatile` operations do not provide any inter-thread synchronization guarantees and are therefore not suitable for this purpose. The following example shows how to pass a message between two threads using atomic operations.
 
@@ -1848,20 +1963,18 @@ PTX MMIO operations strictly preserve the number of memory accesses performed. H
         
 
 
-#### 5.3.9.4.4. `static` Variables
+#### 5.3.10.4.4. `static` Variables
 
-`static` variables are allowed in device code in the following cases:
+`static` local variables are allowed in device functions.
 
-  * Within `__global__` or `__device__`-only functions.
+A different static variable is used for each execution space of the enclosing function. For example,
 
-  * Within `__host__ __device__` functions:
+  * A `__host__ __device__` function has one copy of the static variable for host execution and one copy for device execution.
 
-    * `static` variables without an explicit memory space (automatic deduction).
-
-    * `static` variables with an explicit memory space, such as `static __device__/__constant__/__shared__/__managed__`, are allowed only when `__CUDA_ARCH__` is defined.
+  * A `__tile__ __device__` function has one copy for tile execution and one copy for SIMT execution.
 
 
-A `static` variable within a `__host__ __device__` function holds a different value depending on the execution space.
+If the function has a `__host__` execution space specifier, `static` variables with an explicit memory space, such as `static __device__/__tile__/__constant__/__shared__/__managed__`, are allowed only when `__CUDA_ARCH__` is defined.
 
 Examples of legal and illegal uses of function-scope `static` variables are shown below.
     
@@ -1937,9 +2050,9 @@ See the example on [Compiler Explorer](https://godbolt.org/z/18qhjn8P1).
 
 See the example on [Compiler Explorer](https://godbolt.org/z/Wqo9WjvYY).
 
-#### 5.3.9.4.5. `extern` Variables
+#### 5.3.10.4.5. `extern` Variables
 
-When compiling in the [whole program compilation mode](../02-basics/nvcc.html#nvcc-separate-compilation), `__device__`, `__shared__`, `__managed__`, and `__constant__` variables cannot be defined with external linkage using the `extern` keyword.
+When compiling in the [whole program compilation mode](../02-basics/nvcc.html#nvcc-separate-compilation), `__device__`, `__tile__`, `__shared__`, `__managed__`, and `__constant__` variables cannot be defined with external linkage using the `extern` keyword. This restriction also applies in [separate compilation mode](../02-basics/nvcc.html#nvcc-separate-compilation) for `__tile__` variables.
 
 The only exception is for dynamically allocated `__shared__` variables as described in the [Dynamic Allocation of Shared Memory](../02-basics/writing-cuda-kernels.html#writing-cuda-kernels-dynamic-allocation-shared-memory) section.
     
@@ -1949,13 +2062,13 @@ The only exception is for dynamically allocated `__shared__` variables as descri
     extern __shared__ int z; // OK
     
 
-### 5.3.9.5. Functions
+### 5.3.10.5. Functions
 
-#### 5.3.9.5.1. Recursion
+#### 5.3.10.5.1. Recursion
 
-`__global__` functions do not support recursion, while `__device__` and `__host__ __device__` functions do not have such restriction.
+`__global__`, `__tile_global__` and `__tile__` functions do not support recursion, while `__device__` and `__host__ __device__` functions do not have such restriction.
 
-#### 5.3.9.5.2. External Linkage
+#### 5.3.10.5.2. External Linkage
 
 Device variables or functions with external linkage require [separate compilation mode](../02-basics/nvcc.html#nvcc-separate-compilation) across multiple translation units.
 
@@ -1986,24 +2099,22 @@ Example:
     nvlink fatal   : merge_elf failed
     
 
-#### 5.3.9.5.3. Formal Parameters
+#### 5.3.10.5.3. Formal Parameters
 
-The `__device__`, `__shared__`, `__managed__` and `__constant__` memory space specifiers are not allowed on formal parameters.
+The `__device__`, `__tile__`, `__shared__`, `__managed__` and `__constant__` memory space specifiers are not allowed on formal parameters.
     
     
     void device_function1(__device__ int x) { } // ERROR, __device__ parameter
     void device_function2(__shared__ int x) { } // ERROR, __shared__ parameter
     
 
-#### 5.3.9.5.4. `__global__` Function Parameters
+#### 5.3.10.5.4. `__global__` Function Parameters
 
-A `__global__` function has the following restrictions:
+A `__global__` or `__tile_global__` function has the following restrictions:
 
   * It cannot have a variable number of arguments, namely the C ellipsis syntax `...` and the `va_list` type. C++11 variadic template is allowed, subject to the restrictions described in the [__global__ Variadic Template](#cpp11-variadic-template) section.
 
   * Function parameters are passed to the device via [constant memory](device-callable-apis.html#constant-memory) and their total size is limited to 32,764 bytes.
-
-  * Function parameters cannot be pass-by-reference or by pass-by-rvalue reference.
 
   * Function parameters cannot be of type `std::initializer_list`.
 
@@ -2011,8 +2122,10 @@ A `__global__` function has the following restrictions:
 
   * Lambda expressions and closure types are allowed, subject to the restrictions described in the [Lambda Expressions and __global__ Function Parameters](#lambda-expressions-global) section.
 
+  * For `__tile_global__` functions, the function parameters may not be pass-by-value classes, structs, or unions.
 
-#### 5.3.9.5.5. `__global__` Function Arguments Passing
+
+#### 5.3.10.5.5. `__global__` Function Arguments Passing
 
 When launching a `__global__` function [from device code](../02-basics/intro-to-cuda-cpp.html#intro-cpp-launching-kernels), each argument must be trivially copyable and trivially destructible.
 
@@ -2086,11 +2199,11 @@ Example:
 See the example on [Compiler Explorer](https://godbolt.org/z/cn6Y5W6zs).
 
 
-### 5.3.9.6. Classes
+### 5.3.10.6. Classes
 
-#### 5.3.9.6.1. Class-type Variables
+#### 5.3.10.6.1. Class-type Variables
 
-A variable definition with `__device__`, `__constant__`, `__managed__` or `__shared__` memory space cannot have a class type with a non-empty constructor or a non-empty destructor. A constructor for a class type is considered empty if it is either trivial or satisfies all of the following conditions at a point in the translation unit:
+A variable definition with `__device__`, `__tile__`, `__constant__`, `__managed__` or `__shared__` memory space cannot have a class type with a non-empty constructor or a non-empty destructor. A constructor for a class type is considered empty if it is either trivial or satisfies all of the following conditions at a point in the translation unit:
 
   * The constructor function has been defined.
 
@@ -2116,9 +2229,9 @@ A class’s destructor is considered empty if it is either trivial or satisfies 
   * For all non-`static` data members of the class that are of a class type (or an array thereof), the destructor can be considered empty.
 
 
-#### 5.3.9.6.2. Data Members
+#### 5.3.10.6.2. Data Members
 
-The `__device__`, `__shared__`, `__managed__` and `__constant__` memory space specifiers are not allowed on `class`, `struct`, and `union` data members.
+The `__device__`, `__tile__`, `__shared__`, `__managed__` and `__constant__` memory space specifiers are not allowed on `class`, `struct`, and `union` data members.
 
 Only `static` data members evaluated at compile time are supported, such as [const-qualified](#const-variables) and `constexpr` variables.
     
@@ -2131,11 +2244,11 @@ Only `static` data members evaluated at compile time are supported, such as [con
     };
     
 
-#### 5.3.9.6.3. Function Members
+#### 5.3.10.6.3. Function Members
 
-`__global__` functions cannot be members of a `struct`, `class`, or `union`.
+`__global__` and `__tile_global__` functions cannot be members of a `struct`, `class`, or `union`.
 
-A `__global__` function is allowed in a `friend` declaration, but cannot be defined.
+A `__global__` or `__tile_global__` function is allowed in a `friend` declaration, but cannot be defined.
 
 Example:
     
@@ -2149,7 +2262,7 @@ Example:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/rv6cP3b9j).
 
-#### 5.3.9.6.4. Implicitly-Declared and Non-Virtual Explicitly-Defaulted functions
+#### 5.3.10.6.4. Implicitly-Declared and Non-Virtual Explicitly-Defaulted functions
 
 Implicitly-declared special member functions are those the compiler declares for a class when the user does not declare them; Explicitly-defaulted functions are ones the user declares but marks with `= default`. The special member functions that are implicitly-declared or explicitly-defaulted are default constructor, copy constructor, move constructor, copy assignment operator, move assignment operator, and destructor.
 
@@ -2202,7 +2315,7 @@ For example:
                                 // ~Derived2() has __device__ execution space specifiers
     
 
-#### 5.3.9.6.5. Polymorphic Classes
+#### 5.3.10.6.5. Polymorphic Classes
 
 Polymorphic classes, namely those with `virtual` functions, derived from other polymorphic classes, or with polymorphic data members, are subject to the following restrictions:
 
@@ -2245,7 +2358,7 @@ See the example on [Compiler Explorer](https://godbolt.org/z/To39sGTrW).
 
 See the example on [Compiler Explorer](https://godbolt.org/z/xfKhEGfdG).
 
-#### 5.3.9.6.6. Windows-Specific Class Layout
+#### 5.3.10.6.6. Windows-Specific Class Layout
 
 The CUDA compiler follows the IA64 ABI for class layout, while Microsoft Visual Studio does not. This prevents bitwise copy of special objects between host and device code as described below.
 
@@ -2262,7 +2375,7 @@ Classes of type `T`, with a base class of type `T`, or with data members of type
 
 Copying such objects from device to host or from host to device, including `__global__` function arguments is undefined behavior.
 
-### 5.3.9.7. Templates
+### 5.3.10.7. Templates
 
 A type cannot be used as template argument of a `__global__` function or a `__device__/__constant__` variable (C++14) if either:
 
@@ -2311,15 +2424,60 @@ Example:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/EhTn3GT3z).
 
-## 5.3.10. C++11 Restrictions
+### 5.3.10.8. Restrictions in Tile Code
 
-### 5.3.10.1. `inline` Namespaces
+Functions annotated with `__tile__` or `__tile_global__` have the following additional restrictions:
+
+  * The language constructs below are unsupported in tile code:
+
+    * Return statements inside `do`, `while` or `for` loops.
+
+    * Virtual function invocations.
+
+    * Goto statements.
+
+    * Switch statements.
+
+    * Expressions yielding a function pointer, function reference, pointer to member variable, or pointer to member function.
+
+    * Function pointer and pointer to member function invocations.
+
+    * Pointer to member variable accesses.
+
+    * 128-bit integer or floating point types.
+
+    * Types containing bitfields.
+
+    * Types exceeding 16 MB in size.
+
+    * Types with virtual base classes or virtual functions.
+
+    * Dynamic memory allocation or deallocation with non-placement operator `new` or `delete`.
+
+  * A `__tile__` or `__tile_global__` function must have a function body in the same translation unit in which it is declared.
+
+  * Annotating a virtual function with `__tile__` is unsupported.
+
+  * A `__tile_global__` or `__tile__` function may not have a variable number of arguments using the C ellipsis syntax `...`.
+
+  * A `__tile_global__` or `__tile__` function may not be directly or indirectly recursive.
+
+  * For `__tile_global__` functions, the function parameters may not be pass-by-value classes, structs, or unions.
+
+  * Tile code may not perform device-side kernel launches and tile kernels may not be launched from device side kernel invocations.
+
+  * Direct access to the `__x` member variable of `__half`, `__nv_bfloat16` and related extended floating point types is unsupported in tile code.
+
+
+## 5.3.11. C++11 Restrictions
+
+### 5.3.11.1. `inline` Namespaces
 
 It is not allowed to define one of the following entities within an `inline` namespace when another entity of the same name and type signature is defined in an enclosing namespace:
 
-  * `__global__` function.
+  * `__global__` or `__tile_global__` functions.
 
-  * `__device__`, `__constant__`, `__managed__`, `__shared__` variables.
+  * `__device__`, `__tile__`, `__constant__`, `__managed__`, `__shared__` variables.
 
   * Variables with surface or texture type, such as `cudaSurfaceObject_t` or `cudaTextureObject_t`.
 
@@ -2336,135 +2494,188 @@ Example:
     } // namespace NS
     
 
-### 5.3.10.2. `inline` Unnamed Namespaces
+### 5.3.11.2. `inline` Unnamed Namespaces
 
 The following entities cannot be declared in namespace scope within an `inline` unnamed namespace:
 
-  * `__global__` function.
+  * `__global__` or `__tile_global__` function.
 
-  * `__device__`, `__constant__`, `__managed__`, `__shared__` variables.
+  * `__device__`, `__tile__`, `__constant__`, `__managed__`, `__shared__` variables.
 
   * Variables with surface or texture type, such as `cudaSurfaceObject_t` or `cudaTextureObject_t`.
 
 
-### 5.3.10.3. `constexpr` Functions
+### 5.3.11.3. `constexpr` Functions
 
-By default, a `constexpr` function cannot be called from a function with incompatible execution space, in the same way as standard functions.
+A `__global__` function cannot be declared as `constexpr`. By default, a `constexpr` function cannot be called from a function with incompatible execution space, in the same way as standard functions. In the example code listed in this section `UB` stands for ‘undefined behavior’.
 
-  * Calling a device-only `constexpr` function from a host-function during host code generation phase, namely when `__CUDA_ARCH__` macro is undefined. Example:
-        
-        constexpr __device__ int device_function() { return 0; }
-        
-        int main() {
-            int x = device_function();  // ERROR, calling a device-only constexpr function from host code
-        }
-        
+  * Calling a `constexpr` function that does not have an explicit or implicit `__host__` annotation from a host function during host compilation phase (when `__CUDA_ARCH__` macro is undefined) has undefined behavior. Example:
 
-  * Calling a host-only `constexpr` function from a `__device__` or `__global__` function, during device code generation phase, namely when `__CUDA_ARCH__` macro is defined. Example:
-        
-        constexpr int host_function() { return 0; }
-        
-        __device__ void device_function() {
-            int x = host_function();  // ERROR, calling a host-only constexpr function from device code
-        }
-        
+> constexpr __device__             int  device_func() { return 0; }
+>         constexpr __tile__               int  tile_func()   { return 0; }
+>         
+>         constexpr __device__ __host___   int host_device_func() { return 0; }
+>         
+>         int main() {
+>             constexpr int x1 = device_func(); // UB: calling a __device__-only constexpr function from host code
+>             constexpr int x2 = tile_func();   // UB: calling a __tile__-only constexpr function from host code
+>             constexpr int x3 = host_device_func(); // OK
+>         
+>         }
+>         
+
+  * Calling a `constexpr` function that does not have an explicit or implicit `__device__` annotation from a `__device__` or `__global__` function during device compilation phase (when `__CUDA_ARCH__` macro is defined) has undefined behavior. Example:
+
+> constexpr  int host_func() { return 0; }
+>         
+>         __device__ void dmain()
+>         {
+>             int x = host_func();  // UB: calling a host-only constexpr function from device code
+>         }
+>         
+
+  * Calling a `constexpr` function that does not have an explicit or implicit `__tile__` annotation from a `__tile__` or `__tile_global__` function during device compilation phase (when `__CUDA_ARCH__` macro is defined) has undefined behavior. Example:
+
+> constexpr  int host_func() { return 0; }
+>         
+>         __tile__ void dmain()
+>         {
+>             int x = host_func();  // UB: calling a host-only constexpr function from tile code
+>         }
+>         
 
 
 Note that a function template specialization may not be a `constexpr` function even if the corresponding template function is marked with the keyword `constexpr`.
 
 **Relaxed constexpr-Function Support**
 
-The experimental `nvcc` flag `--expt-relaxed-constexpr` can be used to relax this constraint for both `__host__` and `__device__` functions. However, a `__global__` function cannot be declared as `constexpr`. `nvcc` will also define the macro `__CUDACC_RELAXED_CONSTEXPR__`.
+The experimental `nvcc` flag `--expt-relaxed-constexpr` can be used to relax this constraint as described below. `nvcc` will also define the macro `__CUDACC_RELAXED_CONSTEXPR__`. In the example code listed in this section `UB` stands for ‘undefined behavior’.
 
-When this flag is specified, the compiler will support cross execution space calls described above, as follows:
+When the `--expt-relaxed-constexpr` flag is specified, the compiler will support cross execution space calls, as follows:
 
-  1. A call to a `constexpr` function in a cross-execution space is supported if it occurs in a context that requires constant evaluation, such as the initializer of a `constexpr` variable. Example:
-         
-         constexpr __host__ int host_function(int x) { return x + 1; };
-         
-         __global__ void kernel() {
-             constexpr int val = host_function(1); // CORRECT, the call is in a context that requires constant evaluation.
-         }
-         
-         constexpr __device__ int device_function(int x) { return x + 1; }
-         
-         int main() {
-             constexpr int val = device_function(1); // CORRECT, the call is in a context that requires constant evaluation.
-         }
-         
+  1. A cross-execution space call to a `constexpr` function is supported if it occurs in a context that requires constant evaluation, such as in the initializer of a constexpr variable. Example:
 
-  2. Device code is generated during device code generation for the body of a host-only constexpr function, unless it is not used or is only called in a `constexpr` context. Example:
-         
-         // NOTE: "host_function" is emitted in generated device code because
-         //       it is called from device code in a non-constexpr context
-         constexpr int host_function(int x) { return x + 1; }
-         
-         __device__ int device_function(int in) {
-             return host_function(in);  // CORRECT, even though argument is not a constant expression
-         }
-         
+> constexpr __host__ int host_func(int x) { return x + 1; };
+>          
+>          __global__ void doit() {
+>               constexpr int val = host_func(1); // OK: call is in a context that
+>                                                 // requires constant evaluation.
+>          }
+>          
+>          __tile_global__ void tile_doit() {
+>               constexpr int val = host_func(1); // OK: call is in a context that
+>                                                 // requires constant evaluation.
+>          }
+>          
+>          
+>          constexpr __device__ int device_func(int x) { return x + 1; }
+>          
+>          constexpr __tile__ int tile_func(int x) { return x + 2; }
+>          
+>          int main() {
+>          constexpr int val = device_func(1) + tile_func(1); // OK: call is in a context that
+>                                                             // requires constant evaluation.
+>          }
+>          
 
-  3. All code restrictions that apply to a device function also apply to the `constexpr` host-only function called from the device code. However, the compiler may not emit any build-time diagnostics for restrictions related to the compilation process.
+  2. Otherwise:
 
-For example, the following code patterns are not supported in the body of the host function. This is similar to any device function; however, no compiler diagnostic may be generated.
-
-     * One-Definition Rule (ODR)-use of a host variable or host-only non-`constexpr` function. Example:
-           
-           int host_var1, host_var2;
-           
-           constexpr int* host_function(bool b) { return b ? &host_var1 : &host_var2; };
-           
-           __device__ int device_function(bool flag) {
-               return *host_function(flag); // ERROR, host_function() attempts to refer to the host variables
-                                            //        'host_var1' and 'host_var2'.
-                                            //        The code will compile, but will NOT execute correctly.
-           }
-           
-
-     * Use of exceptions `throw/catch` and Run-Time Type Information `typeid/dynamic_cast`. Example:
-           
-           struct Base { };
-           struct Derived : public Base { };
-           
-           // NOTE: "host_function" is emitted in generated device code
-           constexpr int host_function(bool b, Base *ptr) {
-               if (b) {
-                   return 1;
-               }
-               else if (typeid(ptr) == typeid(Derived)) { // ERROR, use of typeid in code executing on the GPU
-                   return 2;
-               }
-               else {
-                   throw int{4}; // ERROR, use of throw in code executing on the GPU
-               }
-           }
-           
-           __device__ void device_function(bool flag) {
-               Derived d;
-               int val = host_function(flag, &d); //ERROR, host_function() attempts use typeid and throw(),
-                                                  //       which are not allowed in code that executes on the GPU
-           }
-           
-
-  4. During host code generation, the body of a device-only `constexpr` function is preserved in the code sent to the host compiler. However, if the body of a device function attempts to ODR-use a namespace-scope device variable or a non-`constexpr` device function, the call to the device function from host code is not supported. While the code may build without compiler diagnostics, it may behave incorrectly at runtime. Example:
-         
-         __device__ int device_var1, device_var2;
-         
-         constexpr __device__ int* device_function(bool b) { return b ? &device_var1 : &device_var2; };
-         
-         int host_function(bool flag) {
-             return *device_function(flag); // ERROR, device_function() attempts to refer to device variables
-                                            //        'device_var1' and 'device_var2'
-                                            // The code will compile, but will NOT execute correctly.
-         }
-         
+>      1. A cross-execution space call from Tile code to a `constexpr` function that does not have an explicit or implicit `__tile__` annotation is not supported outside of a context where constant folding is required by the language rules. Example:
+>
+>> constexpr __host__ int host_func(int x) { return x + 1; }
+>>             
+>>             __tile__ int doit(int in) {
+>>                 in = host_func(in); // UB: call occurs outside of a context that requires
+>>                                     // constant evaluation.
+>>                 constexpr int other = host_func(10); // OK with -expt-relaxed-constexpr:
+>>                                                      // call is  required to be evaluated at compile time
+>>             }
+>>             
+> 
+>      2. During SIMT device code generation, device code is generated for the body of a host-only `constexpr` function `host_func`, unless `host_func` is not used or is only called in a constant evaluation context. Example:
+>
+>> // NOTE: "host_func" is emitted in generated device code because it is
+>>             // called from device code in a non-constexpr context
+>>             constexpr __host__ int host_func(int x) { return x + 1; }
+>>             
+>>             __device__ int doit(int in) {
+>>                 in = host_func(in);  // OK, even though argument is not a constant expression
+>>                 return in;
+>>             }
+>>             
+> 
+>      3. All code restrictions applicable to a `__device__` function are also applicable to the `constexpr` host-only function `H` that is called from SIMT device code. However, compiler may not emit any build time diagnostics for `H` for these restrictions. The reason is that diagnostics are usually generated during parsing, but `H` may already have been parsed before the call to `H` from device code is encountered later in the translation unit.
+> 
+> For example, the following code patterns are unsupported in the body of `H` (as with any `__device__` function), but no compiler diagnostic may be generated:
+>
+>>         * ODR-use of a host variable or host-only non-`constexpr` function. Example:
+>>
+>>> int host_var1, host_var2;
+>>>               
+>>>               constexpr __host__ int* host_func(bool b) { return b ? &host_var1 : &host_var2; };
+>>>               
+>>>               __device__ int doit(bool flag) {
+>>>                   int *ptr;
+>>>                   ptr = host_func(flag); // UB: host_func() attempts to refer to host variables 'host_var1' and 'host_var2'.
+>>>                                // code will compile, but will NOT execute correctly.
+>>>                   return *ptr;
+>>>               }
+>>>               
+>> 
+>>         * Use of exceptions (`throw/catch`) and RTTI (`typeid, dynamic_cast`). Example:
+>>
+>>> struct Base { };
+>>>               struct Derived : public Base { };
+>>>               
+>>>               // NOTE: "host_func" is emitted in generated device code
+>>>               constexpr int host_func(bool b, Base *ptr) {
+>>>                 if (b) {
+>>>                   return 1;
+>>>                 } else if (typeid(ptr) == typeid(Derived)) { // UB: use of typeid in code executing on the GPU
+>>>                   return 2;
+>>>                 } else {
+>>>                   throw int{4}; // UB: use of throw in code executing on the GPU
+>>>                 }
+>>>               }
+>>>               
+>>>               __device__ void doit(bool flag) {
+>>>                   int val;
+>>>                   Derived d;
+>>>                   val = host_func(flag, &d); //UB: host_func() attempts use typeid and throw(), which are not allowed in code that executes on the GPU
+>>>               }
+>>>               
+>
+>>      4. During host code generation, the body of a `constexpr` non-host function `F` is preserved in the code sent to the host compiler. If the body of `F` attempts to ODR-use a namespace scope device or `__tile__` variable or a non-host non-`constexpr` function, then the call to `F` from host code is not supported (code may build without compiler diagnostics, but may behave incorrectly at run time). Example:
+>>             
+>>             __device__ int device_var1, device_var2;
+>>             
+>>             constexpr __device__ int* device_func(bool b) { return b ? &device_var1 : &device_var2; };
+>>             
+>>             __tile__ int tile_var1, tile_var2;
+>>             
+>>             constexpr __tile__ int* tile_func(bool b) { return b ? &tile_var1 : &tile_var2; };
+>>             
+>>             int doit1(bool flag) {
+>>                 int *ptr;
+>>                 ptr = device_func(flag); // UB: device_func() attempts to refer to device variables 'device_var1' and 'device_var2'
+>>                                          // code will compile, but will NOT execute correctly.
+>>                 return *ptr;
+>>             }
+>>             
+>>             int doit2(bool flag) {
+>>                 int *ptr;
+>>                 ptr = tile_func(flag); // UB: tile_func() attempts to refer to __tile__ variables 'tile_var1' and 'tile_var2'
+>>                                        // code will compile, but will NOT execute correctly.
+>>                 return *ptr;
+>>             }
+>>             
 
 
 Warning
 
-Due to the above restrictions and the lack of compiler diagnostics for incorrect usage, it is recommended to avoid calling a function in the Standard C++ headers `std::` from device code. The implementation of such functions varies depending on the host platform. Instead, it is strongly suggested to call the equivalent functionality in the CUDA C++ Standard Library [libcu++](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#libcu), in the `cuda::std::` namespace.
+Due to the above restrictions and the lack of compiler diagnostics for incorrect usage, it is recommended to avoid calling a function in the Standard C++ headers `std::` from device code. The implementation of such functions varies depending on the host platform. Instead, it is strongly suggested to call the equivalent functionality in the CUDA C++ Standard Library [libcu++](#cpp-standard-library), in the `cuda::std::` namespace.
 
-### 5.3.10.4. `constexpr` Variables
+### 5.3.11.4. `constexpr` Variables
 
 By default, a `constexpr` variable cannot be used in a function with incompatible execution space, in the same way of standard variables.
 
@@ -2520,9 +2731,9 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/MWa1o3c9z).
 
-### 5.3.10.5. `__global__` Variadic Template
+### 5.3.11.5. `__global__` Variadic Template
 
-A variadic `__global__` function template has the following restrictions:
+A variadic `__global__` or `__tile_global__` function template has the following restrictions:
 
   * Only a single pack parameter is allowed.
 
@@ -2547,7 +2758,7 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/x48KnPbbY).
 
-### 5.3.10.6. Defaulted Functions `= default`
+### 5.3.11.6. Defaulted Functions `= default`
 
 The CUDA compiler infers the execution space of explicitly-defaulted member functions as described in [Implicitly-declared and explicitly-defaulted functions](#compiler-generated-functions).
 
@@ -2596,13 +2807,13 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/q1M4j8YYf).
 
-### 5.3.10.7. `[cuda::]std::initializer_list`
+### 5.3.11.7. `[cuda::]std::initializer_list`
 
-By default, the CUDA compiler implicitly considers the member functions of `[cuda::]std::initializer_list` to have `__host__ __device__` execution space specifiers, and therefore they can be invoked directly from device code.
+By default, the CUDA compiler implicitly considers the member functions of `[cuda::]std::initializer_list` to have `__host__ __device__ __tile__` execution space specifiers, and therefore they can be invoked directly from device code.
 
 The `nvcc` flag `--no-host-device-initializer-list` disables this behavior; member functions of `[cuda::]std::initializer_list` will then be considered as `__host__` functions and will not be directly invocable from device code.
 
-A `__global__` function cannot have a parameter of type `[cuda::]std::initializer_list`.
+A `__global__` or `__tile_global__` function cannot have a parameter of type `[cuda::]std::initializer_list`.
 
 Example:
     
@@ -2621,19 +2832,19 @@ Example:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/xeah7r44T).
 
-### 5.3.10.8. `[cuda::]std::move`, `[cuda::]std::forward`
+### 5.3.11.8. `[cuda::]std::move`, `[cuda::]std::forward`
 
-By default, the CUDA compiler implicitly considers `std::move` and `std::forward` function templates to have `__host__ __device__` execution space specifiers, and therefore they can be invoked directly from device code. The `nvcc` flag `--no-host-device-move-forward` disables this behavior; `std::move` and `std::forward` will then be considered as `__host__` functions and will not be directly invocable from device code.
+By default, the CUDA compiler implicitly considers `std::move` and `std::forward` function templates to have `__host__ __device__ __tile__` execution space specifiers, and therefore they can be invoked directly from device code. The `nvcc` flag `--no-host-device-move-forward` disables this behavior; `std::move` and `std::forward` will then be considered as `__host__` functions and will not be directly invocable from device code.
 
 Hint
 
 `cuda::std::move` and `cuda::std::forward` on the contrary always have `__host__ __device__` execution space.
 
-## 5.3.11. C++14 Restrictions
+## 5.3.12. C++14 Restrictions
 
-### 5.3.11.1. Functions with Deduced Return Type
+### 5.3.12.1. Functions with Deduced Return Type
 
-A `__global__` function cannot have a deduced return type `auto`.
+A `__global__` or `__tile_global__` function cannot have a deduced return type `auto`.
 
 Introspection of the return type of a `__device__` function with a deduced return type is not allowed in host code.
 
@@ -2680,9 +2891,9 @@ Examples:
     struct S1_derived_t : MyStruct<decltype(fn1)> { };
     
 
-### 5.3.11.2. Variable Templates
+### 5.3.12.2. Variable Templates
 
-A `__device__` or `__constant__` variable template cannot be `const`-qualified when using the Microsoft compiler.
+A `__device__`, `__tile__` or `__constant__` variable template cannot be `const`-qualified when using the Microsoft compiler.
 
 Examples:
     
@@ -2702,13 +2913,13 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/8hM5Yh7db).
 
-## 5.3.12. C++17 Restrictions
+## 5.3.13. C++17 Restrictions
 
-### 5.3.12.1. `inline` Variables
+### 5.3.13.1. `inline` Variables
 
 In a single translation unit, using an `inline` variable provides no additional functionality beyond a regular variable and does not provide any practical advantage.
 
-`nvcc` allows `inline` variables with `__device__`, `__constant__`, or `__managed__` memory space only in [Separate Compilation](../02-basics/nvcc.html#nvcc-separate-compilation) mode or for variables with internal linkage.
+`nvcc` allows `inline` variables with `__device__`, `__tile__`, `__constant__`, or `__managed__` memory space only in [Separate Compilation](../02-basics/nvcc.html#nvcc-separate-compilation) mode or for variables with internal linkage.
 
 Note
 
@@ -2737,9 +2948,9 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/oraqeGTzY).
 
-### 5.3.12.2. Structured Binding
+### 5.3.13.2. Structured Binding
 
-A structured binding cannot be declared with a memory space specifier, such as `__device__`, `__shared__`, `__constant__`, or `__managed__`.
+A structured binding cannot be declared with a memory space specifier, such as `__device__`, `__tile__`, `__shared__`, `__constant__`, or `__managed__`.
 
 Example:
     
@@ -2750,11 +2961,11 @@ Example:
     // __device__ auto [a, b] = S{4, 5}; // ERROR
     
 
-## 5.3.13. C++20 Restrictions
+## 5.3.14. C++20 Restrictions
 
-### 5.3.13.1. Three-way Comparison Operator
+### 5.3.14.1. Three-way Comparison Operator
 
-The three-way comparison operator (`<=>`) is supported in device code, but some uses implicitly rely on functionality from the C++ Standard Library, which is provided by the host implementation. Using those operators may require specifying the flag `--expt-relaxed-constexpr` to silence warnings, and the functionality requires the host implementation to satisfy the requirements of the device code.
+The three-way comparison operator (`<=>`) is supported in `__device__` and `__global__` functions, but some uses implicitly rely on functionality from the C++ Standard Library, which is provided by the host implementation. Using those operators may require specifying the flag `--expt-relaxed-constexpr` to silence warnings, and the functionality requires the host implementation to satisfy the requirements of the device code.
 
 Examples:
     
@@ -2781,7 +2992,7 @@ Examples:
 
 See the example on [Compiler Explorer](https://godbolt.org/z/qzs5arfx4).
 
-### 5.3.13.2. `consteval` Functions
+### 5.3.14.2. `consteval` Functions
 
 `consteval` functions can be called from both host and device code, independently of their execution space.
 
@@ -2803,3 +3014,12 @@ Examples:
     __host__ __device__ int host_device_function() {
         return device_function();  // CORRECT, even if called from host-device code
     }
+    
+
+## 5.3.15. C++23 Restrictions
+
+There are no known C++23-specific restrictions beyond the unsupported or not-applicable features indicated in the [C++23 Language Features table](#cpp23-language-features) above. Entries marked ❌ or N/A in that table (including Defect Report resolutions) reflect missing or not-applicable features rather than additional behavioral restrictions.
+
+### 5.3.15.1. Equality Operator (P2468R2)
+
+Although NVCC does not fully implement **DR: The Equality Operator You Are Looking For** (P2468R2), it approximates the behavior and this approximation has not led to known failures in user code.

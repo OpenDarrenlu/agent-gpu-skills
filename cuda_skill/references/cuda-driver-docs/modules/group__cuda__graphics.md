@@ -1,4 +1,4 @@
-# 6.32. Graphics Interoperability
+# 6.33. Graphics Interoperability
 
 **Source:** group__CUDA__GRAPHICS.html#group__CUDA__GRAPHICS
 

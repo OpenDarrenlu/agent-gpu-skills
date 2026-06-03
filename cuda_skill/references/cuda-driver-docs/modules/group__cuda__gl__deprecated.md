@@ -1,4 +1,4 @@
-# 6.40.1. OpenGL Interoperability [DEPRECATED]
+# 6.41.1. OpenGL Interoperability [DEPRECATED]
 
 **Source:** group__CUDA__GL__DEPRECATED.html#group__CUDA__GL__DEPRECATED
 

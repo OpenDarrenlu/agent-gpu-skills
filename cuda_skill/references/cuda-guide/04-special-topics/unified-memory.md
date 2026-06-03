@@ -25,7 +25,7 @@ The last paradigm, where unified memory support is limited, is discussed in deta
 
 These systems include hardware-coherent memory systems, such as NVIDIA Grace Hopper and modern Linux systems with Heterogeneous Memory Management (HMM) enabled. HMM is a software-based memory management system, providing the same programming model as hardware-coherent memory systems.
 
-Linux HMM requires Linux kernel version 6.1.24+, 6.2.11+ or 6.3+, devices with compute capability 7.5 or higher and a CUDA driver version 535+ installed with [Open Kernel Modules](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#nvidia-open-gpu-kernel-modules).
+Linux HMM requires Linux kernel version 6.1.24+, 6.2.11+ or 6.3+, devices with compute capability 7.5 or higher and a CUDA driver version 535+ installed with [Open Kernel Modules](https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/kernel-modules.html#open-gpu-kernel-modules-installation).
 
 Note
 
@@ -303,6 +303,16 @@ This impacts the performance of the following scenarios:
   * signaling a GPU thread from a CPU thread or vice-versa.
 
 
+##### 4.1.1.2.1.3. Mixing Hardware and Software Coherency
+
+Some systems with hardware coherence such as NVIDIA DGX Station also support installing discrete, non-coherent GPU hardware. Accesses from a hardware coherent GPU will continue to use the hardware based coherency as described in [CPU and GPU Page Tables: Hardware Coherency vs. Software Coherency](#um-hw-coherency) while accesses from the discrete GPU will use software based coherency.
+
+Sharing of the unified address space is permitted between both classes of GPU. This results in different performance and migration behaviour based on accessing GPU. In particular accesses from a software coherent GPU will have more page faults and memory migration, while accesses from hardware coherent GPU will fault less and map remotely where possible.
+
+For best performance, sharing of data between both GPUs should be limited or done via explicit copies. Alternatively steps such as calling `cudaMemAdviseSetPreferredLocation` should be taken to ensure frequently shared data remains physically resident on CPU or coherent GPU memory as by default accessing software coherent memory requires a fault and migration of data.
+
+On mixed coherency systems, the behavior of `cudaHostRegister` and other host memory access APIs also changes for the software coherent GPU. Instead of using pinned mappings, software coherent GPUs on a mixed coherence system use software mirroring of CPU page tables. This means some GPU accesses may page fault where they would not on a non-mixed coherency system, although such faults are rare and should only occur under memory pressure.
+
 #### 4.1.1.2.2. Direct Unified Memory Access from the Host
 
 Some devices have hardware support for coherent reads, stores and atomic accesses from the host on GPU-resident unified memory. These devices have the attribute `cudaDevAttrDirectManagedMemAccessFromHost` set to 1. Note that all hardware-coherent systems have this attribute set for NVLink-connected devices. On these systems, the host has direct access to GPU-resident memory without page faults and data migration. Note that with CUDA managed memory, the `cudaMemAdviseSetAccessedBy` hint with location type `cudaMemLocationTypeHost` is necessary to enable this direct access without page faults, see example below.
@@ -364,9 +374,9 @@ Managed
 
 After `write` kernel is completed, `ret` will be created and initialized in GPU memory. Next, the CPU will access `ret` followed by `append` kernel using the same `ret` memory again. This code will show different behavior depending on the system architecture and support of hardware coherency:
 
-  * on systems with `directManagedMemAccessFromHost=1`: CPU accesses to the managed buffer will not trigger any migrations; the data will remain resident in GPU memory and any subsequent GPU kernels can continue to access it directly without inflicting faults or migrations
+  * on devices with `directManagedMemAccessFromHost=1`: CPU accesses to the managed buffer will not trigger any migrations; the data will remain resident in GPU memory and any subsequent GPU kernels can continue to access it directly without inflicting faults or migrations
 
-  * on systems with `directManagedMemAccessFromHost=0`: CPU accesses to the managed buffer will page fault and initiate data migration; any GPU kernel trying to access the same data first time will page fault and migrate pages back to GPU memory.
+  * on devices with `directManagedMemAccessFromHost=0`: CPU accesses to the managed buffer will page fault and initiate data migration; any GPU kernel trying to access the same data first time will page fault and migrate pages back to GPU memory.
 
 
 #### 4.1.1.2.3. Host Native Atomics
@@ -375,7 +385,7 @@ Some devices, including NVLink-connected devices of hardware-coherent systems, s
 
 #### 4.1.1.2.4. Atomic Accesses and Synchronization Primitives
 
-CUDA unified memory supports all atomic operations available to host and device threads, enabling all threads to cooperate by concurrently accessing the same shared memory location. The [libcu++](https://nvidia.github.io/cccl/libcudacxx/extended_api/synchronization_primitives.html) library provides many heterogeneous synchronization primitives tuned for concurrent use between host and device threads, including `cuda::atomic`, `cuda::atomic_ref`, `cuda::barrier`, `cuda::semaphore`, among many others.
+CUDA unified memory supports all atomic operations available to host and device threads, enabling all threads to cooperate by concurrently accessing the same shared memory location. The [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives.html) library provides many heterogeneous synchronization primitives tuned for concurrent use between host and device threads, including `cuda::atomic`, `cuda::atomic_ref`, `cuda::barrier`, `cuda::semaphore`, among many others.
 
 On software-coherent systems, atomic accesses from the device to file-backed host memory are not supported. The following example code is valid on hardware-coherent systems but exhibits undefined behavior on other systems:
     

@@ -1,4 +1,4 @@
-# 6.45. EGL Interoperability
+# 6.46. EGL Interoperability
 
 **Source:** group__CUDA__EGL.html#group__CUDA__EGL
 

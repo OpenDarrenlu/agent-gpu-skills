@@ -1,6 +1,11 @@
-# 6.18. Stream Management
+# Stream Management
 
-**Source:** group__CUDA__STREAM.html#group__CUDA__STREAM
+**Source:** group__CUDA__STREAM.html
+
+
+### Typedefs
+
+typedef CUresult* ( *CUgraphRecaptureCallback )( void*  data,  CUgraphNode node, const CUgraphNodeParams*  originalParams, const CUgraphNodeParams*  recaptureParams,  CUgraphRecaptureStatus status )
 
 
 ### Functions
@@ -139,6 +144,8 @@ CUDA_SUCCESS, CUDA_ERROR_DEINITIALIZED, CUDA_ERROR_NOT_INITIALIZED, CUDA_ERROR_N
 
 ###### Description
 
+Support for CIG streams with D3D12 can be determined using cuDeviceGetAttribute() with CU_DEVICE_ATTRIBUTE_D3D12_CIG_STREAMS_SUPPORTED.
+
 Begin CIG (CUDA in Graphics) capture on `hStream` for the graphics API as provided in `streamCigCaptureParams`. When a stream is in CIG capture mode, all operations pushed into the stream will not be executed, but will instead be captured into a graphics API command list/command buffer. All kernel launches and memory copy/memory set operations on the CIG stream will be recorded. When the command list is executed by the graphics API, all the stream's operations will execute in order along with other graphics API commands in the command list.
 
 CIG stream capture may not be initiated if `stream` is CU_STREAM_LEGACY. Capture must be ended on the same stream in which it was initiated, and it may only be initiated if the stream is not already in CIG capture mode.
@@ -188,6 +195,40 @@ Capture may not be initiated if `stream` is CU_STREAM_LEGACY. Capture must be en
 If `mode` is not CU_STREAM_CAPTURE_MODE_RELAXED, cuStreamEndCapture must be called on this stream from the same thread.
 
 Kernels captured using this API must not use texture and surface references. Reading or writing through any texture or surface reference is undefined behavior. This restriction does not apply to texture and surface objects.
+
+CUresult cuStreamBeginRecaptureToGraph ( CUstream hStream, CUstreamCaptureMode mode, CUgraph hGraph, CUgraphRecaptureCallback callbackFunc, void* userData )
+
+
+Begin graph capture on a stream to an existing graph.
+
+######  Parameters
+
+`hStream`
+    \- Stream in which to initiate capture
+`mode`
+    \- Controls the interaction of this capture sequence with other API calls that are potentially unsafe. For more details see cuThreadExchangeStreamCaptureMode.
+`hGraph`
+    \- Existing CUDA graph to be captured into
+`callbackFunc`
+    \- Function that will be called for all parameter mismatches from the original graph
+`userData`
+    \- A generic pointer to user data that is passed into the callback function
+
+###### Returns
+
+CUDA_SUCCESS, CUDA_ERROR_DEINITIALIZED, CUDA_ERROR_NOT_INITIALIZED, CUDA_ERROR_INVALID_VALUE
+
+###### Description
+
+Begin graph capture on `hStream` to the existing `hGraph`. The node creation order while recapturing the graph must be identical to the original graph. The recapture will fail immediately for: * Topology mismatches between the existing graph and the recaptured graph * Parameter mismatches for memory allocation or free nodes
+
+Any other node parameter mismatches during recapture can be configured to call the function provided in `callbackFunc`. The recapture will fail immediately if the callback returns anything other than CUDA_SUCCESS.
+
+If the recapture fails for any reason, the `graph` will be in an undefined state and should be destroyed.
+
+See cuStreamBeginCapture for additional detail on beginning the capture.
+
+Any user objects associated with `graph` will be released prior to the recapture.
 
 CUresult cuStreamCopyAttributes ( CUstream dst, CUstream src )
 

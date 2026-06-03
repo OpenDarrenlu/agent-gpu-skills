@@ -1,4 +1,4 @@
-# 6.20. External Resource Interoperability
+# 6.21. External Resource Interoperability
 
 **Source:** group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP
 

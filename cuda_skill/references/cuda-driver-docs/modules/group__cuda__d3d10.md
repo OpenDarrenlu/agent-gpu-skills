@@ -1,4 +1,4 @@
-# 6.42. Direct3D 10 Interoperability
+# 6.43. Direct3D 10 Interoperability
 
 **Source:** group__CUDA__D3D10.html#group__CUDA__D3D10
 

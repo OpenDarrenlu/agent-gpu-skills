@@ -1,4 +1,4 @@
-# 6.29. Surface Object Management
+# 6.30. Surface Object Management
 
 **Source:** group__CUDA__SURFOBJECT.html#group__CUDA__SURFOBJECT
 
