@@ -8,6 +8,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 | **cutlass-skill** | 中间层 (CUTLASS/CuTeDSL) | 写 CUTLASS/CuTe kernel，查 CuTeDSL 示例 |
 | **triton-skill** | 高层 (Python DSL) | 写 Triton/Gluon 内核，查教程和示例 |
 | **sglang-skill** | 应用层 (LLM Serving) | SGLang 推理引擎开发，KV cache、Attention backend |
+| **colfax-research-skill** | 参考资料 (技术文章) | 查 Colfax Research 文章：CUTLASS/CuTe、FlashAttention-2/3/4、Hopper/Blackwell 优化 |
 
 ## 安装
 
@@ -74,9 +75,13 @@ agent-gpu-skills/
 ├── cutlass_skill/
 │   ├── SKILL.md
 │   └── repos/cutlass/               # sparse checkout (~62MB, .gitignore)
-└── sglang_skill/
+├── sglang_skill/
+│   ├── SKILL.md
+│   └── repos/sglang/                # sparse checkout (~44MB, .gitignore)
+└── colfax-research-skill/
     ├── SKILL.md
-    └── repos/sglang/                # sparse checkout (~44MB, .gitignore)
+    ├── scripts/update_kb.py         # 增量抓取 Colfax 文章
+    └── colfax_knowledge_base/       # 文章 markdown + PDF (随仓库提交)
 ```
 
 `repos/` 目录通过 `.gitignore` 排除，用 `bash update-repos.sh` 重建。
@@ -131,6 +136,24 @@ NVIDIA CUDA 全套文档转换为可搜索的 Markdown:
 | SRT 推理引擎 | `sglang/python/sglang/srt/` |
 | JIT 内核 | `sglang/python/sglang/jit_kernel/` |
 | SGL-Kernel (CUDA) | `sglang/sgl-kernel/` |
+
+## colfax-research-skill
+
+[Colfax Research](https://research.colfax-intl.com) 技术文章本地知识库（29 篇，2023-2026），随仓库提交无需额外抓取:
+
+| 内容 | 路径 |
+|:-----|:-----|
+| 文章索引 (标题/分类/摘要) | `colfax_knowledge_base/metadata.json` |
+| 文章正文 markdown | `colfax_knowledge_base/articles/` |
+| 原文 PDF | `colfax_knowledge_base/pdfs/` |
+| 增量更新脚本 | `scripts/update_kb.py` |
+
+增量抓取新文章（依赖 `requests`、`beautifulsoup4`）:
+
+```bash
+cd colfax-research-skill
+python3 scripts/update_kb.py
+```
 
 ## 致谢
 

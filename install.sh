@@ -63,6 +63,8 @@ SKILLS[cuda-skill]="cuda_skill"
 SKILLS[triton-skill]="triton_skill"
 SKILLS[cutlass-skill]="cutlass_skill"
 SKILLS[sglang-skill]="sglang_skill"
+SKILLS[nv-gpu-kernel-performance-modeling]="nv-gpu-kernel-performance-modeling"
+SKILLS[colfax-research-skill]="colfax-research-skill"
 
 install_to_agent() {
     local agent=$1
@@ -115,6 +117,7 @@ install_to_agent() {
                 basename="$(basename "$item")"
                 [ "$basename" = "SKILL.md" ] && continue
                 [[ "$basename" == update-*.sh ]] && continue
+                [[ "$basename" == *.skill ]] && continue
                 ln -sf "$item" "$target/$basename"
                 echo "  已链接: $basename"
             done
@@ -170,6 +173,15 @@ verify_agent() {
     local SGLANG_REPO="$SKILL_DIR/sglang-skill/repos/sglang"
     check "$SGLANG_REPO/python/sglang/srt" "SGLang SRT core"
     check "$SGLANG_REPO/sgl-kernel/csrc" "sgl-kernel CUDA source"
+
+    local PERF_SKILL="$SKILL_DIR/nv-gpu-kernel-performance-modeling"
+    check "$PERF_SKILL/gpu_whitepapers" "性能建模: gpu_whitepapers"
+    check "$PERF_SKILL/research" "性能建模: research"
+
+    local COLFAX_SKILL="$SKILL_DIR/colfax-research-skill"
+    check "$COLFAX_SKILL/colfax_knowledge_base/metadata.json" "Colfax: 文章索引 metadata.json"
+    check "$COLFAX_SKILL/colfax_knowledge_base/articles" "Colfax: articles"
+    check "$COLFAX_SKILL/scripts/update_kb.py" "Colfax: 更新脚本"
 
     echo "  验证: $PASS 通过, $FAIL 失败"
     echo ""

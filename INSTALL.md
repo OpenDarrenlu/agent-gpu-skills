@@ -61,6 +61,9 @@ bash update-repos.sh sglang
 # 更新 CUDA 文档库
 uv run scrape_docs.py all --force
 
+# 更新 Colfax Research 文章知识库（增量抓取）
+python3 colfax-research-skill/scripts/update_kb.py
+
 # 同步 SKILL.md（修改源文件后重新安装）
 bash install.sh                    # 或 --agent claude 等
 ```

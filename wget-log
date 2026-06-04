@@ -1,0 +1,6 @@
+--2026-06-04 04:23:25--  https://prod-chat-kimi.tos-cn-beijing.volces.com/kimi-fs/okc/qhmzg5mjdq7eq/output/colfax-research-guide.skill?X-Tos-Algorithm=TOS4-HMAC-SHA256
+Resolving prod-chat-kimi.tos-cn-beijing.volces.com (prod-chat-kimi.tos-cn-beijing.volces.com)... 120.255.0.181, 221.194.175.118, 120.255.0.180, ...
+Connecting to prod-chat-kimi.tos-cn-beijing.volces.com (prod-chat-kimi.tos-cn-beijing.volces.com)|120.255.0.181|:443... connected.
+HTTP request sent, awaiting response... 403 Forbidden
+2026-06-04 04:23:25 ERROR 403: Forbidden.
+
