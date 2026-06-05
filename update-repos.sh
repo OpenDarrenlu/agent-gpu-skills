@@ -89,6 +89,22 @@ sglang_dirs=(
     "test"
 )
 
+# VeloQ：装/更新 profile 查询 CLI 二进制（skill 由 install.sh 负责）。非致命。
+update_veloq() {
+    echo ""
+    echo "=== veloq ==="
+    if command -v veloq >/dev/null 2>&1; then
+        echo "  已安装: $(veloq --version 2>/dev/null | head -1)，尝试 self-update..."
+        if veloq self-update --no-skills >/dev/null 2>&1; then
+            echo "  完成: $(veloq --version 2>/dev/null | head -1)"
+        else
+            echo "  跳过（网络/限流；二进制保持不变）"
+        fi
+    else
+        bash "$SCRIPT_DIR/install-veloq.sh" --no-skills || echo "  跳过（见 install-veloq.sh）"
+    fi
+}
+
 TARGET="${1:-all}"
 
 case "$TARGET" in
@@ -101,14 +117,18 @@ case "$TARGET" in
     sglang)
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         ;;
+    veloq)
+        update_veloq
+        ;;
     all)
         clone_or_update "triton" "triton_skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
+        update_veloq
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|sglang|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|sglang|veloq|all]"
         exit 1
         ;;
 esac

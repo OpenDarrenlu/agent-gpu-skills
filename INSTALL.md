@@ -3,11 +3,15 @@
 ## 首次安装
 
 ```bash
-# 1. 获取源码 repo（sparse checkout 从 GitHub，约 114MB）
+# 1. 获取源码 repo（sparse checkout 从 GitHub，约 114MB）+ veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
+#    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
 bash install.sh
+
+# 不想要 VeloQ 时:
+bash install.sh --no-veloq
 ```
 
 ## 安装目标
@@ -47,6 +51,25 @@ bash install.sh --agent gemini     # Gemini CLI
 
 使用 `--copy` 进行全量复制（适用于无法软链接的场景）。
 
+## VeloQ（profile 查询 CLI）
+
+`install.sh` 默认一并安装 [VeloQ](https://github.com/lucifer1004/veloq)：`veloq` 二进制 + 两个 profiling skill（`nsys-profile-analysis` / `ncu-profile-analysis`）。VeloQ 不 vendored 进本仓库，由 [install-veloq.sh](install-veloq.sh) 委托其官方安装器获取，按以下优先级：
+
+1. 本地 VeloQ 源码 checkout（`$VELOQ_SRC`，或自动探测 `../VeloQ`、`~/workspace/VeloQ`）：skill 复制 `SKILL.md` + 软链接 `references`，二进制优先用 `target/release/veloq`；
+2. 已在 PATH 的 `veloq`：用其自带 `veloq self-update`；
+3. VeloQ 官方 `curl` 安装脚本。
+
+任一步失败都不致命（只 warn），不影响本仓库其他 skill 的安装。
+
+```bash
+bash install.sh --agent claude              # 含 VeloQ
+bash install.sh --agent claude --no-veloq   # 跳过 VeloQ
+bash install-veloq.sh --agent claude --no-binary  # 只装 skill
+bash install-veloq.sh --no-skills                  # 只装/更新二进制
+```
+
+二进制默认落在 `~/.local/bin/veloq`（确保它在 `PATH` 中）。`.nsys-rep` 首次查询需要 `nsys >= 2024.6` 在 `PATH` 上（`nsys export -t parquetdir`）。
+
 ## 更新
 
 ```bash
@@ -57,6 +80,10 @@ bash update-repos.sh
 bash update-repos.sh triton
 bash update-repos.sh cutlass
 bash update-repos.sh sglang
+
+# 只更新 veloq 二进制（skill 用 veloq self-update 或重跑 install.sh）
+bash update-repos.sh veloq
+veloq self-update                  # VeloQ 原生升级：二进制 + skill
 
 # 更新 CUDA 文档库
 uv run scrape_docs.py all --force

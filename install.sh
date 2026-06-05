@@ -17,16 +17,18 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 AGENT="cursor"
 COPY_MODE=false
+INSTALL_VELOQ=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --agent) AGENT="$2"; shift 2 ;;
-        --copy)  COPY_MODE=true; shift ;;
+        --agent)    AGENT="$2"; shift 2 ;;
+        --copy)     COPY_MODE=true; shift ;;
+        --no-veloq) INSTALL_VELOQ=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq]"
             echo ""
             echo "首次安装:"
-            echo "  bash update-repos.sh    # 获取源码 repo"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -35,7 +37,8 @@ while [[ $# -gt 0 ]]; do
             echo "  bash install.sh --agent gemini   # Gemini CLI (~/.gemini/skills/)"
             echo ""
             echo "选项:"
-            echo "  --copy  全量复制（适用于无法软链接的场景）"
+            echo "  --copy      全量复制（适用于无法软链接的场景）"
+            echo "  --no-veloq  跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
             exit 0
             ;;
         *) echo "未知参数: $1"; exit 1 ;;
@@ -128,6 +131,16 @@ install_to_agent() {
 
 install_to_agent "$AGENT"
 
+# VeloQ：profile 查询 CLI + 两个 profiling skill。不 vendored，委托其官方安装器。
+# 非致命：失败只 warn，不影响上面已装好的 skill。
+if [ "$INSTALL_VELOQ" = true ] && [ -f "$SCRIPT_DIR/install-veloq.sh" ]; then
+    echo "================================"
+    echo "VeloQ (profile 查询 CLI + skill)"
+    echo "================================"
+    bash "$SCRIPT_DIR/install-veloq.sh" --agent "$AGENT" || \
+        echo "提示: VeloQ 安装未完成（用 --no-veloq 可跳过；或参考 VeloQ README 手动安装）"
+fi
+
 # 验证
 echo "================================"
 echo "验证"
@@ -175,13 +188,24 @@ verify_agent() {
     check "$SGLANG_REPO/sgl-kernel/csrc" "sgl-kernel CUDA source"
 
     local PERF_SKILL="$SKILL_DIR/nv-gpu-kernel-performance-modeling"
-    check "$PERF_SKILL/gpu_whitepapers" "性能建模: gpu_whitepapers"
     check "$PERF_SKILL/research" "性能建模: research"
 
     local COLFAX_SKILL="$SKILL_DIR/colfax-research-skill"
     check "$COLFAX_SKILL/colfax_knowledge_base/metadata.json" "Colfax: 文章索引 metadata.json"
     check "$COLFAX_SKILL/colfax_knowledge_base/articles" "Colfax: articles"
     check "$COLFAX_SKILL/scripts/update_kb.py" "Colfax: 更新脚本"
+
+    if [ "$INSTALL_VELOQ" = true ]; then
+        check "$SKILL_DIR/nsys-profile-analysis/SKILL.md" "VeloQ: nsys-profile-analysis"
+        check "$SKILL_DIR/ncu-profile-analysis/SKILL.md" "VeloQ: ncu-profile-analysis"
+        if command -v veloq >/dev/null 2>&1; then
+            echo "  OK: veloq 二进制 ($(veloq --version 2>/dev/null | head -1))"
+            PASS=$((PASS + 1))
+        else
+            echo "  缺失: veloq 二进制 (PATH 未找到；见 install-veloq.sh)"
+            FAIL=$((FAIL + 1))
+        fi
+    fi
 
     echo "  验证: $PASS 通过, $FAIL 失败"
     echo ""
