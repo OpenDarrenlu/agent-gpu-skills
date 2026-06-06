@@ -1,0 +1,5968 @@
+{
+  "total_authors": 109,
+  "authors": [
+    {
+      "author_id": "sha7-87",
+      "author_name": "sha7dow",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044554843948308001",
+          "id": "2044554843948308001",
+          "title": "AKO：Agentic Kernel Optimization，使用 Claude Code 在几小时内优化出超越 FlashInfer 专家实现的 Kernel"
+        }
+      ]
+    },
+    {
+      "author_id": "81-38-68-51",
+      "author_name": "你好",
+      "article_count": 6,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038659612115727462",
+          "id": "2038659612115727462",
+          "title": "NV mbarier指令编译以及微架构分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2036209743891535004",
+          "id": "2036209743891535004",
+          "title": "B110 thor 使用Cutile生成的SASS指令流分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2030388113005090437",
+          "id": "2030388113005090437",
+          "title": "SASS 指令阅读器，以及对于 MatMul SASS 的初步阅读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2028887778943939641",
+          "id": "2028887778943939641",
+          "title": "Thor 上 cuTile MatMul 实践与 Cache 异常现象分析（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014482571719878158",
+          "id": "2014482571719878158",
+          "title": "Thor 上 cuTile MatMul 实践与 Cache 异常现象分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984297569824833904",
+          "id": "1984297569824833904",
+          "title": "Thor cuTile 实践记录"
+        }
+      ]
+    },
+    {
+      "author_id": "linjinzhen",
+      "author_name": "Jinzhen",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032065891857343604",
+          "id": "2032065891857343604",
+          "title": "高性能MXFP4 x INT8算子实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031516408954234360",
+          "id": "2031516408954234360",
+          "title": "一种H200/H20上的MXFP4 x FP8算子实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2021951434141222000",
+          "id": "2021951434141222000",
+          "title": "通用高性能量化推理算子库Humming"
+        }
+      ]
+    },
+    {
+      "author_id": "wang-wei-23-64-15",
+      "author_name": "摸鱼的王同学",
+      "article_count": 15,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/474701173",
+          "id": "474701173",
+          "title": "浅滩记（1）：十年寒窗聚华清"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/419252050",
+          "id": "419252050",
+          "title": "LeetCode 1091.二进制矩阵中的最短路径"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/418951355",
+          "id": "418951355",
+          "title": "2021.10.08签到题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/415688196",
+          "id": "415688196",
+          "title": "2021.09.30签到题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/414809770",
+          "id": "414809770",
+          "title": "LeetCode签到题（2021.09.28）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/370213623",
+          "id": "370213623",
+          "title": "LeetCode刷题记录（1）：寻找两个正序数组的中位数"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/368299033",
+          "id": "368299033",
+          "title": "初入社会（一）应届生北京落户存档"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/362041867",
+          "id": "362041867",
+          "title": "张昆玮事件中的body shame合集"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/158739262",
+          "id": "158739262",
+          "title": "2020年清华大学新生笔记本选购指南（草稿）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/158603543",
+          "id": "158603543",
+          "title": "轻薄本推荐（2020年7月更新）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/146170938",
+          "id": "146170938",
+          "title": "入门价位轻薄本推荐（5千以下，618专场)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/126176473",
+          "id": "126176473",
+          "title": "清北同学如何在保研时输出内卷"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/120868445",
+          "id": "120868445",
+          "title": "生产力笔记本推荐（2020年4月更新）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/115994558",
+          "id": "115994558",
+          "title": "旗舰价位轻薄本推荐（8千以上，2020年4月已更新）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/113138390",
+          "id": "113138390",
+          "title": "主流价位轻薄本推荐（5千-8千，2020年4月已更新）"
+        }
+      ]
+    },
+    {
+      "author_id": "zhangzn-49-6",
+      "author_name": "ZhangZ",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044125705634591597",
+          "id": "2044125705634591597",
+          "title": "[AI代码走读] DeepEP v1 Low Latency"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044125059372017064",
+          "id": "2044125059372017064",
+          "title": "[AI代码走读] DeepEP v1 High Throughput"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042623507931165218",
+          "id": "2042623507931165218",
+          "title": "细读论文：Insights into DeepSeek-V3"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2040008316714279519",
+          "id": "2040008316714279519",
+          "title": "LLM通信概览：5D 原语 拓扑"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038378833183822600",
+          "id": "2038378833183822600",
+          "title": "细读论文：揭秘NCCL"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037819498779108701",
+          "id": "2037819498779108701",
+          "title": "Nvidia通信演化（NVLink/NVSwitch/IB/DGX)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037151351893910410",
+          "id": "2037151351893910410",
+          "title": "CuTeDSL如何autotune"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2034662735783407682",
+          "id": "2034662735783407682",
+          "title": "FlashAttention FA1/2/3/4进化浅析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2034316419467309332",
+          "id": "2034316419467309332",
+          "title": "[CuTeDSL防晕]高性能GEMM（三）：mcast/2cta"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025619304071149447",
+          "id": "2025619304071149447",
+          "title": "[CuTeDSL防晕] Fence合集，什么时候用哪个，附PTX"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025248873526903367",
+          "id": "2025248873526903367",
+          "title": "[Kernel优化] Software Pipeline / Warp Specialization / Persistent 及其一些思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024886778629243099",
+          "id": "2024886778629243099",
+          "title": "[CuTeDSL防晕] 无B200卡 从0开始调优GEMM到1840TFLOPS (二): Pipeline"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023356213597929481",
+          "id": "2023356213597929481",
+          "title": "[深挖FA4] FA4的优化思想和代码解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020141084731290182",
+          "id": "2020141084731290182",
+          "title": "[LeetCode] 去掉k位数"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020108297701732698",
+          "id": "2020108297701732698",
+          "title": "[CuTeDSL防晕] 无B200卡 从0开始调优GEMM到1840TFLOPS（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015703290181083527",
+          "id": "2015703290181083527",
+          "title": "[Triton底层魔改系列] 从Vector Add到媲美FlashAttention的优化实战（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014263286762324846",
+          "id": "2014263286762324846",
+          "title": "[FA4] FlashAttention-4 没有 B200 也可以直接上手"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2013173173835809173",
+          "id": "2013173173835809173",
+          "title": "FlashAttention4 FA4 工作原理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012436123243275090",
+          "id": "2012436123243275090",
+          "title": "OpenClaw 如何与 Codex/Claude Code/Opencode 丝滑对接：绕过中间商赚差价的实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719977430",
+          "id": "719977430",
+          "title": "OpenAI的o1模型 效果到底如何"
+        }
+      ]
+    },
+    {
+      "author_id": "f6hoks",
+      "author_name": "zhiyuan1i",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1989809041849988324",
+          "id": "1989809041849988324",
+          "title": "从零开始学 KDA-1"
+        }
+      ]
+    },
+    {
+      "author_id": "nobody-999",
+      "author_name": "Nobody",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031471761737430946",
+          "id": "2031471761737430946",
+          "title": "Linear Attention 系列 State Layout：从 SMEM Bank Conflict 看 k-last vs v-last"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027181960976508335",
+          "id": "2027181960976508335",
+          "title": "CuteDSL练习备忘录: 在 CuteDSL 中通过 Inline PTX / NVVM 实现 Masked UMMA"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023109718873220097",
+          "id": "2023109718873220097",
+          "title": "cuLA：用 CUDA 重写线性注意力，欢迎大伙一起来折腾"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012272418786410528",
+          "id": "2012272418786410528",
+          "title": "[FLA练习] chunk_gla_fwd_o CuTe DSL Kernel  优化备忘录"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009677105324114479",
+          "id": "2009677105324114479",
+          "title": "cutlass chunk gated delta h 优化记录"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2000209329819763942",
+          "id": "2000209329819763942",
+          "title": "Linear Attention 的 State 显存布局策略"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1998852596320982088",
+          "id": "1998852596320982088",
+          "title": "KDA Attention 论文的不严谨之处"
+        }
+      ]
+    },
+    {
+      "author_id": "ze-jia-zheng",
+      "author_name": "ZZZZJ",
+      "article_count": 6,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2034034674977260432",
+          "id": "2034034674977260432",
+          "title": "聊聊 cuembed (二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1959047008972171179",
+          "id": "1959047008972171179",
+          "title": "聊聊 CuEmbed （一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688689653",
+          "id": "688689653",
+          "title": "读 Mora 论文笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/137442849",
+          "id": "137442849",
+          "title": "Zoox 拉斯维加斯一小时自动驾驶"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/133344220",
+          "id": "133344220",
+          "title": "ZOOX 旧金山湾区全程自动驾驶"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/117947139",
+          "id": "117947139",
+          "title": "TensorRt 部署流程 (Nvidia GTC Talk Session)"
+        }
+      ]
+    },
+    {
+      "author_id": "wang-shi-sui-feng-70-57-29",
+      "author_name": "Kevin",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042003898190356728",
+          "id": "2042003898190356728",
+          "title": "[RL随笔] 小白学习verl AgentLoop 与 GSM8K Agentic RL Demo"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041185737639518940",
+          "id": "2041185737639518940",
+          "title": "[Kernel随笔] cuLA Warp-Specialized Kernel 中的 Cross-Proxy Fence Bug 修复"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023828507680056143",
+          "id": "2023828507680056143",
+          "title": "小白视角的cuLA开发随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/683196635",
+          "id": "683196635",
+          "title": "VSCode调试使用pybind11的Python和C++代码"
+        }
+      ]
+    },
+    {
+      "author_id": "starmie_choice_specs",
+      "author_name": "Starmind",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2033228078550340630",
+          "id": "2033228078550340630",
+          "title": "飞 门 弄 闸（中）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032257808285028740",
+          "id": "2032257808285028740",
+          "title": "飞 门 弄 闸（上）"
+        }
+      ]
+    },
+    {
+      "author_id": "emczero",
+      "author_name": "半只兔子",
+      "article_count": 19,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2036541914762188055",
+          "id": "2036541914762188055",
+          "title": "注意力中隐藏的递推结构：Flash Attention介绍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029180420994998509",
+          "id": "2029180420994998509",
+          "title": "DPLR 前传与反传推导"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029179783364265830",
+          "id": "2029179783364265830",
+          "title": "阅读笔记:  KDA 在 FLA 中的实现笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029179477943489426",
+          "id": "2029179477943489426",
+          "title": "阅读笔记: Kimi Delta Attention 的反向传播"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029169124027188365",
+          "id": "2029169124027188365",
+          "title": "阅读笔记: Kimi Delta Attention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026111418953478843",
+          "id": "2026111418953478843",
+          "title": "阅读笔记：GDN 在 FLA 中的实现笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026111000932304256",
+          "id": "2026111000932304256",
+          "title": "阅读笔记：Gated DeltaNet 的反向传播"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026108900261343447",
+          "id": "2026108900261343447",
+          "title": "阅读笔记： Gated Delta Networks"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026108535604277610",
+          "id": "2026108535604277610",
+          "title": "阅读笔记：DeltaNet 的反向传播"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026105585796432697",
+          "id": "2026105585796432697",
+          "title": "阅读笔记：RetNet"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024987677531940136",
+          "id": "2024987677531940136",
+          "title": "阅读笔记：DeltaNet"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024986118467142576",
+          "id": "2024986118467142576",
+          "title": "阅读笔记：DeltaNet 在 FLA 中的代码实现笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024645312359220830",
+          "id": "2024645312359220830",
+          "title": "阅读笔记：GLA 在 FLA 中的代码实现笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024642415739375798",
+          "id": "2024642415739375798",
+          "title": "阅读笔记：Gated Linear Attention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/108644782",
+          "id": "108644782",
+          "title": "从零开始： 原生nodejs 搭建文件索引服务器（Part 5）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/108629919",
+          "id": "108629919",
+          "title": "从零开始： 原生nodejs 搭建文件索引服务器（Part4）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/108578605",
+          "id": "108578605",
+          "title": "从零开始： 原生nodejs 搭建文件索引服务器（Part3）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/108529508",
+          "id": "108529508",
+          "title": "从零开始： 原生nodejs 搭建文件索引服务器（Part 2）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/108515683",
+          "id": "108515683",
+          "title": "从零开始： nodejs 搭建文件索引服务器(Part 1)"
+        }
+      ]
+    },
+    {
+      "author_id": "yzhangcs",
+      "author_name": "张宇",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/663319816",
+          "id": "663319816",
+          "title": "[EMNLP'23] Simple Hardware-Efficient PCFGs with Independent Left and Right Productions"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/640952220",
+          "id": "640952220",
+          "title": "[ACL'23] Hexatagging: Projective Dependency Parsing as Tagging"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/620892945",
+          "id": "620892945",
+          "title": "[ACL'20, EMNLP'22] Tetra-Tagging: Word-Synchronous Parsing with Linear-Time Inference"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/617714746",
+          "id": "617714746",
+          "title": "[ICLR'23] Bayes risk CTC: Controllable CTC alignment in Sequence-to-Sequence tasks"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/616549058",
+          "id": "616549058",
+          "title": "[ACL'23] A dynamic programming algorithm for span-based nested NER in O(n^2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/421796178",
+          "id": "421796178",
+          "title": "Semantic Role Labeling as Dependency Parsing"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/196865779",
+          "id": "196865779",
+          "title": "SuPar: 基于Biaffine Parser的神经句法分析器"
+        }
+      ]
+    },
+    {
+      "author_id": "pineapple-38-27",
+      "author_name": "xg20",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938959469439620849",
+          "id": "1938959469439620849",
+          "title": "TritonDistributed-MegaTritonKernel"
+        }
+      ]
+    },
+    {
+      "author_id": "jiayi-weng",
+      "author_name": "Trinkle",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/431543858",
+          "id": "431543858",
+          "title": "如何做到史上最快的基于CPU的通用强化学习环境并行模拟器？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/144842398",
+          "id": "144842398",
+          "title": "RLlib：一个分布式强化学习系统的凝练"
+        }
+      ]
+    },
+    {
+      "author_id": "sheng-ying-1-3",
+      "author_name": "weishengying",
+      "article_count": 16,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2511078239",
+          "id": "2511078239",
+          "title": "sglang 学习（一）：radix-tree"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/722005205",
+          "id": "722005205",
+          "title": "tensorrt 实践小结二：ONNX GraphSurgeon"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/718348437",
+          "id": "718348437",
+          "title": "tensorrt 实践小结一：onnx-parser"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719060912",
+          "id": "719060912",
+          "title": "【OnnxRuntime】IR Pass（transform）梳理（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/717900145",
+          "id": "717900145",
+          "title": "【cuda笔记】：线程束分化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/715863693",
+          "id": "715863693",
+          "title": "浅谈cuda graph在llm推理中的应用"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/467466998",
+          "id": "467466998",
+          "title": "改名机会要过期：CUDA效率优化之：CUDA Graph"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/700224642",
+          "id": "700224642",
+          "title": "游凯超：一文读懂cudagraph"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/712314257",
+          "id": "712314257",
+          "title": "FlashAttention fp8实现（ada架构)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/708867810",
+          "id": "708867810",
+          "title": "shengying.wei：FlashAttention 笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/707715989",
+          "id": "707715989",
+          "title": "cute gemm 优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/706796240",
+          "id": "706796240",
+          "title": "cute swizzle"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/699255051",
+          "id": "699255051",
+          "title": "cute TiledMMA"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/705573338",
+          "id": "705573338",
+          "title": "Cute TiledCopy"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/666232173",
+          "id": "666232173",
+          "title": "reed：cute 之 Copy抽象"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/703560147",
+          "id": "703560147",
+          "title": "Anonymous：CUTLASS CuTe GEMM细节分析（二）——Til"
+        }
+      ]
+    },
+    {
+      "author_id": "chen-hong-zheng-92",
+      "author_name": "chhzh123",
+      "article_count": 6,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002356805263709175",
+          "id": "2002356805263709175",
+          "title": "[CGO'26 C4ML] 通向编译器自我进化之路：用AlphaEvolve进化LLVM/XLA"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2000551416293524790",
+          "id": "2000551416293524790",
+          "title": "[ICLR'26] HeuriGym：评测智能体解组合优化——迎接LLM的下半场"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1997633346654716807",
+          "id": "1997633346654716807",
+          "title": "Dato：面向数据流架构的Task编程模型"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1995400039590299337",
+          "id": "1995400039590299337",
+          "title": "[CGO'26] 面向Hopper和Blackwell GPU的自动化warp specialization"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/700829792",
+          "id": "700829792",
+          "title": "[PLDI'24] Allo：用软件方法论设计硬件加速器"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/674607019",
+          "id": "674607019",
+          "title": "[FCCM'24] 剖析 FPGA 加速大模型推理的潜力"
+        }
+      ]
+    },
+    {
+      "author_id": "cai-hong-77",
+      "author_name": "Hongzhuzhu",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/25449691772",
+          "id": "25449691772",
+          "title": "DeepSeek-V3 MLA 优化全攻略：从低秩压缩到权重吸收，揭秘高性能推理的优化之道"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/697781431",
+          "id": "697781431",
+          "title": "rainbow：还在用MHA？MLA来了DeepSeek-v2的MLA的总结和思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/712664813",
+          "id": "712664813",
+          "title": "vLLM官方文档Paged Attention解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/710310530",
+          "id": "710310530",
+          "title": "聊聊CUDA"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/711574586",
+          "id": "711574586",
+          "title": "PyTorch 张量并行（TP）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/705138777",
+          "id": "705138777",
+          "title": "Mamba2: SSM和Transformer的大一统"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/694288870",
+          "id": "694288870",
+          "title": "PyTorch FSDP 设计解读"
+        }
+      ]
+    },
+    {
+      "author_id": "li-wei-27-70-68",
+      "author_name": "李安渝",
+      "article_count": 12,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1997773657573971153",
+          "id": "1997773657573971153",
+          "title": "把 GPT / Gemini 的长对话变成“可导航文档”：我做了个侧边栏目录 + 文件夹归类插件（开源）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1996349137751390080",
+          "id": "1996349137751390080",
+          "title": "MoE 之后的下一步？DeepSeek Engram 如何用 N-gram 重构大模型稀疏性"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1993730995959111789",
+          "id": "1993730995959111789",
+          "title": "现代大模型 RL Infra 架构：从 GRPO 到 verl"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17902707986",
+          "id": "17902707986",
+          "title": "线程束执行本质"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/9632325957",
+          "id": "9632325957",
+          "title": "大模型推理加速之pageattention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/8450501217",
+          "id": "8450501217",
+          "title": "CUDA代码实战-softmax优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/7818317945",
+          "id": "7818317945",
+          "title": "CUDA代码实战-reduce优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/5411324410",
+          "id": "5411324410",
+          "title": "CUDA实战-自定义pytoch算子"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/4732447803",
+          "id": "4732447803",
+          "title": "CUDA代码实战一matix_mul、reduce"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/3462150219",
+          "id": "3462150219",
+          "title": "GPU的内存体系结构"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1977159988",
+          "id": "1977159988",
+          "title": "TVM编译流程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/992655801",
+          "id": "992655801",
+          "title": "深入分析算子融合技术(TVM)"
+        }
+      ]
+    },
+    {
+      "author_id": "ppppp-41-13",
+      "author_name": "ppppp",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1940518023904601791",
+          "id": "1940518023904601791",
+          "title": "nvidia tensor core 祛魅"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938532574352876909",
+          "id": "1938532574352876909",
+          "title": "ai 芯片的走向"
+        }
+      ]
+    },
+    {
+      "author_id": "yibozhu",
+      "author_name": "Yibo Zhu",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2001741987360023159",
+          "id": "2001741987360023159",
+          "title": "Step 3.5 Flash 发布背后的个人感想"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1949418760793482392",
+          "id": "1949418760793482392",
+          "title": "SIGCOMM Test-of-Time Award 背后的故事"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1932920900203807997",
+          "id": "1932920900203807997",
+          "title": "Step-3推理系统：从PD分离到AF分离（AFD）"
+        }
+      ]
+    },
+    {
+      "author_id": "shi-jian-du-bei-gou-chi-liao",
+      "author_name": "齐夏",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/755874470",
+          "id": "755874470",
+          "title": "开源大模型推理引擎现状及常见推理优化方法"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/683780467",
+          "id": "683780467",
+          "title": "GPU渲染之路：从图形引擎到内核驱动(四、内核态图形驱动层)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/651364842",
+          "id": "651364842",
+          "title": "GPU渲染之路：从图形引擎到内核驱动(三、用户态图形驱动层)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/650510512",
+          "id": "650510512",
+          "title": "GPU渲染之路：从图形引擎到内核驱动(二、跨平台引擎层)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/649971173",
+          "id": "649971173",
+          "title": "GPU渲染之路：从图形引擎到内核驱动(一、计算机图形系统概述)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/620767652",
+          "id": "620767652",
+          "title": "万字长文,看这一篇就够了！WebAssembly原理剖析与生产应用"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/491066310",
+          "id": "491066310",
+          "title": "windows下使用vcpkg三分钟搭建openGL运行环境"
+        }
+      ]
+    },
+    {
+      "author_id": "tian-dao-yuan-ren-dao-er",
+      "author_name": "JiLi-QA",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1988366175332231093",
+          "id": "1988366175332231093",
+          "title": "2025 infra 工作随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/703948671",
+          "id": "703948671",
+          "title": "Yi-VL-6B 适配 Tensorrt-LLM 0.7.1"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/668093490",
+          "id": "668093490",
+          "title": "std::string & std::string_view 浅解"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/667660105",
+          "id": "667660105",
+          "title": "动手实现 unique_ptr"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/667590623",
+          "id": "667590623",
+          "title": "C++ 变量初始化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/667247080",
+          "id": "667247080",
+          "title": "Cmake 入门"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/666343386",
+          "id": "666343386",
+          "title": "Chapter 7 模版（C++之旅读书小记）"
+        }
+      ]
+    },
+    {
+      "author_id": "CPAPCF",
+      "author_name": "CPAPCF",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20703934925",
+          "id": "20703934925",
+          "title": "Blackwell指令集发布新SRAM空间"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17716864720",
+          "id": "17716864720",
+          "title": "名词定义：A门"
+        }
+      ]
+    },
+    {
+      "author_id": "song-zhuo-ran-88",
+      "author_name": "宋卓然",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1925603403934986345",
+          "id": "1925603403934986345",
+          "title": "上海交大计算机学院体系结构方向博士、硕士招生"
+        }
+      ]
+    },
+    {
+      "author_id": "zhi-hong-70-50",
+      "author_name": "芝麻长高够彩虹",
+      "article_count": 16,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1987631409838454164",
+          "id": "1987631409838454164",
+          "title": "GPGPU处理器设计学习（4）——Scoreboard"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1978052188187141013",
+          "id": "1978052188187141013",
+          "title": "GPGPU处理器设计学习（3）——线程块调度与线程束调度"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1976754205562779288",
+          "id": "1976754205562779288",
+          "title": "什么是DMA？DMA如何设计？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1974793914893493839",
+          "id": "1974793914893493839",
+          "title": "课程实践：五级流水线MIPS处理器设计-芝虹"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1974516698330730792",
+          "id": "1974516698330730792",
+          "title": "Vortex GPGPU 代码阅读（1）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1972723528555057301",
+          "id": "1972723528555057301",
+          "title": "GPGPU处理器设计学习（2）——线程分支"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1968768772253935436",
+          "id": "1968768772253935436",
+          "title": "GPGPU处理器设计学习（1）——编程模型与硬件架构"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1948858866319226735",
+          "id": "1948858866319226735",
+          "title": "数字IC积累——握手协议的反压与打拍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938551213156201187",
+          "id": "1938551213156201187",
+          "title": "体系结构学习——（6）线程级并行"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1923673207967285839",
+          "id": "1923673207967285839",
+          "title": "体系结构学习——（5）向量处理器"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1913979841868445362",
+          "id": "1913979841868445362",
+          "title": "体系结构学习——（4）SMT"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1905745951634744688",
+          "id": "1905745951634744688",
+          "title": "体系结构学习支线——如何高效实现浮点加法器？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898816902391902561",
+          "id": "1898816902391902561",
+          "title": "体系结构学习支线——如何高效实现定点加法器？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1892331805283165841",
+          "id": "1892331805283165841",
+          "title": "体系结构学习——(3)MMU (Memory Management Unit)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/30598198721",
+          "id": "30598198721",
+          "title": "体系结构学习——(2)ILP之流水线（Pipeline）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27701527639",
+          "id": "27701527639",
+          "title": "体系结构学习——(1)微代码 Microcode"
+        }
+      ]
+    },
+    {
+      "author_id": "xieym-21",
+      "author_name": "xieym",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025978453158032285",
+          "id": "2025978453158032285",
+          "title": "小菜鸟笔记：KDA里的公式"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2011822117784667169",
+          "id": "2011822117784667169",
+          "title": "小菜鸟学SGL：flashinfer sampling (2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2011499655553389678",
+          "id": "2011499655553389678",
+          "title": "小菜鸟学SGL：flashinfer sampling (1)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009300330299531940",
+          "id": "2009300330299531940",
+          "title": "小菜鸟学SGL: 繁杂的return logprob处理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2006379505573451065",
+          "id": "2006379505573451065",
+          "title": "小菜鸟学SGL：chunked prefill"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2004934343827691165",
+          "id": "2004934343827691165",
+          "title": "小菜鸟学SGL：mha chunked kv"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2004848811638540134",
+          "id": "2004848811638540134",
+          "title": "小菜鸟学SGL：梳理mla相关的patchset"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002313268560159933",
+          "id": "2002313268560159933",
+          "title": "小菜鸟学SGL：简单kvcache patch (3)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2001693623142596959",
+          "id": "2001693623142596959",
+          "title": "小菜鸟学SGL：简单kvcache patch (2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1998399631583880349",
+          "id": "1998399631583880349",
+          "title": "小菜鸟学SGL：学习kvcache的简单kernel（1）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1996187234068628905",
+          "id": "1996187234068628905",
+          "title": "小菜鸟学SGL：简单的scheduler patch (3)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1994115977131086481",
+          "id": "1994115977131086481",
+          "title": "小菜鸟学SGL：学习简单的scheduler patch (2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1992267204335514020",
+          "id": "1992267204335514020",
+          "title": "小菜鸟学SGL：学习简单scheduler patch (1)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1990000527875016467",
+          "id": "1990000527875016467",
+          "title": "小菜鸟学SGL：moe中的topk-softmax算子(2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1989373804238110902",
+          "id": "1989373804238110902",
+          "title": "小菜鸟学SGL：moe中的topk-softmax算子(1)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1988709364865967679",
+          "id": "1988709364865967679",
+          "title": "小菜鸟学SGL-简单patch走读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1982497524817354994",
+          "id": "1982497524817354994",
+          "title": "小菜鸟学deepseekmoe"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1967569351025596070",
+          "id": "1967569351025596070",
+          "title": "菜鸟学cute：coordinate示例"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1964717254076789209",
+          "id": "1964717254076789209",
+          "title": "菜鸟学cute layout-coordinate"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1956420009736771457",
+          "id": "1956420009736771457",
+          "title": "写点无聊的东西[忧桑]"
+        }
+      ]
+    },
+    {
+      "author_id": "sunnycase",
+      "author_name": "SunnyCase",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039745753778804443",
+          "id": "2039745753778804443",
+          "title": "Triton-TLE：告别手动 barrier，用生产消费模型实现 FlashMLA 90% 的性能"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025245870753429243",
+          "id": "2025245870753429243",
+          "title": "如何用 Triton-TLE 写出比 FlashInfer 更快的 TopK Selector"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014316594554226118",
+          "id": "2014316594554226118",
+          "title": "如何用 Triton-TLE 写出比 SGLang 更快的 MoE Align Block Size"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/652121432",
+          "id": "652121432",
+          "title": "2023 年的 Surface RT 还能做什么？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/408791160",
+          "id": "408791160",
+          "title": "AI 应用落地利器 - MegFlow 尝鲜"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/390695615",
+          "id": "390695615",
+          "title": "R329 AIPU 初体验：ShuffleNet 编译到部署"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/148395519",
+          "id": "148395519",
+          "title": "Chino 操作系统开发日志 (2) - Device Tree ？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/56097388",
+          "id": "56097388",
+          "title": "在 K210 上用 TensorFlow 画光"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/30745861",
+          "id": "30745861",
+          "title": "用 C 语言画光系列"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/42692377",
+          "id": "42692377",
+          "title": "Chino 操作系统开发日志 (1) - 为 IoT 而生"
+        }
+      ]
+    },
+    {
+      "author_id": "shi-jie-72-84",
+      "author_name": "仕杰",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/149420699",
+          "id": "149420699",
+          "title": "Faiss 源码解析"
+        }
+      ]
+    },
+    {
+      "author_id": "luckier2know",
+      "author_name": "2know",
+      "article_count": 15,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984212604609131664",
+          "id": "1984212604609131664",
+          "title": "微信高性能计算团队招人啦"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/658306956",
+          "id": "658306956",
+          "title": "Tensor Core 优化半精度矩阵乘揭秘"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/493201665",
+          "id": "493201665",
+          "title": "图形处理单元(GPU)的演进"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/353975826",
+          "id": "353975826",
+          "title": "移动端GPU矩阵乘优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/264786866",
+          "id": "264786866",
+          "title": "OpenCL Reduction优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/98105794",
+          "id": "98105794",
+          "title": "OpenCV入门系列之灰度空间变换"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/92118785",
+          "id": "92118785",
+          "title": "手撕OpenCV源码之金字塔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/60623671",
+          "id": "60623671",
+          "title": "手撕OpenCV源代码之直方图均衡化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/58831589",
+          "id": "58831589",
+          "title": "OpenCV源码交叉编译android库"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/53768256",
+          "id": "53768256",
+          "title": "OpenCV DNN(二)——Net"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/51928656",
+          "id": "51928656",
+          "title": "OpenCV4.0 DNN(一)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/51394272",
+          "id": "51394272",
+          "title": "YUV色彩格式总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/49239772",
+          "id": "49239772",
+          "title": "YUV系列之BGR2YUV"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/47888992",
+          "id": "47888992",
+          "title": "OpenCV 4.0 源码编译"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/36736315",
+          "id": "36736315",
+          "title": "手撕OpenCV源码之resize<INTER_AREA>"
+        }
+      ]
+    },
+    {
+      "author_id": "xiao-jian-bu-wen-sheng-jian-qiao-65",
+      "author_name": "笑渐不闻声渐悄",
+      "article_count": 19,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038247891144288170",
+          "id": "2038247891144288170",
+          "title": "2026.05 随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2036027467606012834",
+          "id": "2036027467606012834",
+          "title": "Speculative Decoding: 投机采样只能复用Hidden States吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012931663584317727",
+          "id": "2012931663584317727",
+          "title": "蹭一下 Tri Dao 新论文的热度，一些拙见"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1998061370952929925",
+          "id": "1998061370952929925",
+          "title": "AI Infra & 投机解码方向实习面经"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1908249002421511962",
+          "id": "1908249002421511962",
+          "title": "Speculative Decoding: 总结、分析、展望（二）Tree Attention 升级之路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1991904699117490479",
+          "id": "1991904699117490479",
+          "title": "Speculative Decoding: 从Padding 的视角重新理解投机解码"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1989004532739490243",
+          "id": "1989004532739490243",
+          "title": "Speculative Decoding: 长距衰减问题不仅源于训推不一致"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984710353276388157",
+          "id": "1984710353276388157",
+          "title": "2025.12 随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1977462207890626511",
+          "id": "1977462207890626511",
+          "title": "搭了一个Claude, Codex, Gemini 协作的 Agent 工作流"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938356063813472681",
+          "id": "1938356063813472681",
+          "title": "被Gemini和Claude Code狠狠驯服了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1972994802497917758",
+          "id": "1972994802497917758",
+          "title": "最近看到的一篇很有意思的spec文章"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1968679023782655324",
+          "id": "1968679023782655324",
+          "title": "nano-PEARL: DT分离与并行投机解码的框架级实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1929485194693423482",
+          "id": "1929485194693423482",
+          "title": "LLM推理加速学习笔记（三）近期学习资料整理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1921216345195934881",
+          "id": "1921216345195934881",
+          "title": "LLM推理加速学习笔记（二）LLM并行策略"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1920525075628668557",
+          "id": "1920525075628668557",
+          "title": "LLM推理加速学习笔记（一）LLM推理基本认知"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1918033580103282744",
+          "id": "1918033580103282744",
+          "title": "NVIDIA 面经"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1904881828906668879",
+          "id": "1904881828906668879",
+          "title": "Speculative Decoding: 总结、分析、展望"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719209888",
+          "id": "719209888",
+          "title": "2024.9 随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716769091",
+          "id": "716769091",
+          "title": "PEARL: 并行投机解码，推理加速最新SOTA（blog/paper/code均开源）"
+        }
+      ]
+    },
+    {
+      "author_id": "cherichy-chi",
+      "author_name": "cherichy",
+      "article_count": 13,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/627999526",
+          "id": "627999526",
+          "title": "让typst曲线支持引用国标GB/T7714"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/579308313",
+          "id": "579308313",
+          "title": "相机标定之张氏标定法及Julia实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/423343732",
+          "id": "423343732",
+          "title": "自己编译的opencv python binding 报ImportError"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/149517344",
+          "id": "149517344",
+          "title": "在wsl2中使用GPU"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/118601703",
+          "id": "118601703",
+          "title": "Matplotlib 中英文及公式字体设置"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/60377531",
+          "id": "60377531",
+          "title": "用C++加速julia：BMP图片读取"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/59182296",
+          "id": "59182296",
+          "title": "《统计学习方法》：决策树（ID3, C4.5）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/59041711",
+          "id": "59041711",
+          "title": "《统计学习方法》：KNN（kd树实现）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/58997595",
+          "id": "58997595",
+          "title": "《统计学习方法》：朴素贝叶斯"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/58891772",
+          "id": "58891772",
+          "title": "《统计学习方法》：感知机"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/58865853",
+          "id": "58865853",
+          "title": "《统计学习方法》：SVM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/58791918",
+          "id": "58791918",
+          "title": "《统计学习方法》系列：索引及初衷"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/54772374",
+          "id": "54772374",
+          "title": "快乐——《包法利夫人》读后感"
+        }
+      ]
+    },
+    {
+      "author_id": "78-33-14-4-67",
+      "author_name": "珂朵莉老大",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1980454696075403417",
+          "id": "1980454696075403417",
+          "title": "实用 Tensor Core 教程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/21142007017",
+          "id": "21142007017",
+          "title": "实用 Swizzle 教程（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20579515046",
+          "id": "20579515046",
+          "title": "实用 Swizzle 教程（一）"
+        }
+      ]
+    },
+    {
+      "author_id": "li-zhao-shi",
+      "author_name": "疯石头",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27382334463",
+          "id": "27382334463",
+          "title": "折扇模型：直观理解EP对云端推理服务性价比的意义"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/613271144",
+          "id": "613271144",
+          "title": "《感知·理知·自我认知》对多模态大模型的启示 & 个人读书笔记分享"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/613071086",
+          "id": "613071086",
+          "title": "GPGPU视角下的大算力与大模型的供需关系"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/612537308",
+          "id": "612537308",
+          "title": "[从大语言模型到通用人工智能]"
+        }
+      ]
+    },
+    {
+      "author_id": "max-lv",
+      "author_name": "Max Lv",
+      "article_count": 18,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/443347505",
+          "id": "443347505",
+          "title": "有关职业规划的一些建议"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/380721191",
+          "id": "380721191",
+          "title": "[上海] [2021] NVIDIA 招聘自动驾驶性能架构师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/267667373",
+          "id": "267667373",
+          "title": "[上海] NVIDIA 深度学习性能架构组 TensorRT 软件工程师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/123905538",
+          "id": "123905538",
+          "title": "[上海] [2020] NVIDIA 招聘自动驾驶性能架构师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/78380152",
+          "id": "78380152",
+          "title": "英伟达2020校招正式开始啦！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/67666846",
+          "id": "67666846",
+          "title": "我们真的还需要更多的AI芯片吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/51607912",
+          "id": "51607912",
+          "title": "[上海] NVIDIA 招聘自动驾驶性能架构师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/34142019",
+          "id": "34142019",
+          "title": "【急招】自动驾驶算法工程师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29342477",
+          "id": "29342477",
+          "title": "NVIDIA 上海开放日活动"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27702948",
+          "id": "27702948",
+          "title": "如何用 TensorFlow 打造 Not Hotdog 的移动应用"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27560916",
+          "id": "27560916",
+          "title": "【福利】针对 1060 上 ETH 挖矿程序的优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/26868130",
+          "id": "26868130",
+          "title": "自动驾驶处理器之战拉开序幕"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/26837121",
+          "id": "26837121",
+          "title": "新一代 Volta 架构解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/22591067",
+          "id": "22591067",
+          "title": "Google 的木马：Google Play Service"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20125242",
+          "id": "20125242",
+          "title": "CUDA 7.5 新特性介绍 -- FP16"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20100767",
+          "id": "20100767",
+          "title": "[上海] NVIDIA Computing Architecture 组招聘"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20003419",
+          "id": "20003419",
+          "title": "cuDNN：利用 GPU 加速卷积神经网络"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/19889811",
+          "id": "19889811",
+          "title": "Virtual Cores and Reconfigurable Pipelines"
+        }
+      ]
+    },
+    {
+      "author_id": "wang-zhi-66-25-35",
+      "author_name": "aiiiiii",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044185615521027049",
+          "id": "2044185615521027049",
+          "title": "被当成13级裁掉那天,我造出了干翻英伟达的芯片"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038482579343586667",
+          "id": "2038482579343586667",
+          "title": "cerebras基本面分析2"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2035964756364879288",
+          "id": "2035964756364879288",
+          "title": "符号方法、启发式与 AI 搜索在 AI 编译中的演进"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2036884269428123274",
+          "id": "2036884269428123274",
+          "title": "cerebras基本面分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2035588990397587754",
+          "id": "2035588990397587754",
+          "title": "NPU编译存储优化思路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2035229801791886368",
+          "id": "2035229801791886368",
+          "title": "英国将成为AI芯片世界第二大国？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032666014081609964",
+          "id": "2032666014081609964",
+          "title": "同涨不同估值：AI 周期里半导体板块的估值分化逻辑"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031616654996673475",
+          "id": "2031616654996673475",
+          "title": "DeepSeek V4是用昇腾训练的吗"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2030863471101878755",
+          "id": "2030863471101878755",
+          "title": "TPUv8训练/推理架构拆解对比"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027948161092568644",
+          "id": "2027948161092568644",
+          "title": "专用加速器和通用处理器（二）GPU怎么演化成GPGPU的（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2026781196298757013",
+          "id": "2026781196298757013",
+          "title": "llm decode加速器架构详解（一）Cerebras Wafer-Scale Engine"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025441600545781209",
+          "id": "2025441600545781209",
+          "title": "llm decode加速器架构详解（零）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1967660040287649834",
+          "id": "1967660040287649834",
+          "title": "苹果芯片架构为什么有2个ai core"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1928211321985434382",
+          "id": "1928211321985434382",
+          "title": "体系结构/操作系统phd招生（帮转）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1907522909041333482",
+          "id": "1907522909041333482",
+          "title": "专用加速器和通用处理器---软硬件架构对比分析（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1909941533727257394",
+          "id": "1909941533727257394",
+          "title": "玄戒o1 npu是买了芯原的？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/5971799662",
+          "id": "5971799662",
+          "title": "特朗普拿了offer，我就没offer了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/746911643",
+          "id": "746911643",
+          "title": "新华社：金融是国之重器。"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/695773723",
+          "id": "695773723",
+          "title": "《城中之城》-低配版《人民的名义》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/672189948",
+          "id": "672189948",
+          "title": "芯片与国有化"
+        }
+      ]
+    },
+    {
+      "author_id": "the-stig-25",
+      "author_name": "yylloc",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/4805166171",
+          "id": "4805166171",
+          "title": "TensorRT-LLM的allreduce插件"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/731328599",
+          "id": "731328599",
+          "title": "手撸算子是人力密集型劳动…？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/711160136",
+          "id": "711160136",
+          "title": "优化NCCL运行时的启动kernel的部分没有意义"
+        }
+      ]
+    },
+    {
+      "author_id": "ni-shi-zzma-14",
+      "author_name": "大润发杀鱼工",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042974355500570119",
+          "id": "2042974355500570119",
+          "title": "seed RL infra招实习生"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1985812420770428370",
+          "id": "1985812420770428370",
+          "title": "RL的一整年"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1936165441090328553",
+          "id": "1936165441090328553",
+          "title": "浅聊RL框架的勃勃生机、万物竞发"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1907077645071524975",
+          "id": "1907077645071524975",
+          "title": "verl RL支持训练deepseek-v3 671B实习复盘(个人版)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/30000309204",
+          "id": "30000309204",
+          "title": "大模型招聘板-实习&校招&社招"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29149216967",
+          "id": "29149216967",
+          "title": "OpenRLHF&Verl参数转换指南"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/28977108898",
+          "id": "28977108898",
+          "title": "几千HC下的大厂暑期实习锐评（三）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/28833947709",
+          "id": "28833947709",
+          "title": "几千HC下的大厂暑期实习锐评（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/28707582070",
+          "id": "28707582070",
+          "title": "几千HC下的大厂暑期实习锐评（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/25556718002",
+          "id": "25556718002",
+          "title": "verl小白解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17809009204",
+          "id": "17809009204",
+          "title": "25年的大模型Infra，SSP人才画像？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15647218277",
+          "id": "15647218277",
+          "title": "年终总结--我想站在舞台上"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15073492309",
+          "id": "15073492309",
+          "title": "Deepseek V3 预训练解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/731680212",
+          "id": "731680212",
+          "title": "计算机24秋招投递体感"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716019812",
+          "id": "716019812",
+          "title": "大模型预训练-并行策略相关面经合集"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719424886",
+          "id": "719424886",
+          "title": "大模型基础架构岗面经（五）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716671621",
+          "id": "716671621",
+          "title": "阿里云ECS大模型训练团队校招"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716387332",
+          "id": "716387332",
+          "title": "大模型基础架构岗面经（四）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716022107",
+          "id": "716022107",
+          "title": "大模型基础架构岗面经（三）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716021841",
+          "id": "716021841",
+          "title": "大模型基础架构岗面经（一）"
+        }
+      ]
+    },
+    {
+      "author_id": "ming-ming-17-32-12",
+      "author_name": "resnet-65536",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1954634867791869927",
+          "id": "1954634867791869927",
+          "title": "Muon优化器科普，但从最速下降的本质出发"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1934745342089335268",
+          "id": "1934745342089335268",
+          "title": "OpenAI开源模型gpt-oss-120b架构中大砍维度的两个模块"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1889024614006501510",
+          "id": "1889024614006501510",
+          "title": "【社会网络分析】Burt的结构洞理论及其度量指标笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/636137559",
+          "id": "636137559",
+          "title": "Ray分布式计算框架的部署与性能测试"
+        }
+      ]
+    },
+    {
+      "author_id": "wu-nian-gao-kao-san-nian-mo-ni-96",
+      "author_name": "俯仰",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1946518373283398271",
+          "id": "1946518373283398271",
+          "title": "站在更加系统的角度重看vLLM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/12712224407",
+          "id": "12712224407",
+          "title": "理解torch.compile基本原理和使用方式。"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/721545966",
+          "id": "721545966",
+          "title": "如何使用cublas计算batched matmul?"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/693184829",
+          "id": "693184829",
+          "title": "五分钟了解分布式基础—Nvdia通信库NCCL概念"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/692723895",
+          "id": "692723895",
+          "title": "深入浅出，以Add算子为例一文看懂pytorch函数常用调用方式及内部原理。"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/690858698",
+          "id": "690858698",
+          "title": "Pytorch internals - 以add算子为例理解elementwise_kernel和TensorIterator的调用流程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/654311704",
+          "id": "654311704",
+          "title": "LLVM Essential读书笔记之先导篇：从源码开始构建LLVM项目"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/653970722",
+          "id": "653970722",
+          "title": "LLVM Essential读书笔记之一：初式LLVM与LLVM IR"
+        }
+      ]
+    },
+    {
+      "author_id": "sinya-lee",
+      "author_name": "李新野",
+      "article_count": 14,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045236695122065107",
+          "id": "2045236695122065107",
+          "title": "写给女性的事后礼仪"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045180336955449548",
+          "id": "2045180336955449548",
+          "title": "关于大明的政治"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044690490017191763",
+          "id": "2044690490017191763",
+          "title": "从衣冠南渡到下南洋：潮汕人的信仰"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037943347201975076",
+          "id": "2037943347201975076",
+          "title": "2009年春"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024858792320332646",
+          "id": "2024858792320332646",
+          "title": "《把中国的美食搬到国外，是不是能挣的盆满钵满？》回答解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2007511659183375752",
+          "id": "2007511659183375752",
+          "title": "《人约》圣地巡礼攻略潮汕篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002304196725200025",
+          "id": "2002304196725200025",
+          "title": "付费咨询/补习"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1962886463122282289",
+          "id": "1962886463122282289",
+          "title": "关于《澄海南洋往事》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1932214973968409610",
+          "id": "1932214973968409610",
+          "title": "OpenAI点评《我的姐姐》里的李新野"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1930422498131968320",
+          "id": "1930422498131968320",
+          "title": "我的姐姐李新莹——广东宗馥莉的堕落之路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1922030441990428447",
+          "id": "1922030441990428447",
+          "title": "25年6月李新野个人网站攻击事件"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1918326766663086374",
+          "id": "1918326766663086374",
+          "title": "澄海南洋往事"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/23991007911",
+          "id": "23991007911",
+          "title": "阿尔法星研究招聘（长期有效）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20507844056",
+          "id": "20507844056",
+          "title": "我的大姨李丽丽"
+        }
+      ]
+    },
+    {
+      "author_id": "Goozx",
+      "author_name": "顾大壮",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/708364161",
+          "id": "708364161",
+          "title": "WaveDrom--波形/寄存器/逻辑门作图工具"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/707746871",
+          "id": "707746871",
+          "title": "《计算机体系结构：量化研究方法》读书笔记目录"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/707441023",
+          "id": "707441023",
+          "title": "第7章 领域专用架构（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/706497058",
+          "id": "706497058",
+          "title": "第7章 领域专用架构（一"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/705843880",
+          "id": "705843880",
+          "title": "第6章 仓库规模计算机"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704567172",
+          "id": "704567172",
+          "title": "AI常用浮点格式合集"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/705420505",
+          "id": "705420505",
+          "title": "OCP Microscaling Formats (MX) 介绍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704552304",
+          "id": "704552304",
+          "title": "第5章 线程级并行（五）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704146824",
+          "id": "704146824",
+          "title": "《计算机体系结构：量化研究方法》 第5章 线程级并行（四）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/701142701",
+          "id": "701142701",
+          "title": "《计算机体系结构：量化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/703269705",
+          "id": "703269705",
+          "title": "《计算机体系结构：量化研究方法》 第5章 线程级并行（三）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/701655550",
+          "id": "701655550",
+          "title": "《计算机体系结构：量化研究方法》 第5章 线程级并行（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/699089250",
+          "id": "699089250",
+          "title": "《计算机体系结构：量化研究方法》 第4章 向量、SIMD和GPU架构中的数据级并行（三）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/695933576",
+          "id": "695933576",
+          "title": "《计算机体系结构：量化研究方法》 第4章 向量、SIMD和G"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/699088427",
+          "id": "699088427",
+          "title": "《计算机体系结构：量化研究方法》 第4章 向量、SIMD和GPU架构中的数据级并行（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/693961279",
+          "id": "693961279",
+          "title": "《计算机体系结构：量化研究方法》第3章 指令级并行及其利用（四）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/692673423",
+          "id": "692673423",
+          "title": "《计算机体系结构：量化研究方法》第3章 指令级并行及其利用（三）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/691594978",
+          "id": "691594978",
+          "title": "《计算机体系结构：量化研究方法》第3章 指令级并行及其利用（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689829650",
+          "id": "689829650",
+          "title": "《计算机体系结构：量化研究方法》第3章 指令级并行及其利用（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688142122",
+          "id": "688142122",
+          "title": "《计算机体系结构：量化研究方法》附录B 内存层次结构回顾"
+        }
+      ]
+    },
+    {
+      "author_id": "magic-frog-sjtu",
+      "author_name": "小志哥",
+      "article_count": 12,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1994811785526654121",
+          "id": "1994811785526654121",
+          "title": "Linux 工作站配置（积极更新）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/668965054",
+          "id": "668965054",
+          "title": "工业视觉之-双目视觉的视差与深度"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1980657881876568031",
+          "id": "1980657881876568031",
+          "title": "ViT 经典论文锐评"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1979921343924434849",
+          "id": "1979921343924434849",
+          "title": "pi, physical intelligence (Π) 系列文章走读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1979156072905343001",
+          "id": "1979156072905343001",
+          "title": "空间表征 论文走读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1978757599928287601",
+          "id": "1978757599928287601",
+          "title": "Qwen VL系列论文走读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1952712276894255049",
+          "id": "1952712276894255049",
+          "title": "UV 未来将一统江湖的python包管理工具 不可不学"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/673947944",
+          "id": "673947944",
+          "title": "Linux命令行挂载NAS网络硬盘"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/250471767",
+          "id": "250471767",
+          "title": "[原创][深度][PyTorch] DDP系列第三篇：实战与技巧"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/228814466",
+          "id": "228814466",
+          "title": "[原创] entry_point+click：快速生成python命令行接口"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/187610959",
+          "id": "187610959",
+          "title": "[原创][深度][PyTorch] DDP系列第二篇：实现原理与源代码解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/178402798",
+          "id": "178402798",
+          "title": "[原创][深度][PyTorch] DDP系列第一篇：入门教程"
+        }
+      ]
+    },
+    {
+      "author_id": "zhangmj-34",
+      "author_name": "做那自由的风",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1953950437062456356",
+          "id": "1953950437062456356",
+          "title": "聊一聊VCCL背后的那点事"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1953578607118100068",
+          "id": "1953578607118100068",
+          "title": "rStar code judge详解"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898141047164507218",
+          "id": "1898141047164507218",
+          "title": "谈谈deepEP中的NVSHMEM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/19643908346",
+          "id": "19643908346",
+          "title": "浅谈NCCL中nvls tree相关"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2975595963",
+          "id": "2975595963",
+          "title": "《From bare metal to a 70B model: infrastructure set-up and scripts》by imbue 笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/711262007",
+          "id": "711262007",
+          "title": "DPDK-SKELON"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/711261549",
+          "id": "711261549",
+          "title": "DPDK环境搭建以及HelloWorld运行"
+        }
+      ]
+    },
+    {
+      "author_id": "yu-huo-er-wang",
+      "author_name": "离散",
+      "article_count": 17,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031600990269461626",
+          "id": "2031600990269461626",
+          "title": "Diffusion: TimeStep Distillation(1) - 从 SDS 到 VSD 到 DMD"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024047733489635455",
+          "id": "2024047733489635455",
+          "title": "Diffusion - MIT 6.S184课程笔记(2): Diffusion Training"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2021951949780567477",
+          "id": "2021951949780567477",
+          "title": "Diffusion - MIT 6.S184课程笔记(1): ODE and SDE"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020329846148972560",
+          "id": "2020329846148972560",
+          "title": "Triton is not that bad!"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1917147937265423211",
+          "id": "1917147937265423211",
+          "title": "sglang dp attention Walk Through"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17797971938",
+          "id": "17797971938",
+          "title": "RoPE: 从理解到实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/721489804",
+          "id": "721489804",
+          "title": "CUDA Mode 学习笔记1: Reduction"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/666223143",
+          "id": "666223143",
+          "title": "Advanced Machine Learning Systems: GEMM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/661347949",
+          "id": "661347949",
+          "title": "机器学习系统: Framework"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/584593990",
+          "id": "584593990",
+          "title": "binary search 二分搜索：一道面试题以及一些思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/536969885",
+          "id": "536969885",
+          "title": "不会线段树怎么做线段题——skyline问题及其衍生思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/531742425",
+          "id": "531742425",
+          "title": "从零开始配置 mac——花里胡哨的桌面篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/371567261",
+          "id": "371567261",
+          "title": "关于 python Rich库的应用"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/372663792",
+          "id": "372663792",
+          "title": "Effective C++读书笔记(2-6)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/371565641",
+          "id": "371565641",
+          "title": "数据密集型应用设计(DDIA)阅读笔记(2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/371269008",
+          "id": "371269008",
+          "title": "数据密集型应用设计(DDIA)阅读笔记(1)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/199389873",
+          "id": "199389873",
+          "title": "LSTM是如何解决梯度消失问题的"
+        }
+      ]
+    },
+    {
+      "author_id": "RockyDing",
+      "author_name": "Rocky Ding",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044083200910152074",
+          "id": "2044083200910152074",
+          "title": "Rocky Ding独家AI产业研报（第1期）：2026.5.12-2026.5.30的AI高价值信息汇总与分享"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1975174691049189562",
+          "id": "1975174691049189562",
+          "title": "深入浅出完整解析FLUX.2、Seedream（即梦）、Z-image、GLM-Image核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1964029619658261252",
+          "id": "1964029619658261252",
+          "title": "深入浅出完整解析扩散模型DDPM、DDIM、Score-Based、SDE、LDM、Classifier/Classifier-Free Guidance、Rectified Flow核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1919046969076195976",
+          "id": "1919046969076195976",
+          "title": "深入浅出完整解析AI Agent（AI智能体）的核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1921872100358076199",
+          "id": "1921872100358076199",
+          "title": "深入浅出完整解析FLUX.1 Kontext和FLUX.1 Krea核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1920211753234600388",
+          "id": "1920211753234600388",
+          "title": "深入浅出完整解析即梦AIGC平台的AI技术功能&产品逻辑"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/20739054077",
+          "id": "20739054077",
+          "title": "深入浅出完整解析DeepSeek系列核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2131795916",
+          "id": "2131795916",
+          "title": "深入浅出全面解析AIGC时代核心价值与发展趋势（2025年版）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/709874399",
+          "id": "709874399",
+          "title": "深入浅出完整解析AIGC时代Transformer核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/706722494",
+          "id": "706722494",
+          "title": "深入浅出完整解析Sora、Wan2.1、AnimateDiff、CogVideoX等AI视频大模型核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/684068402",
+          "id": "684068402",
+          "title": "深入浅出完整解析Stable Diffusion 3（SD 3）和FLUX.1系列核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/673439761",
+          "id": "673439761",
+          "title": "深入浅出完整解析主流AI绘画框架（ComfyUI、Stable Diffusion WebUI、Fooocus）核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/672315125",
+          "id": "672315125",
+          "title": "深入浅出完整解析Stable Video Diffusion（SVD）核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/660924126",
+          "id": "660924126",
+          "title": "深入浅出完整解析ControlNet核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/663157306",
+          "id": "663157306",
+          "title": "深入浅出完整解析AIGC时代中GAN（Generative Adversarial Network）系列模型核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/651076114",
+          "id": "651076114",
+          "title": "手把手教你成为AIGC算法工程师，斩获AIGC算法offer！（2025年版）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/643420260",
+          "id": "643420260",
+          "title": "深入浅出完整解析Stable Diffusion XL（SDXL）核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/642354007",
+          "id": "642354007",
+          "title": "深入浅出完整解析Stable Diffusion中U-Net的前世今生与核心知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/639229126",
+          "id": "639229126",
+          "title": "深入浅出完整解析LoRA（Low-Rank Adaptation）模型核心基础知识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/632809634",
+          "id": "632809634",
+          "title": "深入浅出完整解析Stable Diffusion（SD）核心基础知识"
+        }
+      ]
+    },
+    {
+      "author_id": "zhu-xi-jia-chu-38",
+      "author_name": "竹熙佳处",
+      "article_count": 9,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024832248386528275",
+          "id": "2024832248386528275",
+          "title": "写给大家看的 CuTe 教程：async pipeline"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2003198909405763007",
+          "id": "2003198909405763007",
+          "title": "写给大家看的 CuTe 教程：TMA Copy"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1971945267294111573",
+          "id": "1971945267294111573",
+          "title": "写给大家看的 CuTe 教程: Layout Product & Divide"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1973526710105419953",
+          "id": "1973526710105419953",
+          "title": "写给进阶开发的 CuTe 笔记：tiled mma 的 permutationMNK 参数"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937145378446226159",
+          "id": "1937145378446226159",
+          "title": "写给大家看的 CuTe 教程：tiled mma"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1962625273636845008",
+          "id": "1962625273636845008",
+          "title": "写给大家看的 CuTe 教程：Layout Compose & Inverse"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1930389542784964333",
+          "id": "1930389542784964333",
+          "title": "tiled copy"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1895912970212582251",
+          "id": "1895912970212582251",
+          "title": "写给 ai 推理工程师看的 deepseek-v3 结构解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1895527304509236945",
+          "id": "1895527304509236945",
+          "title": "给 Ampere 开发者看的 Hopper 架构解读"
+        }
+      ]
+    },
+    {
+      "author_id": "yilan-zhong-shan-xiao-29-98",
+      "author_name": "养生的控制人",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1967162514103047154",
+          "id": "1967162514103047154",
+          "title": "NeurIPS 2025|推荐系统|TagCF：我更关心你是谁"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965344941237605594",
+          "id": "1965344941237605594",
+          "title": "Meta提出条件自回归让Transformer更Free"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1964626837742264947",
+          "id": "1964626837742264947",
+          "title": "拒绝遗忘：Meta AI 提出稀疏内存微调"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/81559880388",
+          "id": "81559880388",
+          "title": "LLM上下文太长？DeepSeek用“光学压缩”把文档“看”进去"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1963900528951002475",
+          "id": "1963900528951002475",
+          "title": "Agent落地避不开的上下文工程|LangChain研讨会|Manus"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1963540859078293373",
+          "id": "1963540859078293373",
+          "title": "Power Sampling：不经过RL的LLM也能很会推理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/4111510735",
+          "id": "4111510735",
+          "title": "DiffuSETS：融合文本信息进行时间序列生成"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/3677661718",
+          "id": "3677661718",
+          "title": "经典永不过时，OpenAI语音识别Whisper读书笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/767602702",
+          "id": "767602702",
+          "title": "负样本为王！更强的嵌入模型Conan-Embedding"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/721306620",
+          "id": "721306620",
+          "title": "RAG结合上下文提升召回成功率｜Claude"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/702814462",
+          "id": "702814462",
+          "title": "近期大模型相关benchmark"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/696698774",
+          "id": "696698774",
+          "title": "ORPO：当有监督微调遇上偏好对齐"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/692439406",
+          "id": "692439406",
+          "title": "工业界的推荐系统之涨指标"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/691809792",
+          "id": "691809792",
+          "title": "工业界的推荐系统之冷启动"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/691395023",
+          "id": "691395023",
+          "title": "工业界的推荐系统之重排"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/690291248",
+          "id": "690291248",
+          "title": "工业界的推荐系统之序列建模"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689906325",
+          "id": "689906325",
+          "title": "工业界的推荐系统之交叉"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689615155",
+          "id": "689615155",
+          "title": "工业界的推荐系统之排序"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689384224",
+          "id": "689384224",
+          "title": "工业界的推荐系统之召回"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689208334",
+          "id": "689208334",
+          "title": "工业界的推荐系统之概要"
+        }
+      ]
+    },
+    {
+      "author_id": "da-ge-41-7",
+      "author_name": "极智视界",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032482002721583226",
+          "id": "2032482002721583226",
+          "title": "分类数据集 - 曲奇饼干缺陷检测图像分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1997191879029180064",
+          "id": "1997191879029180064",
+          "title": "目标检测数据集 - 鸟类检测数据集下载「包含VOC、COCO、YOLO三种格式」"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1987196316217021189",
+          "id": "1987196316217021189",
+          "title": "目标检测数据集 - 高通量藻类细胞检测数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1978417480339850190",
+          "id": "1978417480339850190",
+          "title": "目标检测数据集 - 海底鱼类检测数据集下载「包含VOC、COCO、YOLO三种格式」"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941981205089204089",
+          "id": "1941981205089204089",
+          "title": "分类数据集 - 口腔癌病理染色组织切片图片分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941445028015767927",
+          "id": "1941445028015767927",
+          "title": "分类数据集 - 超声图像多囊卵巢综合症分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938960337132036259",
+          "id": "1938960337132036259",
+          "title": "目标检测数据集 - 室内物品检测数据集下载「包含VOC、COCO、YOLO三种格式」"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938206781722560035",
+          "id": "1938206781722560035",
+          "title": "目标检测数据集 - 海洋水下垃圾检测数据集下载「包含VOC、COCO、YOLO三种格式」"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937892079792555479",
+          "id": "1937892079792555479",
+          "title": "分割数据集 - X光肺结核分割数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937891408498373650",
+          "id": "1937891408498373650",
+          "title": "分割数据集 - 大脑肿瘤MRI分割数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937890258403434554",
+          "id": "1937890258403434554",
+          "title": "分割数据集 - 足球运动员分割数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937889351389394913",
+          "id": "1937889351389394913",
+          "title": "分割数据集 - 行人分割数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937880896851145626",
+          "id": "1937880896851145626",
+          "title": "分类数据集 - 场景分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937879858161091557",
+          "id": "1937879858161091557",
+          "title": "分类数据集 - 植物分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937878950589235478",
+          "id": "1937878950589235478",
+          "title": "分类数据集 - 水果分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937877385719555491",
+          "id": "1937877385719555491",
+          "title": "分类数据集 - 癌症检测血细胞分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937876659043799746",
+          "id": "1937876659043799746",
+          "title": "分类数据集 - 医疗X光骨折检测分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937876197490037386",
+          "id": "1937876197490037386",
+          "title": "分类数据集 - 太阳能电池板灰尘分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937875131323127120",
+          "id": "1937875131323127120",
+          "title": "分类数据集 - 交通事故场景分类数据集下载"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937874392634856527",
+          "id": "1937874392634856527",
+          "title": "分类数据集 - 垃圾分类数据集下载"
+        }
+      ]
+    },
+    {
+      "author_id": "starduster",
+      "author_name": "Starduster",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937985446488564563",
+          "id": "1937985446488564563",
+          "title": "GPT5好不好用？那可能取决于你说的哪个GPT5"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/376182149",
+          "id": "376182149",
+          "title": "学渣社畜辞职申请东京工业大学IGP-C经历与杂谈（计算机相关）"
+        }
+      ]
+    },
+    {
+      "author_id": "chen-lu-fang-20",
+      "author_name": "JoeNomad",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/26639126208",
+          "id": "26639126208",
+          "title": "[大模型推理系统] Deepseek inference 并行方式思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17744625577",
+          "id": "17744625577",
+          "title": "[大模型推理系统] SGlang的异步调度：Overlap CPU和GPU流水"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/687397095",
+          "id": "687397095",
+          "title": "[深入分析CUTLASS系列] 0x04 cutlass 源码分析(三) ---  多级流水线(software pipeline)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/681966685",
+          "id": "681966685",
+          "title": "[深入分析CUTLASS系列] 0x03 cutlass 源码分析(二) --- bank conflict free 的shared memory layout (附tvm等价pass)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/679929705",
+          "id": "679929705",
+          "title": "[深入分析CUTLASS系列] 0x02 cutlass 源码分析(一) --- block swizzle 和 tile iterator (附tvm等价code)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/678915618",
+          "id": "678915618",
+          "title": "[深入分析CUTLASS系列] 0x01 cutlass 源码分析(零) --- 软件架构(附ncu性能分析方法)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/677616101",
+          "id": "677616101",
+          "title": "[深入分析CUTLASS系列] 0x00 cutlass基本认知---为什么要用cutlass"
+        }
+      ]
+    },
+    {
+      "author_id": "23-65-18-56-56",
+      "author_name": "东川路第一伊蕾娜",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042292996171982292",
+          "id": "2042292996171982292",
+          "title": "如何高效克服“不match ”"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031736420226876634",
+          "id": "2031736420226876634",
+          "title": "ai 太快，我太慢"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014644604767590154",
+          "id": "2014644604767590154",
+          "title": "向“深度”进发--浅谈如何做出深度"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2011182352471187984",
+          "id": "2011182352471187984",
+          "title": "softthinking相关paper research"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2008649816545179137",
+          "id": "2008649816545179137",
+          "title": "REDSearcher解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2003514274249717381",
+          "id": "2003514274249717381",
+          "title": "RL阅读:Maximum Likelihood Reinforcement Learning"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984645260228449106",
+          "id": "1984645260228449106",
+          "title": "从埋头方法论到人际关系--open and open again （2025 年度总结）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14918304358",
+          "id": "14918304358",
+          "title": "https://zhuanlan.zhihu.com/p/14918304358"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1986447529525649800",
+          "id": "1986447529525649800",
+          "title": "https://zhuanlan.zhihu.com/p/1986447529525649800"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1975721317253792046",
+          "id": "1975721317253792046",
+          "title": "浅谈代码框架思维"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1971186963777320100",
+          "id": "1971186963777320100",
+          "title": "GRPO和DAPO导致输出长度变长一样吗"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1970075848162910937",
+          "id": "1970075848162910937",
+          "title": "RLLM example解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1959404159540393277",
+          "id": "1959404159540393277",
+          "title": "浅谈verl 框架工程开发经验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1954911294147769754",
+          "id": "1954911294147769754",
+          "title": "浅谈verl框架魔改与实操经验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1951332906053122017",
+          "id": "1951332906053122017",
+          "title": "知乎写文一周年小结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1948426489881159193",
+          "id": "1948426489881159193",
+          "title": "大厂模型基座组实习的观察"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1948334729662280166",
+          "id": "1948334729662280166",
+          "title": "KD research的小总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1939672706799875486",
+          "id": "1939672706799875486",
+          "title": "PPO，GRPO，GSPO的演变--从方差，偏差，router和clip几个视角谈论其演进"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1938587511849988425",
+          "id": "1938587511849988425",
+          "title": "rl research的一次小总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1935707458917105812",
+          "id": "1935707458917105812",
+          "title": "Search-R1 研究"
+        }
+      ]
+    },
+    {
+      "author_id": "arsmart-60",
+      "author_name": "Arsmart",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045187571597174770",
+          "id": "2045187571597174770",
+          "title": "MoE预取-文献调研"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2028560429748626315",
+          "id": "2028560429748626315",
+          "title": "bullet(asplos26)-SM切分-PD混部"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027206962220115955",
+          "id": "2027206962220115955",
+          "title": "GPU 集群上的文件传输方案选择"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2021578704350913922",
+          "id": "2021578704350913922",
+          "title": "laer(asplos26): FSDP+EP=FSEP（训练-MOE-专家重排）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2019377813380178621",
+          "id": "2019377813380178621",
+          "title": "基于大模型自动生成html高效阅读论文（codex+html）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2019103200666464565",
+          "id": "2019103200666464565",
+          "title": "tlt(asplos26): 把 reasoning RL 的长尾 rollout，变成可利用的系统机会"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2017897513089259154",
+          "id": "2017897513089259154",
+          "title": "NEUTRINO(osdi25)：代码插桩检测执行时序"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2017183560386229328",
+          "id": "2017183560386229328",
+          "title": "trinity(asplos26)：图变换+kernel fusion"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2016984895747015215",
+          "id": "2016984895747015215",
+          "title": "redfuser(类似FA的融合）/STeP（MOE动态调度）(asplos26)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2016497827140879039",
+          "id": "2016497827140879039",
+          "title": "基于大模型绘制示意图（codex+drawio+手动微调）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2013999465883775728",
+          "id": "2013999465883775728",
+          "title": "toasty(asplos26): CPU网卡调度优化（软件）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2013978981934854588",
+          "id": "2013978981934854588",
+          "title": "Canon(asplos26): 数据流硬件设计"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012644742731678023",
+          "id": "2012644742731678023",
+          "title": "flashmem(asplos26): 端侧IO与计算的overlap"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012496099450069753",
+          "id": "2012496099450069753",
+          "title": "XY-Serve(ASPLOS26)：昇腾-用tile粒度调度解决动态seqlen问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1983567198292305407",
+          "id": "1983567198292305407",
+          "title": "论文阅读笔记：parallelkittens"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965531533952652568",
+          "id": "1965531533952652568",
+          "title": "论文阅读笔记：MIST(Eurosys25)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965526995376014411",
+          "id": "1965526995376014411",
+          "title": "论文阅读笔记：DCP（SOSP25）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965181868543574450",
+          "id": "1965181868543574450",
+          "title": "Agentic RL infra学习"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1956822528807899482",
+          "id": "1956822528807899482",
+          "title": "论文阅读笔记：tutel(mlsys23)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1956451131858325815",
+          "id": "1956451131858325815",
+          "title": "论文阅读笔记：AEP(arxiv25)"
+        }
+      ]
+    },
+    {
+      "author_id": "daquexian",
+      "author_name": "大缺弦",
+      "article_count": 9,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/695833241",
+          "id": "695833241",
+          "title": "TeleChat-12B 模型体验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/681904411",
+          "id": "681904411",
+          "title": "体验电信星辰 TeleChat 大模型"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/603841250",
+          "id": "603841250",
+          "title": "ONNX 新特性和最佳实践介绍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/545573774",
+          "id": "545573774",
+          "title": "onnxsim 和 onnx optimizer 大更新！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/350702340",
+          "id": "350702340",
+          "title": "onnx simplifier 和 optimizer"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/107761106",
+          "id": "107761106",
+          "title": "是什么引起了各个框架 Resize 操作的结果不同？——来自 ONNX 的标准化尝试"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/56376295",
+          "id": "56376295",
+          "title": "Android NNAPI 即将在 Android Q 迎来大更新"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/56387422",
+          "id": "56387422",
+          "title": "DNNLibrary 支持量化了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/30926958",
+          "id": "30926958",
+          "title": "Android 8.1 NNAPI 评测以及可能是全球第一个的 NNAPI 库"
+        }
+      ]
+    },
+    {
+      "author_id": "duan-shi-shi-68",
+      "author_name": "想飞的石头",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043088012750344600",
+          "id": "2043088012750344600",
+          "title": "AI Systems Performance Engineering08--占用率调优、Warp效率和指令级并行"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043081948105633992",
+          "id": "2043081948105633992",
+          "title": "AI Systems Performance Engineering07--GPU内存访问模式分析和调优"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043054114439959622",
+          "id": "2043054114439959622",
+          "title": "AI Systems Performance Engineering06--GPU架构、CUDA编程和最大化占用率"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043048985087235840",
+          "id": "2043048985087235840",
+          "title": "AI Systems Performance Engineering05--GPU存储I/O优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041508039392585662",
+          "id": "2041508039392585662",
+          "title": "AI Systems Performance Engineering04--分布式网络通信调优"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041500535329744136",
+          "id": "2041500535329744136",
+          "title": "AI Systems Performance Engineering03--GPU环境下的操作系统、Docker和Kubernetes调优"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041492859497493131",
+          "id": "2041492859497493131",
+          "title": "AI Systems Performance Engineering02--AI系统硬件概述"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041491331181187553",
+          "id": "2041491331181187553",
+          "title": "AI Systems Performance Engineering01--介绍和AI系统概述"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1975689589818683788",
+          "id": "1975689589818683788",
+          "title": "《清晰思考》第一章 清晰思考的敌人--读书笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1967055733045596831",
+          "id": "1967055733045596831",
+          "title": "论文学习：《 Mycroft：追踪集合通信中的依赖关系以实现可靠的大语言模型训练》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1966265436514518269",
+          "id": "1966265436514518269",
+          "title": "字节跳动的稳健大语言模型训练基础设施"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965491459621880057",
+          "id": "1965491459621880057",
+          "title": "论文学习： 《Mercury：通过远程内存调度解锁大语言模型的多GPU算子优化》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1953205243065135733",
+          "id": "1953205243065135733",
+          "title": "《大规模并行处理器编程》第10章：reduction"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1950302419817829085",
+          "id": "1950302419817829085",
+          "title": "《大规模并行处理器编程》第9章：并行直方图"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1945231610145388253",
+          "id": "1945231610145388253",
+          "title": "《大规模并行处理器编程》第8章：Stencil"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1942570330850825632",
+          "id": "1942570330850825632",
+          "title": "《大规模并行处理器编程》第7章：卷积--常数内存和缓存的介绍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941240728660468898",
+          "id": "1941240728660468898",
+          "title": "《大规模并行处理器编程》第6章：性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1937858801232512751",
+          "id": "1937858801232512751",
+          "title": "MixNet：为大规模MoE训练设定的运行时可配置光电架构"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1934379413471995074",
+          "id": "1934379413471995074",
+          "title": "《大规模并行处理器编程》第5章：内存架构与数据局部性"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1931825492345980252",
+          "id": "1931825492345980252",
+          "title": "《大规模并行处理器编程》第4章：计算架构与调度"
+        }
+      ]
+    },
+    {
+      "author_id": "reku1997",
+      "author_name": "Reku",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2013987217081644893",
+          "id": "2013987217081644893",
+          "title": "Claude opus 4.6 独立发现的 DeepEP 时序问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2011494527026894039",
+          "id": "2011494527026894039",
+          "title": "ThunderKittens 2.0(1): 如何优化 Ulysses"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1919814348047623458",
+          "id": "1919814348047623458",
+          "title": "深度学习框架中的虚拟显存/vllm sleep mode"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1887098218866794901",
+          "id": "1887098218866794901",
+          "title": "[Attention]FlashAttention/Ring-Attention/混合序列并行的统一原理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29046833667",
+          "id": "29046833667",
+          "title": "品鉴一下OpenRLHF和verl的系统设计"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27172237359",
+          "id": "27172237359",
+          "title": "LLM RL入门"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/22879442357",
+          "id": "22879442357",
+          "title": "书籍推荐《深度学习入门2:自制框架》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/21525151726",
+          "id": "21525151726",
+          "title": "对DualPipe的一些想法"
+        }
+      ]
+    },
+    {
+      "author_id": "li-ying-han-4-45",
+      "author_name": "李少侠",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/441146275",
+          "id": "441146275",
+          "title": "[施工中] CUDA GEMM 理论性能分析与 kernel 优化"
+        }
+      ]
+    },
+    {
+      "author_id": "huan-jun-81",
+      "author_name": "白牛",
+      "article_count": 21,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002050606311952981",
+          "id": "2002050606311952981",
+          "title": "拒绝autotune，如何推算triton 2D kernel参数？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2000614435295892317",
+          "id": "2000614435295892317",
+          "title": "分享 nano-vllm 的几个实现细节"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1987546157291951601",
+          "id": "1987546157291951601",
+          "title": "token level梯度优化里的数学基础"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984377891404916694",
+          "id": "1984377891404916694",
+          "title": "白座小课堂：agent，上下文和function calling"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1982903954619769866",
+          "id": "1982903954619769866",
+          "title": "MirrorWe: 社交型Agent的工程基础"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1971649366226870724",
+          "id": "1971649366226870724",
+          "title": "0.99 版 kimi 会员"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1969460355051795788",
+          "id": "1969460355051795788",
+          "title": "kimi-cli结对编程体验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1966923480290263131",
+          "id": "1966923480290263131",
+          "title": "小白记录deepspeed z2多卡训练卡死"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965154262075053079",
+          "id": "1965154262075053079",
+          "title": "避坑阿里云 PAI（已解决）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1961503897702101845",
+          "id": "1961503897702101845",
+          "title": "molly：首个理解 DNA，RNA 和蛋白序列的多模语言模型"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941913860039751385",
+          "id": "1941913860039751385",
+          "title": "驭猫奇法二则"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1936739876855878663",
+          "id": "1936739876855878663",
+          "title": "fp8 AdamW 探路小记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1932746996680200648",
+          "id": "1932746996680200648",
+          "title": "自动扩容的LLM rewrite数据实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1930668724500799906",
+          "id": "1930668724500799906",
+          "title": "RL假丹心得：nvidia-NeMo 训练实测"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/24242060888",
+          "id": "24242060888",
+          "title": "open-r1练气秘籍（附模型地址）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1890709481534502910",
+          "id": "1890709481534502910",
+          "title": "open-r1筑基秘籍(附源码)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1926299705790436657",
+          "id": "1926299705790436657",
+          "title": "LoRA玩家狂喜：改两行torch源码，训练加速20%(bushi"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1926013022431876424",
+          "id": "1926013022431876424",
+          "title": "关于sft和pt loss相同但效果差异的猜测"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1924209926462502867",
+          "id": "1924209926462502867",
+          "title": "分享合成数据的llm训练结果"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1921289932724499867",
+          "id": "1921289932724499867",
+          "title": "kimi 深度研究（agent版）内测体验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1907013899632490113",
+          "id": "1907013899632490113",
+          "title": "程序员最欠缺的“标题革新器”"
+        }
+      ]
+    },
+    {
+      "author_id": "tete-77-44",
+      "author_name": "Tete",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039755652688507245",
+          "id": "2039755652688507245",
+          "title": "生数科技流式视频生成招正式/实习"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1986461968689815938",
+          "id": "1986461968689815938",
+          "title": "清华全新可训练稀疏注意力SLA：稀疏与线性结合，提速26倍！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1986292974531936666",
+          "id": "1986292974531936666",
+          "title": "TurboDiffusion开源，200倍加速视频生成"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941966829229707822",
+          "id": "1941966829229707822",
+          "title": "最全最新的高效注意力综述：Efficient Attention Methods: Hardware-efficient, Sparse, Compact, and Linear Attention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1916288293563249297",
+          "id": "1916288293563249297",
+          "title": "清华SageAttention3，FP4量化5倍加速！且首次支持8比特训练"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1890065552170545501",
+          "id": "1890065552170545501",
+          "title": "清华稀疏Attention，无需训练加速一切模型！(SpargeAttn详细解读，4-7倍加速于FlashAttention的秘密）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14961873305",
+          "id": "14961873305",
+          "title": "清华SageAttention2，4比特量化加速3倍不掉点！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1584248273",
+          "id": "1584248273",
+          "title": "又快又准，即插即用！清华8比特量化Attention，两倍加速于FlashAttention2，各端到端任务均不掉点！"
+        }
+      ]
+    },
+    {
+      "author_id": "91-6-97-1-40",
+      "author_name": "djy123456",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/7841994184",
+          "id": "7841994184",
+          "title": "[转载]关于大模型语料的迷思"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719068931",
+          "id": "719068931",
+          "title": "LLM推理加速：decode阶段的Attention在GPU上的优化（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/715348837",
+          "id": "715348837",
+          "title": "7月26日的文章"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/715493347",
+          "id": "715493347",
+          "title": "推荐场景GPU优化的探索与实践：CUDA Graph与多流并行的比较与分析"
+        }
+      ]
+    },
+    {
+      "author_id": "zhang-pei-yuan-45",
+      "author_name": "Peiyuan007",
+      "article_count": 5,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1951939135389545869",
+          "id": "1951939135389545869",
+          "title": "培源的PhD第一年随想"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/24951760568",
+          "id": "24951760568",
+          "title": "Sliding Tile Attention: 高效的Attn稀疏&加速方法, 视频生成快3倍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/18334988389",
+          "id": "18334988389",
+          "title": "MLSys 入门课程推荐"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15787343613",
+          "id": "15787343613",
+          "title": "UCSD第一学期流水账"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/654221979",
+          "id": "654221979",
+          "title": "从零训练一个迷你Llama (TinyLlama-1.1B)"
+        }
+      ]
+    },
+    {
+      "author_id": "qi-qi-qi-qi-98-47",
+      "author_name": "CalebDu",
+      "article_count": 14,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965725332486218853",
+          "id": "1965725332486218853",
+          "title": "Hadamard Transformation implementation：FHWT"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941232816185644696",
+          "id": "1941232816185644696",
+          "title": "WarpSpecialization for Blackwell"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1940858379905001339",
+          "id": "1940858379905001339",
+          "title": "Dynamic Cluster and Scheduler for Blackwell"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1905383022901059783",
+          "id": "1905383022901059783",
+          "title": "Nvidia Cute 实战-WarpSpecialization Gemm for Hopper"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/21509666996",
+          "id": "21509666996",
+          "title": "关于Tensor Core mma与内存层级 带宽和延迟的一点思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/18984902584",
+          "id": "18984902584",
+          "title": "Nvidia Cute 实战-Marlin W4A16 Gemm"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/8488333314",
+          "id": "8488333314",
+          "title": "Nvidia Cute 实战-WarpSpecialization Gemm"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/7259261717",
+          "id": "7259261717",
+          "title": "Nvidia Cute 实战- StreamK Gemm"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/3904815819",
+          "id": "3904815819",
+          "title": "Nvidia CUTE 实战1：ABQ-LLM GEMM Kernel"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/702606008",
+          "id": "702606008",
+          "title": "QServe：W4A8KV4"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/695914540",
+          "id": "695914540",
+          "title": "vLLM 架构详解（三）：PageAttention CUDA Kernel"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/693279132",
+          "id": "693279132",
+          "title": "CalebDu：vLLM 架构详解（一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/693694396",
+          "id": "693694396",
+          "title": "CalebDu：vLLM 架构详解（二）：内存管理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/691365497",
+          "id": "691365497",
+          "title": "Mamba Kernel详解"
+        }
+      ]
+    },
+    {
+      "author_id": "guo-tian-you-62",
+      "author_name": "TanyoKwok 郭天佑",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020071208675210752",
+          "id": "2020071208675210752",
+          "title": "从 GTC 2026 看 cuTile：半年来的性能进展"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1981047119168164396",
+          "id": "1981047119168164396",
+          "title": "对 cuTile 的感想"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689829403",
+          "id": "689829403",
+          "title": "CUTLASS 3.x 异构编程随感"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/682070578",
+          "id": "682070578",
+          "title": "新手如何入门 PyTorch 动态图"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/670980266",
+          "id": "670980266",
+          "title": "六问大模型推理算法和系统"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/671122102",
+          "id": "671122102",
+          "title": "大模型训练工程的那些事"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/595996564",
+          "id": "595996564",
+          "title": "聊聊 PyTorch 2.0(Inductor)"
+        }
+      ]
+    },
+    {
+      "author_id": "llllkkkk",
+      "author_name": "刘侃",
+      "article_count": 5,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1986883182214263488",
+          "id": "1986883182214263488",
+          "title": "Attention 的交叉路口，Linear 向左，Sparse 向右"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1905713771005063765",
+          "id": "1905713771005063765",
+          "title": "RTP-LLM DeepSeek Reproduce Tech Report"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1892365414530516703",
+          "id": "1892365414530516703",
+          "title": "解读 NSDI25 GPU-Disaggregated Serving for Deep Learning Recommendation Models at Scale"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/19796399275",
+          "id": "19796399275",
+          "title": "RTP-LLM 大模型推理引擎P-D分离 思考篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/26512099",
+          "id": "26512099",
+          "title": "tensorflow 和 caffe2"
+        }
+      ]
+    },
+    {
+      "author_id": "maja-98",
+      "author_name": "maja",
+      "article_count": 14,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2008212361434132968",
+          "id": "2008212361434132968",
+          "title": "从 SDE 到 DDPM : 图像编码器的数学原理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1967983266846966211",
+          "id": "1967983266846966211",
+          "title": "介绍 UCCL（一）: 为什么 UCCL 比 NVSHMEM 更快"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1966873898818736598",
+          "id": "1966873898818736598",
+          "title": "NVIDIA 2025 秋季 GTC (2025-10-29 6:00 pm)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/30797494443",
+          "id": "30797494443",
+          "title": "GTC 2025 review - Day 1"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/6721345137",
+          "id": "6721345137",
+          "title": "NV全新的 SIMD VLIW DSP发布"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/713976130",
+          "id": "713976130",
+          "title": "ICML2024 Bandwidth Efficient Attention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/708243122",
+          "id": "708243122",
+          "title": "PyTorch 2024 Roadmap Release"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/702463571",
+          "id": "702463571",
+          "title": "在内存受限芯片重新应用KV cache"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/687183695",
+          "id": "687183695",
+          "title": "GLIBC memory copy 优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/659769375",
+          "id": "659769375",
+          "title": "大SRAM众核芯片图解卷积实现的Dense MatMul，ReduceSum 等并行层次结构和性能分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/571109439",
+          "id": "571109439",
+          "title": "All you need to know about Tesla AI Day 2022 in 15 minutes"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/288831269",
+          "id": "288831269",
+          "title": "高精地图，智能交通技术招聘"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/35425847",
+          "id": "35425847",
+          "title": "双渠道非合作实时营销"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29936841",
+          "id": "29936841",
+          "title": "如何求解循环方程 ff(x)=(x+3)/(x+1)"
+        }
+      ]
+    },
+    {
+      "author_id": "ma-ming-fei-72",
+      "author_name": "Mingfei",
+      "article_count": 12,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1928431557003153559",
+          "id": "1928431557003153559",
+          "title": "SGLang 在 CPU 上的性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/687844000",
+          "id": "687844000",
+          "title": "Weight Only Quantization 的性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/652659936",
+          "id": "652659936",
+          "title": "PyTorch 工程实践（二）：Unique 的性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/647907549",
+          "id": "647907549",
+          "title": "Scaled Dot Product Attention (SDPA) 在 CPU 上的 性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/634236541",
+          "id": "634236541",
+          "title": "只有偏执才能生存 – 记录这些年我在PyTorch优化项目上的历程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/589912194",
+          "id": "589912194",
+          "title": "PyTorch 工程实践（一）：使用Valgrind解决内存double free的问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/587390761",
+          "id": "587390761",
+          "title": "GNN 在CPU上的性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/499979372",
+          "id": "499979372",
+          "title": "PyTorch CPU性能优化（四）：BFloat16"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/499761288",
+          "id": "499761288",
+          "title": "PyTorch CPU性能优化（三）：向量化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/495278415",
+          "id": "495278415",
+          "title": "PyTorch CPU性能优化（二）：并行化优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/494620090",
+          "id": "494620090",
+          "title": "PyTorch CPU性能优化（一）：Memory Format 和 Channels Last 的性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/79989669",
+          "id": "79989669",
+          "title": "PyTorch在CPU上的一些Performance BKM"
+        }
+      ]
+    },
+    {
+      "author_id": "hai-dao-chuan-shui-shou-chang-5979",
+      "author_name": "Alan 小分享",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17860257709",
+          "id": "17860257709",
+          "title": "豆包大模型团队（字节跳动）内推！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/718776496",
+          "id": "718776496",
+          "title": "研发岗转方向分享 ～ 腾讯 - 量化 - 字节"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/690052715",
+          "id": "690052715",
+          "title": "搞懂 CUDA Shared Memory 上的 bank conflicts 和向量化指令（LDS.128 / float4）的访存特点"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/680091531",
+          "id": "680091531",
+          "title": "FlashAttention v1、v2 - 公式推导 && 算法讲解"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/682564021",
+          "id": "682564021",
+          "title": "[ LLM 分布式训练系列 01 ] 概览 && 数据并行（Data Parallelism）- DP, DDP, ZeRO"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/682354879",
+          "id": "682354879",
+          "title": "[ LLM 分布式训练系列 02 ] 流水线并行（Pipeline Parallelism）- GPipe"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/680999392",
+          "id": "680999392",
+          "title": "ChatGPT Plus 会员怎么开通？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/671053045",
+          "id": "671053045",
+          "title": "动手实现一个简版 PyTorch - 10-414/714: Deep Learning Systems"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/668781029",
+          "id": "668781029",
+          "title": "学习大模型的第一步：理解 Transformer && 动手实现一遍"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/626446997",
+          "id": "626446997",
+          "title": "业余投资者的投资准备 - 《彼得林奇的成功投资》读书总结"
+        }
+      ]
+    },
+    {
+      "author_id": "charles-58-59-65",
+      "author_name": "Charlie",
+      "article_count": 19,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045430701282047192",
+          "id": "2045430701282047192",
+          "title": "怎么让好运的天平向你倾斜？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044198942674613828",
+          "id": "2044198942674613828",
+          "title": "我如何避开周五的大跌——量化PM的精力管理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041261263259522770",
+          "id": "2041261263259522770",
+          "title": "牛市买量化是不是智商税？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039377478314095382",
+          "id": "2039377478314095382",
+          "title": "又一家对冲基金破产——对投资人有什么启示？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037693753977205883",
+          "id": "2037693753977205883",
+          "title": "科技跑团时代，美股大跌，国内应该撤还是抄底？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2035791645862537108",
+          "id": "2035791645862537108",
+          "title": "牛市看多原因 vs 看空原因"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2033176356549306175",
+          "id": "2033176356549306175",
+          "title": "从NBA比赛看波动率的聚集效应"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031784626260328565",
+          "id": "2031784626260328565",
+          "title": "人生和投资怎么做决策？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029300450277569508",
+          "id": "2029300450277569508",
+          "title": "怎么系统化做投资？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2019368021953627777",
+          "id": "2019368021953627777",
+          "title": "什么样的V才能抄底？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015770464933422879",
+          "id": "2015770464933422879",
+          "title": "投资一定要有view"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014063311080153660",
+          "id": "2014063311080153660",
+          "title": "量化基金经理六点看未来AI发展"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2010522651655939426",
+          "id": "2010522651655939426",
+          "title": "国家队对市场的调控"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2010057386472267780",
+          "id": "2010057386472267780",
+          "title": "股市是不是过热了？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2007261513908494864",
+          "id": "2007261513908494864",
+          "title": "接下去的进步要靠无知"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2005425408762466516",
+          "id": "2005425408762466516",
+          "title": "A股宽基的估值到底高不高？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002456082124141850",
+          "id": "2002456082124141850",
+          "title": "把自己长期留在牌桌上"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2001015188971884912",
+          "id": "2001015188971884912",
+          "title": "严格基于统计做重大决策"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1999777666744738542",
+          "id": "1999777666744738542",
+          "title": "资管 vs 自营"
+        }
+      ]
+    },
+    {
+      "author_id": "nian-qi-hua-sheng-bc",
+      "author_name": "菽陌松囿",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043329732683491002",
+          "id": "2043329732683491002",
+          "title": "估算GLM5在coding场景收益"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2016521393752254113",
+          "id": "2016521393752254113",
+          "title": "为什么不喜欢委屈自己"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1956093988122658714",
+          "id": "1956093988122658714",
+          "title": "deepseek v3.2速读总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27339870003",
+          "id": "27339870003",
+          "title": "关于deepseek R1盈利的计算"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/18404735869",
+          "id": "18404735869",
+          "title": "minimax技术报告简读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17087312311",
+          "id": "17087312311",
+          "title": "大模型优化之基础Baseline"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/16066553541",
+          "id": "16066553541",
+          "title": "大模型训练优化之显存篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15666403147",
+          "id": "15666403147",
+          "title": "关于deepseek v3训推优化的剖析"
+        }
+      ]
+    },
+    {
+      "author_id": "joker-94-94-62",
+      "author_name": "朱然",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1982516191567311623",
+          "id": "1982516191567311623",
+          "title": "Fine Grained Activation Offloading"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29101694086",
+          "id": "29101694086",
+          "title": "小红书大模型AI Infra团队介绍&招聘信息"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1957457076080076392",
+          "id": "1957457076080076392",
+          "title": "nccl-tests中的bus bandwidth"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1956326731205026560",
+          "id": "1956326731205026560",
+          "title": "投机采样在MoE模型推理上的问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1941155460007822033",
+          "id": "1941155460007822033",
+          "title": "MoE训练的专家负载均衡优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1914291080385496482",
+          "id": "1914291080385496482",
+          "title": "小红书hilab最新开源的基座模型"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1909287306793325050",
+          "id": "1909287306793325050",
+          "title": "小红书大模型顶尖实习生招聘"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29105036577",
+          "id": "29105036577",
+          "title": "Expert Parallelism Load Balancer分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29103563814",
+          "id": "29103563814",
+          "title": "MLA 吸收之谜"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29100961343",
+          "id": "29100961343",
+          "title": "PCIe的传输带宽可以通过并发提升利用率吗？"
+        }
+      ]
+    },
+    {
+      "author_id": "du-kun-tai-19",
+      "author_name": "云山乱",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/27506915595",
+          "id": "27506915595",
+          "title": "万千GPU，同跑LLM！在K8s里面部署vLLM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15177057416",
+          "id": "15177057416",
+          "title": "PhD延期？我在vLLM团队的2024冒险"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/699607438",
+          "id": "699607438",
+          "title": "博士后半段：有关选择与诚恳"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/437014481",
+          "id": "437014481",
+          "title": "奶奶，我想你了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/102518559",
+          "id": "102518559",
+          "title": "从网络角度看：利用深度学习做视频分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/71166589",
+          "id": "71166589",
+          "title": "计算性(2) - 对问题的第一次分类"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/68436938",
+          "id": "68436938",
+          "title": "未名湖是个海洋，石坊上铺满星光"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/64382065",
+          "id": "64382065",
+          "title": "计算性(1) - 图灵机和可计算性"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/62421849",
+          "id": "62421849",
+          "title": "似乎我也老了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/62029838",
+          "id": "62029838",
+          "title": "高数常见坑点：等价无穷小"
+        }
+      ]
+    },
+    {
+      "author_id": "tan-zong-tangent",
+      "author_name": "MisakiQAQ",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984955485745608211",
+          "id": "1984955485745608211",
+          "title": "Qwen全系列实测：上海AI Lab发布RL后训练Scaling Law，揭示“效率饱和”新现象"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/25587155209",
+          "id": "25587155209",
+          "title": "我的MLsys学习与秋招之路——写在 AI Infra 大基建的黄金时代"
+        }
+      ]
+    },
+    {
+      "author_id": "mmaxwell-60",
+      "author_name": "Mmaxwell",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/22276377692",
+          "id": "22276377692",
+          "title": "26届 ai compiler/ai infra 求职记录帖"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704489267",
+          "id": "704489267",
+          "title": "MLIR 练习生的日常"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/665267792",
+          "id": "665267792",
+          "title": "[Paper Reading] TVM: An Automated End-to-End Optimizing Compiler for Deep Learning"
+        }
+      ]
+    },
+    {
+      "author_id": "uravel-81",
+      "author_name": "PicoPika",
+      "article_count": 12,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/696844342",
+          "id": "696844342",
+          "title": "[CUDA 学习笔记] GEMM 优化: 双缓冲 (Prefetch) 和 Bank Conflict 解决"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/435908830",
+          "id": "435908830",
+          "title": "深入浅出GPU优化系列：GEMM优化（一） - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/442930482",
+          "id": "442930482",
+          "title": "深入浅出GPU优化系列：GEMM优化（二） - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/481600052",
+          "id": "481600052",
+          "title": "深入浅出GPU优化系列：GEMM优化（三） - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/692010210",
+          "id": "692010210",
+          "title": "[CUDA 学习笔记] 矩阵转置算子优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/692009543",
+          "id": "692009543",
+          "title": "[CUDA 学习笔记] half 类型的 atomicAdd 操作"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/597435971",
+          "id": "597435971",
+          "title": "【BBuf的CUDA笔记】四，介绍三个高效实用的CUDA算法实现（OneFlow ElementWise模板，FastAtomicAdd模板，OneFlow UpsampleNearest2d模板） - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688610091",
+          "id": "688610091",
+          "title": "[CUDA 学习笔记] Reduce 算子优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/596012674",
+          "id": "596012674",
+          "title": "【BBuf的CUDA笔记】三，reduce优化入门学习笔记 - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688609115",
+          "id": "688609115",
+          "title": "[CUDA 学习笔记] Element-wise 算子优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/591058808",
+          "id": "591058808",
+          "title": "【BBuf 的CUDA笔记】一，解析OneFlow Element-Wise 算子实现 - 知乎"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688610975",
+          "id": "688610975",
+          "title": "[CUDA 学习笔记] CUDA kernel 的 grid_size 和 block_size 选择"
+        }
+      ]
+    },
+    {
+      "author_id": "ustc-nhpcc",
+      "author_name": "USTC-NHPCC",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044507873053603219",
+          "id": "2044507873053603219",
+          "title": "【RG Summary】[arXiv'26] PROBE"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044507212035395591",
+          "id": "2044507212035395591",
+          "title": "【RG Q&A Summary】[arxiv'26] Token Sparse Attention"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031793965167547374",
+          "id": "2031793965167547374",
+          "title": "【RG Q&A Summary】[CVPR'26] AdaCluster"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1980244092379218212",
+          "id": "1980244092379218212",
+          "title": "【RG Q&A Summary】[SOSP'25] Pie: A Programmable Serving System for Emerging LLM Applications"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1976302854697402853",
+          "id": "1976302854697402853",
+          "title": "【RG Q&A Summary】[ArXiv] FAST-DLLM V2: Efficient Block-Diffusion LLM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1934337496696725728",
+          "id": "1934337496696725728",
+          "title": "【RG Q&A Summary】[arXiv] RetroInfer:A Vector-Storage Approach for Scalable Long-Context LLM Inference"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1934336212514108579",
+          "id": "1934336212514108579",
+          "title": "【RG Q&A Summary】CacheBlend : Fast Large Language Model Serving for RAG with Cached Knowledge Fusion"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1915539843318002513",
+          "id": "1915539843318002513",
+          "title": "【RG Q&A Summary】[arXiv] Down with the Hierarchy: The 'H' in HNSW Stands for \"Hubs\""
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1915442048447808124",
+          "id": "1915442048447808124",
+          "title": "【RG Q&A Summary】[SOSP'24] Ozz & [arXiv] AsyncFS"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1908554180580319318",
+          "id": "1908554180580319318",
+          "title": "【RG Q&A Summary】[OSDI'24] Llumnix & [SOSP'24] HotSPa"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1908213388124861006",
+          "id": "1908213388124861006",
+          "title": "【RG Q&A Summary】Klotski: Efficient Mixture-of-Expert Inference via Expert-Aware Multi-Batch Pipeline"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1908210247123857680",
+          "id": "1908210247123857680",
+          "title": "【RG Q&A Summary】CHIME: A Cache-Efficient and High-Performance Hybrid Index on Disaggregated Memory"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1904946489387628431",
+          "id": "1904946489387628431",
+          "title": "【RG Q&A Summary】[OSDI'24] FairyWren & [arXiv] fMoE"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898083213005522853",
+          "id": "1898083213005522853",
+          "title": "【RG Q&A Summary】[OSDI'24] Ladder"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898081775537853170",
+          "id": "1898081775537853170",
+          "title": "【RG Q&A Summary】Comprehensive introduction of DeepSeek-AI's technical report (PART ⅠI)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/31406523047",
+          "id": "31406523047",
+          "title": "【RG Q&A Summary】Comprehensive introduction of DeepSeek-AI's technical report (PART Ⅰ)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/18042967757",
+          "id": "18042967757",
+          "title": "【RG Q&A Summary】[OSDI'24] DistServe: Disaggregating Prefill and Decoding for Goodput-optimized La..."
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/16742425732",
+          "id": "16742425732",
+          "title": "【RG Q&A Summary】[OSDI'24] Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15998395738",
+          "id": "15998395738",
+          "title": "【RG Q&A Summary】[OSDI'24] Motor: Enabling Multi-Versioning for Distributed Transactions on Disagg..."
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14402430046",
+          "id": "14402430046",
+          "title": "【RG Q&A Summary】 [SOSP'24] PowerInfer: Fast Large Language Model Serving with a Consumer-grade GPU"
+        }
+      ]
+    },
+    {
+      "author_id": "fuliluo",
+      "author_name": "罗福莉",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/428263027",
+          "id": "428263027",
+          "title": "极简单但贼有效的Fine-tuning算法，几行代码最高涨点8%"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/39211679",
+          "id": "39211679",
+          "title": "文本风格转换 Paper List"
+        }
+      ]
+    },
+    {
+      "author_id": "lin-zhang-52-62",
+      "author_name": "Lin Zhang",
+      "article_count": 5,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/717509355",
+          "id": "717509355",
+          "title": "大模型训练：如何优化MFU"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/710296768",
+          "id": "710296768",
+          "title": "大模型训练：Megatron-Kwai中的内存优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/694877232",
+          "id": "694877232",
+          "title": "大模型训练：Megatron-Core中的通信优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/687353235",
+          "id": "687353235",
+          "title": "当我们在谈论AGI时，我们在谈论什么"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/680047456",
+          "id": "680047456",
+          "title": "分析AutoGPTQ中存在的一个Bug"
+        }
+      ]
+    },
+    {
+      "author_id": "eigensystem",
+      "author_name": "Eigensystem",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/716093535",
+          "id": "716093535",
+          "title": "Flux.1 & SD3极速生成 - DiT模型推理优化方法 序列并行篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/714252753",
+          "id": "714252753",
+          "title": "DiT类模型纵评-从DiT到SD3到Flux"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/713199948",
+          "id": "713199948",
+          "title": "DiT并行推理引擎-xDiT的设计哲学"
+        }
+      ]
+    },
+    {
+      "author_id": "840445",
+      "author_name": "Uranus",
+      "article_count": 16,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14486526122",
+          "id": "14486526122",
+          "title": "vLLM V1 代码走读，先睹为快！(1/2)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14430956145?utm_campaign=shareopn&utm_content=group1_article&utm_medium=social&utm_psn=1854945218031398913&utm_source=wechat_session",
+          "id": "14430956145",
+          "title": "游凯超：我与vLLM的2024"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/662950353",
+          "id": "662950353",
+          "title": "投机采样：Llama-2 70B提速100%的秘诀！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/645645716",
+          "id": "645645716",
+          "title": "如此简单！LLaMA-2 finetune 实战！🚀🚀🚀"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/644659157",
+          "id": "644659157",
+          "title": "Xinference: 在个人电脑上玩转LLaMA-2！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/642953825",
+          "id": "642953825",
+          "title": "Xinference：在个人电脑上 PK 两代 chatglm！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/636001335",
+          "id": "636001335",
+          "title": "解开封印！加倍 LLM 推理吞吐: ggml.ai 与 llama.cpp"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/626501077",
+          "id": "626501077",
+          "title": "完全开源！基于 LLaMA 的 generative agent 来啦！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/623873461",
+          "id": "623873461",
+          "title": "初探 generative agent：围观 AI 打德州扑克"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/617794173",
+          "id": "617794173",
+          "title": "重绘中国：用 AI 着色一百年前的中华大地"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/619528375",
+          "id": "619528375",
+          "title": "用 tensor-parallel 让大模型多卡并发推理 🚀"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/616504594",
+          "id": "616504594",
+          "title": "GPT fine-tune实战： 训练我自己的 ChatGPT🚀🚀🚀"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/614913980",
+          "id": "614913980",
+          "title": "Alpaca-lora 在消费级显卡上训练你自己的 ChatGPT！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/608938646",
+          "id": "608938646",
+          "title": "Let's benchmark pandas 2.0.0 RC0！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/604347825",
+          "id": "604347825",
+          "title": "不会前端？用 streamlit 为你的项目打造美观的 UI！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/600666143",
+          "id": "600666143",
+          "title": "清宫造办处档案在线查询系统上线啦！用 OCR 和 Python 协助清史和清宫艺术研究"
+        }
+      ]
+    },
+    {
+      "author_id": "zi-qi-dong-lai-1",
+      "author_name": "紫气东来",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1995433233983231025",
+          "id": "1995433233983231025",
+          "title": "LLM(34)：Batch size 与 Learning rate 的理论与实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1924064976684966893",
+          "id": "1924064976684966893",
+          "title": "Reasoning LLM（六）：内在奖励"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1917257135730964355",
+          "id": "1917257135730964355",
+          "title": "Reasoning LLM（五）：熵缩过程与能力边界"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1913905349284591240",
+          "id": "1913905349284591240",
+          "title": "Reasoning LLM（四）：Agentic RL"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/25410252053",
+          "id": "25410252053",
+          "title": "Reasoning LLM（三）：LLM+RL"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1892967943471621999",
+          "id": "1892967943471621999",
+          "title": "RAG智能化工作流助力AI搜索"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/28558622452",
+          "id": "28558622452",
+          "title": "LLM(33)：MoE 的算法理论与 EP 的工程化问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/19663561530",
+          "id": "19663561530",
+          "title": "LLM(32)：和而不同，LLM缓存压缩方案(MLA, TPA, MFA)讨论"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17569409591",
+          "id": "17569409591",
+          "title": "Reasoning LLM（二）：过程监督与结果监督"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/14665512019",
+          "id": "14665512019",
+          "title": "LLM(31)：序列并行的典型方案与实现细节"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/706135598",
+          "id": "706135598",
+          "title": "sys(2): 通信原语及其性能分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/968362756",
+          "id": "968362756",
+          "title": "Reasoning LLM（一）：LLM+MCTS"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/715022552",
+          "id": "715022552",
+          "title": "Tools(2): Nsight Compute 使用指南"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/714941037",
+          "id": "714941037",
+          "title": "Tools(1): 典型框架语言的分析手段"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/710813718",
+          "id": "710813718",
+          "title": "LLM(30)：scaling law 与词表大小之关系"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704941572",
+          "id": "704941572",
+          "title": "LLM(29)：再谈 LLM 中的并行计算"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/701860743",
+          "id": "701860743",
+          "title": "LLM(28)：解读 Mamba 2，兼谈 LLM 的统一理论"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/699027700",
+          "id": "699027700",
+          "title": "sys(1): 内存墙与LLM 计算"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/694416583",
+          "id": "694416583",
+          "title": "CUDA（四）：使用 CUDA 实现 Transformer 结构"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/696197013",
+          "id": "696197013",
+          "title": "ops(8)：self-attention 的 CUDA 实现及优化 (下)"
+        }
+      ]
+    },
+    {
+      "author_id": "winter-81-20-9",
+      "author_name": "lvhan",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/678920627",
+          "id": "678920627",
+          "title": "LMDeploy 推理 pipeline"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/678269293",
+          "id": "678269293",
+          "title": "LMDeploy"
+        }
+      ]
+    },
+    {
+      "author_id": "qiao-feng-xi",
+      "author_name": "乔枫惜",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/675392178",
+          "id": "675392178",
+          "title": "NSDI '23 | Hindsight 如何高效追踪分布式系统中的罕见情况"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/570329623",
+          "id": "570329623",
+          "title": "Graphiler 和 MLSys 2022 见闻"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/275837455",
+          "id": "275837455",
+          "title": "OSDI '20 | RAMMER (NNFusion) 如何进一步压榨加速器性能"
+        }
+      ]
+    },
+    {
+      "author_id": "pdev",
+      "author_name": "Pentium PRO",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/447559292",
+          "id": "447559292",
+          "title": "2021年总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/340712707",
+          "id": "340712707",
+          "title": "2020年总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/151582059",
+          "id": "151582059",
+          "title": "SIGMOD20远距离围观"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/139045053",
+          "id": "139045053",
+          "title": "Streaming system动态调优"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/128306241",
+          "id": "128306241",
+          "title": "Good,  Bad, and Ugly of ML for Networked Systems"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/122598847",
+          "id": "122598847",
+          "title": "self-driving DB"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/116172188",
+          "id": "116172188",
+          "title": "Federated Learning发展前景探讨"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/104444471",
+          "id": "104444471",
+          "title": "MLsys各方向综述"
+        }
+      ]
+    },
+    {
+      "author_id": "fazzie",
+      "author_name": "Fazzie",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/17542710424",
+          "id": "17542710424",
+          "title": "谈谈DeepSeek V3 的Dual Pipe算法"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/698950172",
+          "id": "698950172",
+          "title": "超大模型加载转换Trick"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/679969680",
+          "id": "679969680",
+          "title": "流水线并行论文总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/676193188",
+          "id": "676193188",
+          "title": "AI读论文: LLAMA PRO: Progressive LLaMA with Block Expansion"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/608318764",
+          "id": "608318764",
+          "title": "ML system 入坑指南"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/460971028",
+          "id": "460971028",
+          "title": "OPTIMIZER FUSION: EFFICIENT TRAINING WITH BETTER LOCALITY AND PARALLELISM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/460966888",
+          "id": "460966888",
+          "title": "Pytorch 分布式数据 Distributed Data Parallal"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/444887088",
+          "id": "444887088",
+          "title": "论文解读：LITE TRANSFORMER WITH LONG-SHORT RANGE ATTENTION"
+        }
+      ]
+    },
+    {
+      "author_id": "ming-yin-2-93",
+      "author_name": "丸山彩",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1961841132536338098",
+          "id": "1961841132536338098",
+          "title": "专家即服务(EaaS)解读，大规模DeepSeek类MoE模型推理的高效通信实现和一些碎碎念"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/701716465",
+          "id": "701716465",
+          "title": "SC '23 流水线并行Hanayo总结&投稿流程&参会记录"
+        }
+      ]
+    },
+    {
+      "author_id": "chui-zou-liao-ka-pei",
+      "author_name": "赵轩磊",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/705950674",
+          "id": "705950674",
+          "title": "实时AI视频生成：Pyramid Attention Broadcast"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688059946",
+          "id": "688059946",
+          "title": "高效视频生成 x 序列并行 = DSP"
+        }
+      ]
+    },
+    {
+      "author_id": "yao-zhu-jia-jie",
+      "author_name": "要术甲杰",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/584944969",
+          "id": "584944969",
+          "title": "多面体编译理论与深度学习实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/259311866",
+          "id": "259311866",
+          "title": "Polyhedral编译调度算法(3)——isl中的调度算法"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/232070003",
+          "id": "232070003",
+          "title": "Polyhedral编译调度算法(2)——Feautrier算法"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/199683290",
+          "id": "199683290",
+          "title": "本系列文章的第1部分"
+        }
+      ]
+    },
+    {
+      "author_id": "24-80-63-95",
+      "author_name": "赖睿航",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045509863221064141",
+          "id": "2045509863221064141",
+          "title": "PithTrain：Agent 时代的 MoE 训练框架设计"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/903143931",
+          "id": "903143931",
+          "title": "基于 MLCEngine 的低延迟高吞吐量的 LLM 部署研究"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/702425411",
+          "id": "702425411",
+          "title": "MLCEngine"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/612517660",
+          "id": "612517660",
+          "title": "面向 Web 的机器学习编译突破：纯浏览器运行 Stable Diffusion"
+        }
+      ]
+    },
+    {
+      "author_id": "huang-fei-bai",
+      "author_name": "飞白",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1927404769514857289",
+          "id": "1927404769514857289",
+          "title": "NVIDIA英伟达|2026校招内推"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/675169612",
+          "id": "675169612",
+          "title": "NVIDIA英伟达|2024实习/社招内推"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/643787425",
+          "id": "643787425",
+          "title": "NVIDIA英伟达|2023实习生内推"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/438279536",
+          "id": "438279536",
+          "title": "NVIDIA英伟达|2022校招内推"
+        }
+      ]
+    },
+    {
+      "author_id": "ha-ha-ha-ha-51-33-24",
+      "author_name": "昇腾CANN",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2046246835237414813",
+          "id": "2046246835237414813",
+          "title": "从一张查找表到 4GB/s：HiFloat8 Cast 算子的工程化之路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2046230056305947769",
+          "id": "2046230056305947769",
+          "title": "码力全开特辑直播预告｜6月8日19:00，ATVOSS ：算子全流程实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045445596664837871",
+          "id": "2045445596664837871",
+          "title": "码力全开特辑直播预告｜6月4日19:00，ATVOSS:极简开发概述"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045188097982386641",
+          "id": "2045188097982386641",
+          "title": "智算未来，开源同行：复旦大学CANN启航营&校园赛圆满举办"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043702298174607815",
+          "id": "2043702298174607815",
+          "title": "码力全开特辑直播预告｜6月1日19:00，Triton昇腾亲和扩展编程实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043391092926699164",
+          "id": "2043391092926699164",
+          "title": "5月29日直播 | HIXL协同Mooncake实现KV Cache池化技术实践分享"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042920203265238579",
+          "id": "2042920203265238579",
+          "title": "开发者说直播预告｜5月28日19:00，optimized_transducer算子任务开发与性能调优"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042712425921769539",
+          "id": "2042712425921769539",
+          "title": "TensorFlow×AutoFuse实现算子自动融合，提升推荐模型48%的性能！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2040725972022997442",
+          "id": "2040725972022997442",
+          "title": "CANN-Bench设计解读-如何构建一个Agent-Native的算子评测体系"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041202650855855419",
+          "id": "2041202650855855419",
+          "title": "码力全开特辑直播预告｜5月25日19:00，Triton Ascend代码架构及功能扩展全解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2040383890574070792",
+          "id": "2040383890574070792",
+          "title": "码力全开特辑直播预告｜5月21日19:00，详解面向昇腾的Triton算子调试和性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2040373905651652203",
+          "id": "2040373905651652203",
+          "title": "5月21日直播丨CANN社区开发者成长路径介绍及算子天梯赛发布"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039772466084590360",
+          "id": "2039772466084590360",
+          "title": "芯模赋能，智启未来：杭电CANN启航营圆满收官，解锁AI实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039771999791215614",
+          "id": "2039771999791215614",
+          "title": "芯聚力量，智创未来：南京信息工程大学CANN启航营圆满收官，为AI注入青春力量"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2039771509250647890",
+          "id": "2039771509250647890",
+          "title": "南京理工大学计算机学院联合CANN开源社区举办算子挑战赛校内赛赋能培训班"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038697253917954105",
+          "id": "2038697253917954105",
+          "title": "5月18日直播丨CANNBot进阶开发-Vector算子之排序性能优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038691473080717537",
+          "id": "2038691473080717537",
+          "title": "码力全开特辑直播预告｜5月18日19:00，从基础理论到实践，全流程掌握面向昇腾的Triton算子开"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038314507441808146",
+          "id": "2038314507441808146",
+          "title": "5月15日直播丨CANNBot进阶开发-自动生成Vector算子之RegBase"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037950506161722485",
+          "id": "2037950506161722485",
+          "title": "5月14号直播丨​多模态生成技术优化实践第二期--并行和Cache篇"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2037901884741179073",
+          "id": "2037901884741179073",
+          "title": "开发者说直播预告｜5月14日19:00，SignBitsUnpack算子社区任务开发指南"
+        }
+      ]
+    },
+    {
+      "author_id": "i4oolish",
+      "author_name": "i4oolish",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/564064499",
+          "id": "564064499",
+          "title": "品读Sean Parent关于Value&Concept的代码"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/542185155",
+          "id": "542185155",
+          "title": "ONNX怎样才能用好？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/457572170",
+          "id": "457572170",
+          "title": "逃离ONNX"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/451061340",
+          "id": "451061340",
+          "title": "MLIR入门理解2-背景及演进"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/450022851",
+          "id": "450022851",
+          "title": "MLIR入门理解"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/429514428",
+          "id": "429514428",
+          "title": "01-python到XLA执行流程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/393563450",
+          "id": "393563450",
+          "title": "本地VSCode搭建RUST开发环境"
+        }
+      ]
+    },
+    {
+      "author_id": "zhou-ye-sheng-17-34",
+      "author_name": "MASA-XUEzy",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/650545727",
+          "id": "650545727",
+          "title": "详解SpMM on GPU(二)——VectorSparse代码解析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/650722013",
+          "id": "650722013",
+          "title": "详解SpMM on GPU(一)"
+        }
+      ]
+    },
+    {
+      "author_id": "zhi-zhe-zai-cao-mang",
+      "author_name": "meton",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/698412325",
+          "id": "698412325",
+          "title": "DeepMind 文生图评测：Gecko框架"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/697080956",
+          "id": "697080956",
+          "title": "StoryDiffusion：一致性保持的视频生成"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/697080164",
+          "id": "697080164",
+          "title": "diffusion model based视频生成工作调研"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/645362500",
+          "id": "645362500",
+          "title": "CNN量化 vs. LLM量化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/618940347",
+          "id": "618940347",
+          "title": "半监督目标检测：Teacher巡礼"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/616138047",
+          "id": "616138047",
+          "title": "卷积：从推理引擎优化和硬件优化角度理解"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/101544149",
+          "id": "101544149",
+          "title": "深度学习加速：算法、编译器、体系结构与硬件设计"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/100151292",
+          "id": "100151292",
+          "title": "RocketChip 学习笔记系列"
+        }
+      ]
+    },
+    {
+      "author_id": "starkerfirst",
+      "author_name": "starkerfirst",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15365540966",
+          "id": "15365540966",
+          "title": "2024年度总结"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/675381283",
+          "id": "675381283",
+          "title": "2023年度总结"
+        }
+      ]
+    },
+    {
+      "author_id": "fengbintu",
+      "author_name": "涂锋斌",
+      "article_count": 12,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/712712200",
+          "id": "712712200",
+          "title": "ISSCC 2024智能芯片研究趋势分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/689089734",
+          "id": "689089734",
+          "title": "清华园“双肩挑”与Doctor of Philosophy"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/629778702",
+          "id": "629778702",
+          "title": "香港科技大学涂锋斌老师课题组（TU-LAB）招收AI芯片方向博士生/博士后"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/560268538",
+          "id": "560268538",
+          "title": "从师夷长技到引领潮流"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/499339219",
+          "id": "499339219",
+          "title": "高算力AI芯片新范式：可重构数字存算一体架构"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/482013495",
+          "id": "482013495",
+          "title": "ISSCC'22奇妙之旅"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/340775090",
+          "id": "340775090",
+          "title": "从Thinker到Evolver：对可演化AI芯片的探索"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/101230937",
+          "id": "101230937",
+          "title": "RISC-V Summit'19 Trip Report"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/97975061",
+          "id": "97975061",
+          "title": "ICCAD'19 Trip Report"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/36733625",
+          "id": "36733625",
+          "title": "[ISCA'18] RANA: Towards Efficient Neural Acceleration with Refresh-Optimized Embedded DRAM"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/26841015",
+          "id": "26841015",
+          "title": "硬创公开课：设计神经网络硬件架构时，我们在思考什么？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/25890632",
+          "id": "25890632",
+          "title": "Neural Networks on Silicon"
+        }
+      ]
+    },
+    {
+      "author_id": "hzfengsy",
+      "author_name": "冯思远",
+      "article_count": 5,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1977733593548752743",
+          "id": "1977733593548752743",
+          "title": "TVM FFI 赋能 CuteDSL：开放机器学习系统 ABI 实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/650110025",
+          "id": "650110025",
+          "title": "利用GPU加速，在Orange Pi上跑LLMs"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/462195406",
+          "id": "462195406",
+          "title": "第四次TVMCon会议"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/437995108",
+          "id": "437995108",
+          "title": "TensorIR系列【二】 Block and Schedule原理"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/433540150",
+          "id": "433540150",
+          "title": "TensorIR系列【一】 背景与简介"
+        }
+      ]
+    },
+    {
+      "author_id": "dxq-15-8",
+      "author_name": "dxq",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2030249310621841397",
+          "id": "2030249310621841397",
+          "title": "总是从过去中找到似曾相识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027686642316506956",
+          "id": "2027686642316506956",
+          "title": "为什么要发文章"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2000203560592355730",
+          "id": "2000203560592355730",
+          "title": "编译器Agent"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/704317757",
+          "id": "704317757",
+          "title": "NPU对接PT2的思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/640259407",
+          "id": "640259407",
+          "title": "DSA反思与展望"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/637969717",
+          "id": "637969717",
+          "title": "王健飞：Long Live DSA (3)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/582706007",
+          "id": "582706007",
+          "title": "AI芯片软件栈--最近感悟"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/483252526",
+          "id": "483252526",
+          "title": "Tensorrent芯片和软件"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/388452164",
+          "id": "388452164",
+          "title": "tvm or mlir ？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/367035973",
+          "id": "367035973",
+          "title": "看Chris Lattner在ASPLOS演讲有感"
+        }
+      ]
+    },
+    {
+      "author_id": "xu-zhi-ying-35",
+      "author_name": "工藤福尔摩",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/642963019",
+          "id": "642963019",
+          "title": "mlsys胡言乱语"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/389400552",
+          "id": "389400552",
+          "title": "TVM集成第三方库"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/374190571",
+          "id": "374190571",
+          "title": "实验室服务器管理"
+        }
+      ]
+    },
+    {
+      "author_id": "jsji",
+      "author_name": "opencore",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/75224840",
+          "id": "75224840",
+          "title": "[2019.07.25] IBM上海编译器组招有经验的GCC开发人员或者对编译器有强烈兴趣的工程师"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/51980276",
+          "id": "51980276",
+          "title": "2018年12月国内编译器雇主汇总"
+        }
+      ]
+    },
+    {
+      "author_id": "zheng-lianmin",
+      "author_name": "郑怜悯",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/159234325",
+          "id": "159234325",
+          "title": "TVM开发小结 - 2020年5-6月"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/61503631",
+          "id": "61503631",
+          "title": "TVM开发报告 - 2019年3月"
+        }
+      ]
+    },
+    {
+      "author_id": "jin-yu-chen-76",
+      "author_name": "金雨辰",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/523395133",
+          "id": "523395133",
+          "title": "Relax: TVM 的下一代图层级 IR"
+        }
+      ]
+    },
+    {
+      "author_id": "PL-Lab",
+      "author_name": "仓颉编程语言",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044811548582007751",
+          "id": "2044811548582007751",
+          "title": "仓颉社区两应用入选 HDC 鸿蒙星光大道，邀你松山湖见！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042262271741748972",
+          "id": "2042262271741748972",
+          "title": "华为云码道×仓颉实战：零基础开发你的专属音乐编辑器"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2035762396535468477",
+          "id": "2035762396535468477",
+          "title": "GOSIM Paris | 华为仓颉董鑫：300天，我们如何用AI革新编程语言研发？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032054079128588628",
+          "id": "2032054079128588628",
+          "title": "Cangjie 1.1.0 正式发布，支持 Android/iOS 跨平台运行，中心仓正式上线 | STS Beta 测试活动获奖名单公示"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2030331463716089943",
+          "id": "2030331463716089943",
+          "title": "直播预告 |【仓颉社区】第44期WORKSHOP"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2028147710620877415",
+          "id": "2028147710620877415",
+          "title": "诚挚邀请｜仓颉伙伴发展与开发者交流大会・深圳站——共筑国产基础软件生态，探索 \"仓颉 + 鸿蒙 + 多行业\" 创新之路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2022267702203392647",
+          "id": "2022267702203392647",
+          "title": "《仓颉编程语言综述》发表于SCI期刊《计算机科学技术学报》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020898620690445742",
+          "id": "2020898620690445742",
+          "title": "论文速览 | 仓颉编程语言概览"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020192721634079323",
+          "id": "2020192721634079323",
+          "title": "仓颉STS-beta先锋招募进行中 | Cangjie 1.1.0-beta.24 已发布，快来一起捉虫吧~"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2020187240890942428",
+          "id": "2020187240890942428",
+          "title": "直播预告 |【仓颉社区】第43期WORKSHOP"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2017631512820994191",
+          "id": "2017631512820994191",
+          "title": "仓颉STS-beta先锋招募令 | 三周三连发，共筑仓颉语言新基石"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2017548666613806581",
+          "id": "2017548666613806581",
+          "title": "agentskills-runtime开源预览版发布"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015803760924963153",
+          "id": "2015803760924963153",
+          "title": "AI赋能，决战代码之巅：第十届华为ICT大赛中国总决赛编程赛3月14日开赛"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015746550907807671",
+          "id": "2015746550907807671",
+          "title": "CangjieSkills 正式开源：为仓颉 AI 编程打造的\"技能增强\"方案，实测降低 60% 费用"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015742310479049478",
+          "id": "2015742310479049478",
+          "title": "仓颉语言2025荣誉榜单揭晓，感恩同行者！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015737712418759782",
+          "id": "2015737712418759782",
+          "title": "鸿蒙仓颉编程语言挑战赛三等奖作品：CodeWeavers团队以仓颉技术解锁智能问答新范式"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015471630667752117",
+          "id": "2015471630667752117",
+          "title": "鸿蒙仓颉编程语言挑战赛三等奖作品：MeetWise智能会议助手"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015458113877209594",
+          "id": "2015458113877209594",
+          "title": "鸿蒙仓颉编程语言挑战赛获奖作品：基于仓颉语言开发的鸿蒙原生应用——《仓颉迹》开发实践"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015454451964609403",
+          "id": "2015454451964609403",
+          "title": "鸿蒙仓颉编程语言挑战赛三等奖作品：安全会议助手"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2015448872600754012",
+          "id": "2015448872600754012",
+          "title": "AtomGit × 仓颉 2025 年度运营报告：数据见证实力，时间轴镌刻成长"
+        }
+      ]
+    },
+    {
+      "author_id": "yin-yue-61",
+      "author_name": "NULL",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2029911741958710156",
+          "id": "2029911741958710156",
+          "title": "LLM 可以只通过文字创造和维系一个自我吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2024125364524384936",
+          "id": "2024125364524384936",
+          "title": "第三十六章：走光事件引发的行业进化和焦虑"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1977094290699224442",
+          "id": "1977094290699224442",
+          "title": "从ilya访谈中提到的”价值函数 (Value Function)“开始"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898344834579821727",
+          "id": "1898344834579821727",
+          "title": "快速梳理近期的视频生成自回归论文"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/12481085305",
+          "id": "12481085305",
+          "title": "快速梳理Attention稀疏文章"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/10731795229",
+          "id": "10731795229",
+          "title": "每天保持个体真实性训练对抗社会飞速的虚拟化进程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/683596286",
+          "id": "683596286",
+          "title": "像VAE压缩一本书？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/675850906",
+          "id": "675850906",
+          "title": "光计算大算力AI芯片: 光学超表面材料"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/666622705",
+          "id": "666622705",
+          "title": "LLM-FP4 Transformer极低bit量化论文简析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/664502783",
+          "id": "664502783",
+          "title": "打印pytorch模型执行中forward经过的layer，以及layer的输入/输出"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/653353583",
+          "id": "653353583",
+          "title": "适配模拟计算噪音和精度的算法尝试"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/646351790",
+          "id": "646351790",
+          "title": "从H100规格回看NVIDIA软实力"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/645627275",
+          "id": "645627275",
+          "title": "Flash Attention2 示意图"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/639458849",
+          "id": "639458849",
+          "title": "RPTQ 论文解读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/632456305",
+          "id": "632456305",
+          "title": "torch.nn实现单机多卡模型并行的tensor parallel"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/623047485",
+          "id": "623047485",
+          "title": "GPTQ 代码注释"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/621427727",
+          "id": "621427727",
+          "title": "GPT巧妙类比了用海森矩阵量化模型的技术"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/616435032",
+          "id": "616435032",
+          "title": "论文分享:Sanger通过稀疏化注意力实现GPT等NLP模型的硬件加速"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/616188760",
+          "id": "616188760",
+          "title": "论文分享:transformer推理的全栈优化"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/615884740",
+          "id": "615884740",
+          "title": "大语言模型的反思"
+        }
+      ]
+    },
+    {
+      "author_id": "lceda",
+      "author_name": "嘉立创EDA",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045929685209576167",
+          "id": "2045929685209576167",
+          "title": "有简单，续航久的番茄钟开源项目推荐吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2045105158141608407",
+          "id": "2045105158141608407",
+          "title": "嘉立创EDA怎么PCB仿真？求教程？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043742080120394402",
+          "id": "2043742080120394402",
+          "title": "硬核！首个AI远程调试器，开源了！有配套Skill技能包"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043741073902760607",
+          "id": "2043741073902760607",
+          "title": "1分钟，搞定2个经典的电流检测电路"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043740481306325634",
+          "id": "2043740481306325634",
+          "title": "【免费扩展介绍】嘉立创EDA能写代码了？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043738831824871991",
+          "id": "2043738831824871991",
+          "title": "有什么简单，却很受欢迎的开源项目吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2043737598607216750",
+          "id": "2043737598607216750",
+          "title": "有没有适合情人节参考DIY的开源项目？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032466475907335383",
+          "id": "2032466475907335383",
+          "title": "啥情况下，要接光耦？怎么算电阻？能全方面讲一下光耦隔离电路吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025180869254476099",
+          "id": "2025180869254476099",
+          "title": "这个USB布局错误，虽然离谱，却经常出现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2021971372100822778",
+          "id": "2021971372100822778",
+          "title": "PCB设计中，电流与线宽的关系？能给1个确切的回复吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2017598618429850262",
+          "id": "2017598618429850262",
+          "title": "你做过什么开源项目？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2016927666134082836",
+          "id": "2016927666134082836",
+          "title": "家里有上世纪的936焊台，不想丢了，有什么不错的改造方案吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012932937000175457",
+          "id": "2012932937000175457",
+          "title": "【开源】太疯狂了，小伙用8张硬盘，手搓全固态NAS"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2011846658527343148",
+          "id": "2011846658527343148",
+          "title": "【开源】自制空气净化器！支持检测4种环境参数"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009934652828312384",
+          "id": "2009934652828312384",
+          "title": "电容选对了，为什么滤波还是失效？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009628661331025963",
+          "id": "2009628661331025963",
+          "title": "DCDC原来是这么设计的！这11个技巧，我记住了！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2002059869679788479",
+          "id": "2002059869679788479",
+          "title": "【开源】3万多的灯，他花400做出来了？咋做的？咱研究一下"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2001715062432366756",
+          "id": "2001715062432366756",
+          "title": "【开源】花6.8元，自制快充，140W，5-28V可调……"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1994473402405234349",
+          "id": "1994473402405234349",
+          "title": "[开源硬件]30天才花1度电？我做了个暖风机，画PCB的时候用，好暖和"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1962194424642643276",
+          "id": "1962194424642643276",
+          "title": "我做了一个，能心率检测的鼠标"
+        }
+      ]
+    },
+    {
+      "author_id": "bao-yun-gang",
+      "author_name": "包云岗",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027528986687709550",
+          "id": "2027528986687709550",
+          "title": "香山，开源芯片，十年，感恩"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2025293148985763653",
+          "id": "2025293148985763653",
+          "title": "计算所建所70年之际关于图灵奖级别科研工作的几点思考"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023721481771787582",
+          "id": "2023721481771787582",
+          "title": "“万众一芯”ISCA26论文背后的故事"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014781903811683808",
+          "id": "2014781903811683808",
+          "title": "我的小龙虾开始发力了！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009077414710486902",
+          "id": "2009077414710486902",
+          "title": "聊一聊1999年的“72小时网络生存测试”"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1999226233804841034",
+          "id": "1999226233804841034",
+          "title": "纪录片《科举》随想"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1993475419706509004",
+          "id": "1993475419706509004",
+          "title": "国科大2025拾光奉献纪念典礼小记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1978632641575159340",
+          "id": "1978632641575159340",
+          "title": "RISC-V产业大会参会感想（2）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1976560245254923384?share_code=1pCxDzZISQqvL&utm_psn=1978632517226607538",
+          "id": "1976560245254923384",
+          "title": "RISC-V产业大会参会感想"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1965197156337034061",
+          "id": "1965197156337034061",
+          "title": "万众一芯 UCAgent 正式开源：基于大语言模型的硬件验证 AI Agent"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1945965753355468963",
+          "id": "1945965753355468963",
+          "title": "开源EDA+开源IP+国产工艺，芯片点亮！开放试用与流片申请"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1929322131939910259",
+          "id": "1929322131939910259",
+          "title": "一生一芯”2025暑期发布会@7月21日"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1928582281460683497",
+          "id": "1928582281460683497",
+          "title": "香山团队的这群年轻人们"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1909060204873618624",
+          "id": "1909060204873618624",
+          "title": "RISC-V欧洲峰会见闻（1）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1902444597822592477",
+          "id": "1902444597822592477",
+          "title": "五四青年节，再读教员《心之力》"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1893086114526499896",
+          "id": "1893086114526499896",
+          "title": "“2025，香山交付年”：进展1"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1892002330498561360",
+          "id": "1892002330498561360",
+          "title": "以开源凝共识"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/29577399103",
+          "id": "29577399103",
+          "title": "哈萨克斯坦首颗处理器芯片诞生记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/23808305990",
+          "id": "23808305990",
+          "title": "情人节，开源香山芯片+开源DeepSeek成功牵手！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/16436754766",
+          "id": "16436754766",
+          "title": "香山开源项目在硅谷科技圈引起的反思"
+        }
+      ]
+    },
+    {
+      "author_id": "zhang-qiao-lun",
+      "author_name": "硬件工程师",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/614356931",
+          "id": "614356931",
+          "title": "ThinkPad X1 Carbon 2023 64G内存有没有必要/ThinkPad X1 Carbon和macBook怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/614060112",
+          "id": "614060112",
+          "title": "ThinkPad的市场保值率怎么样？ThinkPad 2022和2021怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/530167406",
+          "id": "530167406",
+          "title": "618万元左右台式机整机推荐"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/522809767",
+          "id": "522809767",
+          "title": "大学老师适合哪款ThinkPad笔记本|ThinkPad X1 Carbon款式推荐"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/516290918",
+          "id": "516290918",
+          "title": "ThinkPad X1 Carbon 2022款和X1C 2021款买哪一款好"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/489951286",
+          "id": "489951286",
+          "title": "万元左右轻薄视频剪辑电脑选哪款"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/466993159",
+          "id": "466993159",
+          "title": "办公用，万元左右轻薄的ThinkPad 2K屏值不值得"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/460190941",
+          "id": "460190941",
+          "title": "科研党用visio等软件，买什么电脑比较合适"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/447730500",
+          "id": "447730500",
+          "title": "南卡枕中宝「骨传导小音箱」测评"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/444375272",
+          "id": "444375272",
+          "title": "南卡最新款骨传导耳机（Runner Pro3）测评：专门用来运动的耳机"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/442695143",
+          "id": "442695143",
+          "title": "南卡 NANK/A2真无线蓝牙耳机使用体验：南卡 NANK/A2怎么样？物美价廉的降噪蓝牙耳机怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/438380887",
+          "id": "438380887",
+          "title": "金融办公万元左右，轻度游戏，适合买什么笔记本"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/434219032",
+          "id": "434219032",
+          "title": "新潮无短板！佩戴舒适度天花板的S&O魔浪S体验"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/429794917",
+          "id": "429794917",
+          "title": "ThinkPad X1 Carbon非4K屏幕大硬盘选购"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/429132475",
+          "id": "429132475",
+          "title": "联想ThinkPad X1 Titanium 好还是Yoga好"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/427498608",
+          "id": "427498608",
+          "title": "南卡 NANK骨传导Runner Pro2使用体验：南卡最新骨传导耳机怎么样？游泳跑步运动耳机哪款好？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/419178182",
+          "id": "419178182",
+          "title": "剪辑视频，万元轻薄笔记本中ThinkPad, MacBook和华为笔记本怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/416440575",
+          "id": "416440575",
+          "title": "ThinkPad X1 隐士 2021 和 P1 隐士 2021续航怎么样 | ThinkPad X1 Extreme 4代和P1 Extreme 4代怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/412449715",
+          "id": "412449715",
+          "title": "万元预算下ThinkPad X1 Carbon, X13, X1 Nano以及XPS怎么选"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/411937736",
+          "id": "411937736",
+          "title": "博士科研用什么万元笔记本比较好"
+        }
+      ]
+    },
+    {
+      "author_id": "feng-yi-yang-de-zhu-15",
+      "author_name": "SnoopyBug",
+      "article_count": 10,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2040878470352392494",
+          "id": "2040878470352392494",
+          "title": "音乐桌宠：让线条小狗跟着音乐摇起来"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1931450178491121814",
+          "id": "1931450178491121814",
+          "title": "基于Notion博客构建Github主页"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/665585751",
+          "id": "665585751",
+          "title": "Jetson 风扇转速自动调节"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/665558148",
+          "id": "665558148",
+          "title": "Jetson AGX Xavier 刷机指南"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/617790935",
+          "id": "617790935",
+          "title": "64位并行前缀加法器-BKA（Brent-Kung）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/587487846",
+          "id": "587487846",
+          "title": "SNN图像脉冲化——泊松编码"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/489187295",
+          "id": "489187295",
+          "title": "Tournament分支预测器简介"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/490633550",
+          "id": "490633550",
+          "title": "Y86处理器模拟"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/450852850",
+          "id": "450852850",
+          "title": "深度卷积神经网络在CPU上计算的加速"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/450863825",
+          "id": "450863825",
+          "title": "PyTorch构造数据集（深度学习计算机视觉）"
+        }
+      ]
+    },
+    {
+      "author_id": "zhi-hui-64-54",
+      "author_name": "稚晖",
+      "article_count": 8,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/543745183",
+          "id": "543745183",
+          "title": "Isaac仿真平台搭建以及ROS试用教程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/336429888",
+          "id": "336429888",
+          "title": "【保姆级教程】个人深度学习工作站配置指南"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/147659820",
+          "id": "147659820",
+          "title": "【自制FOC驱动器】深入浅出讲解FOC算法与SVPWM技术"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/145801160",
+          "id": "145801160",
+          "title": "配置CLion用于STM32开发【优雅の嵌入式开发】"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/83226948",
+          "id": "83226948",
+          "title": "如何从源码编译OpenCV4Android库"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/81969854",
+          "id": "81969854",
+          "title": "嵌入式AI从入门到放肆【K210篇】-- 硬件与环境"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/72896282",
+          "id": "72896282",
+          "title": "如何自制一个超迷你的语音助手"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/64809151",
+          "id": "64809151",
+          "title": "如何制作一个带指纹识别的机械键盘"
+        }
+      ]
+    },
+    {
+      "author_id": "matongxue",
+      "author_name": "马同学",
+      "article_count": 20,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1898022059805770153",
+          "id": "1898022059805770153",
+          "title": "AI那么强，我为什么还要写书？世界读书日！买课程赠签名马书"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/31230713617",
+          "id": "31230713617",
+          "title": "贝叶斯公式｜相信直觉还是数据？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/15074255027",
+          "id": "15074255027",
+          "title": "简谐运动的特点与运动方程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/10701324882",
+          "id": "10701324882",
+          "title": "如何用光学解决最速降线问题"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/6842796153",
+          "id": "6842796153",
+          "title": "用微分方程解决追逐问题(一道经典的物理竞赛题目)"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/719143839",
+          "id": "719143839",
+          "title": "马蹄哒哒哒，马书第三本《马同学图解微积分(下)》出版啦！"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/715528167",
+          "id": "715528167",
+          "title": "如何理解数学中的梯度？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/712839426",
+          "id": "712839426",
+          "title": "如何计算牟合方盖的体积？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/712132500",
+          "id": "712132500",
+          "title": "《马同学图解微积分(下)》涨价了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/706755006",
+          "id": "706755006",
+          "title": "如何理解方向导数｜马同学图解微积分"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/701330753",
+          "id": "701330753",
+          "title": "考研数学如何提分？多元函数微积分｜空间想象能力"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/696371171",
+          "id": "696371171",
+          "title": "用二重积分的的的定义计算体积｜马同学图解微积分"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/694085372",
+          "id": "694085372",
+          "title": "世界读书日！买课程赠送定制签名版“马”书"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/684166681",
+          "id": "684166681",
+          "title": "窗户上的公式｜格林公式的推导"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/678545240",
+          "id": "678545240",
+          "title": "一张知识地图拿捏微积分｜马同学图解微积分"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/675501144",
+          "id": "675501144",
+          "title": "2023我们努力了，2024还继续吗？"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/674933032",
+          "id": "674933032",
+          "title": "又是一年！马同学第二本书出版啦"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/662418185",
+          "id": "662418185",
+          "title": "明明可以视频科普，他却要为我们写一本书"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/647041597",
+          "id": "647041597",
+          "title": "涨价了！马同学微积分课程涨价了"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/641822315",
+          "id": "641822315",
+          "title": "如何通过三维动画理解旋转曲面"
+        }
+      ]
+    },
+    {
+      "author_id": "deng-feng-10-87-48",
+      "author_name": "等风",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/457343520",
+          "id": "457343520",
+          "title": "Hensel Lifting & Newton-Raphson method"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/457271104",
+          "id": "457271104",
+          "title": "p-adic Valuation"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/365860557",
+          "id": "365860557",
+          "title": "佩尔（Pell）方程"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/347246297",
+          "id": "347246297",
+          "title": "一道题引发的思考——琴生（Jensen）不等式的积分形式"
+        }
+      ]
+    }
+  ]
+}

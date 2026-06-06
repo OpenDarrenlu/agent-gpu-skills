@@ -1,0 +1,93 @@
+# DiT类模型纵评-从DiT到SD3到Flux
+
+**作者**: Eigensystem
+
+**原文链接**: https://zhuanlan.zhihu.com/p/714252753
+
+---
+
+近两个月，文生图领域新开源的模型层出不穷。前有Pixart-sigma将最高生成分辨率提升到4K；后有SD3开源将stable diffusion系列推到了新的高度，SD系列模型也从unet backbone切换到了DiT，使用了MMDiT。在社区尚在对sd3尝鲜的阶段，black-forest-labs的flux.1就冒了出来，在生成效果上有种瞬间将SD3打的体无完肤的感觉，获得一众好评。
+
+笔者在进行xDiT项目中对pixart-sigma，stable diffusion 3，flux.1支持工作的过程中研究了三者之间在transformer backbone架构方面的差别。结合官方的资料简单分享一下，聊聊自己的拙见。若有理解或看法方面的问题，望算法大佬轻喷。
+
+我们最近的工作xDiT也支持三种架构，它可以让DiTs运行在多GPU上，满足实时图片生成的需求。 https://github.com/xdit-project/xDiT
+
+1.Pixart-Sigma == DiT?
+
+pixart-sigma使用了和DiT论文Scalable Diffusion Models with Transformers中DiT Block with Cross-Attention几乎完全一致的backbone模型结构，也就是如下DiT Block结构表示的中间那张图：
+
+单个transformer block由三层构成，一个multi-head self-attention对图片本身patches之间的相关关系进行处理，让图片的每个patch都能关注到其他patch的情况，保证所有patch最后能形成一个统一表意的图片；一个cross attention将输入的text投射为kv并与图片patch tokens做attention，相当于一个text guidance，将图片向text condition指引的方向进行处理；和一个FFN层。
+
+对于每个DiT block，输入的condition都是一致的，即由T5编码以后的text embedding。所有block中self-attention输出的latent共享同一个text condition进行cross attention。
+
+笔者认为该结构本身非常简单优雅，不同的部分负责不同的分工。cross-attention做condition following，self-attention做图片内部关系与细节的处理。如果需要对某方面进行改进，也只需要对对应的layer修改就可以。同时，condition还可以轻松被替换成image embedding来进行图生图。
+
+pixart-sigma也使用了DiT论文中的Classifier-free guidance，即在diffusion开始之前生成两份充满噪声的图片，分别计算一个text conditional的latent和一个unconditional的latent，在主干网络运行结束之后再将两个latent组合送入scheduler。具体的原理可以直接参考https://arxiv.org/pdf/2212.09748
+
+值得一提的是，pixart-sigma的技术报告中提到使用了Key-Value (KV) Token Compression，即认为空间上相邻的patches中存在相同的特征，于是在进行self-attention计算时，将key与value中相邻的patches通过卷积操作合并成一个patch，query保持不变，从而降低高分辨率情况下做self-attention带来的二次方开销并同时保证生成效果。报告中提到，在4K分辨率下通过在模型深层使用kv token compression带来了35%的推理与训练加速。
+
+不过笔者似乎并未在最新的diffusers代码中找到pixart-sigma模型使用了这个技术的痕迹。pixart-sigma与pixart-alpha一样，使用PixArtTransformer2DModel作为backbone，而PixArtTransformer2DModel则直接使用AttnProcessor2_0进行attn计算，似乎并没有enable compression。希望有更了解的大佬解惑
+
+2. Stable diffusion 3 - MMDiT? DiT++
+
+stability ai将其推出的stable diffusion 3的backbone架构称作MMDiT，即Multimodal Diffusion Transformer Backbone。其文章Scaling Rectified Flow Transformers for High-Resolution Image Synthesis中提到Our architecture builds upon the DiT (Peebles & Xie, 2023) architecture，笔者认为其实MMDiT backbone的架构就是将DiT论文中DiT Block with adaLN-Zero和DiT Block with In-Context Conditioning的结合，并在此基础上做改动，即：
+
+MM-DiT block architecture
+
+通过Overview of all components图可以看到，SD3中扮演DiT Block with adaLN-Zero中condition角色的就是timestep与pooled prompt embeds分别经过对应的timestep_embedder和text_embedder得到的embedding加起来，随后这个embedding会分别进入到每个transformer block的adaLN-Zero层中通过Silu与linear层获得该block的各个scale与shift参数，并应用到当前block的各层输出上。这一部分对应着(b)One MM-DiT block图中的 \alpha_x , \beta_x , \gamma_x 等参数，也与DiT block with adaLN-Zero图完全等价。SD3论文中将其称作modulation mechanism。对这部分实现有兴趣的读者可参考https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/attention.py#L89
+
+由于仅仅通过scale和shift的方式对各layer输出的参数进行调整，这种方式似乎只能提供很粗粒度的condition信息。在DiT论文中并没有使用text，而是仅仅使用简单的class conditional，或许可以直接通过这种方式达符合条件生成结果。但对于需要处理复杂text condition的SD3显然不能将condition following全部压在这上面。于是SD3也引入了In Context Conditioning的方式进一步的在生成中引入text条件。
+
+此处可以看到，MM-DiT与DiT论文中In Context Conditioning的最大不同就是，MM-DiT并没有像In Context Conditioning图中所示，简单粗暴的把text编码结果 c 与input tokens(即(a)图中 x )在sequence length维度拼接。而是让作为condition的 c 与作为image token的 x 拥有同等地位，单独经过AdaLN-Zero，to_kv，to_query，MLP这样的完整流程。在diffusers的代码实现中， c 被称作encoder_hidden_states，在逻辑上与代表image token的hidden_state完全等价，前文提到modulation mechanism也会同样的作用于condition上。而image token与条件c的拼接发生在两者分别计算出对应的q,k,v后，从而保证在attention的过程中image token可以与condition互相关注。
+
+笔者认为完全等价的处理condition和image token就是MM-DiT这个名字的来由，也是其关键所在。condition也可以换成任何text以外的其他模态进行处理，甚至可以添加第三种模态，让文字与图片共同指导图片生成。SD3论文中也有提到：
+
+As shown in Figure 2b, this is equivalent to having two independent transformers for each modality, but joining the sequences of the two modalities for the attention operation, such that both representations can work in their own space yet take the other one into account
+
+从编码的角度出发，将condition与image token完全等价的处理相对于cross-attention方式似乎的确更有利于condition following，同时也不会仅在block的某个特定层中引入condition信息。另外，condition信息是随着image token一起从浅层向深层流动的，整个过程中也会被不断的编码以关注到不同细节，语意等不同层次的信息，从而在不同层级的attention中image token也能获得不同层次的condition。通过这种方式，对各种不同模态的condition的解析也能更加彻底。而cross attention中所有blocks共用同一个condition输入，仅通过一个linear做不同层次的变换，相对而言确实显得对condition的解析略有不足，对于不同模态condition的处理能力可能相对较弱。
+
+3.Flux.1? SD3++?
+
+不过似乎SD3的生成效果并不是非常符合人们对它的预期，在大家迫切的需要一个人人可用的，开源的，能和MJ抗衡的模型时，Flux.1发布了
+
+虽然tech report还是coming soon的状态，不过diffusers 0.30.0中已经发布了其pipeline，我们可以从代码里对其架构一探究竟。
+
+Flux.1上可以看到很多SD3的影子。同样使用了flow matching，同样使用了MM-DiT。最明显的差别则是，SD3的已开源版本stable-diffusion-3-medium仅有2B的大小，而Flux.1有12B。
+
+从整体架构上看，似乎只有prompt处理上有比较明显的改动，text encoder由SD3中的3个减小为2个，同样是一个T5和一个CLIP。
+
+我们重点关注transformer backbone的架构变化。阅读FluxTransformer2DModel代码，可以发现flux相对于其他模型最明显的改动是使用了两种不同的transformer block，分别是FluxTransformerBlock与FluxSingleTransformerBlock。两者前后拼接，分别有19层与38层。
+
+FluxTransformerBlock
+
+FluxTransformerBlock的架构几乎完全与SD3使用的JointTransformerBlock等价。直接使用了MM-DiT的模式，用两套权重分别处理condition和image tokens。唯一的差别在与Attention层使用的AttnProcessor不同：其中Flux使用的FluxSingleAttnProcessor2_0由于使用了rope，相对于JointAttnProcessor2_0在做SDPA前多了一个apply rope的过程；同时FluxSingleAttnProcessor2_0将condition拼接到了image tokens前面，而JointAttnProcessor2_0是拼接到后面。
+
+此前的SD3与Pixart等模型中均使用基于sin-cos的绝对位置编码，并且很多模型的技术报告中也提到并未发现引入rope对模型效果有明显影响。可以期待一波Flux.1技术报告中对引入rope效果的呈现。不过Flux.1中的RoPE同样是直接在patch tokens被展平成一维以后进行，而非将2d的rope直接作用于图片用以编码patch tokens空间相关信息。
+
+FluxSingleTransformerBlock
+
+再说FluxSingleTransformerBlock。FluxSingleTransformerBlock对跑完了19层MM-DiT的image tokens与condition进行进一步处理。然而不同于FluxTransformerBlock对两者分别处理的是，FluxSingleTransformerBlock的输入hidden_state直接就是condition与image tokens在sequence length维度拼接的结果，也就是直接使用了In-context Conditioning的形式。这两者在19个FluxSingleTransformerBlock计算完成后直接进行拼接，送入到后续的38个FluxSingleTransformerBlock层中
+
+至于FluxSingleTransformerBlock内部的实现则是采用black forest官网中所提到的parallel diffusion transformer，即将经过layernorm后的hidden state分别进行attn和linear计算，完成后再将其在hidden dim维度合并在一起进行proj_out的linear操作。其原理在论文中有详细解释，此处不在赘述
+
+4.从sys角度看架构
+
+pixart-sigma， SD3，flux.1作为近期发布的DiT模型的代表，能从中看出来目前DiT模型的架构尚未稳定。不同模型之间的架构变化很大，巧思也很多。这种不稳定性给DiT的system层面带来了相当大的挑战。
+
+例如，对于类似pixart的较为标准的DiT，我们仅需要在block之间传递latent，于是系统层面进行流水线并行就相当简单。同时由于其self-attention和cross-attention是分开的，若想进行sequence parallel，也只需要稍微修改self-attention中的处理，将image tokens均分为多份便可与LLM中的sequence parallel共用同样的算法。
+
+但SD3与Flux.1则不然。首先由于其使用了MM-DiT，block之间不止需要传递image tokens，还有condition。另一方面，由于其在attention计算时将image tokens和condition embedding在sequence length维度concat的特性，为sequence parallel的实现增添了不少难度。
+
+另外，Flux.1使用不同的transformer block的特性也会带来流水线并行方面的问题，如block切分，通信，负载均衡等。需要在sys层面进行进一步探索。
+
+我们已经在xdit项目中给出了一套相对完善的对MM-DiT序列并行的解决方案，Flux.1的流水线并行也在迅速推进中。欢迎有兴趣的读者参考，也欢迎读者将xdit作为实验平台，在其上验证自己的其他idea。笔者也会在之后进一步的分享我们在不同架构上所做的优化工作。
+
+5.Reference
+
+PIxART-&: Weak-to-Strong Training of Diffusion Transformer for 4K Text-to-Image Generation
+
+Scaling Rectified Flow Transformers for High-Resolution Image Synthesis
+
+Scaling Vision Transformers to 22 Billion Parameters
+
+对Flux.1实现有兴趣的读者也可以参考一下@周弈帆大佬写的flux.1源码解读，内容非常详实丰富，是彻底理解Flux.1不可多得的好资料

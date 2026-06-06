@@ -1,0 +1,110 @@
+# OpenRLHF&Verl参数转换指南
+
+**作者**: 大润发杀鱼工大模型路口吃拼好饭
+
+**原文链接**: https://zhuanlan.zhihu.com/p/29149216967
+
+---
+
+共同作者： @墨云沧
+文章动机
+
+自从O1和R1发布以来，社区涌现出了很多复现O1和R1的工作，大家都希望可以从0开始训练一个自己的Reasoning Model。那么如果希望复现一下，自然需要一个合理的框架，因为RLHF至多需要同时有4个模型参与，所以对于大多数算法工作者而言（比如我）想要自己手搓一个框架实现这么多的功能往往是不太现实的，所以借助于一个完备、合适、恰当的框架是非常重要的。目前社区内知名度比较高、拓展性比较强的框架主要有两个
+
+OpnenRLHF
+VeRL
+
+考虑到RLHF框架中可以调节的参数比较多，因此我和@墨云沧准备合作写一个合作文章，用来介绍这两个框架对应的参数，帮助大家适应如何从一个框架迁移到另一个框架，本文侧重于对算法可调节参数的分析，因此涉及到系统的部分暂时不包括（例如：Hybrid Engine的使用）。
+
+我们从一个最基础的脚本train_ppo_llama_ray.sh（OpenRLHF）入手，verl中对应的是PPO下的各种脚本。
+
+参数注入逻辑
+
+对于OpenRLHF来说，运行参数的注入，是直接通过train_ppo.py文件直接进行管理的，使用argparse来存储脚本输入的参数，并且参数与调用之间一一映射，仅需要使用args.xxx就可以完成参数的读取。
+
+verl的参数是以yaml文件为模版进行存储的，所有的模版文件都在config文件目录下，并且参数是以层级的形式进行存储，例如actor_rollout_ref.actor.ppo_mini_batch_size就是表明在使用针对Actor model(actor_rollout_ref)的训练框架(actor)的bs参数(ppo_mini_batch_size)。而脚本的填写，则是使得参数可以覆盖模版的默认参数，来进行调用。
+
+模型参数
+介绍	OpenRLHF	Verl
+Actor模型路径	pretrain	actor_rollout_ref.model.path
+Reward模型路径	reward_pretrain	reward_model.model.path
+(补充)Critic模型路径	critic_pretrain	critic.model.path
+
+这两个参数的含义非常简单，就是Actor模型和Reward模型的路径，其实OpnenRLHF同样支持传入Critic模型的路径，参数名是critic_pretrain。因为我们这里没有传入，则Critic模型会读取Reward模型的配置，即初始参数一样，如果没有设置Reward模型，则会继承自Actor模型。如果使用Reinforce++或者GRPO这类Critic Free的算法，则不设置Critic模型。Refrence模型继承自Actor模型，两者参数一样，并且Refrence模型不会更新。
+
+verl会需要指定critic.model.path的路径，但如果脚本中没有设置，则会调用参数模版中默认的路径来进行运行。
+
+优化参数
+介绍	OpenRLHF	Verl
+Actor模型学习率	actor_learning_rate	actor_rollout_ref.actor.optim.lr
+Critic模型学习率	critic_learning_rate	critic.optim.lr
+
+OpnenRLHF默认使用的是Warmup-Decay的学习率调度器，所以也支持设置warmup步数等其他的相关参数，具体的可以在train_ppo_ray.py中找到相关的参数。
+
+Verl中对于学习率的调度方式可以选择为constant/cosine，在yaml文件中依然可以找对应的位置。
+
+数据参数
+
+
+
+
+介绍	OpenRLHF	Verl
+训练阶段单卡分配的experience数量	micro_train_batch_size	actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu
+训练时全局的experience数量	train_batch_size	actor_rollout_ref.actor.ppo_mini_batch_size*actor_rollout_ref.rollout.n(本节末有解释)
+探索阶段单卡分配的experience数量	micro_rollout_batch_size	\(自动计算)
+探索阶段的prompt数量	rollout_batch_size	data.train_batch_size
+实际使用的最大prompt数量	max_samples	\
+单个prompt采样次数	n_samples_per_prompt	actor_rollout_ref.rollout.n
+训练阶段experience的学习次数	max_epochs	actor_rollout_ref.actor.ppo_epochs
+数据集迭代次数	num_episodes	trainer.total_epochs
+
+这几个参数比较复杂，我们需要重点介绍一下，但仅代表本人理解，不一定完全正确。
+
+OpenRLHF流程：
+
+(1)首先，当给定一个数据集之后，框架会从中选择至多max_samples个prompt。假设我们的数据集仅有1024个prompt，并且1024小于max_samples，则1024个prompt全部保留。
+
+(2)之后进入探索阶段，由于一次探索完1024个prompt的时间太长，所以选择一次只对rollout_batch_size个prompt进行探索。我们假设rollout_batch_size为32，则一共需要探索1024÷32=32步。这个32步就是我们在wandb或者tensorboard上面看到的步骤，我们称之为explore step。我们会用vllm对每个prompt进行采样n_samples_per_prompt次，得到所有的samples。我们假设n_samples_per_prompt为8，则得到了32×8=256个样本，即每个样本都是一个问答对，一共有32个问题，并且相同的问题回答了8次。
+
+(3)之后需要生成experience，这时就需要切换到训练引擎，即在1步内单卡负责生成micro_rollout_batch_size个经验，我们假设micro_rollout_batch_size为4，我们有8张卡，则1步一共可以生成32个experience。由于我们一共有256个样本，所以需要一共需要256÷32=8步可以得到全部的experience。在make experience阶段我们主要利用Reward模型得到每个答案的奖励分数、用Critic模型给出每个答案每一步的Value值（如果有Critic模型），以及用Refrence模型和Actor模型给出每个答案每一步的预测概率并且计算出对应的KL惩罚值（如果有Refrence模型）
+
+(4)在结束探索阶段后，就进入了训练阶段。刚才一共得到了256个experience，但是我们的显卡不足以一次性在所有的样本上进行训练，因此我们设置train_batch_size为128，即每次只更新128个experience，则需要256÷128=2步，也就是说在训练阶段模型更新了2次，我们称之为update step。假设micro_train_batch_size为4，我们有8张卡，则1步一共可以训练32个experience，那么我们需要4步梯度累计，然后才进行反向传播。当update step大于1，也就是所有的experience不能一次更新完的时候，就称之为off policy，反之如果update step=1，也就是模型探索一步就更新一步，则称之为on policy。并且需要注意，如果max_epochs＞1，此时这一组经验被训练了多次，即对256个experience进行了多次优化，那么此时的策略一定是off policy，所以一般情况下我们默认这个参数为1即可，因为我们希望尽可能地确保我们的优化是on policy的。
+
+(5)我们再强调一遍，我们的数据集有1024个prompt，每次探索和训练其中的32个，则经过以上流程循环1024÷32=32步，我们已经探索并且训练完了整个数据集，之后我们再训练num_episodes次，则完成了整个训练流程。
+
+
+
+
+Verl流程上，从算法逻辑上与OpenRLHF的是相同的，但是其中需要关注的是actor_rollout_ref.actor.ppo_mini_batch_size参数是一个与采样数n无关的参数，从上述的1024个prompt的数据集来看，如果ppo_mini_batch_size的设置为32的话，则一定进行1024÷32=32次的参数更新，无论sample_n的设置值为多少。
+
+但要注意，verl中的ppo_micro_batch_size_per_gpu是已经考虑了sample_n，因此又重新对OpenRLHF的参数含义相同。
+
+算法参数
+介绍	OpenRLHF	verl
+优势计算函数	advantage_estimator	algorithm.adv_estimator
+GAE中的平衡系数	lambd	algorithm.lam
+计算奖励时的折扣因子	gamma	algorithm.gamma
+KL惩罚系数	init_kl_coef	algorithm.kl_ctrl.kl_coef
+是否使用KL损失函数	use_kl_loss	actor_rollout_ref.actor.use_kl_loss
+KL的估计函数	kl_estimator	actor_rollout_ref.actor.kl_loss_type
+
+批处理参数部分
+
+上文提到的actor的训练bs设置不再赘述。
+
+介绍	OpenRLHF	verl
+rollout计算log_prob时每个GPU的微批量大小	micro_train_batch_size	actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu
+ref计算log_prob时每个GPU的微批量大小	micro_train_batch_size	actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu
+critic模型单GPU计算的批量大小	micro_train_batch_size	critic.forward_micro_batch_size_per_gpu
+reward模型单GPU计算的批量大小	micro_train_batch_size	reward_model.micro_batch_size_per_gpu
+
+在OpenRLHF中，通常由micro_train_batch_size来管理所有的bs信息，对于不同的模型角色，实际上使用的是一个参数进行管理。但在verl中，这个部分的参数则是可以指定的。一般来说如果脚本中不特地指定数值，则会保持与ctor_rollout_ref.actor中设置一致。并且在verl中，落实到per_gpu的参数设置，一般都是已经考虑了sample_n次的结果。
+
+
+
+
+生成参数
+介绍	OpenRLHF	Verl
+采样阶段的温度系数	temperature	rollout.temperature
+prompt最大长度	prompt_max_len	data.max_prompt_length
+生成回答的最大长度	generate_max_len	data.max_response_length

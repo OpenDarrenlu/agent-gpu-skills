@@ -1,0 +1,212 @@
+{
+  "batch": 1,
+  "total_authors": 8,
+  "authors": [
+    {
+      "author_id": "sha7-87",
+      "author_name": "sha7dow",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2044554843948308001",
+          "id": "2044554843948308001",
+          "title": "AKO：Agentic Kernel Optimization，使用 Claude Code 在几小时内优化出超越 FlashInfer 专家实现的 Kernel"
+        }
+      ]
+    },
+    {
+      "author_id": "81-38-68-51",
+      "author_name": "你好",
+      "article_count": 6,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2038659612115727462",
+          "id": "2038659612115727462",
+          "title": "NV mbarier指令编译以及微架构分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2036209743891535004",
+          "id": "2036209743891535004",
+          "title": "B110 thor 使用Cutile生成的SASS指令流分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2030388113005090437",
+          "id": "2030388113005090437",
+          "title": "SASS 指令阅读器，以及对于 MatMul SASS 的初步阅读"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2028887778943939641",
+          "id": "2028887778943939641",
+          "title": "Thor 上 cuTile MatMul 实践与 Cache 异常现象分析（二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2014482571719878158",
+          "id": "2014482571719878158",
+          "title": "Thor 上 cuTile MatMul 实践与 Cache 异常现象分析"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1984297569824833904",
+          "id": "1984297569824833904",
+          "title": "Thor cuTile 实践记录"
+        }
+      ]
+    },
+    {
+      "author_id": "linjinzhen",
+      "author_name": "Jinzhen",
+      "article_count": 3,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032065891857343604",
+          "id": "2032065891857343604",
+          "title": "高性能MXFP4 x INT8算子实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031516408954234360",
+          "id": "2031516408954234360",
+          "title": "一种H200/H20上的MXFP4 x FP8算子实现"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2021951434141222000",
+          "id": "2021951434141222000",
+          "title": "通用高性能量化推理算子库Humming"
+        }
+      ]
+    },
+    {
+      "author_id": "f6hoks",
+      "author_name": "zhiyuan1i",
+      "article_count": 1,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1989809041849988324",
+          "id": "1989809041849988324",
+          "title": "从零开始学 KDA-1"
+        }
+      ]
+    },
+    {
+      "author_id": "nobody-999",
+      "author_name": "Nobody",
+      "article_count": 7,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2031471761737430946",
+          "id": "2031471761737430946",
+          "title": "Linear Attention 系列 State Layout：从 SMEM Bank Conflict 看 k-last vs v-last"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2027181960976508335",
+          "id": "2027181960976508335",
+          "title": "CuteDSL练习备忘录: 在 CuteDSL 中通过 Inline PTX / NVVM 实现 Masked UMMA"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023109718873220097",
+          "id": "2023109718873220097",
+          "title": "cuLA：用 CUDA 重写线性注意力，欢迎大伙一起来折腾"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2012272418786410528",
+          "id": "2012272418786410528",
+          "title": "[FLA练习] chunk_gla_fwd_o CuTe DSL Kernel  优化备忘录"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2009677105324114479",
+          "id": "2009677105324114479",
+          "title": "cutlass chunk gated delta h 优化记录"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2000209329819763942",
+          "id": "2000209329819763942",
+          "title": "Linear Attention 的 State 显存布局策略"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1998852596320982088",
+          "id": "1998852596320982088",
+          "title": "KDA Attention 论文的不严谨之处"
+        }
+      ]
+    },
+    {
+      "author_id": "ze-jia-zheng",
+      "author_name": "ZZZZJ",
+      "article_count": 6,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2034034674977260432",
+          "id": "2034034674977260432",
+          "title": "聊聊 cuembed (二）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/1959047008972171179",
+          "id": "1959047008972171179",
+          "title": "聊聊 CuEmbed （一）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/688689653",
+          "id": "688689653",
+          "title": "读 Mora 论文笔记"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/137442849",
+          "id": "137442849",
+          "title": "Zoox 拉斯维加斯一小时自动驾驶"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/133344220",
+          "id": "133344220",
+          "title": "ZOOX 旧金山湾区全程自动驾驶"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/117947139",
+          "id": "117947139",
+          "title": "TensorRt 部署流程 (Nvidia GTC Talk Session)"
+        }
+      ]
+    },
+    {
+      "author_id": "wang-shi-sui-feng-70-57-29",
+      "author_name": "Kevin",
+      "article_count": 4,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2042003898190356728",
+          "id": "2042003898190356728",
+          "title": "[RL随笔] 小白学习verl AgentLoop 与 GSM8K Agentic RL Demo"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2041185737639518940",
+          "id": "2041185737639518940",
+          "title": "[Kernel随笔] cuLA Warp-Specialized Kernel 中的 Cross-Proxy Fence Bug 修复"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2023828507680056143",
+          "id": "2023828507680056143",
+          "title": "小白视角的cuLA开发随笔"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/683196635",
+          "id": "683196635",
+          "title": "VSCode调试使用pybind11的Python和C++代码"
+        }
+      ]
+    },
+    {
+      "author_id": "starmie_choice_specs",
+      "author_name": "Starmind",
+      "article_count": 2,
+      "articles": [
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2033228078550340630",
+          "id": "2033228078550340630",
+          "title": "飞 门 弄 闸（中）"
+        },
+        {
+          "href": "https://zhuanlan.zhihu.com/p/2032257808285028740",
+          "id": "2032257808285028740",
+          "title": "飞 门 弄 闸（上）"
+        }
+      ]
+    }
+  ]
+}
