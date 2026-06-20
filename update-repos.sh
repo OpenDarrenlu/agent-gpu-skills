@@ -3,12 +3,13 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / sglang)
+# 带参数:   只更新指定 repo (triton / cutlass / sglang / nvidia-skills)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   triton_skill/repos/triton/
 #   cutlass_skill/repos/cutlass/
 #   sglang_skill/repos/sglang/
+#   repos/nvidia-skills/  (NVIDIA skills 完整仓库)
 
 set -e
 
@@ -42,6 +43,32 @@ clone_or_update() {
         git sparse-checkout init --cone
         git sparse-checkout set "${sparse_dirs[@]}"
         git checkout "$branch"
+        echo "  Clone 完成."
+    fi
+
+    du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
+}
+
+# 完整 clone（不 sparse checkout）用于纯文本 skill 仓库
+clone_full_repo() {
+    local name="$1"
+    local repo_dir="$2"
+    local url="$3"
+    local branch="$4"
+
+    mkdir -p "$(dirname "$repo_dir")"
+
+    echo ""
+    echo "=== $name ==="
+
+    if [ -d "$repo_dir/.git" ]; then
+        echo "  更新中..."
+        cd "$repo_dir"
+        git pull --ff-only origin "$branch" 2>/dev/null || git pull origin "$branch"
+        echo "  更新完成."
+    else
+        echo "  首次 clone..."
+        git clone --depth 1 --branch "$branch" "$url" "$repo_dir"
         echo "  Clone 完成."
     fi
 
@@ -120,15 +147,19 @@ case "$TARGET" in
     veloq)
         update_veloq
         ;;
+    nvidia-skills)
+        clone_full_repo "nvidia-skills" "$SCRIPT_DIR/repos/nvidia-skills" "https://github.com/NVIDIA/skills.git" "main"
+        ;;
     all)
         clone_or_update "triton" "triton_skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         update_veloq
+        clone_full_repo "nvidia-skills" "$SCRIPT_DIR/repos/nvidia-skills" "https://github.com/NVIDIA/skills.git" "main"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|sglang|veloq|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|sglang|veloq|nvidia-skills|all]"
         exit 1
         ;;
 esac
@@ -140,3 +171,16 @@ for sk in triton_skill cutlass_skill sglang_skill; do
         du -sh "$SCRIPT_DIR/$sk/repos/"*/ 2>/dev/null
     fi
 done
+if [ -d "$SCRIPT_DIR/repos/nvidia-skills" ]; then
+    du -sh "$SCRIPT_DIR/repos/nvidia-skills" 2>/dev/null
+    # 统计 NVIDIA skill 数量
+    nvidia_count=0
+    for base in "$SCRIPT_DIR/repos/nvidia-skills/skills" "$SCRIPT_DIR/repos/nvidia-skills/plugins/nvidia-skills/skills"; do
+        if [ -d "$base" ]; then
+            for d in "$base"/*/; do
+                [ -f "$d/SKILL.md" ] && nvidia_count=$((nvidia_count + 1))
+            done
+        fi
+    done
+    echo "  NVIDIA skills 数量: $nvidia_count"
+fi

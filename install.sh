@@ -1,6 +1,6 @@
 #!/bin/bash
 # GPU Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -13,22 +13,36 @@
 
 set -e
 
+# Bash 版本检查: declare -A 需要 4.0+
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    for brew_bash in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+        if [ -x "$brew_bash" ]; then
+            exec "$brew_bash" "$0" "$@"
+        fi
+    done
+    echo "错误: 需要 Bash 4.0+ (当前 Bash $BASH_VERSION)"
+    echo "macOS 用户请运行: brew install bash"
+    exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 AGENT="cursor"
 COPY_MODE=false
 INSTALL_VELOQ=true
+INSTALL_NVIDIA=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --agent)    AGENT="$2"; shift 2 ;;
         --copy)     COPY_MODE=true; shift ;;
         --no-veloq) INSTALL_VELOQ=false; shift ;;
+        --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills]"
             echo ""
             echo "首次安装:"
-            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制)"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA skills)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -37,8 +51,9 @@ while [[ $# -gt 0 ]]; do
             echo "  bash install.sh --agent gemini   # Gemini CLI (~/.gemini/skills/)"
             echo ""
             echo "选项:"
-            echo "  --copy      全量复制（适用于无法软链接的场景）"
-            echo "  --no-veloq  跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
+            echo "  --copy            全量复制（适用于无法软链接的场景）"
+            echo "  --no-veloq        跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
+            echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
             exit 0
             ;;
         *) echo "未知参数: $1"; exit 1 ;;
@@ -61,18 +76,42 @@ if [ ! -d "$SCRIPT_DIR/cuda_skill" ]; then
     exit 1
 fi
 
-declare -A SKILLS
-SKILLS[cuda-skill]="cuda_skill"
-SKILLS[triton-skill]="triton_skill"
-SKILLS[cutlass-skill]="cutlass_skill"
-SKILLS[sglang-skill]="sglang_skill"
-SKILLS[nv-gpu-kernel-performance-modeling]="nv-gpu-kernel-performance-modeling"
-SKILLS[colfax-research-skill]="colfax-research-skill"
-SKILLS[gpu-communication-libraries]="gpu-communication-libraries"
-SKILLS[ncu-persistent-kernel-diagnosis]="ncu-persistent-kernel-diagnosis"
-SKILLS[persistent-kernel-scheduling]="persistent-kernel-scheduling"
-SKILLS[persistent-kernel-utilization]="persistent-kernel-utilization"
-SKILLS[ncu-report-skill]="ncu-report-skill"
+# 使用平行数组替代关联数组（兼容 Bash 3.2）
+SKILL_NAMES=(
+    cuda-skill
+    triton-skill
+    cutlass-skill
+    sglang-skill
+    nv-gpu-kernel-performance-modeling
+    colfax-research-skill
+    gpu-communication-libraries
+    ncu-persistent-kernel-diagnosis
+    persistent-kernel-scheduling
+    persistent-kernel-utilization
+    ncu-report-skill
+)
+SKILL_DIRS=(
+    cuda_skill
+    triton_skill
+    cutlass_skill
+    sglang_skill
+    nv-gpu-kernel-performance-modeling
+    colfax-research-skill
+    gpu-communication-libraries
+    ncu-persistent-kernel-diagnosis
+    persistent-kernel-scheduling
+    persistent-kernel-utilization
+    ncu-report-skill
+)
+
+# 检查是否为本地 skill（避免 NVIDIA skills 覆盖本地）
+is_local_skill() {
+    local name="$1"
+    for n in "${SKILL_NAMES[@]}"; do
+        [ "$n" = "$name" ] && return 0
+    done
+    return 1
+}
 
 install_to_agent() {
     local agent=$1
@@ -86,8 +125,9 @@ install_to_agent() {
 
     mkdir -p "$SKILL_DIR"
 
-    for skill_name in "${!SKILLS[@]}"; do
-        src_dir="${SKILLS[$skill_name]}"
+    for i in "${!SKILL_NAMES[@]}"; do
+        skill_name="${SKILL_NAMES[$i]}"
+        src_dir="${SKILL_DIRS[$i]}"
         src_path="$SCRIPT_DIR/$src_dir"
         target="$SKILL_DIR/$skill_name"
 
@@ -132,6 +172,64 @@ install_to_agent() {
         fi
     done
     echo ""
+
+    # NVIDIA skills 自动遍历安装
+    if [ "$INSTALL_NVIDIA" = true ]; then
+        local nvidia_bases=(
+            "$SCRIPT_DIR/repos/nvidia-skills/skills"
+            "$SCRIPT_DIR/repos/nvidia-skills/plugins/nvidia-skills/skills"
+        )
+        local nvidia_installed=0
+        local nvidia_skipped=0
+
+        for nvidia_base in "${nvidia_bases[@]}"; do
+            [ -d "$nvidia_base" ] || continue
+
+            for skill_dir in "$nvidia_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                local target="$SKILL_DIR/$skill_name"
+
+                # 如果与本地 skill 同名，优先保留本地（避免覆盖）
+                if is_local_skill "$skill_name"; then
+                    nvidia_skipped=$((nvidia_skipped + 1))
+                    continue
+                fi
+
+                # 清理旧安装
+                if [ -L "$target" ]; then
+                    rm "$target"
+                elif [ -d "$target" ]; then
+                    rm -rf "$target"
+                fi
+
+                if [ "$COPY_MODE" = true ]; then
+                    cp -r "$skill_dir" "$target"
+                else
+                    mkdir -p "$target"
+                    cp "$skill_dir/SKILL.md" "$target/SKILL.md"
+                    for item in "$skill_dir"/*; do
+                        local basename_item
+                        basename_item="$(basename "$item")"
+                        [ "$basename_item" = "SKILL.md" ] && continue
+                        [ -L "$target/$basename_item" ] && rm "$target/$basename_item"
+                        ln -sf "$item" "$target/$basename_item" 2>/dev/null || true
+                    done
+                fi
+                nvidia_installed=$((nvidia_installed + 1))
+            done
+        done
+
+        if [ $nvidia_installed -gt 0 ]; then
+            echo "--- NVIDIA skills ($nvidia_installed 个) ---"
+            echo "  已安装 $nvidia_installed 个 NVIDIA 官方 skill"
+            echo "  (跳过与本地 skill 同名的 $nvidia_skipped 个)"
+            echo ""
+        fi
+    fi
 }
 
 install_to_agent "$AGENT"
@@ -170,7 +268,8 @@ verify_agent() {
         fi
     }
 
-    for skill_name in "${!SKILLS[@]}"; do
+    for i in "${!SKILL_NAMES[@]}"; do
+        skill_name="${SKILL_NAMES[$i]}"
         check "$SKILL_DIR/$skill_name/SKILL.md" "$skill_name/SKILL.md"
     done
 
@@ -209,6 +308,33 @@ verify_agent() {
         else
             echo "  缺失: veloq 二进制 (PATH 未找到；见 install-veloq.sh)"
             FAIL=$((FAIL + 1))
+        fi
+    fi
+
+    # NVIDIA skills 验证
+    if [ "$INSTALL_NVIDIA" = true ]; then
+        local nvidia_bases=(
+            "$SCRIPT_DIR/repos/nvidia-skills/skills"
+            "$SCRIPT_DIR/repos/nvidia-skills/plugins/nvidia-skills/skills"
+        )
+        local nvidia_ok=0 nvidia_missing=0
+        for nvidia_base in "${nvidia_bases[@]}"; do
+            [ -d "$nvidia_base" ] || continue
+            for skill_dir in "$nvidia_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                if [ -e "$SKILL_DIR/$skill_name/SKILL.md" ]; then
+                    nvidia_ok=$((nvidia_ok + 1))
+                else
+                    nvidia_missing=$((nvidia_missing + 1))
+                fi
+            done
+        done
+        if [ $nvidia_ok -gt 0 ] || [ $nvidia_missing -gt 0 ]; then
+            echo "  OK: NVIDIA skills $nvidia_ok 个已安装, $nvidia_missing 个缺失"
+            PASS=$((PASS + 1))
         fi
     fi
 
