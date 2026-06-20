@@ -68,6 +68,10 @@ SKILLS[cutlass-skill]="cutlass_skill"
 SKILLS[sglang-skill]="sglang_skill"
 SKILLS[nv-gpu-kernel-performance-modeling]="nv-gpu-kernel-performance-modeling"
 SKILLS[colfax-research-skill]="colfax-research-skill"
+SKILLS[gpu-communication-libraries]="gpu-communication-libraries"
+SKILLS[ncu-persistent-kernel-diagnosis]="ncu-persistent-kernel-diagnosis"
+SKILLS[persistent-kernel-scheduling]="persistent-kernel-scheduling"
+SKILLS[persistent-kernel-utilization]="persistent-kernel-utilization"
 
 install_to_agent() {
     local agent=$1
