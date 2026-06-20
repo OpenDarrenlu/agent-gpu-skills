@@ -10,9 +10,11 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 | **sglang-skill** | 应用层 (LLM Serving) | SGLang 推理引擎开发，KV cache、Attention backend |
 | **colfax-research-skill** | 参考资料 (技术文章) | 查 Colfax Research 文章：CUTLASS/CuTe、FlashAttention-2/3/4、Hopper/Blackwell 优化 |
 | **gpu-communication-libraries** | 参考资料 (通信库) | 查 NCCL/NVSHMEM/DeepEP/UCX/GIN 等 GPU 通信库特性、API、选型指南 |
+| **nv-gpu-kernel-performance-modeling** | 参考资料 (性能建模) | GPU kernel 算子性能建模：分解、流水线设计、延迟预测、跨架构移植 |
 | **ncu-persistent-kernel-diagnosis** | 参考资料 (性能诊断) | 用 NCU 诊断 Persistent Kernel 的 SM/TC 空泡、流水线 stall、负载不均 |
 | **persistent-kernel-scheduling** | 参考资料 (调度策略) | Persistent Kernel 调度策略：Static/Dynamic/CLC/Stream-K/尾效决策树 |
 | **persistent-kernel-utilization** | 参考资料 (极致优化) | Persistent Kernel 利用率优化：warp spec、multistage、TMA multicast、setmaxnreg |
+| **ncu-report-skill** | 参考资料 (NCU 分析) | B200 / sm_100 上用 NCU profile kernel、诊断瓶颈、写优化计划 |
 | **nsys-profile-analysis** | 性能分析 (timeline) | 用 VeloQ 查 `.nsys-rep`：GPU 空闲、kernel 启动因果、CPU↔GPU 关联、NVTX 归因、并发 |
 | **ncu-profile-analysis** | 性能分析 (kernel) | 用 VeloQ 查 `.ncu-rep`：occupancy、warp stall、访存吞吐、指令构成、source/SASS 关联 |
 
@@ -94,12 +96,20 @@ agent-gpu-skills/
 │   └── colfax_knowledge_base/       # 文章 markdown + PDF (随仓库提交)
 ├── gpu-communication-libraries/
 │   └── SKILL.md                     # GPU 通信库全景指南（纯文本 skill，无外部 repo）
+├── nv-gpu-kernel-performance-modeling/
+│   ├── SKILL.md
+│   └── research/                    # 性能建模研究资料
 ├── ncu-persistent-kernel-diagnosis/
 │   └── SKILL.md                     # NCU 诊断 Persistent Kernel SM/TC 空泡与流水线 stall
 ├── persistent-kernel-scheduling/
 │   └── SKILL.md                     # Persistent Kernel 调度策略：Static/Dynamic/CLC/Stream-K
-└── persistent-kernel-utilization/
-    └── SKILL.md                     # Persistent Kernel 利用率极致优化指南
+├── persistent-kernel-utilization/
+│   └── SKILL.md                     # Persistent Kernel 利用率极致优化指南
+└── ncu-report-skill/
+    ├── SKILL.md
+    ├── blackwell-cuda-programming.md
+    ├── helpers/
+    └── reference/
 ```
 
 `repos/` 目录通过 `.gitignore` 排除，用 `bash update-repos.sh` 重建。

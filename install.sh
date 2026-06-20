@@ -72,6 +72,7 @@ SKILLS[gpu-communication-libraries]="gpu-communication-libraries"
 SKILLS[ncu-persistent-kernel-diagnosis]="ncu-persistent-kernel-diagnosis"
 SKILLS[persistent-kernel-scheduling]="persistent-kernel-scheduling"
 SKILLS[persistent-kernel-utilization]="persistent-kernel-utilization"
+SKILLS[ncu-report-skill]="ncu-report-skill"
 
 install_to_agent() {
     local agent=$1
