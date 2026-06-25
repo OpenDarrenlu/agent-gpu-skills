@@ -38,6 +38,8 @@ The skill is self-contained: reference docs, reusable helper scripts (harness te
 │   ├── 07-report-template.md         ← final report structure
 │   ├── 08-b200-metric-names.md       ← sm_100 metric name reference
 │   └── 09-common-issues.md           ← permissions, PM sampling, JIT toolchains, etc.
+├── references/                       ← NVIDIA official docs (auto-updated by scrape_docs.py)
+│   └── ProfilingGuide.md             ← Nsight Compute Profiling Guide (from docs.nvidia.com)
 └── blackwell-cuda-programming.md     ← companion reference: Blackwell programming principles
 ```
 

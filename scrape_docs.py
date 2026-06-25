@@ -1131,6 +1131,26 @@ class NsightDocsScraper(DocumentationScraper):
         print(f"\nDone: {total_saved} saved, {total_skipped} cached, {total_failed} failed")
         print(f"Output: {self.output_dir}")
 
+        # Copy ProfilingGuide to ncu-report-skill/references/ when scraping ncu-docs
+        if self.doc_type == "ncu-docs":
+            self._copy_to_ncu_report_skill()
+
+    def _copy_to_ncu_report_skill(self) -> None:
+        """Copy ProfilingGuide.md to ncu-report-skill/references/ for self-contained access."""
+        src = self.output_dir / "ProfilingGuide.md"
+        if not src.exists():
+            print(f"  ⚠ ProfilingGuide.md not found in {self.output_dir}, skipping copy")
+            return
+
+        ncu_skill_dir = Path("ncu-report-skill")
+        refs_dir = ncu_skill_dir / "references"
+        refs_dir.mkdir(parents=True, exist_ok=True)
+        dst = refs_dir / "ProfilingGuide.md"
+
+        import shutil
+        shutil.copy2(src, dst)
+        print(f"  ✓ Copied ProfilingGuide.md -> {dst}")
+
     def _create_index(self, pages: list[dict[str, str]]) -> None:
         content = f"# {self.doc_name} Documentation Index\n\n"
         for page in pages:

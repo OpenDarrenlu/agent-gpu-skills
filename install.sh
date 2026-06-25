@@ -299,6 +299,9 @@ verify_agent() {
     check "$COLFAX_SKILL/colfax_knowledge_base/articles" "Colfax: articles"
     check "$COLFAX_SKILL/scripts/update_kb.py" "Colfax: 更新脚本"
 
+    local NCU_SKILL="$SKILL_DIR/ncu-report-skill"
+    check "$NCU_SKILL/references/ProfilingGuide.md" "NCU ProfilingGuide (参考文档)"
+
     if [ "$INSTALL_VELOQ" = true ]; then
         check "$SKILL_DIR/nsys-profile-analysis/SKILL.md" "VeloQ: nsys-profile-analysis"
         check "$SKILL_DIR/ncu-profile-analysis/SKILL.md" "VeloQ: ncu-profile-analysis"
