@@ -86,6 +86,9 @@ SKILL_NAMES=(
     persistent-kernel-scheduling
     persistent-kernel-utilization
     ncu-report-skill
+    gpu-performance-router
+    gpu-kernel-authoring-router
+    llm-serving-router
 )
 SKILL_DIRS=(
     cuda_skill
@@ -99,6 +102,9 @@ SKILL_DIRS=(
     persistent-kernel-scheduling
     persistent-kernel-utilization
     ncu-report-skill
+    gpu-performance-router
+    gpu-kernel-authoring-router
+    llm-serving-router
 )
 
 # 检查是否为本地 skill（避免 NVIDIA skills 覆盖本地）

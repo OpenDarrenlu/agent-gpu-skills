@@ -1,20 +1,14 @@
 ---
-- name: nv-gpu-kernel-performance-modeling
-  description: >
-    NVIDIA GPU 算子(kernel)性能建模 Skill。通过系统化的方法论，将 CUDA kernel 
-    的计算流程映射到 GPU 硬件执行流程，设计最优访存/计算流水线排布，计算理论延迟。
-    覆盖 Ampere(SM80)、Hopper(SM90)、Blackwell(SM100) 三代架构，支持从 kernel 
-    分析、流水线设计到延迟预测的全流程。
-    
-    适用场景：
-    - 分析现有 kernel 实现并提取计算流程
-    - 设计最优流水线排布（producer-consumer、warp-specialized、multistage）
-    - 计算各流水线阶段的延迟及掩盖情况
-    - 跨架构性能预测与移植（A100/H100/B200等）
-    - 指导 kernel 优化（tile size、stage count、register分配等）
-    
-    核心方法：Kernel Decomposition + Stage-Centric Pipeline Analysis + 
-    Heterogeneous Instruction Pipeline Demand Modeling + 轻量MLP校准
+name: nv-gpu-kernel-performance-modeling
+description: >
+  NVIDIA GPU kernel performance modeling skill. Use for analytical performance
+  modeling, latency prediction, roofline-style reasoning, kernel decomposition,
+  stage-centric pipeline analysis, producer-consumer pipelines, warp-specialized
+  pipelines, multistage pipelines, instruction pipeline demand modeling, tile size,
+  stage count, register allocation, occupancy/latency tradeoffs, and cross-architecture
+  prediction for A100/H100/B200, Ampere sm_80, Hopper sm_90, Blackwell sm_100.
+  中文触发词：GPU 性能建模、kernel 延迟预测、理论性能、流水线建模、访存/计算重叠、
+  跨架构迁移、A100/H100/B200 性能估计、tile/stage/register 参数选择。
 ---
 
 # NVIDIA GPU 算子性能建模 Skill

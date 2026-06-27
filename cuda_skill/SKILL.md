@@ -1,6 +1,14 @@
 ---
 name: cuda-skill
-description: "Query NVIDIA PTX ISA 9.1, CUDA Runtime API 13.1, Driver API 13.1, Programming Guide v13.1, Best Practices Guide, Nsight Compute, Nsight Systems local documentation. Debug and optimize GPU kernels with nsys/ncu/compute-sanitizer workflows. Use when writing, debugging, or optimizing CUDA code, GPU kernels, PTX instructions, inline PTX, TensorCore operations (WMMA, WGMMA, TMA, tcgen05), or when the user mentions CUDA API functions, error codes, device properties, memory management, profiling, GPU performance, compute capabilities, CUDA Graphs, Cooperative Groups, Unified Memory, dynamic parallelism, CUDA programming model concepts, bank conflicts, shared memory optimization, warp divergence, memory coalescing, occupancy tuning, register pressure, L2 cache control, async copy, mbarrier, thread block clusters, or CUDA architecture questions (Ampere sm_80, Hopper sm_90, Blackwell sm_100)."
+description: >
+  CUDA/PTX/NVIDIA GPU kernel development skill. Use for CUDA C++ kernels, PTX ISA,
+  inline PTX, CUDA Runtime/Driver API, compute-sanitizer, cuda-gdb, Nsight Compute,
+  Nsight Systems, ncu/nsys, occupancy, register pressure, shared memory bank conflict,
+  memory coalescing, warp divergence, CUDA Graphs, Cooperative Groups, Unified Memory,
+  Tensor Core WMMA/WGMMA/MMA, TMA, mbarrier, tcgen05, sm_80/sm_90/sm_100.
+  中文触发词：CUDA 编程、CUDA kernel、PTX 指令、内联 PTX、显存管理、共享内存优化、
+  bank conflict、访存合并、warp 分支、寄存器压力、occupancy、B200/H100/A100 架构问题、
+  ncu/nsys/compute-sanitizer 调试。
 ---
 
 # CUDA & PTX Reference

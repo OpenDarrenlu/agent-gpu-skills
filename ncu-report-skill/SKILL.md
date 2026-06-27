@@ -1,6 +1,13 @@
 ---
 name: ncu-report-skill
-description: Profile CUDA kernels with Nsight Compute on B200 / sm_100. Use when the user asks to profile a kernel, analyze its performance, diagnose bottlenecks, read an ncu report, or write an optimization plan — including variants in Chinese ("profile 一下", "为什么慢", "ncu 报告").
+description: >
+  Nsight Compute/NCU CUDA kernel profiling and report analysis skill for B200/sm_100
+  and general NVIDIA GPUs. Use for profiling kernels, reading .ncu-rep reports,
+  collecting ncu metrics, source/SASS attribution, occupancy, warp stalls, memory
+  throughput, Tensor Core utilization, roofline, bottleneck diagnosis, optimization
+  plans, standalone harnesses, and profile/report directories. 中文触发词：ncu 报告、
+  Nsight Compute、profile 一下、为什么 kernel 慢、帮我看性能瓶颈、warp stall、
+  occupancy、SM/TC 利用率、source counters、下一步怎么优化。
 ---
 
 # Skill: CUDA Kernel Profiling (B200 / Nsight Compute)

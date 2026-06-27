@@ -1,10 +1,12 @@
 ---
 name: gpu-communication-libraries
 description: |
-  GPU 通信相关代码库与工具完整指南。涵盖 NVIDIA NCCL、NVSHMEM、CUDA P2P/IPC、GPUDirect、
-  UCX/UCC、Gloo、RCCL、MSCCL、DeepEP、GIN 等所有主流 GPU 通信库，提供各库的 GitHub 地址、
-  核心特性、使用场景、API 速查和选型建议。用于 GPU 多卡/多节点通信开发、分布式训练推理优化、
-  通信 kernel 融合等场景。
+  GPU communication libraries and distributed GPU communication skill. Use for NCCL,
+  NVSHMEM, CUDA P2P/IPC, GPUDirect, RDMA, UCX/UCC, Gloo, RCCL, MSCCL, DeepEP,
+  GIN, collectives, allreduce, allgather, reduce-scatter, alltoall, multi-GPU,
+  multi-node training/inference, tensor/expert/data parallel communication, and
+  communication-kernel fusion. 中文触发词：GPU 通信库、多卡通信、多节点通信、
+  NCCL、NVSHMEM、RDMA、GPUDirect、P2P、CUDA IPC、allreduce、alltoall、通信优化。
 
 triggers:
   - "GPU 通信库"

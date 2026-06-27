@@ -2,12 +2,40 @@
 
 ## 首次安装
 
+推荐一条命令完成外部 repo 获取、submodule 初始化和 skill 安装：
+
 ```bash
-# 1. 获取源码 repo（sparse checkout 从 GitHub，约 114MB）+ veloq 二进制
+# Codex
+bash bootstrap.sh --agent codex
+
+# Cursor / Claude Code / Gemini CLI
+bash bootstrap.sh --agent cursor
+bash bootstrap.sh --agent claude
+bash bootstrap.sh --agent gemini
+```
+
+`bootstrap.sh` 会依次运行：
+
+1. `git submodule update --init --recursive`
+2. `bash update-repos.sh`
+3. `bash install.sh --agent <agent>`
+
+可继续传入 `install.sh` 的选项：
+
+```bash
+bash bootstrap.sh --agent codex --no-nvidia-skills --no-veloq
+bash bootstrap.sh --agent cursor --copy
+```
+
+如果需要手动分步执行：
+
+```bash
+# 1. 获取源码 repo（sparse checkout 从 GitHub）+ NVIDIA/Cursor skills + veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
+#    同时安装 NVIDIA skills、Cursor skills、GPU router skills
 bash install.sh
 
 # 不想要 VeloQ 时:
@@ -80,6 +108,8 @@ bash update-repos.sh
 bash update-repos.sh triton
 bash update-repos.sh cutlass
 bash update-repos.sh sglang
+bash update-repos.sh nvidia-skills
+bash update-repos.sh cursor-skills
 
 # 只更新 veloq 二进制（skill 用 veloq self-update 或重跑 install.sh）
 bash update-repos.sh veloq

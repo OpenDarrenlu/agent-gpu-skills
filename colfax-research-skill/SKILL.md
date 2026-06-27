@@ -1,15 +1,13 @@
 ---
 name: colfax-research-skill
 description: >
-  Guide to Colfax Research articles on CUDA GPU optimization, CUTLASS, FlashAttention, and NVIDIA GPU architecture.
-  Use when the user asks about: (1) CUDA kernel optimization, GEMM, or tensor operations on NVIDIA GPUs,
-  (2) CUTLASS library usage, CuTe abstractions, or layout algebra,
-  (3) FlashAttention implementations (FA-2, FA-3, FA-4), FlexAttention, or attention optimization,
-  (4) NVIDIA GPU architectures (Hopper, Blackwell, Grace-Hopper),
-  (5) FP8/INT8 quantization, mixed-precision training, or low-precision inference,
-  (6) Cluster Launch Control (CLC), TMA, WGMMA, or other Hopper/Blackwell-specific features,
-  (7) Any topic related to Colfax Research publications or GPU kernel performance tuning.
-  The skill provides article recommendations with Chinese explanations from the complete Colfax Research knowledge base.
+  Colfax Research GPU optimization article guide. Use for CUDA kernel optimization,
+  CUTLASS, CuTe, layout algebra, FlashAttention FA-2/FA-3/FA-4, FlexAttention,
+  GEMM, tensor operations, Hopper, Blackwell, Grace-Hopper, FP8/INT8 quantization,
+  mixed precision, CLC, TMA, WGMMA, Colfax article lookup, or when the user asks
+  for paper/blog references and reading order for GPU performance tuning.
+  中文触发词：Colfax 文章、GPU 优化资料、CUTLASS 教程、CuTe 布局代数、
+  FlashAttention 文章、Hopper/Blackwell 优化、推荐阅读顺序。
 ---
 
 # Colfax Research Guide

@@ -83,7 +83,22 @@ update_submodule() {
 
     echo ""
     echo "=== $name ==="
-    git -C "$SCRIPT_DIR" submodule update --init --remote "$path"
+    if ! git -C "$SCRIPT_DIR" submodule update --init --remote "$path"; then
+        local url
+        local https_url
+        url="$(git -C "$SCRIPT_DIR" config -f .gitmodules --get "submodule.$path.url" 2>/dev/null || true)"
+        case "$url" in
+            git@github.com:*)
+                https_url="https://github.com/${url#git@github.com:}"
+                echo "  SSH 更新失败，尝试 HTTPS: $https_url"
+                git -C "$SCRIPT_DIR" config "submodule.$path.url" "$https_url"
+                git -C "$SCRIPT_DIR" submodule update --init --remote "$path"
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+    fi
     echo "  Submodule 更新完成."
     du -sh "$SCRIPT_DIR/$path" 2>/dev/null | awk '{print "  大小: "$1}'
 }

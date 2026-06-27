@@ -1,6 +1,14 @@
 ---
 name: triton-skill
-description: "Write, debug, and optimize Triton and Gluon GPU kernels using local source code, tutorials, and kernel references. Use when the user mentions Triton, Gluon, tl.load, tl.store, tl.dot, tl.dot_scaled, triton.jit, gluon.jit, wgmma, tcgen05, TMA, tensor descriptor, persistent kernel, warp specialization, fused attention, matmul kernel, kernel fusion, tl.program_id, triton autotune, MXFP, FP8, FP4, NVFP4, block-scaled matmul, SwiGLU, top-k, triton_kernels, roofline analysis, Triton IR, TritonGPU dialect, MLIR Triton, PDL (programmatic dependent launch), cluster launch control, or asks about writing GPU kernels in Python. Also use when the user wants to understand Triton compiler internals, debug Triton kernel correctness, profile Triton kernel performance, or convert CUDA kernels to Triton."
+description: >
+  Triton/Gluon GPU kernel writing and optimization skill. Use for @triton.jit,
+  tl.load/tl.store/tl.dot/tl.dot_scaled, program_id, masks, block pointers,
+  tensor descriptors, triton.autotune, fused attention, matmul, reductions,
+  layer norm/RMSNorm, SwiGLU, top-k, FP8/FP4/MXFP/NVFP4, persistent matmul,
+  warp specialization, TMA, WGMMA, tcgen05, PDL, Triton IR/MLIR/TritonGPU,
+  converting CUDA kernels to Triton, or profiling/debugging Triton kernels.
+  中文触发词：写 Triton kernel、Triton 算子、Gluon、Python GPU kernel、Triton GEMM、
+  Triton attention、Triton 性能优化、Triton 编译器、CUDA 转 Triton。
 ---
 
 # Triton & Gluon Kernel Development

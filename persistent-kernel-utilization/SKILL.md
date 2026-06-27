@@ -1,12 +1,14 @@
 ---
 name: persistent-kernel-utilization
 description: |
-  Persistent Kernel 的 SM/Memory 利用率极致优化指南。系统化解决五大利用率杀手：
-  Wave Quantization 尾效、负载不均、Occupancy 不足、Pipeline 空泡、Epilogue-Mainloop 未重叠。
-  覆盖 Stream-K、Hybrid Stream-K、CLC 动态调度、Warp Specialization、Multistage Pipeline、
-  TMA Multicast、TMEM Double Buffering、Register Rebalancing (setmaxnreg)、Hilbert-Curve Scheduling
-  等优化技术。适用场景：persistent kernel 利用率低、SM 空泡严重、TC 利用率不达标、
-  需要极致榨干 GPU 性能的场景。
+  Persistent kernel utilization optimization skill. Use for low SM utilization,
+  low Tensor Core/TC utilization, memory utilization, occupancy shortage, wave
+  quantization, load imbalance, pipeline bubbles, epilogue-mainloop overlap,
+  Stream-K, Hybrid Stream-K, CLC dynamic scheduling, warp specialization,
+  multistage pipeline, TMA multicast, TMEM double buffering, setmaxnreg/register
+  rebalancing, Hilbert-curve scheduling, and squeezing Hopper/Blackwell/B200 GPU
+  performance. 中文触发词：persistent kernel 利用率低、SM 利用率低、TC 利用率低、
+  occupancy 不足、极致优化、榨干 GPU、流水线空泡、setmaxnreg。
 triggers:
   - "persistent kernel 利用率"
   - "SM 利用率"

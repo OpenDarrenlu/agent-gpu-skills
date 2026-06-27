@@ -1,6 +1,15 @@
 ---
 name: sglang-skill
-description: "Develop, debug, and optimize SGLang LLM serving engine. Use when the user mentions SGLang, sglang, srt, sgl-kernel, LLM serving, model inference, KV cache, attention backend, FlashInfer backend, MLA, MoE routing, MoE dispatch, expert parallelism SGLang, speculative decoding, disaggregated serving, TP/PP/EP, radix cache, continuous batching, chunked prefill, CUDA graph SGLang, model loading, quantization FP8/GPTQ/AWQ, JIT kernel, triton kernel SGLang, DeepSeek serving, EPLB (expert load balancing), HiCache, launch_server, sglang Engine API, LoRA inference, torch.compile SGLang, or asks about serving LLMs with SGLang. Also use when the user wants to add a new model to SGLang, add a new attention backend, debug SGLang serving issues, or optimize SGLang throughput/latency."
+description: >
+  SGLang LLM serving development, debugging, and optimization skill. Use for
+  SGLang, srt, sgl-kernel, LLM serving/inference, launch_server, Engine API,
+  KV cache, radix cache, attention backend, FlashInfer, MLA, MoE routing/dispatch,
+  expert parallelism, TP/PP/EP, speculative decoding, disaggregated serving,
+  continuous batching, chunked prefill, CUDA Graph, quantization FP8/GPTQ/AWQ,
+  LoRA inference, DeepSeek serving, EPLB, HiCache, torch.compile, serving latency,
+  throughput, OOM, scheduler, or adding models/backends.
+  中文触发词：SGLang 服务、LLM 推理、KV cache、attention backend、FlashInfer、
+  MLA、MoE、DeepSeek serving、吞吐/延迟优化、连续 batching、chunked prefill。
 ---
 
 # SGLang Development

@@ -1,10 +1,12 @@
 ---
 name: ncu-persistent-kernel-diagnosis
 description: |
-  通过 NCU (Nsight Compute) 分析 Persistent Kernel 的 SM 空泡、Tensor Core 空泡、流水线掩盖问题。
-  针对 Hopper (SM90) / Blackwell (SM100) 架构，提供系统化的性能诊断流程、关键指标解读、
-  Stall 根因分析和优化方向指导。适用场景：诊断 persistent kernel 性能不达预期、
-  SM 负载不均、TC 利用率低、流水线空泡、尾效 (tail effect) 问题。
+  NCU/Nsight Compute persistent kernel diagnosis skill. Use for persistent kernel
+  performance diagnosis, SM idle bubbles, Tensor Core idle bubbles, pipeline stall,
+  long scoreboard, barrier stall, warp issue stalled, PmSampling, load imbalance,
+  tail effect, Hopper sm_90, Blackwell sm_100, B200, TC utilization, SM utilization,
+  and evidence-based optimization from NCU metrics. 中文触发词：NCU 分析 persistent kernel、
+  SM 空泡、TC 空泡、流水线空泡、尾效、负载不均、为什么 persistent kernel 慢。
 triggers:
   - "ncu persistent"
   - "SM 空泡"

@@ -1,12 +1,12 @@
 ---
 name: persistent-kernel-scheduling
 description: |
-  CUDA Persistent Kernel 调度策略完整指南：静态调度 (Static Persistent)、动态调度
-  (Dynamic Persistent / CLC)、单 Tile 调度 (Non-persistent) 的对比分析。
-  覆盖 Hopper (SM90) 与 Blackwell (SM100) 架构，包含 Cluster Launch Control (CLC)
-  硬件特性详解、Stream-K 负载均衡、尾效量化、决策树。
-  适用场景：选择 persistent kernel 调度策略、理解 CLC 工作原理、诊断负载不均问题、
-  优化 grouped GEMM / MoE / 变长 Attention 等负载不均场景。
+  Persistent kernel scheduling strategy skill. Use for static persistent vs dynamic
+  persistent vs non-persistent scheduling, Cluster Launch Control (CLC), Stream-K,
+  tile scheduler design, CTA scheduling, wave quantization, tail effect, load imbalance,
+  grouped GEMM, MoE, variable-length attention, Hopper sm_90, Blackwell sm_100, and
+  choosing a scheduling strategy. 中文触发词：persistent kernel 调度、静态/动态 persistent、
+  CLC、Cluster Launch Control、Stream-K、tile scheduler、CTA 调度、尾效、负载不均。
 triggers:
   - "persistent kernel"
   - "static persistent"
