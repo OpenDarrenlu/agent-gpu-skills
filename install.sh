@@ -364,14 +364,23 @@ verify_agent() {
     check "$NCU_SKILL/references/ProfilingGuide.md" "NCU ProfilingGuide (参考文档)"
 
     if [ "$INSTALL_VELOQ" = true ]; then
-        check "$SKILL_DIR/nsys-profile-analysis/SKILL.md" "VeloQ: nsys-profile-analysis"
-        check "$SKILL_DIR/ncu-profile-analysis/SKILL.md" "VeloQ: ncu-profile-analysis"
+        if [ -e "$SKILL_DIR/nsys-profile-analysis/SKILL.md" ]; then
+            echo "  OK: VeloQ: nsys-profile-analysis"
+            PASS=$((PASS + 1))
+        else
+            echo "  可选缺失: VeloQ: nsys-profile-analysis (用 --no-veloq 可跳过)"
+        fi
+        if [ -e "$SKILL_DIR/ncu-profile-analysis/SKILL.md" ]; then
+            echo "  OK: VeloQ: ncu-profile-analysis"
+            PASS=$((PASS + 1))
+        else
+            echo "  可选缺失: VeloQ: ncu-profile-analysis (用 --no-veloq 可跳过)"
+        fi
         if command -v veloq >/dev/null 2>&1; then
             echo "  OK: veloq 二进制 ($(veloq --version 2>/dev/null | head -1))"
             PASS=$((PASS + 1))
         else
-            echo "  缺失: veloq 二进制 (PATH 未找到；见 install-veloq.sh)"
-            FAIL=$((FAIL + 1))
+            echo "  可选缺失: veloq 二进制 (PATH 未找到；不影响其他 skills；见 install-veloq.sh 或用 --no-veloq)"
         fi
     fi
 
@@ -433,7 +442,7 @@ verify_agent() {
 
     if [ $FAIL -gt 0 ]; then
         echo "  提示: 缺失路径可能影响 skill 搜索功能."
-        echo "    - CUDA 文档: 运行 'uv run scrape_docs.py all --force'"
+        echo "    - CUDA 文档: 运行 'python3 scrape_docs.py all --force'"
         echo "    - 源码 repo: 运行 'bash update-repos.sh'"
         echo ""
     fi

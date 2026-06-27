@@ -1,12 +1,4 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "beautifulsoup4",
-#   "html2text",
-#   "requests",
-# ]
-# ///
+#!/usr/bin/env python3
 """
 Unified CUDA documentation scraper.
 
@@ -15,10 +7,66 @@ and converts to searchable markdown format.
 """
 
 import argparse
+import importlib.util
+import os
 import re
 import shutil
+import subprocess
+import sys
+import venv
 from pathlib import Path
+from typing import Optional, Union
 from urllib.parse import urljoin
+
+
+REQUIRED_PACKAGES = {
+    "bs4": "beautifulsoup4",
+    "html2text": "html2text",
+    "requests": "requests",
+}
+
+
+def ensure_python_deps() -> None:
+    """Install scraper dependencies into a local venv when missing."""
+    missing = [
+        package
+        for module, package in REQUIRED_PACKAGES.items()
+        if importlib.util.find_spec(module) is None
+    ]
+    if not missing:
+        return
+
+    if os.environ.get("SCRAPE_DOCS_BOOTSTRAPPED") == "1":
+        print(
+            "Missing Python packages after bootstrap: "
+            + ", ".join(missing)
+            + "\nRun: python3 -m pip install -r requirements-docs.txt",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    repo_root = Path(__file__).resolve().parent
+    venv_dir = repo_root / ".venv-docs"
+    python_bin = venv_dir / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+
+    print("Missing Python packages: " + ", ".join(missing))
+    print(f"Creating local docs venv: {venv_dir}")
+    venv.EnvBuilder(with_pip=True, clear=False).create(venv_dir)
+
+    requirements = repo_root / "requirements-docs.txt"
+    install_cmd = [str(python_bin), "-m", "pip", "install"]
+    if requirements.exists():
+        install_cmd += ["-r", str(requirements)]
+    else:
+        install_cmd += list(REQUIRED_PACKAGES.values())
+
+    subprocess.check_call(install_cmd)
+    env = os.environ.copy()
+    env["SCRAPE_DOCS_BOOTSTRAPPED"] = "1"
+    os.execve(str(python_bin), [str(python_bin), str(Path(__file__).resolve()), *sys.argv[1:]], env)
+
+
+ensure_python_deps()
 
 import html2text
 import requests
@@ -32,7 +80,7 @@ class DocumentationScraper:
         self,
         base_url: str,
         output_dir: Path,
-        cache_dir: Path | None = None,
+        cache_dir: Optional[Path] = None,
         skip_download: bool = False,
         force: bool = False,
     ):
@@ -66,7 +114,7 @@ class DocumentationScraper:
         self.h2t.unicode_snob = True
         self.h2t.decode_errors = "ignore"
 
-    def fetch_page(self, url: str) -> BeautifulSoup | None:
+    def fetch_page(self, url: str) -> Optional[BeautifulSoup]:
         """Fetch and parse a webpage."""
         try:
             print(f"Fetching: {url}")
@@ -851,7 +899,7 @@ class BestPracticesScraper(DocumentationScraper):
     def __init__(self, output_dir: Path, force: bool = False):
         super().__init__(self.BASE_URL, output_dir, force=force)
 
-    def _find_main_content(self, soup: BeautifulSoup) -> Tag | None:
+    def _find_main_content(self, soup: BeautifulSoup) -> Optional[Tag]:
         for selector in [
             ("article", {}),
             ("div", {"class": "bd-article-container"}),
@@ -1306,7 +1354,7 @@ def main() -> None:
         args.output_dir = refs_base / f"{api_name}-docs"
 
     # Create appropriate scraper
-    scraper: PTXScraper | APIScraper
+    scraper: Union[PTXScraper, APIScraper]
     if args.api_type == "ptx":
         scraper = PTXScraper(args.output_dir, args.force)
     else:

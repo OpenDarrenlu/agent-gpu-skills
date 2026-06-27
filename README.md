@@ -121,7 +121,8 @@ agent-gpu-skills/
 ├── install.sh                       # 安装脚本 (支持 --agent cursor|claude|codex|gemini，含 VeloQ)
 ├── install-veloq.sh                 # VeloQ 最小封装 (veloq 二进制 + 两个 profiling skill)
 ├── update-repos.sh                  # 克隆/更新外部 repo (triton, cutlass, sglang, veloq)
-├── scrape_docs.py                   # 文档爬虫 (uv script)
+├── requirements-docs.txt            # CUDA 文档爬虫 Python 依赖
+├── scrape_docs.py                   # CUDA 文档爬虫 (python3，可自动创建 .venv-docs)
 ├── cuda_skill/
 │   ├── SKILL.md
 │   └── references/                  # CUDA 文档库 (~700 files)
@@ -187,7 +188,7 @@ NVIDIA CUDA 全套文档转换为可搜索的 Markdown:
 | Nsight Systems 文档 | 5 | 833KB | [NVIDIA Nsight Systems](https://docs.nvidia.com/nsight-systems/) |
 | 工具指南 (nsys/ncu/debug) | 6 | - | 手写参考 |
 
-文档通过 `scrape_docs.py` 管理，用 `uv run scrape_docs.py all --force` 更新。
+文档通过 `scrape_docs.py` 管理，用 `python3 scrape_docs.py all --force` 更新。首次运行缺依赖时会自动创建本地 `.venv-docs` 并安装 `requirements-docs.txt`。
 
 ## cutlass-skill
 
@@ -244,7 +245,7 @@ python3 scripts/update_kb.py
 
 [VeloQ](https://github.com/lucifer1004/veloq) 是一个 agent-friendly 的 GPU profile 查询 CLI：**纯 CLI 入、JSON 契约出**，一次调用一个结果，无需打开 Nsight GUI。它读 `nsys export -t parquetdir` 的产物和 `.ncu-rep` 报告，输出带版本号的稳定 envelope（`data.rows[]`，每行带可跨 trace diff 的 `key`），专为 coding agent / shell 脚本推理 GPU profile 设计。
 
-本仓库**不 vendored** VeloQ 内容，只做最小封装 [install-veloq.sh](install-veloq.sh)，按 `本地 ../VeloQ 源码 → veloq self-update → 官方 curl 安装器` 的优先级取得二进制与 skill，全程非致命。
+本仓库**不 vendored** VeloQ 内容，只做最小封装 [install-veloq.sh](install-veloq.sh)，按 `本地 ../VeloQ 源码 → veloq self-update → 官方 curl 安装器 → cargo fallback` 的优先级取得二进制与 skill，全程非致命。
 
 | 安装方式 | 命令 |
 |:---------|:-----|
@@ -253,6 +254,14 @@ python3 scripts/update_kb.py
 | 只装 skill 到某 agent | `bash install-veloq.sh --agent claude --no-binary` |
 | 用本地 VeloQ 源码 | `VELOQ_SRC=/path/to/VeloQ bash install-veloq.sh --agent claude` |
 | 升级（VeloQ 原生） | `veloq self-update` |
+
+如果服务器访问 GitHub raw/release 返回 403，可先跳过 VeloQ 完成其它 skills：
+
+```bash
+bash bootstrap.sh --agent codex --no-veloq
+```
+
+之后再用 `cargo binstall veloq` 或 `cargo install veloq` 补装二进制，并重跑 `bash install-veloq.sh --agent codex`。
 
 装好后两个 skill（`nsys-profile-analysis` / `ncu-profile-analysis`）会落到 `~/.<agent>/skills/`，agent 遇到 `.nsys-rep` / `.ncu-rep` 问题时自动触发；也可手动用 CLI：
 

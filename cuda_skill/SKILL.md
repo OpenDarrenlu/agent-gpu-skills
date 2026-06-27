@@ -321,17 +321,17 @@ ptx-docs/
 cd /path/to/cursor-gpu-skills
 
 # Update everything
-uv run scrape_docs.py all --force
+python3 scrape_docs.py all --force
 
 # Or update individually:
-uv run scrape_docs.py ptx-simple --force    # Condensed PTX from triton repo
-uv run scrape_docs.py ptx                    # Full PTX ISA from NVIDIA
-uv run scrape_docs.py runtime                # CUDA Runtime API
-uv run scrape_docs.py driver                 # CUDA Driver API
-uv run scrape_docs.py guide --force          # CUDA Programming Guide v13.1
-uv run scrape_docs.py best-practices --force # CUDA C++ Best Practices Guide
-uv run scrape_docs.py ncu-docs --force       # Nsight Compute docs
-uv run scrape_docs.py nsys-docs --force      # Nsight Systems docs
+python3 scrape_docs.py ptx-simple --force    # Condensed PTX from triton repo
+python3 scrape_docs.py ptx                    # Full PTX ISA from NVIDIA
+python3 scrape_docs.py runtime                # CUDA Runtime API
+python3 scrape_docs.py driver                 # CUDA Driver API
+python3 scrape_docs.py guide --force          # CUDA Programming Guide v13.1
+python3 scrape_docs.py best-practices --force # CUDA C++ Best Practices Guide
+python3 scrape_docs.py ncu-docs --force       # Nsight Compute docs
+python3 scrape_docs.py nsys-docs --force      # Nsight Systems docs
 ```
 
 ## Additional References

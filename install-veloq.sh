@@ -6,6 +6,7 @@
 #   1. 本地 VeloQ 源码 checkout（$VELOQ_SRC，或自动探测 ../VeloQ、~/workspace/VeloQ）
 #   2. 已在 PATH 的 veloq（用其自带 `veloq self-update`）
 #   3. VeloQ 官方安装脚本（curl）
+#   4. Rust fallback: cargo-binstall / cargo install
 # 任一步失败都不致命，只 warn —— 不影响本仓库其他 skill 的安装。
 #
 # 用法:
@@ -85,6 +86,25 @@ install_skills_from_src() {
     done
 }
 
+install_binary_from_cargo() {
+    if command -v cargo-binstall >/dev/null 2>&1; then
+        echo "  尝试 cargo-binstall veloq..."
+        cargo-binstall -y veloq && return 0
+    fi
+
+    if command -v cargo >/dev/null 2>&1; then
+        if cargo binstall --version >/dev/null 2>&1; then
+            echo "  尝试 cargo binstall veloq..."
+            cargo binstall -y veloq && return 0
+        fi
+
+        echo "  尝试 cargo install veloq..."
+        cargo install veloq && return 0
+    fi
+
+    return 1
+}
+
 # ---------------------------------------------------------------------------
 # skills
 # ---------------------------------------------------------------------------
@@ -133,12 +153,15 @@ if $DO_BINARY; then
     else
         echo "  安装官方预编译二进制（curl install.sh --no-skills）..."
         if ! curl -fsSL "$INSTALLER_URL" | bash -s -- --no-skills; then
-            echo "  warn: 远程安装失败。可用 'cargo binstall veloq' 或参考 VeloQ README" >&2
+            echo "  warn: 远程安装失败，尝试 Rust/cargo fallback..." >&2
+            if ! install_binary_from_cargo; then
+                echo "  warn: VeloQ 二进制未安装。可稍后手动运行 'cargo binstall veloq'、设置 VELOQ_SRC，或用 --no-veloq 跳过" >&2
+            fi
         fi
     fi
     case ":$PATH:" in
         *":$HOME/.local/bin:"*) ;;
-        *) command -v veloq >/dev/null 2>&1 || echo "  提示: 确保二进制目录（如 ~/.local/bin）在 PATH 中" ;;
+        *) command -v veloq >/dev/null 2>&1 || echo "  提示: 确保二进制目录（如 ~/.local/bin 或 ~/.cargo/bin）在 PATH 中" ;;
     esac
     echo ""
 fi
