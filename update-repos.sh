@@ -9,7 +9,7 @@
 #   triton_skill/repos/triton/
 #   cutlass_skill/repos/cutlass/
 #   sglang_skill/repos/sglang/
-#   repos/nvidia-skills/  (NVIDIA skills 完整仓库)
+#   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
 
 set -e
@@ -176,7 +176,7 @@ case "$TARGET" in
         update_veloq
         ;;
     nvidia-skills)
-        clone_full_repo "nvidia-skills" "$SCRIPT_DIR/repos/nvidia-skills" "https://github.com/NVIDIA/skills.git" "main"
+        update_submodule "nvidia-skills" "repos/nvidia-skills"
         ;;
     cursor-skills)
         update_submodule "cursor-skills" "repos/cursor-skills"
@@ -186,7 +186,7 @@ case "$TARGET" in
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         update_veloq
-        clone_full_repo "nvidia-skills" "$SCRIPT_DIR/repos/nvidia-skills" "https://github.com/NVIDIA/skills.git" "main"
+        update_submodule "nvidia-skills" "repos/nvidia-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
         ;;
     *)

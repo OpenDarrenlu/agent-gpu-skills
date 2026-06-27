@@ -116,6 +116,22 @@ is_local_skill() {
     return 1
 }
 
+ensure_submodule_path() {
+    local label="$1"
+    local path="$2"
+    local marker="$3"
+
+    [ -e "$SCRIPT_DIR/$marker" ] && return 0
+
+    if git -C "$SCRIPT_DIR" config -f .gitmodules --get "submodule.$path.url" >/dev/null 2>&1; then
+        echo "  初始化 submodule: $label ($path)"
+        if ! git -C "$SCRIPT_DIR" submodule update --init "$path"; then
+            echo "  warn: 无法初始化 $label submodule；可手动运行 'git submodule update --init --recursive'" >&2
+            return 1
+        fi
+    fi
+}
+
 install_to_agent() {
     local agent=$1
     local SKILL_DIR
@@ -178,6 +194,8 @@ install_to_agent() {
 
     # NVIDIA skills 自动遍历安装
     if [ "$INSTALL_NVIDIA" = true ]; then
+        ensure_submodule_path "nvidia-skills" "repos/nvidia-skills" "repos/nvidia-skills/skills" || true
+
         local nvidia_bases=(
             "$SCRIPT_DIR/repos/nvidia-skills/skills"
             "$SCRIPT_DIR/repos/nvidia-skills/plugins/nvidia-skills/skills"
@@ -236,6 +254,8 @@ install_to_agent() {
 
     # Cursor skills 自动遍历安装
     if [ "$INSTALL_CURSOR_SKILLS" = true ]; then
+        ensure_submodule_path "cursor-skills" "repos/cursor-skills" "repos/cursor-skills/skills" || true
+
         local cursor_base="$SCRIPT_DIR/repos/cursor-skills/skills"
         local cursor_installed=0
         local cursor_skipped=0

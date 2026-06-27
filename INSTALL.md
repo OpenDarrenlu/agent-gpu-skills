@@ -2,6 +2,19 @@
 
 ## 首次安装
 
+推荐 clone 时直接拉取 submodules：
+
+```bash
+git clone --recursive git@github.com:OpenDarrenlu/agent-gpu-skills.git
+cd agent-gpu-skills
+```
+
+如果已经普通 clone 了，也可以补拉：
+
+```bash
+git submodule update --init --recursive
+```
+
 推荐一条命令完成外部 repo 获取、submodule 初始化和 skill 安装：
 
 ```bash

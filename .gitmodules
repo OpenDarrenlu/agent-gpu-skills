@@ -4,3 +4,6 @@
 [submodule "repos/cursor-skills"]
 	path = repos/cursor-skills
 	url = git@github.com:Saddss/cursor-skills.git
+[submodule "repos/nvidia-skills"]
+	path = repos/nvidia-skills
+	url = https://github.com/NVIDIA/skills.git

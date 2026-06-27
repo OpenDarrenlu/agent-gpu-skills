@@ -21,7 +21,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 | **nsys-profile-analysis** | 性能分析 (timeline) | 用 VeloQ 查 `.nsys-rep`：GPU 空闲、kernel 启动因果、CPU↔GPU 关联、NVTX 归因、并发 |
 | **ncu-profile-analysis** | 性能分析 (kernel) | 用 VeloQ 查 `.ncu-rep`：occupancy、warp stall、访存吞吐、指令构成、source/SASS 关联 |
 
-> **NVIDIA 官方 Skills**: 另包含 [NVIDIA/skills](https://github.com/NVIDIA/skills) 仓库中 200+ 个官方 skill（cuDF、cuOpt、DeepStream、Nemo、Holoscan、Earth2、Omniverse 等）。通过 `bash update-repos.sh nvidia-skills` 获取，`bash install.sh` 自动安装到 agent。加 `--no-nvidia-skills` 可跳过。
+> **NVIDIA 官方 Skills**: 另包含 [NVIDIA/skills](https://github.com/NVIDIA/skills) 仓库中 200+ 个官方 skill（cuDF、cuOpt、DeepStream、Nemo、Holoscan、Earth2、Omniverse 等）。该仓库作为 submodule 位于 `repos/nvidia-skills/`，可通过 `git clone --recursive`、`git submodule update --init --recursive` 或 `bash update-repos.sh nvidia-skills` 获取，`bash install.sh` 自动安装到 agent。加 `--no-nvidia-skills` 可跳过。
 
 > **Cursor Skills**: 另包含 [Saddss/cursor-skills](https://github.com/Saddss/cursor-skills) 仓库中的通用开发、性能分析、计划/评审等 skill。该仓库作为 submodule 位于 `repos/cursor-skills/`，通过 `bash update-repos.sh cursor-skills` 获取/更新，`bash install.sh` 默认安装。加 `--no-cursor-skills` 可跳过。
 
@@ -34,7 +34,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 clone 到新机器后，进入仓库目录执行一条命令即可获取外部 repo、初始化 submodule，并安装所有默认 skills：
 
 ```bash
-git clone https://github.com/slowlyC/agent-gpu-skills.git
+git clone --recursive git@github.com:OpenDarrenlu/agent-gpu-skills.git
 cd agent-gpu-skills
 
 # Codex
@@ -57,7 +57,7 @@ bash bootstrap.sh --agent codex --no-nvidia-skills --no-veloq
 ### 分步安装
 
 ```bash
-git clone https://github.com/slowlyC/agent-gpu-skills.git
+git clone --recursive git@github.com:OpenDarrenlu/agent-gpu-skills.git
 cd agent-gpu-skills
 
 # 1. 获取外部源码 repo (sparse checkout, ~130MB) + NVIDIA/Cursor skills
@@ -120,7 +120,7 @@ agent-gpu-skills/
 ├── bootstrap.sh                     # 一条命令获取外部 repo 并安装/使能 skills
 ├── install.sh                       # 安装脚本 (支持 --agent cursor|claude|codex|gemini，含 VeloQ)
 ├── install-veloq.sh                 # VeloQ 最小封装 (veloq 二进制 + 两个 profiling skill)
-├── update-repos.sh                  # 克隆/更新外部 repo (triton, cutlass, sglang, veloq)
+├── update-repos.sh                  # 克隆/更新外部 repo 与 submodule (triton, cutlass, sglang, veloq, NVIDIA/Cursor skills)
 ├── requirements-docs.txt            # CUDA 文档爬虫 Python 依赖
 ├── scrape_docs.py                   # CUDA 文档爬虫 (python3，可自动创建 .venv-docs)
 ├── cuda_skill/
@@ -163,14 +163,14 @@ agent-gpu-skills/
 ├── llm-serving-router/
 │   └── SKILL.md                     # LLM Serving 路由 skill
 └── repos/
-    ├── nvidia-skills/                 # NVIDIA 官方 skills 完整仓库 (~10MB, .gitignore)
+    ├── nvidia-skills/                 # NVIDIA 官方 skills submodule
     │   ├── skills/                    # 200+ 个 skill (cuDF, cuOpt, DeepStream, Nemo...)
     │   └── plugins/nvidia-skills/skills/  # 额外插件 skill
     └── cursor-skills/                 # Saddss/cursor-skills submodule
         └── skills/                    # 通用开发、性能分析、计划/评审等 skill
 ```
 
-`repos/` 目录通过 `.gitignore` 排除，用 `bash update-repos.sh` 重建。
+`repos/nvidia-skills` 与 `repos/cursor-skills` 是 submodule；新机器可用 `git clone --recursive` 直接拉取，或在普通 clone 后运行 `git submodule update --init --recursive` / `bash update-repos.sh`。
 
 ## cuda-skill
 
