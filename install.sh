@@ -1,6 +1,6 @@
 #!/bin/bash
 # GPU Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -13,15 +13,9 @@
 
 set -e
 
-# Bash 版本检查: declare -A 需要 4.0+
-if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
-    for brew_bash in /opt/homebrew/bin/bash /usr/local/bin/bash; do
-        if [ -x "$brew_bash" ]; then
-            exec "$brew_bash" "$0" "$@"
-        fi
-    done
-    echo "错误: 需要 Bash 4.0+ (当前 Bash $BASH_VERSION)"
-    echo "macOS 用户请运行: brew install bash"
+# Bash 版本检查: 脚本只使用普通数组，macOS 自带 Bash 3.2 可运行。
+if [ "${BASH_VERSINFO[0]}" -lt 3 ]; then
+    echo "错误: 需要 Bash 3.0+ (当前 Bash $BASH_VERSION)"
     exit 1
 fi
 
@@ -31,6 +25,7 @@ AGENT="cursor"
 COPY_MODE=false
 INSTALL_VELOQ=true
 INSTALL_NVIDIA=true
+INSTALL_CURSOR_SKILLS=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -38,11 +33,12 @@ while [[ $# -gt 0 ]]; do
         --copy)     COPY_MODE=true; shift ;;
         --no-veloq) INSTALL_VELOQ=false; shift ;;
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
+        --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]"
             echo ""
             echo "首次安装:"
-            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA skills)"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/Cursor skills)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -54,6 +50,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --copy            全量复制（适用于无法软链接的场景）"
             echo "  --no-veloq        跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
             echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
+            echo "  --no-cursor-skills 跳过 Saddss/cursor-skills 仓库中的 skills"
             exit 0
             ;;
         *) echo "未知参数: $1"; exit 1 ;;
@@ -230,6 +227,64 @@ install_to_agent() {
             echo ""
         fi
     fi
+
+    # Cursor skills 自动遍历安装
+    if [ "$INSTALL_CURSOR_SKILLS" = true ]; then
+        local cursor_base="$SCRIPT_DIR/repos/cursor-skills/skills"
+        local cursor_installed=0
+        local cursor_skipped=0
+
+        if [ -d "$cursor_base" ]; then
+            for skill_dir in "$cursor_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                local target="$SKILL_DIR/$skill_name"
+
+                # 如果与本地 skill 同名，优先保留本地（避免覆盖）
+                if is_local_skill "$skill_name"; then
+                    cursor_skipped=$((cursor_skipped + 1))
+                    continue
+                fi
+
+                # 清理旧安装
+                if [ -L "$target" ]; then
+                    rm "$target"
+                elif [ -d "$target" ]; then
+                    rm -rf "$target"
+                fi
+
+                if [ "$COPY_MODE" = true ]; then
+                    cp -r "$skill_dir" "$target"
+                else
+                    mkdir -p "$target"
+                    cp "$skill_dir/SKILL.md" "$target/SKILL.md"
+                    for item in "$skill_dir"/*; do
+                        local basename_item
+                        basename_item="$(basename "$item")"
+                        [ "$basename_item" = "SKILL.md" ] && continue
+                        [ -L "$target/$basename_item" ] && rm "$target/$basename_item"
+                        ln -sf "$item" "$target/$basename_item" 2>/dev/null || true
+                    done
+                fi
+                cursor_installed=$((cursor_installed + 1))
+            done
+
+            if [ $cursor_installed -gt 0 ]; then
+                echo "--- Cursor skills ($cursor_installed 个) ---"
+                echo "  已安装 $cursor_installed 个 Saddss/cursor-skills skill"
+                echo "  (跳过与本地 skill 同名的 $cursor_skipped 个)"
+                echo ""
+            fi
+        else
+            echo "--- Cursor skills ---"
+            echo "  跳过: 未找到 repos/cursor-skills/skills"
+            echo "  提示: 运行 'git submodule update --init repos/cursor-skills' 或 'bash update-repos.sh cursor-skills'"
+            echo ""
+        fi
+    fi
 }
 
 install_to_agent "$AGENT"
@@ -337,6 +392,32 @@ verify_agent() {
         done
         if [ $nvidia_ok -gt 0 ] || [ $nvidia_missing -gt 0 ]; then
             echo "  OK: NVIDIA skills $nvidia_ok 个已安装, $nvidia_missing 个缺失"
+            PASS=$((PASS + 1))
+        fi
+    fi
+
+    # Cursor skills 验证
+    if [ "$INSTALL_CURSOR_SKILLS" = true ]; then
+        local cursor_base="$SCRIPT_DIR/repos/cursor-skills/skills"
+        local cursor_ok=0 cursor_missing=0
+        if [ -d "$cursor_base" ]; then
+            for skill_dir in "$cursor_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                if is_local_skill "$skill_name"; then
+                    continue
+                fi
+                if [ -e "$SKILL_DIR/$skill_name/SKILL.md" ]; then
+                    cursor_ok=$((cursor_ok + 1))
+                else
+                    cursor_missing=$((cursor_missing + 1))
+                fi
+            done
+        fi
+        if [ $cursor_ok -gt 0 ] || [ $cursor_missing -gt 0 ]; then
+            echo "  OK: Cursor skills $cursor_ok 个已安装, $cursor_missing 个缺失"
             PASS=$((PASS + 1))
         fi
     fi

@@ -20,6 +20,8 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 
 > **NVIDIA 官方 Skills**: 另包含 [NVIDIA/skills](https://github.com/NVIDIA/skills) 仓库中 200+ 个官方 skill（cuDF、cuOpt、DeepStream、Nemo、Holoscan、Earth2、Omniverse 等）。通过 `bash update-repos.sh nvidia-skills` 获取，`bash install.sh` 自动安装到 agent。加 `--no-nvidia-skills` 可跳过。
 
+> **Cursor Skills**: 另包含 [Saddss/cursor-skills](https://github.com/Saddss/cursor-skills) 仓库中的通用开发、性能分析、计划/评审等 skill。该仓库作为 submodule 位于 `repos/cursor-skills/`，通过 `bash update-repos.sh cursor-skills` 获取/更新，`bash install.sh` 默认安装。加 `--no-cursor-skills` 可跳过。
+
 > `nsys-profile-analysis` / `ncu-profile-analysis` 由 [VeloQ](https://github.com/lucifer1004/veloq) 提供 —— 一个把 nsys/ncu profile 转成稳定 JSON 契约的 agent-friendly CLI（`veloq`）。本仓库不 vendored 其内容，安装时委托其官方安装器（细节见 [VeloQ](#veloq-profile-查询-cli) 一节）。
 
 ## 安装
@@ -28,16 +30,20 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 git clone https://github.com/slowlyC/agent-gpu-skills.git
 cd agent-gpu-skills
 
-# 1. 获取外部源码 repo (sparse checkout, ~130MB) + NVIDIA skills (~10MB)
-#    注意: NVIDIA skills 有 200+ 个，可选单独获取
+# 1. 获取外部源码 repo (sparse checkout, ~130MB) + NVIDIA/Cursor skills
+#    注意: NVIDIA skills 有 200+ 个，Cursor skills 有数十个，可选单独获取
 bash update-repos.sh
 
 # 只获取 NVIDIA skills
 bash update-repos.sh nvidia-skills
 
+# 只获取 Cursor skills
+bash update-repos.sh cursor-skills
+
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时会安装 VeloQ（veloq 二进制 + 两个 profiling skill）；加 --no-veloq 可跳过
 #    同时会安装 NVIDIA 官方 skills（200+ 个）；加 --no-nvidia-skills 可跳过
+#    同时会安装 Cursor skills；加 --no-cursor-skills 可跳过
 bash install.sh
 ```
 
@@ -118,9 +124,11 @@ agent-gpu-skills/
     ├── helpers/
     └── reference/
 └── repos/
-    └── nvidia-skills/                 # NVIDIA 官方 skills 完整仓库 (~10MB, .gitignore)
-        ├── skills/                      # 200+ 个 skill (cuDF, cuOpt, DeepStream, Nemo...)
-        └── plugins/nvidia-skills/skills/  # 额外插件 skill
+    ├── nvidia-skills/                 # NVIDIA 官方 skills 完整仓库 (~10MB, .gitignore)
+    │   ├── skills/                    # 200+ 个 skill (cuDF, cuOpt, DeepStream, Nemo...)
+    │   └── plugins/nvidia-skills/skills/  # 额外插件 skill
+    └── cursor-skills/                 # Saddss/cursor-skills submodule
+        └── skills/                    # 通用开发、性能分析、计划/评审等 skill
 ```
 
 `repos/` 目录通过 `.gitignore` 排除，用 `bash update-repos.sh` 重建。
