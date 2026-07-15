@@ -1,0 +1,4 @@
+interface:
+  display_name: "DeepGEMM Grouped GEMM"
+  short_description: "Use DeepGEMM source to build grouped and MoE GEMM kernels"
+  default_prompt: "Use $deepgemm-skill to find and adapt the best DeepGEMM grouped GEMM implementation for this operator."

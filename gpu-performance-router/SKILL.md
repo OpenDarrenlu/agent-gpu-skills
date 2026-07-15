@@ -22,6 +22,7 @@ Use this router to pick the most specific GPU performance skill before answering
 - **Analytical latency prediction or cross-architecture modeling**: use `nv-gpu-kernel-performance-modeling`.
 - **General CUDA/PTX correctness, architecture, or API details**: use `cuda-skill`.
 - **Triton kernel performance**: use `triton-skill`, then use `ncu-report-skill` if profiling evidence is needed.
+- **DeepGEMM grouped/MoE kernel performance**: use `deepgemm-skill`, then use `ncu-report-skill` for profiling evidence.
 - **CUTLASS/CuTe kernel performance**: use `cutlass-skill`, then use `ncu-report-skill` if profiling evidence is needed.
 
 ## Workflow

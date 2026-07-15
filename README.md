@@ -6,6 +6,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 |:------|:-----|:---------|
 | **cuda-skill** | 底层 (PTX/CUDA C++) | 查 PTX 指令、CUDA API、Programming Guide，nsys/ncu 分析 |
 | **cutlass-skill** | 中间层 (CUTLASS/CuTeDSL) | 写 CUTLASS/CuTe kernel，查 CuTeDSL 示例 |
+| **deepgemm-skill** | 专项参考 (Grouped/MoE GEMM) | 查 DeepGEMM SM90/SM100 grouped GEMM、masked/contiguous layout、Mega MoE 实现 |
 | **triton-skill** | 高层 (Python DSL) | 写 Triton/Gluon 内核，查教程和示例 |
 | **sglang-skill** | 应用层 (LLM Serving) | SGLang 推理引擎开发，KV cache、Attention backend |
 | **colfax-research-skill** | 参考资料 (技术文章) | 查 Colfax Research 文章：CUTLASS/CuTe、FlashAttention-2/3/4、Hopper/Blackwell 优化 |
@@ -60,7 +61,7 @@ bash bootstrap.sh --agent codex --no-nvidia-skills --no-veloq
 git clone --recursive git@github.com:OpenDarrenlu/agent-gpu-skills.git
 cd agent-gpu-skills
 
-# 1. 获取外部源码 repo (sparse checkout, ~130MB) + NVIDIA/Cursor skills
+# 1. 获取外部源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/Cursor skills
 #    注意: NVIDIA skills 有 200+ 个，Cursor skills 有数十个，可选单独获取
 bash update-repos.sh
 
@@ -120,7 +121,7 @@ agent-gpu-skills/
 ├── bootstrap.sh                     # 一条命令获取外部 repo 并安装/使能 skills
 ├── install.sh                       # 安装脚本 (支持 --agent cursor|claude|codex|gemini，含 VeloQ)
 ├── install-veloq.sh                 # VeloQ 最小封装 (veloq 二进制 + 两个 profiling skill)
-├── update-repos.sh                  # 克隆/更新外部 repo 与 submodule (triton, cutlass, sglang, veloq, NVIDIA/Cursor skills)
+├── update-repos.sh                  # 克隆/更新外部 repo 与 submodule (triton, cutlass, DeepGEMM, sglang, veloq, NVIDIA/Cursor skills)
 ├── requirements-docs.txt            # CUDA 文档爬虫 Python 依赖
 ├── scrape_docs.py                   # CUDA 文档爬虫 (python3，可自动创建 .venv-docs)
 ├── cuda_skill/
@@ -133,6 +134,10 @@ agent-gpu-skills/
 ├── cutlass_skill/
 │   ├── SKILL.md
 │   └── repos/cutlass/               # sparse checkout (~62MB, .gitignore)
+├── deepgemm-skill/
+│   ├── SKILL.md
+│   ├── references/                  # Grouped GEMM 代码地图
+│   └── repos/deepgemm/              # 完整递归浅克隆（含 CUTLASS/fmt，.gitignore）
 ├── sglang_skill/
 │   ├── SKILL.md
 │   └── repos/sglang/                # sparse checkout (~44MB, .gitignore)
@@ -200,6 +205,20 @@ NVIDIA CUDA 全套文档转换为可搜索的 Markdown:
 | CuTe Python bindings | `cutlass/python/pycute/` |
 | CUTLASS C++ 示例 | `cutlass/examples/` |
 | CuTe 头文件 | `cutlass/include/cute/` |
+
+## deepgemm-skill
+
+引用 [DeepSeek DeepGEMM](https://github.com/deepseek-ai/DeepGEMM) 最新 `main` 源码，面向 Grouped GEMM / MoE 算子开发：
+
+| 内容 | 路径 |
+|:-----|:-----|
+| Python API 与测试契约 | `deepgemm/deep_gemm/`、`deepgemm/tests/` |
+| Grouped GEMM host/JIT dispatch | `deepgemm/csrc/apis/gemm.hpp`、`deepgemm/csrc/jit_kernels/` |
+| SM90/SM100 device kernels | `deepgemm/deep_gemm/include/deep_gemm/impls/` |
+| Grouped scheduler | `deepgemm/deep_gemm/include/deep_gemm/scheduler/gemm.cuh` |
+| Mega MoE | `deepgemm/csrc/apis/mega.hpp`、`deepgemm/tests/test_mega_moe.py` |
+
+源码通过 `bash update-repos.sh deepgemm` 完整递归浅克隆，包含构建所需的 CUTLASS 与 fmt 子模块；skill 内的代码地图区分 M-grouped contiguous、M-grouped masked、K-grouped 与 Mega MoE 路径。
 
 ## triton-skill
 
@@ -293,4 +312,4 @@ veloq stats trace.nsys-rep --limit 10 --format table
 
 ## 许可
 
-CUDA 文档内容 (c) NVIDIA Corporation. Triton、CUTLASS、SGLang 源码遵循各自原始许可。NVIDIA skills 遵循其原始许可。
+CUDA 文档内容 (c) NVIDIA Corporation. Triton、CUTLASS、DeepGEMM、SGLang 源码遵循各自原始许可。NVIDIA skills 遵循其原始许可。

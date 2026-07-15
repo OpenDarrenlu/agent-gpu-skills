@@ -3,11 +3,12 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / sglang / nvidia-skills / cursor-skills)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nvidia-skills / cursor-skills)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   triton_skill/repos/triton/
 #   cutlass_skill/repos/cutlass/
+#   deepgemm-skill/repos/deepgemm/
 #   sglang_skill/repos/sglang/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
@@ -73,6 +74,34 @@ clone_full_repo() {
         echo "  Clone 完成."
     fi
 
+    du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
+}
+
+# 完整递归 clone，用于需要第三方源码子模块的 kernel 仓库。
+clone_recursive_repo() {
+    local name="$1"
+    local skill_dir="$2"
+    local url="$3"
+    local branch="$4"
+    local repos_dir="$SCRIPT_DIR/$skill_dir/repos"
+    local repo_dir="$repos_dir/$name"
+
+    mkdir -p "$repos_dir"
+
+    echo ""
+    echo "=== $name ==="
+
+    if [ -d "$repo_dir/.git" ]; then
+        echo "  更新中..."
+        git -C "$repo_dir" pull --ff-only origin "$branch"
+    else
+        echo "  首次 clone (含浅层 submodules)..."
+        git clone --depth 1 --branch "$branch" --recurse-submodules --shallow-submodules "$url" "$repo_dir"
+    fi
+
+    git -C "$repo_dir" submodule sync --recursive
+    git -C "$repo_dir" submodule update --init --recursive --depth 1
+    echo "  更新完成."
     du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
 }
 
@@ -169,6 +198,9 @@ case "$TARGET" in
     cutlass)
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         ;;
+    deepgemm)
+        clone_recursive_repo "deepgemm" "deepgemm-skill" "https://github.com/deepseek-ai/DeepGEMM.git" "main"
+        ;;
     sglang)
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         ;;
@@ -184,6 +216,7 @@ case "$TARGET" in
     all)
         clone_or_update "triton" "triton_skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
+        clone_recursive_repo "deepgemm" "deepgemm-skill" "https://github.com/deepseek-ai/DeepGEMM.git" "main"
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         update_veloq
         update_submodule "nvidia-skills" "repos/nvidia-skills"
@@ -191,14 +224,14 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|sglang|veloq|nvidia-skills|cursor-skills|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|veloq|nvidia-skills|cursor-skills|all]"
         exit 1
         ;;
 esac
 
 echo ""
 echo "=== 总览 ==="
-for sk in triton_skill cutlass_skill sglang_skill; do
+for sk in triton_skill cutlass_skill deepgemm-skill sglang_skill; do
     if [ -d "$SCRIPT_DIR/$sk/repos" ]; then
         du -sh "$SCRIPT_DIR/$sk/repos/"*/ 2>/dev/null
     fi

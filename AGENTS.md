@@ -18,6 +18,7 @@ If a router points to a more specific skill, read that downstream skill before p
 - CUDA C++ / PTX / NVIDIA API / architecture docs: `cuda-skill`
 - Triton / Gluon / Python GPU kernels: `triton-skill`
 - CUTLASS / CuTe / CuTeDSL / template GEMM: `cutlass-skill`
+- DeepGEMM / grouped GEMM / MoE GEMM / contiguous or masked expert layouts: `deepgemm-skill`
 - SGLang serving/runtime/kernel integration: `sglang-skill`
 - Nsight Compute / `.ncu-rep` / kernel bottleneck reports: `ncu-report-skill`
 - Persistent kernel NCU diagnosis: `ncu-persistent-kernel-diagnosis`

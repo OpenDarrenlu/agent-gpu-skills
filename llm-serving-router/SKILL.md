@@ -19,7 +19,8 @@ Use this router for LLM inference and serving questions, especially when GPU ker
 - **Capacity planning, tokens/sec, GPU count, concurrency, SLA sizing**: use `llm-serving-capacity-planner` when installed.
 - **Pipeline/runtime bottleneck analysis**: use `llm-pipeline-analysis` when installed.
 - **Torch profiler traces**: use `llm-torch-profiler-analysis` when installed.
-- **Attention/MoE kernel implementation details**: use `triton-skill`, `cutlass-skill`, or `cuda-skill` depending on stack.
+- **DeepGEMM grouped/MoE kernel implementation details**: use `deepgemm-skill`.
+- **Other attention/MoE kernel implementation details**: use `triton-skill`, `cutlass-skill`, or `cuda-skill` depending on stack.
 - **Multi-GPU communication or parallelism bottlenecks**: use `gpu-communication-libraries`.
 
 ## Workflow

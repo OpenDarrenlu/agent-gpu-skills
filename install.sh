@@ -78,6 +78,7 @@ SKILL_NAMES=(
     cuda-skill
     triton-skill
     cutlass-skill
+    deepgemm-skill
     sglang-skill
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
@@ -94,6 +95,7 @@ SKILL_DIRS=(
     cuda_skill
     triton_skill
     cutlass_skill
+    deepgemm-skill
     sglang_skill
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
@@ -367,6 +369,12 @@ verify_agent() {
     local CUTLASS_REPO="$SKILL_DIR/cutlass-skill/repos/cutlass"
     check "$CUTLASS_REPO/python/CuTeDSL" "CuTeDSL source"
     check "$CUTLASS_REPO/include/cute" "CuTe headers"
+
+    local DEEPGEMM_REPO="$SKILL_DIR/deepgemm-skill/repos/deepgemm"
+    check "$DEEPGEMM_REPO/csrc/apis/gemm.hpp" "DeepGEMM grouped GEMM API"
+    check "$DEEPGEMM_REPO/deep_gemm/include/deep_gemm/scheduler/gemm.cuh" "DeepGEMM grouped scheduler"
+    check "$DEEPGEMM_REPO/tests/test_fp8_fp4.py" "DeepGEMM grouped GEMM tests"
+    check "$DEEPGEMM_REPO/third-party/cutlass/include/cute" "DeepGEMM CUTLASS submodule"
 
     local SGLANG_REPO="$SKILL_DIR/sglang-skill/repos/sglang"
     check "$SGLANG_REPO/python/sglang/srt" "SGLang SRT core"

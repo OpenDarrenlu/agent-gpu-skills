@@ -43,7 +43,7 @@ bash bootstrap.sh --agent cursor --copy
 如果需要手动分步执行：
 
 ```bash
-# 1. 获取源码 repo（sparse checkout 从 GitHub）+ NVIDIA/Cursor skills + veloq 二进制
+# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/Cursor skills + veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
@@ -134,6 +134,7 @@ bash update-repos.sh
 # 只更新某个 repo
 bash update-repos.sh triton
 bash update-repos.sh cutlass
+bash update-repos.sh deepgemm
 bash update-repos.sh sglang
 bash update-repos.sh nvidia-skills
 bash update-repos.sh cursor-skills
