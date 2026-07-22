@@ -41,10 +41,11 @@ cd agent-gpu-skills
 # Codex
 bash bootstrap.sh --agent codex
 
-# Cursor / Claude Code / Gemini CLI
+# Cursor / Claude Code / Gemini CLI / Kimi Code CLI
 bash bootstrap.sh --agent cursor
 bash bootstrap.sh --agent claude
 bash bootstrap.sh --agent gemini
+bash bootstrap.sh --agent kimi
 ```
 
 `bootstrap.sh` 会依次运行 `git submodule update --init --recursive`、`bash update-repos.sh`、`bash install.sh --agent <agent>`。如需跳过大仓库或二进制安装，可继续传入 `install.sh` 的选项，例如：
@@ -90,8 +91,9 @@ SKILL.md 格式兼容 Claude Code、Codex、Gemini CLI 等支持 Agent Skills �
 | Claude Code | `~/.claude/skills/` | `bash install.sh --agent claude` |
 | Codex | `~/.codex/skills/` | `bash install.sh --agent codex` |
 | Gemini CLI | `~/.gemini/skills/` | `bash install.sh --agent gemini` |
+| Kimi Code CLI | `~/.agents/skills/` | `bash install.sh --agent kimi` |
 
-注: 本项目只在 Cursor 下完整验证过。其他工具的 skill 发现和搜索机制可能有差异，如遇问题可以让对应工具的 AI 协助排查。
+注: 本项目已在 Cursor 和 Kimi Code CLI（当前环境）下完成安装验证。Claude Code / Codex / Gemini CLI 的 skill 发现机制可能有差异，如遇问题可以让对应工具的 AI 协助排查。
 
 ### 路径约定说明
 
@@ -103,6 +105,7 @@ SKILL.md 格式兼容 Claude Code、Codex、Gemini CLI 等支持 Agent Skills �
 | Claude Code | `~/.claude/` | `~/.claude/skills/` | Claude Code 自己的目录约定 |
 | Codex | `~/.codex/` | `~/.codex/skills/` | 本仓库统一使用 `.codex` 目录 |
 | Gemini CLI | `~/.gemini/` | `~/.gemini/skills/` | Gemini CLI 自己的目录约定 |
+| Kimi Code CLI | `~/.agents/` | `~/.agents/skills/` | Kimi Code CLI 的用户级 skill 目录 |
 
 对 Codex 来说要特别区分两件事：
 
@@ -269,8 +272,10 @@ python3 scripts/update_kb.py
 | 安装方式 | 命令 |
 |:---------|:-----|
 | 随本仓库一起装（推荐） | `bash install.sh --agent claude`（加 `--no-veloq` 跳过） |
+| 随本仓库一起装到 Kimi | `bash install.sh --agent kimi`（加 `--no-veloq` 跳过） |
 | 只装/更新 veloq 二进制 | `bash update-repos.sh veloq` |
 | 只装 skill 到某 agent | `bash install-veloq.sh --agent claude --no-binary` |
+| 只装 skill 到 Kimi | `bash install-veloq.sh --agent kimi --no-binary` |
 | 用本地 VeloQ 源码 | `VELOQ_SRC=/path/to/VeloQ bash install-veloq.sh --agent claude` |
 | 升级（VeloQ 原生） | `veloq self-update` |
 
@@ -282,7 +287,7 @@ bash bootstrap.sh --agent codex --no-veloq
 
 之后再用 `cargo binstall veloq` 或 `cargo install veloq` 补装二进制，并重跑 `bash install-veloq.sh --agent codex`。
 
-装好后两个 skill（`nsys-profile-analysis` / `ncu-profile-analysis`）会落到 `~/.<agent>/skills/`，agent 遇到 `.nsys-rep` / `.ncu-rep` 问题时自动触发；也可手动用 CLI：
+装好后三个 skill（`nsys-profile-analysis` / `ncu-profile-analysis` / `pytorch-profile-analysis`）会落到 `~/.<agent>/skills/`，agent 遇到 `.nsys-rep` / `.ncu-rep` 问题时自动触发；也可手动用 CLI：
 
 ```bash
 # 这个文件能被谁读？属于哪种 profile？

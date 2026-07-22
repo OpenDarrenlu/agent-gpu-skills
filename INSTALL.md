@@ -21,10 +21,11 @@ git submodule update --init --recursive
 # Codex
 bash bootstrap.sh --agent codex
 
-# Cursor / Claude Code / Gemini CLI
+# Cursor / Claude Code / Gemini CLI / Kimi Code CLI
 bash bootstrap.sh --agent cursor
 bash bootstrap.sh --agent claude
 bash bootstrap.sh --agent gemini
+bash bootstrap.sh --agent kimi
 ```
 
 `bootstrap.sh` 会依次运行：
@@ -62,6 +63,7 @@ bash install.sh                    # Cursor (默认，已验证)
 bash install.sh --agent claude     # Claude Code
 bash install.sh --agent codex      # Codex
 bash install.sh --agent gemini     # Gemini CLI
+bash install.sh --agent kimi       # Kimi Code CLI
 ```
 
 | 工具 | Skill 安装路径 | 验证状态 | 官方文档 |
@@ -70,8 +72,9 @@ bash install.sh --agent gemini     # Gemini CLI
 | Claude Code | `~/.claude/skills/` | 未验证 | [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills) |
 | Codex | `~/.codex/skills/` | 未验证 | [Codex Skills](https://developers.openai.com/codex/skills) |
 | Gemini CLI | `~/.gemini/skills/` | 未验证 | [Gemini CLI Skills](https://geminicli.com/docs/cli/skills/) |
+| Kimi Code CLI | `~/.agents/skills/` | 未验证 | — |
 
-注: SKILL.md 格式是跨工具通用的，但 skill 发现机制和搜索工具的行为可能因工具而异。Cursor 以外的工具如遇问题，建议让对应 AI 协助排查。
+注: SKILL.md 格式是跨工具通用的，但 skill 发现机制和搜索工具的行为可能因工具而异。Cursor 与 Kimi Code CLI 已在本仓库验证安装；Claude Code / Codex / Gemini CLI 如遇问题，建议让对应 AI 协助排查。
 
 ## 路径说明
 
@@ -81,6 +84,12 @@ bash install.sh --agent gemini     # Gemini CLI
 - skill 目录：`~/.codex/skills/`
 
 因此 `bash install.sh --agent codex` 会直接安装到 `~/.codex/skills/`。
+
+对 Kimi Code CLI 统一使用：
+
+- skill 目录：`~/.agents/skills/`
+
+因此 `bash install.sh --agent kimi` 会直接安装到 `~/.agents/skills/`。
 
 ## 安装方式
 
@@ -108,6 +117,9 @@ bash install.sh --agent claude              # 含 VeloQ
 bash install.sh --agent claude --no-veloq   # 跳过 VeloQ
 bash install-veloq.sh --agent claude --no-binary  # 只装 skill
 bash install-veloq.sh --no-skills                  # 只装/更新二进制
+
+bash install.sh --agent kimi                # Kimi Code CLI（含 VeloQ）
+bash install-veloq.sh --agent kimi          # 只更新 Kimi 的 VeloQ skill/二进制
 ```
 
 二进制默认落在 `~/.local/bin/veloq` 或 `~/.cargo/bin/veloq`（确保它在 `PATH` 中）。`.nsys-rep` 首次查询需要 `nsys >= 2024.6` 在 `PATH` 上（`nsys export -t parquetdir`）。

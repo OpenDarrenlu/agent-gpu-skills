@@ -1,6 +1,6 @@
 #!/bin/bash
 # 一条命令完成外部 repo 获取与 skill 安装。
-# 用法: bash bootstrap.sh [--agent cursor|claude|codex|gemini] [install.sh 其他选项]
+# 用法: bash bootstrap.sh [--agent cursor|claude|codex|gemini|kimi] [install.sh 其他选项]
 
 set -e
 
@@ -26,12 +26,13 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            echo "用法: bash bootstrap.sh [--agent cursor|claude|codex|gemini] [install.sh 其他选项]"
+            echo "用法: bash bootstrap.sh [--agent cursor|claude|codex|gemini|kimi] [install.sh 其他选项]"
             echo ""
             echo "示例:"
             echo "  bash bootstrap.sh --agent codex"
             echo "  bash bootstrap.sh --agent cursor --copy"
             echo "  bash bootstrap.sh --agent claude --no-nvidia-skills"
+            echo "  bash bootstrap.sh --agent kimi"
             echo ""
             echo "选项:"
             echo "  --no-update       跳过 update-repos.sh，只运行 install.sh"

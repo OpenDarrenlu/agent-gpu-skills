@@ -1,6 +1,6 @@
 #!/bin/bash
 # GPU Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
         --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]"
             echo ""
             echo "首次安装:"
             echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/Cursor skills)"
@@ -45,6 +45,7 @@ while [[ $# -gt 0 ]]; do
             echo "  bash install.sh --agent claude   # Claude Code (~/.claude/skills/)"
             echo "  bash install.sh --agent codex    # Codex (~/.codex/skills/)"
             echo "  bash install.sh --agent gemini   # Gemini CLI (~/.gemini/skills/)"
+            echo "  bash install.sh --agent kimi     # Kimi Code CLI (~/.agents/skills/)"
             echo ""
             echo "选项:"
             echo "  --copy            全量复制（适用于无法软链接的场景）"
@@ -63,6 +64,7 @@ get_skill_dir() {
         claude) echo "${HOME}/.claude/skills" ;;
         codex)  echo "${HOME}/.codex/skills" ;;
         gemini) echo "${HOME}/.gemini/skills" ;;
+        kimi)   echo "${HOME}/.agents/skills" ;;
         *)      echo "Unknown agent: $1" >&2; return 1 ;;
     esac
 }

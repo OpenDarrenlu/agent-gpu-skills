@@ -10,7 +10,7 @@
 # 任一步失败都不致命，只 warn —— 不影响本仓库其他 skill 的安装。
 #
 # 用法:
-#   bash install-veloq.sh [--agent cursor|claude|codex|gemini] [--no-binary] [--no-skills]
+#   bash install-veloq.sh [--agent cursor|claude|codex|gemini|kimi] [--no-binary] [--no-skills]
 #
 # 选项:
 #   --agent       目标工具（决定 skill 安装目录），默认 cursor
@@ -42,6 +42,7 @@ agent_root() {
         claude) echo "${HOME}/.claude" ;;
         codex)  echo "${HOME}/.codex" ;;
         gemini) echo "${HOME}/.gemini" ;;
+        kimi)   echo "${HOME}/.agents" ;;
         *) echo "未知 agent: $1" >&2; return 1 ;;
     esac
 }
