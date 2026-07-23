@@ -1,14 +1,45 @@
 ---
 name: cuda-skill
 description: >
-  CUDA/PTX/NVIDIA GPU kernel development skill. Use for CUDA C++ kernels, PTX ISA,
-  inline PTX, CUDA Runtime/Driver API, compute-sanitizer, cuda-gdb, Nsight Compute,
-  Nsight Systems, ncu/nsys, occupancy, register pressure, shared memory bank conflict,
-  memory coalescing, warp divergence, CUDA Graphs, Cooperative Groups, Unified Memory,
-  Tensor Core WMMA/WGMMA/MMA, TMA, mbarrier, tcgen05, sm_80/sm_90/sm_100.
-  中文触发词：CUDA 编程、CUDA kernel、PTX 指令、内联 PTX、显存管理、共享内存优化、
-  bank conflict、访存合并、warp 分支、寄存器压力、occupancy、B200/H100/A100 架构问题、
-  ncu/nsys/compute-sanitizer 调试。
+  CUDA/PTX/NVIDIA GPU kernel development skill. Use for CUDA C++ kernels, PTX ISA, inline PTX, CUDA
+  Runtime/Driver API, compute-sanitizer, cuda-gdb, Nsight Compute, Nsight Systems, ncu/nsys, occupancy,
+  register pressure, shared memory bank conflict, memory coalescing, warp divergence, CUDA Graphs,
+  Cooperative Groups, Unified Memory, Tensor Core WMMA/WGMMA/MMA, TMA, mbarrier, tcgen05,
+  sm_80/sm_90/sm_100. Common queries: how to write CUDA, what is PTX, CUDA error, cuLaunchKernel,
+  cudaMemcpy, kernel launch, grid/block/thread, __shared__, __syncthreads, dynamic parallelism, CUDA
+  stream, event, graph, cooperative groups, cuda-gdb, compute-sanitizer, nvcc, cuobjdump, nvdisasm,
+  SASS, driver API, runtime API, device property, multi-GPU, peer access, unified memory, managed
+  memory, zero copy, pinned memory, async copy, memcpy async, stream ordered memory allocator, CUDA
+  module, cubin, fatbin, link error, undefined reference, nvcc flags, arch flags, sm_80 sm_86 sm_89
+  sm_90 sm_100. 中文触发词：CUDA 编程、CUDA kernel、PTX 指令、内联 PTX、显存管理、共享内存优化、bank conflict、访存合并、warp
+  分支、寄存器压力、occupancy、B200/H100/A100 架构问题、ncu/nsys/compute-sanitizer 调试。
+triggers:
+  - "A100"
+  - "B200"
+  - "CUDA"
+  - "CUDA API"
+  - "CUDA Driver"
+  - "CUDA Graph"
+  - "CUDA Runtime"
+  - "H100"
+  - "Nsight"
+  - "PTX"
+  - "Tensor Core"
+  - "Unified Memory"
+  - "__shared__"
+  - "bank conflict"
+  - "compute-sanitizer"
+  - "cuda-gdb"
+  - "grid block thread"
+  - "kernel launch"
+  - "nvcc"
+  - "occupancy"
+  - "register pressure"
+  - "sm_100"
+  - "sm_90"
+  - "warp"
+  - "共享内存"
+  - "显存"
 ---
 
 # CUDA & PTX Reference

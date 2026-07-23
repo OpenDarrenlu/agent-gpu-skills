@@ -1,13 +1,28 @@
 ---
 name: colfax-research-skill
 description: >
-  Colfax Research GPU optimization article guide. Use for CUDA kernel optimization,
-  CUTLASS, CuTe, layout algebra, FlashAttention FA-2/FA-3/FA-4, FlexAttention,
-  GEMM, tensor operations, Hopper, Blackwell, Grace-Hopper, FP8/INT8 quantization,
-  mixed precision, CLC, TMA, WGMMA, Colfax article lookup, or when the user asks
-  for paper/blog references and reading order for GPU performance tuning.
-  中文触发词：Colfax 文章、GPU 优化资料、CUTLASS 教程、CuTe 布局代数、
-  FlashAttention 文章、Hopper/Blackwell 优化、推荐阅读顺序。
+  Colfax Research GPU optimization article guide. Use for CUDA kernel optimization, CUTLASS, CuTe,
+  layout algebra, FlashAttention FA-2/FA-3/FA-4, FlexAttention, GEMM, tensor operations, Hopper,
+  Blackwell, Grace-Hopper, FP8/INT8 quantization, mixed precision, CLC, TMA, WGMMA, Colfax article
+  lookup, or when the user asks for paper/blog references and reading order for GPU performance tuning.
+  Common queries: Colfax Research article, CUTLASS tutorial, CuTe tutorial, FlashAttention-2,
+  FlashAttention-3, FlashAttention-4, FlexAttention, Hopper optimization, Blackwell optimization,
+  Grace-Hopper, FP8 training, mixed precision, CLC, TMA, WGMMA, GPU blog, GPU paper reading list,
+  recommended reading, Colfax PDF, Colfax knowledge base. 中文触发词：Colfax 文章、GPU 优化资料、CUTLASS 教程、CuTe
+  布局代数、FlashAttention 文章、Hopper/Blackwell 优化、推荐阅读顺序。
+triggers:
+  - "Blackwell 优化"
+  - "CUTLASS 教程"
+  - "Colfax"
+  - "Colfax Research"
+  - "CuTe 教程"
+  - "FlashAttention"
+  - "GPU 文章"
+  - "Hopper 优化"
+  - "blog"
+  - "knowledge base"
+  - "推荐阅读"
+  - "论文"
 ---
 
 # Colfax Research Guide

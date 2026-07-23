@@ -1,24 +1,26 @@
 ---
 name: ncu-persistent-kernel-diagnosis
-description: |
-  NCU/Nsight Compute persistent kernel diagnosis skill. Use for persistent kernel
-  performance diagnosis, SM idle bubbles, Tensor Core idle bubbles, pipeline stall,
-  long scoreboard, barrier stall, warp issue stalled, PmSampling, load imbalance,
-  tail effect, Hopper sm_90, Blackwell sm_100, B200, TC utilization, SM utilization,
-  and evidence-based optimization from NCU metrics. 中文触发词：NCU 分析 persistent kernel、
-  SM 空泡、TC 空泡、流水线空泡、尾效、负载不均、为什么 persistent kernel 慢。
+description: >
+  NCU/Nsight Compute persistent kernel diagnosis skill. Use for persistent kernel performance diagnosis,
+  SM idle bubbles, Tensor Core idle bubbles, pipeline stall, long scoreboard, barrier stall, warp issue
+  stalled, PmSampling, load imbalance, tail effect, Hopper sm_90, Blackwell sm_100, B200, TC
+  utilization, SM utilization, and evidence-based optimization from NCU metrics. Common queries:
+  persistent kernel slow, SM idle, TC idle, pipeline stall, barrier stall, long scoreboard, warp
+  stalled, issue stall, PmSampling, load imbalance persistent kernel, tail effect, persistent grid,
+  resident worker, Hopper persistent, Blackwell persistent, B200 ncu. 中文触发词：NCU 分析 persistent kernel、SM
+  空泡、TC 空泡、流水线空泡、尾效、负载不均、为什么 persistent kernel 慢。
 triggers:
-  - "ncu persistent"
   - "SM 空泡"
   - "TC 空泡"
-  - "pipeline stall"
-  - "long scoreboard"
   - "barrier stall"
-  - "warp issue stalled"
-  - "PmSampling"
-  - "负载不均"
-  - "尾效"
-  - "persistent kernel 诊断"
+  - "load imbalance"
+  - "long scoreboard"
+  - "ncu persistent"
+  - "persistent kernel"
+  - "pipeline stall"
+  - "resident worker"
+  - "tail effect"
+  - "warp stalled"
 ---
 
 # 通过 NCU 分析 Persistent Kernel 的 SM 空泡与流水线掩盖

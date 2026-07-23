@@ -1,14 +1,35 @@
 ---
 name: cutlass-skill
 description: >
-  CUTLASS/CuTe/CuTeDSL high-performance GPU kernel skill. Use for CUTLASS,
-  CuTe, cute::Layout, cute::Tensor, TiledMMA, TiledCopy, CollectiveMainloop,
-  CollectiveEpilogue, GemmUniversal, grouped GEMM, sparse GEMM, MoE GEMM,
-  FP8/FP4/blockwise scaling GEMM, Hopper/Blackwell GEMM, Stream-K, TMA,
-  warp specialization, epilogue fusion, EVT, KernelSchedule, EpilogueSchedule,
-  pycute, layout algebra, swizzle, compiling examples, or debugging template errors.
-  中文触发词：CUTLASS、CuTe、CuTeDSL、GEMM 模板、Blackwell GEMM、Hopper GEMM、
-  grouped GEMM、MoE GEMM、TMA GEMM、EVT、layout 代数、CUTLASS 编译错误。
+  CUTLASS/CuTe/CuTeDSL high-performance GPU kernel skill. Use for CUTLASS, CuTe, cute::Layout,
+  cute::Tensor, TiledMMA, TiledCopy, CollectiveMainloop, CollectiveEpilogue, GemmUniversal, grouped
+  GEMM, sparse GEMM, MoE GEMM, FP8/FP4/blockwise scaling GEMM, Hopper/Blackwell GEMM, Stream-K, TMA,
+  warp specialization, epilogue fusion, EVT, KernelSchedule, EpilogueSchedule, pycute, layout algebra,
+  swizzle, compiling examples, or debugging template errors. Common queries: CUTLASS example, CuTe
+  layout, cute::Tensor, TiledMMA, TiledCopy, CollectiveMainloop, CollectiveEpilogue, GemmUniversal,
+  CUTLASS 3.x, CUTLASS 2.x, Hopper GEMM, Blackwell GEMM, FP8 GEMM, FP4 GEMM, blockwise scaling, group
+  GEMM in CUTLASS, MoE in CUTLASS, Stream-K CUTLASS, EVT epilogue, KernelSchedule, EpilogueSchedule,
+  CuTeDSL pycute, layout algebra, swizzle, cute::Stride, cute::Shape, compile CUTLASS, CMake CUTLASS,
+  CUTLASS template error, nvcc error. 中文触发词：CUTLASS、CuTe、CuTeDSL、GEMM 模板、Blackwell GEMM、Hopper
+  GEMM、grouped GEMM、MoE GEMM、TMA GEMM、EVT、layout 代数、CUTLASS 编译错误。
+triggers:
+  - "Blackwell GEMM"
+  - "CUTLASS"
+  - "CUTLASS GEMM"
+  - "CUTLASS 模板"
+  - "CUTLASS 编译"
+  - "CollectiveMainloop"
+  - "CuTe"
+  - "CuTeDSL"
+  - "EVT"
+  - "GemmUniversal"
+  - "Hopper GEMM"
+  - "KernelSchedule"
+  - "Stream-K"
+  - "TiledCopy"
+  - "TiledMMA"
+  - "layout 代数"
+  - "pycute"
 ---
 
 # CUTLASS & CuTeDSL Development

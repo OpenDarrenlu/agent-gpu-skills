@@ -1,13 +1,31 @@
 ---
 name: ncu-report-skill
 description: >
-  Nsight Compute/NCU CUDA kernel profiling and report analysis skill for B200/sm_100
-  and general NVIDIA GPUs. Use for profiling kernels, reading .ncu-rep reports,
-  collecting ncu metrics, source/SASS attribution, occupancy, warp stalls, memory
-  throughput, Tensor Core utilization, roofline, bottleneck diagnosis, optimization
-  plans, standalone harnesses, and profile/report directories. 中文触发词：ncu 报告、
-  Nsight Compute、profile 一下、为什么 kernel 慢、帮我看性能瓶颈、warp stall、
-  occupancy、SM/TC 利用率、source counters、下一步怎么优化。
+  Nsight Compute/NCU CUDA kernel profiling and report analysis skill for B200/sm_100 and general NVIDIA
+  GPUs. Use for profiling kernels, reading .ncu-rep reports, collecting ncu metrics, source/SASS
+  attribution, occupancy, warp stalls, memory throughput, Tensor Core utilization, roofline, bottleneck
+  diagnosis, optimization plans, standalone harnesses, and profile/report directories. Common queries:
+  ncu report, .ncu-rep, Nsight Compute report, kernel profiling, ncu metrics, source counters, SASS
+  attribution, occupancy analysis, warp stall analysis, memory throughput analysis, Tensor Core
+  utilization, roofline analysis, bottleneck diagnosis, optimization plan, ncu cli, ncu collection,
+  profile harness, B200 ncu, sm_100 ncu. 中文触发词：ncu 报告、Nsight Compute、profile 一下、为什么 kernel
+  慢、帮我看性能瓶颈、warp stall、occupancy、SM/TC 利用率、source counters、下一步怎么优化。
+triggers:
+  - ".ncu-rep"
+  - "B200 ncu"
+  - "Nsight Compute"
+  - "SASS"
+  - "bottleneck"
+  - "kernel profiling"
+  - "memory throughput"
+  - "ncu metrics"
+  - "ncu report"
+  - "roofline"
+  - "source counters"
+  - "warp stall"
+  - "为什么 kernel 慢"
+  - "优化计划"
+  - "性能瓶颈"
 ---
 
 # Skill: CUDA Kernel Profiling (B200 / Nsight Compute)

@@ -92,6 +92,7 @@ SKILL_NAMES=(
     gpu-performance-router
     gpu-kernel-authoring-router
     llm-serving-router
+    gpu-development-catchall
 )
 SKILL_DIRS=(
     cuda_skill
@@ -109,6 +110,7 @@ SKILL_DIRS=(
     gpu-performance-router
     gpu-kernel-authoring-router
     llm-serving-router
+    gpu-development-catchall
 )
 
 # 检查是否为本地 skill（避免 NVIDIA skills 覆盖本地）

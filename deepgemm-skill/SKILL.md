@@ -1,13 +1,32 @@
 ---
 name: deepgemm-skill
 description: >
-  DeepGEMM source reference and workflow for developing NVIDIA grouped GEMM and
-  MoE kernels. Use for DeepGEMM, M-grouped or K-grouped GEMM, contiguous or
-  masked grouped layouts, FP8/FP4/BF16 GEMM, Mega MoE, SM90/Hopper,
-  SM100/Blackwell, JIT kernel generation, TMA, WGMMA, tcgen05, grouped GEMM
-  scheduling, alignment, scaling-factor packing, or adapting DeepGEMM kernels
-  into another project. 中文触发词：DeepGEMM、grouped GEMM、分组 GEMM、MoE GEMM、
-  M grouped、K grouped、contiguous layout、masked layout、Mega MoE、专家算子。
+  DeepGEMM source reference and workflow for developing NVIDIA grouped GEMM and MoE kernels. Use for
+  DeepGEMM, M-grouped or K-grouped GEMM, contiguous or masked grouped layouts, FP8/FP4/BF16 GEMM, Mega
+  MoE, SM90/Hopper, SM100/Blackwell, JIT kernel generation, TMA, WGMMA, tcgen05, grouped GEMM
+  scheduling, alignment, scaling-factor packing, or adapting DeepGEMM kernels into another project.
+  Common queries: DeepGEMM install, DeepGEMM grouped GEMM, M-grouped, K-grouped, contiguous grouped
+  GEMM, masked grouped GEMM, DeepGEMM JIT, gemm.hpp, DeepGEMM scheduler, DeepGEMM test, test_fp8_fp4,
+  test_mega_moe, Mega MoE, DeepGEMM SM90, DeepGEMM SM100, FP8 FP4 BF16 GEMM, scale factor, UE8M0,
+  swapAB, TMA multicast, DeepGEMM build, DeepGEMM integration, DeepGEMM contiguous layout, DeepGEMM
+  masked layout, expert parallelism kernel. 中文触发词：DeepGEMM、grouped GEMM、分组 GEMM、MoE GEMM、M grouped、K
+  grouped、contiguous layout、masked layout、Mega MoE、专家算子。
+triggers:
+  - "DeepGEMM"
+  - "DeepGEMM JIT"
+  - "DeepGEMM scheduler"
+  - "K-grouped"
+  - "M-grouped"
+  - "Mega MoE"
+  - "MoE GEMM"
+  - "contiguous layout"
+  - "gemm.hpp"
+  - "grouped GEMM"
+  - "masked layout"
+  - "test_fp8_fp4"
+  - "test_mega_moe"
+  - "专家算子"
+  - "分组 GEMM"
 ---
 
 # DeepGEMM Grouped GEMM Development

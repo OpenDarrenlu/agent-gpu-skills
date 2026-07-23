@@ -1,15 +1,38 @@
 ---
 name: sglang-skill
 description: >
-  SGLang LLM serving development, debugging, and optimization skill. Use for
-  SGLang, srt, sgl-kernel, LLM serving/inference, launch_server, Engine API,
-  KV cache, radix cache, attention backend, FlashInfer, MLA, MoE routing/dispatch,
-  expert parallelism, TP/PP/EP, speculative decoding, disaggregated serving,
-  continuous batching, chunked prefill, CUDA Graph, quantization FP8/GPTQ/AWQ,
-  LoRA inference, DeepSeek serving, EPLB, HiCache, torch.compile, serving latency,
-  throughput, OOM, scheduler, or adding models/backends.
-  中文触发词：SGLang 服务、LLM 推理、KV cache、attention backend、FlashInfer、
-  MLA、MoE、DeepSeek serving、吞吐/延迟优化、连续 batching、chunked prefill。
+  SGLang LLM serving development, debugging, and optimization skill. Use for SGLang, srt, sgl-kernel,
+  LLM serving/inference, launch_server, Engine API, KV cache, radix cache, attention backend,
+  FlashInfer, MLA, MoE routing/dispatch, expert parallelism, TP/PP/EP, speculative decoding,
+  disaggregated serving, continuous batching, chunked prefill, CUDA Graph, quantization FP8/GPTQ/AWQ,
+  LoRA inference, DeepSeek serving, EPLB, HiCache, torch.compile, serving latency, throughput, OOM,
+  scheduler, or adding models/backends. Common queries: SGLang install, sglang.launch_server, Engine,
+  SRT, sgl-kernel, sglang add model, sglang backend, radix cache, KV cache manager, attention backend,
+  FlashInfer, FlashAttention, MLA, DeepSeek MLA, MoE routing, EP, TP, PP, speculative decoding, eagle,
+  medusa, disaggregated serving, chunked prefill, continuous batching, CUDA Graph in SGLang, FP8
+  quantization, GPTQ, AWQ, LoRA serving, EPLB, HiCache, torch.compile sglang, sglang benchmark, sglang
+  OOM, sglang latency, sglang throughput, sglang scheduler. 中文触发词：SGLang 服务、LLM 推理、KV cache、attention
+  backend、FlashInfer、MLA、MoE、DeepSeek serving、吞吐/延迟优化、连续 batching、chunked prefill。
+triggers:
+  - "CUDA Graph"
+  - "Engine"
+  - "FlashInfer"
+  - "KV cache"
+  - "MLA"
+  - "MoE routing"
+  - "OOM"
+  - "SGLang"
+  - "SRT"
+  - "attention backend"
+  - "chunked prefill"
+  - "continuous batching"
+  - "launch_server"
+  - "radix cache"
+  - "sgl-kernel"
+  - "speculative decoding"
+  - "吞吐"
+  - "延迟"
+  - "推理服务"
 ---
 
 # SGLang Development

@@ -1,32 +1,33 @@
 ---
 name: gpu-communication-libraries
-description: |
-  GPU communication libraries and distributed GPU communication skill. Use for NCCL,
-  NVSHMEM, CUDA P2P/IPC, GPUDirect, RDMA, UCX/UCC, Gloo, RCCL, MSCCL, DeepEP,
-  GIN, collectives, allreduce, allgather, reduce-scatter, alltoall, multi-GPU,
-  multi-node training/inference, tensor/expert/data parallel communication, and
-  communication-kernel fusion. 中文触发词：GPU 通信库、多卡通信、多节点通信、
-  NCCL、NVSHMEM、RDMA、GPUDirect、P2P、CUDA IPC、allreduce、alltoall、通信优化。
-
+description: >
+  GPU communication libraries and distributed GPU communication skill. Use for NCCL, NVSHMEM, CUDA
+  P2P/IPC, GPUDirect, RDMA, UCX/UCC, Gloo, RCCL, MSCCL, DeepEP, GIN, collectives, allreduce, allgather,
+  reduce-scatter, alltoall, multi-GPU, multi-node training/inference, tensor/expert/data parallel
+  communication, and communication-kernel fusion. Common queries: NCCL error, NCCL allreduce, NCCL
+  allgather, NCCL reduce-scatter, NCCL alltoall, NCCL broadcast, NVSHMEM, CUDA P2P, GPUDirect RDMA,
+  InfiniBand, RoCE, multi-node training, multi-GPU inference, tensor parallel communication, expert
+  parallel communication, data parallel communication, DeepEP, GIN, UCX, UCC, MSCCL, RCCL, Gloo,
+  communication fusion, overlap communication, communication bottleneck. 中文触发词：GPU
+  通信库、多卡通信、多节点通信、NCCL、NVSHMEM、RDMA、GPUDirect、P2P、CUDA IPC、allreduce、alltoall、通信优化。
 triggers:
-  - "GPU 通信库"
+  - "DeepEP"
+  - "GIN"
+  - "GPUDirect"
   - "NCCL"
   - "NVSHMEM"
-  - "collective communication"
   - "P2P"
-  - "GPUDirect"
   - "RDMA"
+  - "UCX"
+  - "allgather"
   - "allreduce"
   - "alltoall"
+  - "expert parallel"
+  - "reduce-scatter"
+  - "tensor parallel"
   - "多卡通信"
-  - "分布式通信"
+  - "多节点"
   - "通信优化"
-  - "Gloo"
-  - "UCX"
-  - "DeepEP"
-  - "通信 kernel"
-  - "GPU P2P"
-  - "CUDA IPC"
 ---
 
 # GPU 通信代码库全景指南

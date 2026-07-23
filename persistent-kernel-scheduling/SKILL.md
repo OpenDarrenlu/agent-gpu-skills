@@ -1,26 +1,26 @@
 ---
 name: persistent-kernel-scheduling
-description: |
-  Persistent kernel scheduling strategy skill. Use for static persistent vs dynamic
-  persistent vs non-persistent scheduling, Cluster Launch Control (CLC), Stream-K,
-  tile scheduler design, CTA scheduling, wave quantization, tail effect, load imbalance,
-  grouped GEMM, MoE, variable-length attention, Hopper sm_90, Blackwell sm_100, and
-  choosing a scheduling strategy. 中文触发词：persistent kernel 调度、静态/动态 persistent、
-  CLC、Cluster Launch Control、Stream-K、tile scheduler、CTA 调度、尾效、负载不均。
+description: >
+  Persistent kernel scheduling strategy skill. Use for static persistent vs dynamic persistent vs
+  non-persistent scheduling, Cluster Launch Control (CLC), Stream-K, tile scheduler design, CTA
+  scheduling, wave quantization, tail effect, load imbalance, grouped GEMM, MoE, variable-length
+  attention, Hopper sm_90, Blackwell sm_100, and choosing a scheduling strategy. Common queries:
+  persistent kernel schedule, static persistent, dynamic persistent, non-persistent vs persistent, CLC,
+  Cluster Launch Control, clcTryCancel, Stream-K, tile scheduler, CTA scheduler, wave quantization, tail
+  effect, load imbalance, variable length attention, Hopper tile scheduler, Blackwell tile scheduler,
+  choose scheduling strategy. 中文触发词：persistent kernel 调度、静态/动态 persistent、CLC、Cluster Launch
+  Control、Stream-K、tile scheduler、CTA 调度、wave quantization、尾效、负载不均。
 triggers:
-  - "persistent kernel"
-  - "static persistent"
-  - "dynamic persistent"
   - "CLC"
-  - "cluster launch control"
-  - "tile scheduler"
-  - "Stream-K"
-  - "负载不均"
-  - "尾效"
-  - "wave quantization"
-  - "grouped GEMM 调度"
-  - "MoE 调度"
   - "CTA 调度"
+  - "Cluster Launch Control"
+  - "Stream-K"
+  - "dynamic persistent"
+  - "persistent kernel 调度"
+  - "static persistent"
+  - "tail effect"
+  - "tile scheduler"
+  - "wave quantization"
 ---
 
 # CUDA Persistent Kernel：静态调度 vs 动态调度 资料汇总

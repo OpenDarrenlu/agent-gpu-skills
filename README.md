@@ -19,6 +19,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 | **gpu-performance-router** | 路由 (性能) | 用户没点名 skill 时，将 GPU 性能/NCU/NSYS/利用率/瓶颈问题分流到具体 skill |
 | **gpu-kernel-authoring-router** | 路由 (写 kernel) | 将 CUDA/Triton/CUTLASS/CuTe/GEMM/attention kernel 写作问题分流到具体 skill |
 | **llm-serving-router** | 路由 (LLM Serving) | 将 SGLang/KV cache/attention backend/MoE/吞吐延迟问题分流到具体 skill |
+| **gpu-development-catchall** | 兜底 (任意 GPU 问题) | 最大化命中率：任何 GPU/CUDA/算子/性能/通信/推理相关问题先命中它，再路由到具体 skill |
 | **nsys-profile-analysis** | 性能分析 (timeline) | 用 VeloQ 查 `.nsys-rep`：GPU 空闲、kernel 启动因果、CPU↔GPU 关联、NVTX 归因、并发 |
 | **ncu-profile-analysis** | 性能分析 (kernel) | 用 VeloQ 查 `.ncu-rep`：occupancy、warp stall、访存吞吐、指令构成、source/SASS 关联 |
 
@@ -170,6 +171,8 @@ agent-gpu-skills/
 │   └── SKILL.md                     # CUDA/Triton/CUTLASS 写作路由 skill
 ├── llm-serving-router/
 │   └── SKILL.md                     # LLM Serving 路由 skill
+├── gpu-development-catchall/
+│   └── SKILL.md                     # 兜底：任意 GPU 相关问题先命中它再路由
 └── repos/
     ├── nvidia-skills/                 # NVIDIA 官方 skills submodule
     │   ├── skills/                    # 200+ 个 skill (cuDF, cuOpt, DeepStream, Nemo...)

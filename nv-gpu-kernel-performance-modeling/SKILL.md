@@ -1,14 +1,34 @@
 ---
 name: nv-gpu-kernel-performance-modeling
 description: >
-  NVIDIA GPU kernel performance modeling skill. Use for analytical performance
-  modeling, latency prediction, roofline-style reasoning, kernel decomposition,
-  stage-centric pipeline analysis, producer-consumer pipelines, warp-specialized
-  pipelines, multistage pipelines, instruction pipeline demand modeling, tile size,
-  stage count, register allocation, occupancy/latency tradeoffs, and cross-architecture
-  prediction for A100/H100/B200, Ampere sm_80, Hopper sm_90, Blackwell sm_100.
-  中文触发词：GPU 性能建模、kernel 延迟预测、理论性能、流水线建模、访存/计算重叠、
-  跨架构迁移、A100/H100/B200 性能估计、tile/stage/register 参数选择。
+  NVIDIA GPU kernel performance modeling skill. Use for analytical performance modeling, latency
+  prediction, roofline-style reasoning, kernel decomposition, stage-centric pipeline analysis,
+  producer-consumer pipelines, warp-specialized pipelines, multistage pipelines, instruction pipeline
+  demand modeling, tile size, stage count, register allocation, occupancy/latency tradeoffs, and
+  cross-architecture prediction for A100/H100/B200, Ampere sm_80, Hopper sm_90, Blackwell sm_100. Common
+  queries: GPU performance model, roofline model, latency model, throughput estimation, analytical
+  model, kernel decomposition, pipeline stage analysis, producer consumer pipeline, multistage,
+  instruction demand, tile size selection, stage count, register file, occupancy vs latency, A100 vs
+  H100 vs B200, cross architecture, memory bound, compute bound, bandwidth bound, arithmetic intensity,
+  calibrate model, theoretical peak, achievable TFLOPS. 中文触发词：GPU 性能建模、kernel
+  延迟预测、理论性能、流水线建模、访存/计算重叠、跨架构迁移、A100/H100/B200 性能估计、tile/stage/register 参数选择。
+triggers:
+  - "A100"
+  - "B200"
+  - "H100"
+  - "arithmetic intensity"
+  - "kernel decomposition"
+  - "occupancy"
+  - "pipeline"
+  - "register"
+  - "roofline"
+  - "stage count"
+  - "throughput estimation"
+  - "tile size"
+  - "延迟模型"
+  - "性能建模"
+  - "理论性能"
+  - "跨架构"
 ---
 
 # NVIDIA GPU 算子性能建模 Skill

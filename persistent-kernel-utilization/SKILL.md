@@ -1,29 +1,29 @@
 ---
 name: persistent-kernel-utilization
-description: |
-  Persistent kernel utilization optimization skill. Use for low SM utilization,
-  low Tensor Core/TC utilization, memory utilization, occupancy shortage, wave
-  quantization, load imbalance, pipeline bubbles, epilogue-mainloop overlap,
-  Stream-K, Hybrid Stream-K, CLC dynamic scheduling, warp specialization,
-  multistage pipeline, TMA multicast, TMEM double buffering, setmaxnreg/register
-  rebalancing, Hilbert-curve scheduling, and squeezing Hopper/Blackwell/B200 GPU
-  performance. 中文触发词：persistent kernel 利用率低、SM 利用率低、TC 利用率低、
-  occupancy 不足、极致优化、榨干 GPU、流水线空泡、setmaxnreg。
+description: >
+  Persistent kernel utilization optimization skill. Use for low SM utilization, low Tensor Core/TC
+  utilization, memory utilization, occupancy shortage, wave quantization, load imbalance, pipeline
+  bubbles, epilogue-mainloop overlap, Stream-K, Hybrid Stream-K, CLC dynamic scheduling, warp
+  specialization, multistage pipeline, TMA multicast, TMEM double buffering, setmaxnreg/register
+  rebalancing, Hilbert-curve scheduling, and squeezing Hopper/Blackwell/B200 GPU performance. Common
+  queries: low SM utilization, low TC utilization, GPU not fully utilized, occupancy too low, wave
+  quantization, pipeline bubble, epilogue overlap, mainloop overlap, Stream-K optimization, hybrid
+  Stream-K, CLC dynamic, warp specialization, multistage pipeline, TMA multicast, TMEM double buffer,
+  setmaxnreg, register rebalancing, Hilbert curve, maximize GPU performance. 中文触发词：persistent kernel
+  利用率低、SM 利用率低、TC 利用率低、occupancy 不足、流水线空泡、setmaxnreg、榨干 GPU、极致优化。
 triggers:
-  - "persistent kernel 利用率"
-  - "SM 利用率"
-  - "TC 利用率"
-  - "occupancy"
-  - "wave quantization"
+  - "GPU 利用率低"
+  - "SM 利用率低"
   - "Stream-K"
-  - "warp specialization"
-  - "multistage pipeline"
+  - "TC 利用率低"
   - "TMA multicast"
+  - "epilogue overlap"
+  - "occupancy 低"
+  - "pipeline bubble"
   - "setmaxnreg"
-  - "Hilbert curve"
-  - "epilogue mainloop 重叠"
+  - "warp specialization"
   - "极致优化"
-  - "GPU 性能榨干"
+  - "榨干 GPU"
 ---
 
 # Persistent Kernel 的 SM/Memory 利用率问题与极致优化指南

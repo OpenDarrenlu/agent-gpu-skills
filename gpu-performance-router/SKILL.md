@@ -1,12 +1,31 @@
 ---
 name: gpu-performance-router
 description: >
-  Router for NVIDIA GPU performance, profiling, and bottleneck diagnosis. Use when
-  the user says a CUDA/Triton/CUTLASS kernel is slow, asks "why is this slow",
-  wants ncu/nsys/Nsight Compute/Nsight Systems analysis, SM/TC utilization,
-  warp stalls, occupancy, memory throughput, persistent kernel bubbles, roofline,
-  B200/H100/A100 performance, or an optimization plan. 中文触发词：为什么慢、性能瓶颈、
-  ncu 报告、nsys 时间线、SM 利用率、TC 利用率、warp stall、occupancy、GPU 优化计划。
+  Router for NVIDIA GPU performance, profiling, and bottleneck diagnosis. Use when the user says a
+  CUDA/Triton/CUTLASS kernel is slow, asks "why is this slow", wants ncu/nsys/Nsight Compute/Nsight
+  Systems analysis, SM/TC utilization, warp stalls, occupancy, memory throughput, persistent kernel
+  bubbles, roofline, B200/H100/A100 performance, or an optimization plan. Casual entry point: anything
+  about GPU performance, kernel slow, why slow, profiling, benchmark, speed up, optimize kernel, latency
+  high, throughput low, GPU utilization low, wall time, kernel time, trace analysis, hotspot,
+  performance regression, tuning, autotune, grid search tile size. 中文触发词：为什么慢、怎么这么慢、性能瓶颈、kernel 慢、ncu
+  报告、nsys 时间线、SM 利用率、TC 利用率、warp stall、occupancy、GPU 优化计划。
+triggers:
+  - "GPU 利用率"
+  - "autotune"
+  - "benchmark"
+  - "hotspot"
+  - "kernel 慢"
+  - "latency"
+  - "optimize"
+  - "profiling"
+  - "speed up"
+  - "throughput"
+  - "trace"
+  - "为什么慢"
+  - "怎么这么慢"
+  - "性能回归"
+  - "性能瓶颈"
+  - "调参"
 ---
 
 # GPU Performance Router

@@ -2,13 +2,37 @@
 name: triton-skill
 description: >
   Triton/Gluon GPU kernel writing and optimization skill. Use for @triton.jit,
-  tl.load/tl.store/tl.dot/tl.dot_scaled, program_id, masks, block pointers,
-  tensor descriptors, triton.autotune, fused attention, matmul, reductions,
-  layer norm/RMSNorm, SwiGLU, top-k, FP8/FP4/MXFP/NVFP4, persistent matmul,
-  warp specialization, TMA, WGMMA, tcgen05, PDL, Triton IR/MLIR/TritonGPU,
-  converting CUDA kernels to Triton, or profiling/debugging Triton kernels.
-  中文触发词：写 Triton kernel、Triton 算子、Gluon、Python GPU kernel、Triton GEMM、
-  Triton attention、Triton 性能优化、Triton 编译器、CUDA 转 Triton。
+  tl.load/tl.store/tl.dot/tl.dot_scaled, program_id, masks, block pointers, tensor descriptors,
+  triton.autotune, fused attention, matmul, reductions, layer norm/RMSNorm, SwiGLU, top-k,
+  FP8/FP4/MXFP/NVFP4, persistent matmul, warp specialization, TMA, WGMMA, tcgen05, PDL, Triton
+  IR/MLIR/TritonGPU, converting CUDA kernels to Triton, or profiling/debugging Triton kernels. Common
+  queries: how to write Triton kernel, Triton tutorial, tl.dot, tl.load, tl.store, tl.sum, tl.max,
+  tl.softmax, Triton autotune, Triton cache, Triton compile error, Triton IR, TritonGPU, ptxas error,
+  launch grid, num_stages, num_warps, Triton GPU kernel, Triton vs CUDA, convert CUDA to Triton, Triton
+  reduction, Triton scan, Triton matmul, Triton flash attention, Triton layer norm, Triton RMSNorm,
+  Triton MoE, Triton grouped GEMM, Triton FP8, Triton FP4, Triton MXFP, block pointer, tensor pointer,
+  TMA descriptor, Triton wgmma, Triton tcgen05, Triton PDL, warp specialization. 中文触发词：写 Triton
+  kernel、Triton 算子、Gluon、Python GPU kernel、Triton GEMM、Triton attention、Triton 性能优化、Triton 编译器、CUDA 转
+  Triton。
+triggers:
+  - "Gluon"
+  - "Python GPU kernel"
+  - "Triton"
+  - "Triton GEMM"
+  - "Triton IR"
+  - "Triton attention"
+  - "Triton kernel"
+  - "Triton 性能"
+  - "Triton 教程"
+  - "Triton 算子"
+  - "Triton 编译"
+  - "autotune"
+  - "block pointer"
+  - "num_stages"
+  - "num_warps"
+  - "tl.dot"
+  - "tl.load"
+  - "tl.store"
 ---
 
 # Triton & Gluon Kernel Development
