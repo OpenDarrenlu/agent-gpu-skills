@@ -37,24 +37,54 @@ bash bootstrap.sh --agent kimi
 可继续传入 `install.sh` 的选项：
 
 ```bash
-bash bootstrap.sh --agent codex --no-nvidia-skills --no-veloq
+bash bootstrap.sh --agent codex --no-nvidia-skills --no-amd-skills --no-veloq
 bash bootstrap.sh --agent cursor --copy
 ```
 
 如果需要手动分步执行：
 
 ```bash
-# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/Cursor skills + veloq 二进制
+# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor skills + veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
-#    同时安装 NVIDIA skills、Cursor skills、GPU router skills
+#    同时安装 NVIDIA skills、AMD skills、Cursor skills、GPU router skills
 bash install.sh
 
 # 不想要 VeloQ 时:
 bash install.sh --no-veloq
+
+# 不安装 AMD 官方 skills 时（本地 amd-instinct-cdna4-isa 仍会安装）:
+bash install.sh --no-amd-skills
 ```
+
+## AMD 文档本地知识库
+
+安装脚本会安装本仓库的 `amd-gpu-docs` skill；它与 `repos/amd-skills/` 中的 AMD 官方 workflow skills 分工不同：前者负责广泛的官方公开文档检索，后者负责具体工作流。文档缓存只在本机生成，并由 Git 忽略。
+
+```bash
+# ROCm + Instinct 核心目录
+python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile core
+
+# 加上 ROCm Blog、Ryzen AI、Quark、GPUOpen 当前技术目录
+python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile all
+
+# 查询本地文档和 amd/skills
+python3 amd-gpu-docs/scripts/query_amd_docs.py "hipGraph"
+python3 amd-gpu-docs/scripts/query_amd_docs.py "gfx950" --limit 20
+```
+
+同步器是增量式的：已存在的页面默认复用，`--refresh` 才会重新下载；`--workers 4` 等参数可降低站点压力。AMD 文档站偶尔会返回 Cloudflare `429` challenge，脚本会对 429/5xx/超时退避重试并保留已成功页面，稍后可重新运行续抓。`all` 表示当前公开技术目录，不包含私有支持门户、无限历史版本或营销页面。
+
+PDF 默认不抓取。只有在逐份确认 AMD 的 Specification Agreement/文档许可后，才运行：
+
+```bash
+python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile all \
+  --include-pdfs --accept-document-terms
+```
+
+PDF 以及 HTML/Markdown 缓存均位于 `amd-gpu-docs/cache/`，该目录不会进入 Git；查询 PDF 需要额外安装 `pdfplumber`，然后加 `--include-pdfs`。
 
 ## 安装目标
 
@@ -100,6 +130,30 @@ bash install.sh --agent kimi       # Kimi Code CLI
 - 其余文件: 软链接到项目目录（repo、references 等）
 
 使用 `--copy` 进行全量复制（适用于无法软链接的场景）。
+
+需要隔离安装或在 CI 中验证时，可指定自定义目录：
+
+```bash
+bash install.sh --agent codex --dest /absolute/path/to/test-skills --no-veloq
+```
+
+## AMD 官方 skills 与 CDNA4 ISA
+
+`install.sh` 默认从 `repos/amd-skills/skills/` 安装 AMD 官方稳定 skills；可用 `--no-amd-skills` 跳过。`bootstrap.sh` 会自动初始化该 submodule，也可以单独运行：
+
+```bash
+bash update-repos.sh amd-skills
+bash install.sh --agent codex
+```
+
+`amd-instinct-cdna4-isa` 是本仓库额外提供的 ISA 检索 skill。由于 AMD 官方 PDF 的 Specification Agreement 限制复制和再分发，PDF 不随 Git 仓库或 `install.sh` 分发。接受 AMD 条款后，在源仓库或安装后的 skill 目录运行：
+
+```bash
+bash amd-instinct-cdna4-isa/download-cdna4-isa.sh
+bash amd-instinct-cdna4-isa/query-cdna4-isa.sh "v_mfma"
+```
+
+检索脚本优先使用 `pdftotext`（macOS: `brew install poppler`；Debian/Ubuntu: `apt install poppler-utils`），没有时可回退到 Python `pdfplumber`。提取文本不会提交到仓库；`pdftotext` 路径只使用临时文件并在脚本退出时删除。
 
 ## VeloQ（profile 查询 CLI）
 
@@ -149,6 +203,7 @@ bash update-repos.sh cutlass
 bash update-repos.sh deepgemm
 bash update-repos.sh sglang
 bash update-repos.sh nvidia-skills
+bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
 
 # 只更新 veloq 二进制（skill 用 veloq self-update 或重跑 install.sh）

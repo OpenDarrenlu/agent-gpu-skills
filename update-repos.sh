@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nvidia-skills / cursor-skills)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nvidia-skills / amd-skills / cursor-skills)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   triton_skill/repos/triton/
@@ -11,6 +11,7 @@
 #   deepgemm-skill/repos/deepgemm/
 #   sglang_skill/repos/sglang/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
+#   repos/amd-skills/     (AMD skills submodule)
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
 
 set -e
@@ -210,6 +211,9 @@ case "$TARGET" in
     nvidia-skills)
         update_submodule "nvidia-skills" "repos/nvidia-skills"
         ;;
+    amd-skills)
+        update_submodule "amd-skills" "repos/amd-skills"
+        ;;
     cursor-skills)
         update_submodule "cursor-skills" "repos/cursor-skills"
         ;;
@@ -220,11 +224,12 @@ case "$TARGET" in
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         update_veloq
         update_submodule "nvidia-skills" "repos/nvidia-skills"
+        update_submodule "amd-skills" "repos/amd-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|veloq|nvidia-skills|cursor-skills|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|veloq|nvidia-skills|amd-skills|cursor-skills|all]"
         exit 1
         ;;
 esac
@@ -248,6 +253,16 @@ if [ -d "$SCRIPT_DIR/repos/nvidia-skills" ]; then
         fi
     done
     echo "  NVIDIA skills 数量: $nvidia_count"
+fi
+if [ -d "$SCRIPT_DIR/repos/amd-skills" ]; then
+    du -sh "$SCRIPT_DIR/repos/amd-skills" 2>/dev/null
+    amd_count=0
+    if [ -d "$SCRIPT_DIR/repos/amd-skills/skills" ]; then
+        for d in "$SCRIPT_DIR/repos/amd-skills/skills"/*/; do
+            [ -f "$d/SKILL.md" ] && amd_count=$((amd_count + 1))
+        done
+    fi
+    echo "  AMD skills 数量: $amd_count"
 fi
 if [ -d "$SCRIPT_DIR/repos/cursor-skills" ]; then
     du -sh "$SCRIPT_DIR/repos/cursor-skills" 2>/dev/null

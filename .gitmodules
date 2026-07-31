@@ -7,3 +7,7 @@
 [submodule "repos/nvidia-skills"]
 	path = repos/nvidia-skills
 	url = https://github.com/NVIDIA/skills.git
+[submodule "repos/amd-skills"]
+	path = repos/amd-skills
+	url = https://github.com/amd/skills.git
+	branch = main

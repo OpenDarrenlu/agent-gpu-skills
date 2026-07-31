@@ -7,7 +7,7 @@ prefer the most specific installed skill before answering detailed technical que
 
 Use a router first when the user does not name a skill:
 
-- `gpu-development-catchall`: any GPU/CUDA/kernel/performance/communication/serving question where the right domain is unclear; it routes to the most specific skill.
+- `gpu-development-catchall`: any GPU/CUDA/ROCm/kernel/performance/communication/serving question where the right domain is unclear; it routes to the most specific skill.
 - `gpu-performance-router`: GPU profiling, "why is this slow", NCU/NSYS, SM/TC utilization, stalls, occupancy, roofline, B200/H100/A100 optimization.
 - `gpu-kernel-authoring-router`: writing or changing CUDA, PTX, Triton, Gluon, CUTLASS, CuTe, GEMM, attention, or fused GPU kernels.
 - `llm-serving-router`: SGLang, LLM inference, KV cache, attention backends, FlashInfer, MLA, MoE, throughput, latency, benchmarks, capacity planning.
@@ -17,6 +17,8 @@ If a router points to a more specific skill, read that downstream skill before p
 ## Direct Skill Preferences
 
 - CUDA C++ / PTX / NVIDIA API / architecture docs: `cuda-skill`
+- AMD/ROCm/HIP documentation and broad local knowledge-base queries: `amd-gpu-docs`
+- AMD Instinct / CDNA4 ISA / AMD GPU assembly: `amd-instinct-cdna4-isa`
 - Triton / Gluon / Python GPU kernels: `triton-skill`
 - CUTLASS / CuTe / CuTeDSL / template GEMM: `cutlass-skill`
 - DeepGEMM / grouped GEMM / MoE GEMM / contiguous or masked expert layouts: `deepgemm-skill`

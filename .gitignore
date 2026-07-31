@@ -8,3 +8,10 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# AMD CDNA4 ISA is fetched locally only; the official document is not vendored.
+amd-instinct-cdna4-isa/references/amd-instinct-cdna4-instruction-set-architecture.pdf
+amd-instinct-cdna4-isa/references/*.txt
+
+# AMD documentation mirror is always local; sources have mixed licenses/terms.
+amd-gpu-docs/cache/

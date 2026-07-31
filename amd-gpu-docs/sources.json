@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "web_roots": [
+    {
+      "id": "rocm",
+      "title": "AMD ROCm documentation",
+      "url": "https://rocm.docs.amd.com/en/latest/",
+      "profiles": ["core", "all"]
+    },
+    {
+      "id": "instinct",
+      "title": "AMD Instinct documentation",
+      "url": "https://instinct.docs.amd.com/latest/",
+      "profiles": ["core", "all"]
+    },
+    {
+      "id": "rocm-blogs",
+      "title": "AMD ROCm technical blogs",
+      "url": "https://rocm.blogs.amd.com/",
+      "profiles": ["all"]
+    },
+    {
+      "id": "ryzen-ai",
+      "title": "AMD Ryzen AI documentation",
+      "url": "https://ryzenai.docs.amd.com/en/latest/",
+      "profiles": ["all"]
+    },
+    {
+      "id": "quark",
+      "title": "AMD Quark documentation",
+      "url": "https://quark.docs.amd.com/latest/",
+      "profiles": ["all"]
+    }
+  ],
+  "sitemaps": [
+    {
+      "id": "gpuopen",
+      "title": "AMD GPUOpen technical catalog",
+      "url": "https://gpuopen.com/sitemap-0.xml",
+      "profiles": ["all"]
+    }
+  ],
+  "pdf_discovery_pages": [
+    {
+      "id": "amd-gpu-architecture",
+      "url": "https://gpuopen.com/amd-gpu-architecture-programming-documentation/",
+      "profiles": ["all"]
+    },
+    {
+      "id": "rocm-gpu-architecture",
+      "url": "https://rocm.docs.amd.com/en/latest/reference/gpu-arch/index.html",
+      "profiles": ["core", "all"]
+    }
+  ],
+  "local_roots": [
+    {
+      "id": "amd-skills",
+      "title": "Installed amd/skills catalog",
+      "relative_path": "../repos/amd-skills/skills"
+    }
+  ]
+}

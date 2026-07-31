@@ -1,6 +1,6 @@
 #!/bin/bash
 # GPU Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -22,23 +22,27 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 AGENT="cursor"
+DEST_DIR=""
 COPY_MODE=false
 INSTALL_VELOQ=true
 INSTALL_NVIDIA=true
+INSTALL_AMD=true
 INSTALL_CURSOR_SKILLS=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --agent)    AGENT="$2"; shift 2 ;;
+        --dest)     DEST_DIR="$2"; shift 2 ;;
         --copy)     COPY_MODE=true; shift ;;
         --no-veloq) INSTALL_VELOQ=false; shift ;;
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
+        --no-amd-skills) INSTALL_AMD=false; shift ;;
         --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-cursor-skills]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills]"
             echo ""
             echo "首次安装:"
-            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/Cursor skills)"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor skills)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -48,9 +52,11 @@ while [[ $# -gt 0 ]]; do
             echo "  bash install.sh --agent kimi     # Kimi Code CLI (~/.agents/skills/)"
             echo ""
             echo "选项:"
+            echo "  --dest DIR        安装到自定义 skill 目录（便于隔离安装/CI 验证）"
             echo "  --copy            全量复制（适用于无法软链接的场景）"
             echo "  --no-veloq        跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
             echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
+            echo "  --no-amd-skills   跳过 AMD 官方 skills（来自 amd/skills）"
             echo "  --no-cursor-skills 跳过 Saddss/cursor-skills 仓库中的 skills"
             exit 0
             ;;
@@ -59,6 +65,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 get_skill_dir() {
+    if [ -n "$DEST_DIR" ]; then
+        echo "$DEST_DIR"
+        return 0
+    fi
     case $1 in
         cursor) echo "${HOME}/.cursor/skills" ;;
         claude) echo "${HOME}/.claude/skills" ;;
@@ -89,6 +99,8 @@ SKILL_NAMES=(
     persistent-kernel-scheduling
     persistent-kernel-utilization
     ncu-report-skill
+    amd-gpu-docs
+    amd-instinct-cdna4-isa
     gpu-performance-router
     gpu-kernel-authoring-router
     llm-serving-router
@@ -107,13 +119,15 @@ SKILL_DIRS=(
     persistent-kernel-scheduling
     persistent-kernel-utilization
     ncu-report-skill
+    amd-gpu-docs
+    amd-instinct-cdna4-isa
     gpu-performance-router
     gpu-kernel-authoring-router
     llm-serving-router
     gpu-development-catchall
 )
 
-# 检查是否为本地 skill（避免 NVIDIA skills 覆盖本地）
+# 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
 is_local_skill() {
     local name="$1"
     for n in "${SKILL_NAMES[@]}"; do
@@ -317,6 +331,63 @@ install_to_agent() {
             echo ""
         fi
     fi
+
+    # AMD 官方 skills 自动遍历安装（amd/skills）
+    if [ "$INSTALL_AMD" = true ]; then
+        ensure_submodule_path "amd-skills" "repos/amd-skills" "repos/amd-skills/skills" || true
+
+        local amd_base="$SCRIPT_DIR/repos/amd-skills/skills"
+        local amd_installed=0
+        local amd_skipped=0
+
+        if [ -d "$amd_base" ]; then
+            for skill_dir in "$amd_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                local target="$SKILL_DIR/$skill_name"
+
+                # 本地 skill 优先，避免上游新增同名目录覆盖仓库路由。
+                if is_local_skill "$skill_name"; then
+                    amd_skipped=$((amd_skipped + 1))
+                    continue
+                fi
+
+                if [ -L "$target" ]; then
+                    rm "$target"
+                elif [ -d "$target" ]; then
+                    rm -rf "$target"
+                fi
+
+                if [ "$COPY_MODE" = true ]; then
+                    cp -r "$skill_dir" "$target"
+                else
+                    mkdir -p "$target"
+                    cp "$skill_dir/SKILL.md" "$target/SKILL.md"
+                    for item in "$skill_dir"/*; do
+                        local basename_item
+                        basename_item="$(basename "$item")"
+                        [ "$basename_item" = "SKILL.md" ] && continue
+                        [ -L "$target/$basename_item" ] && rm "$target/$basename_item"
+                        ln -sf "$item" "$target/$basename_item" 2>/dev/null || true
+                    done
+                fi
+                amd_installed=$((amd_installed + 1))
+            done
+
+            echo "--- AMD skills ($amd_installed 个) ---"
+            echo "  已安装 $amd_installed 个 amd/skills 官方 skill"
+            echo "  (跳过与本地 skill 同名的 $amd_skipped 个)"
+            echo ""
+        else
+            echo "--- AMD skills ---"
+            echo "  跳过: 未找到 repos/amd-skills/skills"
+            echo "  提示: 运行 'git submodule update --init repos/amd-skills' 或 'bash update-repos.sh amd-skills'"
+            echo ""
+        fi
+    fi
 }
 
 install_to_agent "$AGENT"
@@ -439,6 +510,32 @@ verify_agent() {
         done
         if [ $nvidia_ok -gt 0 ] || [ $nvidia_missing -gt 0 ]; then
             echo "  OK: NVIDIA skills $nvidia_ok 个已安装, $nvidia_missing 个缺失"
+            PASS=$((PASS + 1))
+        fi
+    fi
+
+    # AMD skills 验证
+    if [ "$INSTALL_AMD" = true ]; then
+        local amd_base="$SCRIPT_DIR/repos/amd-skills/skills"
+        local amd_ok=0 amd_missing=0
+        if [ -d "$amd_base" ]; then
+            for skill_dir in "$amd_base"/*; do
+                [ -d "$skill_dir" ] || continue
+                [ -f "$skill_dir/SKILL.md" ] || continue
+                local skill_name
+                skill_name="$(basename "$skill_dir")"
+                if is_local_skill "$skill_name"; then
+                    continue
+                fi
+                if [ -e "$SKILL_DIR/$skill_name/SKILL.md" ]; then
+                    amd_ok=$((amd_ok + 1))
+                else
+                    amd_missing=$((amd_missing + 1))
+                fi
+            done
+        fi
+        if [ $amd_ok -gt 0 ] || [ $amd_missing -gt 0 ]; then
+            echo "  OK: AMD skills $amd_ok 个已安装, $amd_missing 个缺失"
             PASS=$((PASS + 1))
         fi
     fi
