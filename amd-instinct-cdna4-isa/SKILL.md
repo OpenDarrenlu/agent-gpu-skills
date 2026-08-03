@@ -24,6 +24,10 @@ triggers:
 
 # AMD Instinct CDNA4 ISA Reference
 
+> Compatibility skill: new multi-generation work should use
+> `amd-instinct-isa`. This directory remains installed so existing CDNA4
+> commands and references keep working.
+
 This skill is the CDNA4 counterpart to `cuda-skill`'s PTX reference. It is
 designed for precise lookups in AMD's **CDNA4 Instruction Set Architecture
 Reference Guide** (dated 5-August-2025), not as a replacement for ROCm/HIP

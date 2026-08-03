@@ -100,6 +100,7 @@ SKILL_NAMES=(
     persistent-kernel-utilization
     ncu-report-skill
     amd-gpu-docs
+    amd-instinct-isa
     amd-instinct-cdna4-isa
     gpu-performance-router
     gpu-kernel-authoring-router
@@ -120,6 +121,7 @@ SKILL_DIRS=(
     persistent-kernel-utilization
     ncu-report-skill
     amd-gpu-docs
+    amd-instinct-isa
     amd-instinct-cdna4-isa
     gpu-performance-router
     gpu-kernel-authoring-router

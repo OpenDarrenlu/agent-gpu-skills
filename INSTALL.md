@@ -55,7 +55,7 @@ bash install.sh
 # 不想要 VeloQ 时:
 bash install.sh --no-veloq
 
-# 不安装 AMD 官方 skills 时（本地 amd-instinct-cdna4-isa 仍会安装）:
+# 不安装 AMD 官方 skills 时（本地多代 ISA skills 仍会安装）:
 bash install.sh --no-amd-skills
 ```
 
@@ -137,7 +137,7 @@ bash install.sh --agent kimi       # Kimi Code CLI
 bash install.sh --agent codex --dest /absolute/path/to/test-skills --no-veloq
 ```
 
-## AMD 官方 skills 与 CDNA4 ISA
+## AMD 官方 skills 与 Instinct ISA
 
 `install.sh` 默认从 `repos/amd-skills/skills/` 安装 AMD 官方稳定 skills；可用 `--no-amd-skills` 跳过。`bootstrap.sh` 会自动初始化该 submodule，也可以单独运行：
 
@@ -154,6 +154,27 @@ bash amd-instinct-cdna4-isa/query-cdna4-isa.sh "v_mfma"
 ```
 
 检索脚本优先使用 `pdftotext`（macOS: `brew install poppler`；Debian/Ubuntu: `apt install poppler-utils`），没有时可回退到 Python `pdfplumber`。提取文本不会提交到仓库；`pdftotext` 路径只使用临时文件并在脚本退出时删除。
+
+多代 AMD Instinct ISA 使用 `amd-instinct-isa`。它维护 CDNA1、CDNA2、CDNA3、CDNA4 和 CDNA5 的官方入口，并允许在新 PDF 尚未加入目录时用 `--url` 登记。用户确认文档条款后可执行：
+
+```bash
+python3 amd-instinct-isa/scripts/amd_instinct_isa.py list
+python3 amd-instinct-isa/scripts/amd_instinct_isa.py download cdna5-isa \
+  --accept-document-terms
+python3 amd-instinct-isa/scripts/amd_instinct_isa.py query "WMMA" \
+  --document cdna5-isa
+```
+
+下载新一代 ISA 或 white paper：
+
+```bash
+python3 amd-instinct-isa/scripts/amd_instinct_isa.py download \
+  --url https://www.amd.com/path/to/new-document.pdf \
+  --id cdna6-isa --title "AMD Instinct CDNA6 ISA" \
+  --accept-document-terms
+```
+
+下载的 PDF 只保存在 `amd-instinct-isa/references/`，不会提交到 Git。`amd-instinct-cdna4-isa` 作为旧命令入口继续保留。
 
 ## VeloQ（profile 查询 CLI）
 

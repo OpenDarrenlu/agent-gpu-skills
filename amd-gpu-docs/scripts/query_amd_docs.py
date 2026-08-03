@@ -6,7 +6,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -112,13 +115,22 @@ def search_text_files(
     return count
 
 
-def search_pdfs(manifest: dict, pattern: re.Pattern[str], source_filter: str | None, limit: int, start: int) -> int:
+def extract_pdf_pages(path: Path) -> list[str]:
+    pdftotext = shutil.which("pdftotext")
+    if pdftotext:
+        with tempfile.TemporaryDirectory(prefix="amd-docs-pdf-") as temp_dir:
+            text_path = Path(temp_dir) / "document.txt"
+            subprocess.run([pdftotext, "-layout", str(path), str(text_path)], check=True)
+            return text_path.read_text(errors="replace").split("\f")
     try:
         import pdfplumber
-    except ImportError:
-        print("PDF query skipped: install Python pdfplumber", file=sys.stderr)
-        return start
+    except ImportError as exc:
+        raise RuntimeError("install pdftotext or Python pdfplumber to query PDFs") from exc
+    with pdfplumber.open(path) as pdf:
+        return [page.extract_text(x_tolerance=1.5, y_tolerance=3) or "" for page in pdf.pages]
 
+
+def search_pdfs(manifest: dict, pattern: re.Pattern[str], source_filter: str | None, limit: int, start: int) -> int:
     count = start
     for url, record in manifest.get("pdfs", {}).items():
         path = SKILL_DIR / record.get("path", "")
@@ -127,21 +139,19 @@ def search_pdfs(manifest: dict, pattern: re.Pattern[str], source_filter: str | N
         if source_filter and source_filter.lower() not in (url + " " + str(path)).lower():
             continue
         try:
-            with pdfplumber.open(path) as pdf:
-                for page_number, page in enumerate(pdf.pages, 1):
-                    text = page.extract_text(x_tolerance=1.5, y_tolerance=3) or ""
-                    matching = [line for line in text.splitlines() if pattern.search(line)]
-                    if not matching:
-                        continue
-                    count += 1
-                    print(f"[{count}] {url}")
-                    print(f"    local: {path}")
-                    print(f"    PDF page: {page_number}")
-                    for line in matching[:5]:
-                        print(f"  > {line}")
-                    print()
-                    if count >= limit:
-                        return count
+            for page_number, text in enumerate(extract_pdf_pages(path), 1):
+                matching = [line for line in text.splitlines() if pattern.search(line)]
+                if not matching:
+                    continue
+                count += 1
+                print(f"[{count}] {url}")
+                print(f"    local: {path}")
+                print(f"    PDF page: {page_number}")
+                for line in matching[:5]:
+                    print(f"  > {line}")
+                print()
+                if count >= limit:
+                    return count
         except Exception as exc:
             print(f"PDF query failed for {path}: {exc}", file=sys.stderr)
     return count

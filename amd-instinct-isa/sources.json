@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "id": "cdna5-isa",
+      "generation": "CDNA5",
+      "kind": "isa",
+      "title": "AMD Instinct CDNA5 Instruction Set Architecture",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-cdna5-instruction-set-architecture.pdf"
+    },
+    {
+      "id": "cdna4-isa",
+      "generation": "CDNA4",
+      "kind": "isa",
+      "title": "AMD Instinct MI350/CDNA4 Instruction Set Architecture",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-cdna4-instruction-set-architecture.pdf"
+    },
+    {
+      "id": "cdna3-isa",
+      "generation": "CDNA3",
+      "kind": "isa",
+      "title": "AMD Instinct MI300/CDNA3 Instruction Set Architecture",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf"
+    },
+    {
+      "id": "cdna2-isa",
+      "generation": "CDNA2",
+      "kind": "isa",
+      "title": "AMD Instinct MI200/CDNA2 Instruction Set Architecture",
+      "url": "https://www.amd.com/system/files/TechDocs/instinct-mi200-cdna2-instruction-set-architecture.pdf"
+    },
+    {
+      "id": "cdna1-isa",
+      "generation": "CDNA1",
+      "kind": "isa",
+      "title": "AMD Instinct MI100/CDNA1 Shader Instruction Set Architecture",
+      "url": "https://www.amd.com/system/files/TechDocs/instinct-mi100-cdna1-shader-instruction-set-architecture%C2%A0.pdf"
+    },
+    {
+      "id": "cdna-white-paper",
+      "generation": "CDNA",
+      "kind": "white-paper",
+      "title": "AMD CDNA Architecture white paper",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-business-docs/white-papers/amd-cdna-white-paper.pdf"
+    }
+  ]
+}

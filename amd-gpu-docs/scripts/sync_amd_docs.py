@@ -31,7 +31,7 @@ CACHE_DIR = SKILL_DIR / "cache"
 SOURCES_FILE = SKILL_DIR / "sources.json"
 MANIFEST_FILE = CACHE_DIR / "manifest.json"
 INDEX_FILE = CACHE_DIR / "INDEX.md"
-USER_AGENT = "agent-gpu-skills-amd-docs/1.0 (+https://github.com/OpenDarrenlu/agent-gpu-skills)"
+USER_AGENT = "Mozilla/5.0 (compatible; agent-gpu-skills-amd-docs/1.0)"
 
 HTML_EXTENSIONS = {"", ".html", ".htm"}
 SKIP_SUFFIXES = {
@@ -47,6 +47,7 @@ SKIP_PATH_PARTS = (
 PDF_HOSTS = {"www.amd.com", "docs.amd.com"}
 SITEMAP_ONLY_HOSTS = {"gpuopen.com"}
 WRITE_LOCK = threading.Lock()
+PDF_RANGE_CHUNK_BYTES = 1024 * 1024
 
 
 @dataclass
@@ -319,6 +320,43 @@ def sitemap_urls(url: str) -> list[str]:
     ]
 
 
+def download_pdf_by_ranges(url: str, target: Path) -> None:
+    """Assemble an official PDF when a legacy AMD CDN full GET times out."""
+    probe = Request(url, headers={"User-Agent": USER_AGENT, "Range": "bytes=0-0"})
+    with urlopen(probe, timeout=60) as response:
+        content_range = response.headers.get("Content-Range", "")
+        content_length = response.headers.get("Content-Length")
+        match = re.search(r"/([0-9]+)$", content_range)
+        total = int(match.group(1)) if match else int(content_length or 0)
+        if total <= 0:
+            raise RuntimeError("Range endpoint did not provide a total PDF size")
+        response.read(1)
+
+    with target.open("wb") as output:
+        for start in range(0, total, PDF_RANGE_CHUNK_BYTES):
+            end = min(total - 1, start + PDF_RANGE_CHUNK_BYTES - 1)
+            expected = end - start + 1
+            for attempt in range(4):
+                request = Request(
+                    url,
+                    headers={
+                        "User-Agent": USER_AGENT,
+                        "Range": f"bytes={start}-{end}",
+                    },
+                )
+                try:
+                    with urlopen(request, timeout=90) as response:
+                        chunk = response.read()
+                    if len(chunk) != expected:
+                        raise RuntimeError(f"expected {expected} bytes, received {len(chunk)}")
+                    output.write(chunk)
+                    break
+                except (HTTPError, URLError, TimeoutError, RuntimeError):
+                    if attempt == 3:
+                        raise
+                    time.sleep(min(15.0, 1.5 * (2**attempt)))
+
+
 def download_pdf(url: str, refresh: bool) -> dict[str, object]:
     target = local_path(CACHE_DIR / "pdfs", url, ".pdf")
     if target.exists() and target.stat().st_size > 0 and not refresh:
@@ -326,12 +364,18 @@ def download_pdf(url: str, refresh: bool) -> dict[str, object]:
     target.parent.mkdir(parents=True, exist_ok=True)
     temp = target.with_name(f".{target.name}.{os.getpid()}.{threading.get_ident()}.part")
     command = [
-        "curl", "--fail", "--location", "--retry", "2", "--retry-delay", "2",
-        "--connect-timeout", "15", "--max-time", "180", "--silent", "--show-error",
+        "curl", "--fail", "--location", "--http1.1", "--retry", "2", "--retry-all-errors",
+        "--retry-delay", "2", "--connect-timeout", "15", "--max-time", "90", "--silent", "--show-error",
         "--output", str(temp), url,
     ]
     try:
-        subprocess.run(command, check=True)
+        try:
+            if "/system/files/TechDocs/" in urlparse(url).path:
+                raise RuntimeError("legacy AMD CDN path")
+            subprocess.run(command, check=True)
+        except (FileNotFoundError, subprocess.CalledProcessError, RuntimeError) as exc:
+            print(f"  PDF full download failed; trying Range fallback for {url} ({exc})", file=sys.stderr)
+            download_pdf_by_ranges(url, temp)
         if not temp.exists() or temp.stat().st_size == 0:
             raise RuntimeError("downloaded PDF is empty")
         temp.replace(target)
@@ -341,11 +385,11 @@ def download_pdf(url: str, refresh: bool) -> dict[str, object]:
             temp.unlink()
 
 
-def selected_sources(config: dict[str, object], profile: str) -> tuple[list[dict], list[dict], list[dict]]:
+def selected_sources(config: dict[str, object], profile: str) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     def pick(key: str) -> list[dict]:
         return [item for item in config.get(key, []) if profile in item.get("profiles", [])]
 
-    return pick("web_roots"), pick("sitemaps"), pick("pdf_discovery_pages")
+    return pick("web_roots"), pick("sitemaps"), pick("pdf_discovery_pages"), pick("pdf_seeds")
 
 
 def write_index(profile: str, documents: dict[str, dict], pdfs: dict[str, dict], errors: list[dict], config: dict) -> None:
@@ -389,6 +433,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--refresh", action="store_true", help="refetch files already in the local cache")
     parser.add_argument("--include-pdfs", action="store_true")
     parser.add_argument("--accept-document-terms", action="store_true")
+    parser.add_argument(
+        "--pdf-url", action="append", default=[],
+        help="explicit official PDF URL; repeat for multiple URLs (requires --include-pdfs)",
+    )
     parser.add_argument("--list-sources", action="store_true")
     return parser.parse_args()
 
@@ -401,11 +449,13 @@ def main() -> int:
         raise SystemExit("--max-pages must be >= 0")
     if args.include_pdfs and not args.accept_document_terms:
         raise SystemExit("--include-pdfs requires --accept-document-terms")
+    if args.pdf_url and not args.include_pdfs:
+        raise SystemExit("--pdf-url requires --include-pdfs --accept-document-terms")
 
     config = load_json(SOURCES_FILE, {})
     if not isinstance(config, dict):
         raise SystemExit(f"invalid sources file: {SOURCES_FILE}")
-    roots, sitemaps, discovery_pages = selected_sources(config, args.profile)
+    roots, sitemaps, discovery_pages, pdf_seeds = selected_sources(config, args.profile)
 
     if args.list_sources:
         for item in roots:
@@ -414,6 +464,8 @@ def main() -> int:
             print(f"sitemap {item['id']:<20} {item['url']}")
         for item in discovery_pages:
             print(f"pdf-seed {item['id']:<17} {item['url']}")
+        for item in pdf_seeds:
+            print(f"pdf-url  {item['id']:<18} {item['url']}")
         for item in config.get("local_roots", []):
             print(f"local   {item['id']:<20} {item['relative_path']}")
         return 0
@@ -432,7 +484,22 @@ def main() -> int:
     pending = deque(dict.fromkeys(seeds))
     seen: set[str] = set()
     documents: dict[str, dict] = {}
-    pdf_urls: set[str] = set()
+    pdf_urls: set[str] = {
+        canonicalize(item["url"])
+        for item in pdf_seeds
+    }
+    pdf_urls.update(canonicalize(url) for url in args.pdf_url)
+    invalid_pdf_urls = [
+        url for url in sorted(pdf_urls)
+        if urlparse(url).scheme != "https"
+        or not urlparse(url).path.lower().endswith(".pdf")
+        or urlparse(url).netloc not in PDF_HOSTS
+    ]
+    if invalid_pdf_urls:
+        raise SystemExit(
+            "explicit PDF URLs must be HTTPS .pdf URLs hosted by www.amd.com or docs.amd.com: "
+            + ", ".join(invalid_pdf_urls)
+        )
     errors = list(sitemap_errors)
 
     print(f"AMD docs sync: profile={args.profile}, workers={args.workers}, initial_pages={len(pending)}")

@@ -7,8 +7,8 @@ description: >-
   asks for AMD or ROCm documentation, APIs, programming guides, library/tool
   behavior, architecture references, compatibility, installation, examples,
   or wants to download, index, search, compare, or study AMD technical
-  material locally. For exact CDNA4 opcode and encoding questions, also use
-  amd-instinct-cdna4-isa.
+  material locally. For exact CDNA1 through CDNA5 opcode and encoding
+  questions, also use amd-instinct-isa.
 triggers:
   - "AMD documentation"
   - "AMD docs"
@@ -45,6 +45,8 @@ GPU developers:
 - in the `all` profile: ROCm blogs, Ryzen AI docs, Quark docs, and GPUOpen;
 - the local `repos/amd-skills/skills/` catalog;
 - optionally, official AMD PDFs discovered from those pages.
+- explicitly cataloged official PDF seeds, including documents not yet linked
+  from a documentation landing page.
 
 It intentionally excludes private/support-portal content, product marketing,
 community posts, unrelated CPU/FPGA material, hidden preview versions blocked
@@ -77,6 +79,15 @@ Specification Agreements or redistribution restrictions:
 ```bash
 python3 scripts/sync_amd_docs.py --profile all \
   --include-pdfs --accept-document-terms
+```
+
+Add a newly published official AMD PDF immediately, even before it appears in
+the configured catalogs:
+
+```bash
+python3 scripts/sync_amd_docs.py --profile core \
+  --include-pdfs --accept-document-terms \
+  --pdf-url https://www.amd.com/path/to/new-document.pdf
 ```
 
 The downloader only creates files under `cache/`, which is ignored by Git.
@@ -128,8 +139,8 @@ HTML fallback text.
 5. For performance claims, use documentation to form a hypothesis, then ask
    for the smallest relevant profile or benchmark. Documentation alone is not
    workload evidence.
-6. For exact CDNA4 opcode/encoding details, invoke
-   `amd-instinct-cdna4-isa/query-cdna4-isa.sh` and report the PDF page.
+6. For exact CDNA1-CDNA5 opcode/encoding details, invoke the
+   `amd-instinct-isa` query helper and report the PDF page.
 
 ## Local layout
 

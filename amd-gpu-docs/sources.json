@@ -52,6 +52,20 @@
       "profiles": ["core", "all"]
     }
   ],
+  "pdf_seeds": [
+    {
+      "id": "cdna5-isa",
+      "title": "AMD Instinct CDNA5 Instruction Set Architecture",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-cdna5-instruction-set-architecture.pdf",
+      "profiles": ["core", "all"]
+    },
+    {
+      "id": "cdna-white-paper",
+      "title": "AMD CDNA Architecture white paper",
+      "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-business-docs/white-papers/amd-cdna-white-paper.pdf",
+      "profiles": ["core", "all"]
+    }
+  ],
   "local_roots": [
     {
       "id": "amd-skills",

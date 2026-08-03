@@ -18,7 +18,7 @@ If a router points to a more specific skill, read that downstream skill before p
 
 - CUDA C++ / PTX / NVIDIA API / architecture docs: `cuda-skill`
 - AMD/ROCm/HIP documentation and broad local knowledge-base queries: `amd-gpu-docs`
-- AMD Instinct / CDNA4 ISA / AMD GPU assembly: `amd-instinct-cdna4-isa`
+- AMD Instinct / CDNA1-CDNA5 ISA / AMD GPU assembly: `amd-instinct-isa`
 - Triton / Gluon / Python GPU kernels: `triton-skill`
 - CUTLASS / CuTe / CuTeDSL / template GEMM: `cutlass-skill`
 - DeepGEMM / grouped GEMM / MoE GEMM / contiguous or masked expert layouts: `deepgemm-skill`
