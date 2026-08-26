@@ -1,7 +1,8 @@
 # Agent Guidance
 
-This repository is a skill bundle for GPU development agents. When working here,
-prefer the most specific installed skill before answering detailed technical questions.
+This repository is a skill bundle for GPU development agents and also includes the
+CCFA research-paper skill family. When working here, prefer the most specific
+installed skill before answering detailed technical questions.
 
 ## Skill Routing
 
@@ -27,9 +28,18 @@ If a router points to a more specific skill, read that downstream skill before p
 - Persistent kernel NCU diagnosis: `ncu-persistent-kernel-diagnosis`
 - Persistent kernel scheduling / CLC / Stream-K: `persistent-kernel-scheduling`
 - Persistent kernel utilization tuning: `persistent-kernel-utilization`
+- IKET in-kernel profiling for CuTe DSL kernels (run-iket, per-warp timelines): `iket-profiling`
 - Analytical GPU performance modeling: `nv-gpu-kernel-performance-modeling`
 - NCCL / NVSHMEM / GPUDirect / RDMA / collectives: `gpu-communication-libraries`
 - Colfax Research articles and reading order: `colfax-research-skill`
+
+## Research Paper Skill Routing
+
+For paper-project requests, use the most specific installed `ccf-*` skill from
+`repos/ccfa-skills`. Route idea shaping/review, literature work, experiment design,
+visual composition, writing, review, integrity auditing, submission checks, and
+rebuttals to their matching CCFA owner skill. Use `ccf-pipeline-orchestrator` for
+multi-stage coordination and `ccf-common` for the shared routing and artifact rules.
 
 ## Operating Rules
 

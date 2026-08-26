@@ -1,6 +1,6 @@
 #!/bin/bash
-# GPU Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills]
+# Agent Skill 安装脚本
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -28,6 +28,7 @@ INSTALL_VELOQ=true
 INSTALL_NVIDIA=true
 INSTALL_AMD=true
 INSTALL_CURSOR_SKILLS=true
+INSTALL_CCFA_SKILLS=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -38,11 +39,12 @@ while [[ $# -gt 0 ]]; do
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
         --no-amd-skills) INSTALL_AMD=false; shift ;;
         --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
+        --no-ccfa-skills) INSTALL_CCFA_SKILLS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]"
             echo ""
             echo "首次安装:"
-            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor skills)"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor/CCFA skills)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -58,6 +60,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
             echo "  --no-amd-skills   跳过 AMD 官方 skills（来自 amd/skills）"
             echo "  --no-cursor-skills 跳过 Saddss/cursor-skills 仓库中的 skills"
+            echo "  --no-ccfa-skills  跳过 mikubaka88/CCFA-Skills 论文研究 skills"
             exit 0
             ;;
         *) echo "未知参数: $1"; exit 1 ;;
@@ -106,6 +109,7 @@ SKILL_NAMES=(
     gpu-kernel-authoring-router
     llm-serving-router
     gpu-development-catchall
+    iket-profiling
 )
 SKILL_DIRS=(
     cuda_skill
@@ -127,6 +131,7 @@ SKILL_DIRS=(
     gpu-kernel-authoring-router
     llm-serving-router
     gpu-development-catchall
+    iket-profiling
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
@@ -330,6 +335,76 @@ install_to_agent() {
             echo "--- Cursor skills ---"
             echo "  跳过: 未找到 repos/cursor-skills/skills"
             echo "  提示: 运行 'git submodule update --init repos/cursor-skills' 或 'bash update-repos.sh cursor-skills'"
+            echo ""
+        fi
+    fi
+
+    # CCFA Skills 自动遍历安装。上游完整安装语义是复制所有 ccf-* 目录：
+    # 其中 17 个目录是 runtime skill，ccf-latex-templates 是项目脚手架依赖。
+    if [ "$INSTALL_CCFA_SKILLS" = true ]; then
+        ensure_submodule_path "ccfa-skills" "repos/ccfa-skills" "repos/ccfa-skills/ccf-common/SKILL.md" || true
+
+        local ccfa_base="$SCRIPT_DIR/repos/ccfa-skills"
+        local ccfa_installed=0
+        local ccfa_support_installed=0
+        local ccfa_skipped=0
+
+        if [ -d "$ccfa_base" ]; then
+            for ccfa_dir in "$ccfa_base"/ccf-*; do
+                [ -d "$ccfa_dir" ] || continue
+
+                local entry_name
+                entry_name="$(basename "$ccfa_dir")"
+                local target="$SKILL_DIR/$entry_name"
+
+                if [ -f "$ccfa_dir/SKILL.md" ] && is_local_skill "$entry_name"; then
+                    ccfa_skipped=$((ccfa_skipped + 1))
+                    continue
+                fi
+
+                if [ -L "$target" ]; then
+                    rm "$target"
+                elif [ -d "$target" ]; then
+                    rm -rf "$target"
+                elif [ -e "$target" ]; then
+                    rm "$target"
+                fi
+
+                if [ -f "$ccfa_dir/SKILL.md" ]; then
+                    if [ "$COPY_MODE" = true ]; then
+                        cp -r "$ccfa_dir" "$target"
+                    else
+                        mkdir -p "$target"
+                        cp "$ccfa_dir/SKILL.md" "$target/SKILL.md"
+                        for item in "$ccfa_dir"/*; do
+                            local basename_item
+                            basename_item="$(basename "$item")"
+                            [ "$basename_item" = "SKILL.md" ] && continue
+                            [ -L "$target/$basename_item" ] && rm "$target/$basename_item"
+                            ln -sf "$item" "$target/$basename_item" 2>/dev/null || true
+                        done
+                    fi
+                    ccfa_installed=$((ccfa_installed + 1))
+                else
+                    # 支撑目录不参与 skill 发现，混合模式可直接链接整个目录。
+                    if [ "$COPY_MODE" = true ]; then
+                        cp -r "$ccfa_dir" "$target"
+                    else
+                        ln -s "$ccfa_dir" "$target"
+                    fi
+                    ccfa_support_installed=$((ccfa_support_installed + 1))
+                fi
+            done
+
+            echo "--- CCFA Skills ($ccfa_installed 个) ---"
+            echo "  已安装 $ccfa_installed 个 CCFA runtime skill"
+            echo "  已安装 $ccfa_support_installed 个 CCFA 支撑目录"
+            echo "  (跳过与本地 skill 同名的 $ccfa_skipped 个)"
+            echo ""
+        else
+            echo "--- CCFA Skills ---"
+            echo "  跳过: 未找到 repos/ccfa-skills"
+            echo "  提示: 运行 'git submodule update --init repos/ccfa-skills' 或 'bash update-repos.sh ccfa-skills'"
             echo ""
         fi
     fi
@@ -565,6 +640,39 @@ verify_agent() {
         if [ $cursor_ok -gt 0 ] || [ $cursor_missing -gt 0 ]; then
             echo "  OK: Cursor skills $cursor_ok 个已安装, $cursor_missing 个缺失"
             PASS=$((PASS + 1))
+        fi
+    fi
+
+    # CCFA Skills 验证（包含无 SKILL.md 的 ccf-latex-templates 支撑目录）
+    if [ "$INSTALL_CCFA_SKILLS" = true ]; then
+        local ccfa_base="$SCRIPT_DIR/repos/ccfa-skills"
+        local ccfa_ok=0 ccfa_missing=0 ccfa_support_ok=0
+        if [ -d "$ccfa_base" ]; then
+            for ccfa_dir in "$ccfa_base"/ccf-*; do
+                [ -d "$ccfa_dir" ] || continue
+                local entry_name
+                entry_name="$(basename "$ccfa_dir")"
+                if [ -f "$ccfa_dir/SKILL.md" ]; then
+                    if [ -e "$SKILL_DIR/$entry_name/SKILL.md" ]; then
+                        ccfa_ok=$((ccfa_ok + 1))
+                    else
+                        ccfa_missing=$((ccfa_missing + 1))
+                    fi
+                elif [ -e "$SKILL_DIR/$entry_name" ]; then
+                    ccfa_support_ok=$((ccfa_support_ok + 1))
+                else
+                    ccfa_missing=$((ccfa_missing + 1))
+                fi
+            done
+        else
+            ccfa_missing=$((ccfa_missing + 1))
+        fi
+        if [ $ccfa_missing -eq 0 ] && [ $ccfa_ok -gt 0 ]; then
+            echo "  OK: CCFA Skills $ccfa_ok 个、支撑目录 $ccfa_support_ok 个已安装"
+            PASS=$((PASS + 1))
+        else
+            echo "  缺失: CCFA Skills $ccfa_missing 项（已安装 runtime skill $ccfa_ok 个）"
+            FAIL=$((FAIL + 1))
         fi
     fi
 

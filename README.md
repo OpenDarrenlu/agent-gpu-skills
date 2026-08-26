@@ -1,6 +1,6 @@
 # agent-gpu-skills
 
-GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini CLI。
+GPU 开发与科研论文 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini CLI。
 
 | Skill | 层级 | 使用场景 |
 |:------|:-----|:---------|
@@ -16,6 +16,7 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 | **persistent-kernel-scheduling** | 参考资料 (调度策略) | Persistent Kernel 调度策略：Static/Dynamic/CLC/Stream-K/尾效决策树 |
 | **persistent-kernel-utilization** | 参考资料 (极致优化) | Persistent Kernel 利用率优化：warp spec、multistage、TMA multicast、setmaxnreg |
 | **ncu-report-skill** | 参考资料 (NCU 分析) | B200 / sm_100 上用 NCU profile kernel、诊断瓶颈、写优化计划 |
+| **iket-profiling** | 性能分析 (kernel 内时间线) | CuTe DSL kernel 内 IKET 打点 + run-iket：per-warp 时间线、TMA/MMA 重叠、pipeline/mbarrier 等待定位 |
 | **gpu-performance-router** | 路由 (性能) | 用户没点名 skill 时，将 GPU 性能/NCU/NSYS/利用率/瓶颈问题分流到具体 skill |
 | **gpu-kernel-authoring-router** | 路由 (写 kernel) | 将 CUDA/Triton/CUTLASS/CuTe/GEMM/attention kernel 写作问题分流到具体 skill |
 | **llm-serving-router** | 路由 (LLM Serving) | 将 SGLang/KV cache/attention backend/MoE/吞吐延迟问题分流到具体 skill |
@@ -31,6 +32,8 @@ GPU 开发 Agent Skill 集合，适用于 Cursor / Claude Code / Codex / Gemini 
 > **Cursor Skills**: 另包含 [Saddss/cursor-skills](https://github.com/Saddss/cursor-skills) 仓库中的通用开发、性能分析、计划/评审等 skill。该仓库作为 submodule 位于 `repos/cursor-skills/`，通过 `bash update-repos.sh cursor-skills` 获取/更新，`bash install.sh` 默认安装。加 `--no-cursor-skills` 可跳过。
 
 > **AMD Skills**: 另包含 AMD 官方 [amd/skills](https://github.com/amd/skills) 仓库中的 AMD 工作流 skills（ROCm/vLLM、Instinct 部署、Magpie、TraceLens、Ryzen AI 等）。该仓库作为 submodule 位于 `repos/amd-skills/`，通过 `bash update-repos.sh amd-skills` 获取/更新，`bash install.sh` 默认安装。加 `--no-amd-skills` 可跳过。
+
+> **CCFA Skills**: 另包含 [mikubaka88/CCFA-Skills](https://github.com/mikubaka88/CCFA-Skills) 的 17 个 CCF-A 论文研究 runtime skill（idea、文献、实验、科研绘图、写作、评审、审计、投稿与 rebuttal）及 LaTeX 模板支撑目录。该仓库作为 submodule 位于 `repos/ccfa-skills/`，通过 `bash update-repos.sh ccfa-skills` 获取/更新，`bash install.sh` 默认安装。加 `--no-ccfa-skills` 可跳过。
 
 > **AMD 文档知识库**: `amd-gpu-docs` 会把当前公开的 ROCm/Instinct 技术目录及可选的 ROCm Blog、Ryzen AI、Quark、GPUOpen 页面保存到本地 Git-ignored cache，并与 `repos/amd-skills/skills/` 一起检索。运行 `python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile core`（或 `all`）同步，运行 `python3 amd-gpu-docs/scripts/query_amd_docs.py "hipGraph"` 查询。AMD 站点可能触发 Cloudflare 限流；脚本会重试并支持断点式增量运行，不能把失败页面当作已下载。PDF 必须显式传入 `--include-pdfs --accept-document-terms`，只保存在本地缓存，不提交或再分发。
 
@@ -74,8 +77,8 @@ bash bootstrap.sh --agent codex --no-nvidia-skills --no-amd-skills --no-veloq
 git clone --recursive git@github.com:OpenDarrenlu/agent-gpu-skills.git
 cd agent-gpu-skills
 
-# 1. 获取外部源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor skills
-#    注意: NVIDIA skills 有 200+ 个，AMD/Cursor skills 会持续更新，可选单独获取
+# 1. 获取外部源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor/CCFA skills
+#    注意: NVIDIA skills 有 200+ 个，AMD/Cursor/CCFA skills 会持续更新，可选单独获取
 bash update-repos.sh
 
 # 只获取 NVIDIA skills
@@ -87,11 +90,15 @@ bash update-repos.sh cursor-skills
 # 只获取 AMD skills
 bash update-repos.sh amd-skills
 
+# 只获取 CCFA Skills
+bash update-repos.sh ccfa-skills
+
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时会安装 VeloQ（veloq 二进制 + 两个 profiling skill）；加 --no-veloq 可跳过
 #    同时会安装 NVIDIA 官方 skills（200+ 个）；加 --no-nvidia-skills 可跳过
 #    同时会安装 AMD 官方 skills；加 --no-amd-skills 可跳过
 #    同时会安装 Cursor skills；加 --no-cursor-skills 可跳过
+#    同时会安装 CCFA Skills；加 --no-ccfa-skills 可跳过
 bash install.sh
 ```
 
@@ -142,7 +149,7 @@ agent-gpu-skills/
 ├── bootstrap.sh                     # 一条命令获取外部 repo 并安装/使能 skills
 ├── install.sh                       # 安装脚本 (支持 --agent cursor|claude|codex|gemini，含 VeloQ)
 ├── install-veloq.sh                 # VeloQ 最小封装 (veloq 二进制 + 两个 profiling skill)
-├── update-repos.sh                  # 克隆/更新外部 repo 与 submodule (triton, cutlass, DeepGEMM, sglang, veloq, NVIDIA/AMD/Cursor skills)
+├── update-repos.sh                  # 克隆/更新外部 repo 与 submodule (triton, cutlass, DeepGEMM, sglang, veloq, NVIDIA/AMD/Cursor/CCFA skills)
 ├── requirements-docs.txt            # CUDA 文档爬虫 Python 依赖
 ├── scrape_docs.py                   # CUDA 文档爬虫 (python3，可自动创建 .venv-docs)
 ├── cuda_skill/
@@ -182,6 +189,9 @@ agent-gpu-skills/
 │   ├── blackwell-cuda-programming.md
 │   ├── helpers/
 │   └── reference/
+├── iket-profiling/
+│   ├── SKILL.md                     # CuTe DSL kernel 内 IKET 打点 + run-iket per-warp 时间线
+│   └── UPSTREAM.md                  # 来源说明 (vendored from github.com/humanfia/iket-profiling-skill)
 ├── gpu-performance-router/
 │   └── SKILL.md                     # GPU 性能/Profiling 路由 skill
 ├── gpu-kernel-authoring-router/
@@ -208,11 +218,14 @@ agent-gpu-skills/
     │   └── plugins/nvidia-skills/skills/  # 额外插件 skill
     ├── cursor-skills/                 # Saddss/cursor-skills submodule
     │   └── skills/                    # 通用开发、性能分析、计划/评审等 skill
-    └── amd-skills/                    # amd/skills submodule
-        └── skills/                    # AMD 官方工作流 skills
+    ├── amd-skills/                    # amd/skills submodule
+    │   └── skills/                    # AMD 官方工作流 skills
+    └── ccfa-skills/                   # mikubaka88/CCFA-Skills submodule
+        ├── ccf-*/                     # 17 个论文研究 runtime skills
+        └── ccf-latex-templates/       # 项目脚手架所需会议模板
 ```
 
-`repos/nvidia-skills`、`repos/amd-skills` 与 `repos/cursor-skills` 是 submodule；新机器可用 `git clone --recursive` 直接拉取，或在普通 clone 后运行 `git submodule update --init --recursive` / `bash update-repos.sh`。
+`repos/nvidia-skills`、`repos/amd-skills`、`repos/cursor-skills` 与 `repos/ccfa-skills` 是 submodule；新机器可用 `git clone --recursive` 直接拉取，或在普通 clone 后运行 `git submodule update --init --recursive` / `bash update-repos.sh`。
 
 ## AMD skills 与多代 Instinct ISA
 
@@ -363,7 +376,8 @@ veloq stats trace.nsys-rep --limit 10 --format table
 
 - cuda-skill 的文档爬取方案受 [technillogue/ptx-isa-markdown](https://github.com/technillogue/ptx-isa-markdown) 启发。
 - NVIDIA 官方 skills 来自 [NVIDIA/skills](https://github.com/NVIDIA/skills) 仓库。
+- CCFA 论文研究 skills 来自 [mikubaka88/CCFA-Skills](https://github.com/mikubaka88/CCFA-Skills) 仓库。
 
 ## 许可
 
-CUDA 文档内容 (c) NVIDIA Corporation. Triton、CUTLASS、DeepGEMM、SGLang 源码遵循各自原始许可。NVIDIA skills 遵循其原始许可。
+CUDA 文档内容 (c) NVIDIA Corporation. Triton、CUTLASS、DeepGEMM、SGLang 源码遵循各自原始许可。NVIDIA 与 CCFA skills 遵循各自原始许可。
