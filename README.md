@@ -11,6 +11,7 @@ GPU 开发与科研论文 Agent Skill 集合，适用于 Cursor / Claude Code / 
 | **sglang-skill** | 应用层 (LLM Serving) | SGLang 推理引擎开发，KV cache、Attention backend |
 | **colfax-research-skill** | 参考资料 (技术文章) | 查 Colfax Research 文章：CUTLASS/CuTe、FlashAttention-2/3/4、Hopper/Blackwell 优化 |
 | **gpu-communication-libraries** | 参考资料 (通信库) | 查 NCCL/NVSHMEM/DeepEP/UCX/GIN 等 GPU 通信库特性、API、选型指南 |
+| **nccl-skill** | 专项参考 (NCCL) | NCCL API 用法、环境变量、hang 排查、算法/协议调优、net/tuner/profiler 插件、Device API/LSA/GIN、NCCL 源码内部 |
 | **nv-gpu-kernel-performance-modeling** | 参考资料 (性能建模) | GPU kernel 算子性能建模：分解、流水线设计、延迟预测、跨架构移植 |
 | **ncu-persistent-kernel-diagnosis** | 参考资料 (性能诊断) | 用 NCU 诊断 Persistent Kernel 的 SM/TC 空泡、流水线 stall、负载不均 |
 | **persistent-kernel-scheduling** | 参考资料 (调度策略) | Persistent Kernel 调度策略：Static/Dynamic/CLC/Stream-K/尾效决策树 |

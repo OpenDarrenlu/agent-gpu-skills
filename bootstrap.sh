@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "选项:"
             echo "  --no-update       跳过 update-repos.sh，只运行 install.sh"
-            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills"
+            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills、--no-ccfa-skills"
             exit 0
             ;;
         *)

@@ -97,6 +97,7 @@ SKILL_NAMES=(
     sglang-skill
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
+    nccl-skill
     gpu-communication-libraries
     ncu-persistent-kernel-diagnosis
     persistent-kernel-scheduling
@@ -119,6 +120,7 @@ SKILL_DIRS=(
     sglang_skill
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
+    nccl_skill
     gpu-communication-libraries
     ncu-persistent-kernel-diagnosis
     persistent-kernel-scheduling
@@ -531,6 +533,12 @@ verify_agent() {
     local SGLANG_REPO="$SKILL_DIR/sglang-skill/repos/sglang"
     check "$SGLANG_REPO/python/sglang/srt" "SGLang SRT core"
     check "$SGLANG_REPO/sgl-kernel/csrc" "sgl-kernel CUDA source"
+
+    local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
+    check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"
+    check "$NCCL_REPO/src/device" "NCCL device kernels"
+    check "$NCCL_REPO/plugins/net" "NCCL net plugin headers"
+    check "$SKILL_DIR/nccl-skill/references" "NCCL references"
 
     local PERF_SKILL="$SKILL_DIR/nv-gpu-kernel-performance-modeling"
     check "$PERF_SKILL/research" "性能建模: research"

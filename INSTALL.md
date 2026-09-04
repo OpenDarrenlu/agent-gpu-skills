@@ -37,19 +37,19 @@ bash bootstrap.sh --agent kimi
 可继续传入 `install.sh` 的选项：
 
 ```bash
-bash bootstrap.sh --agent codex --no-nvidia-skills --no-amd-skills --no-veloq
+bash bootstrap.sh --agent codex --no-nvidia-skills --no-amd-skills --no-ccfa-skills --no-veloq
 bash bootstrap.sh --agent cursor --copy
 ```
 
 如果需要手动分步执行：
 
 ```bash
-# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor skills + veloq 二进制
+# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor/CCFA skills + veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
-#    同时安装 NVIDIA skills、AMD skills、Cursor skills、GPU router skills
+#    同时安装 NVIDIA skills、AMD skills、Cursor skills、CCFA Skills、GPU router skills
 bash install.sh
 
 # 不想要 VeloQ 时:
@@ -57,6 +57,9 @@ bash install.sh --no-veloq
 
 # 不安装 AMD 官方 skills 时（本地多代 ISA skills 仍会安装）:
 bash install.sh --no-amd-skills
+
+# 不安装 CCFA 论文研究 skills 时:
+bash install.sh --no-ccfa-skills
 ```
 
 ## AMD 文档本地知识库
@@ -136,6 +139,17 @@ bash install.sh --agent kimi       # Kimi Code CLI
 ```bash
 bash install.sh --agent codex --dest /absolute/path/to/test-skills --no-veloq
 ```
+
+## CCFA 论文研究 Skills
+
+`install.sh` 默认从 `repos/ccfa-skills/` 安装 17 个 `ccf-*` runtime skill，并安装 `ccf-latex-templates` 支撑目录，保持上游完整安装语义。`install.sh` 会在 submodule 尚未初始化时自动初始化；也可以单独更新和安装：
+
+```bash
+bash update-repos.sh ccfa-skills
+bash install.sh --agent codex
+```
+
+如不需要论文 idea、文献、实验、科研绘图、写作、评审、投稿和 rebuttal 工作流，可传入 `--no-ccfa-skills`。
 
 ## AMD 官方 skills 与 Instinct ISA
 
@@ -223,9 +237,11 @@ bash update-repos.sh triton
 bash update-repos.sh cutlass
 bash update-repos.sh deepgemm
 bash update-repos.sh sglang
+bash update-repos.sh nccl
 bash update-repos.sh nvidia-skills
 bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
+bash update-repos.sh ccfa-skills
 
 # 只更新 veloq 二进制（skill 用 veloq self-update 或重跑 install.sh）
 bash update-repos.sh veloq

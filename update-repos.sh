@@ -3,16 +3,18 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nvidia-skills / amd-skills / cursor-skills)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nccl / nvidia-skills / amd-skills / cursor-skills / ccfa-skills)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   triton_skill/repos/triton/
 #   cutlass_skill/repos/cutlass/
 #   deepgemm-skill/repos/deepgemm/
 #   sglang_skill/repos/sglang/
+#   nccl_skill/repos/nccl/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/amd-skills/     (AMD skills submodule)
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
+#   repos/ccfa-skills/    (mikubaka88/CCFA-Skills submodule)
 
 set -e
 
@@ -174,6 +176,16 @@ sglang_dirs=(
     "test"
 )
 
+# NCCL sparse checkout 目录
+nccl_dirs=(
+    "src"
+    "plugins"
+    "contrib"
+    "bindings"
+    "docs"
+    "makefiles"
+)
+
 # VeloQ：装/更新 profile 查询 CLI 二进制（skill 由 install.sh 负责）。非致命。
 update_veloq() {
     echo ""
@@ -205,6 +217,9 @@ case "$TARGET" in
     sglang)
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         ;;
+    nccl)
+        clone_or_update "nccl" "nccl_skill" "https://github.com/NVIDIA/nccl.git" "master" "${nccl_dirs[@]}"
+        ;;
     veloq)
         update_veloq
         ;;
@@ -217,26 +232,31 @@ case "$TARGET" in
     cursor-skills)
         update_submodule "cursor-skills" "repos/cursor-skills"
         ;;
+    ccfa-skills)
+        update_submodule "ccfa-skills" "repos/ccfa-skills"
+        ;;
     all)
         clone_or_update "triton" "triton_skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "cutlass_skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         clone_recursive_repo "deepgemm" "deepgemm-skill" "https://github.com/deepseek-ai/DeepGEMM.git" "main"
         clone_or_update "sglang" "sglang_skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
+        clone_or_update "nccl" "nccl_skill" "https://github.com/NVIDIA/nccl.git" "master" "${nccl_dirs[@]}"
         update_veloq
         update_submodule "nvidia-skills" "repos/nvidia-skills"
         update_submodule "amd-skills" "repos/amd-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
+        update_submodule "ccfa-skills" "repos/ccfa-skills"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|veloq|nvidia-skills|amd-skills|cursor-skills|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|nccl|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|all]"
         exit 1
         ;;
 esac
 
 echo ""
 echo "=== 总览 ==="
-for sk in triton_skill cutlass_skill deepgemm-skill sglang_skill; do
+for sk in triton_skill cutlass_skill deepgemm-skill sglang_skill nccl_skill; do
     if [ -d "$SCRIPT_DIR/$sk/repos" ]; then
         du -sh "$SCRIPT_DIR/$sk/repos/"*/ 2>/dev/null
     fi
@@ -273,4 +293,12 @@ if [ -d "$SCRIPT_DIR/repos/cursor-skills" ]; then
         done
     fi
     echo "  Cursor skills 数量: $cursor_count"
+fi
+if [ -d "$SCRIPT_DIR/repos/ccfa-skills" ]; then
+    du -sh "$SCRIPT_DIR/repos/ccfa-skills" 2>/dev/null
+    ccfa_count=0
+    for d in "$SCRIPT_DIR/repos/ccfa-skills"/ccf-*/; do
+        [ -f "$d/SKILL.md" ] && ccfa_count=$((ccfa_count + 1))
+    done
+    echo "  CCFA runtime skills 数量: $ccfa_count"
 fi

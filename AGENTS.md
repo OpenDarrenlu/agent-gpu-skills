@@ -30,7 +30,8 @@ If a router points to a more specific skill, read that downstream skill before p
 - Persistent kernel utilization tuning: `persistent-kernel-utilization`
 - IKET in-kernel profiling for CuTe DSL kernels (run-iket, per-warp timelines): `iket-profiling`
 - Analytical GPU performance modeling: `nv-gpu-kernel-performance-modeling`
-- NCCL / NVSHMEM / GPUDirect / RDMA / collectives: `gpu-communication-libraries`
+- NCCL / NVSHMEM / GPUDirect / RDMA / collectives overview: `gpu-communication-libraries`
+- NCCL API / debugging / tuning / plugins / Device API / GIN / source internals: `nccl-skill`
 - Colfax Research articles and reading order: `colfax-research-skill`
 
 ## Research Paper Skill Routing
