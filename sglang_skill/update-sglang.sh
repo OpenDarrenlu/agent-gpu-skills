@@ -18,17 +18,14 @@ if [ "$1" = "--full" ]; then
 fi
 
 # sparse checkout 的目录列表
+# 注: 上游已重构 —— sgl-kernel/ 移至 python/sglang/kernels/aot/,
+# python/sglang/jit_kernel/ 移至 python/sglang/kernels/{jit,ops}/
 SPARSE_DIRS=(
     # Python 核心
     "python/sglang/srt"
-    "python/sglang/jit_kernel"
     "python/sglang/lang"
-    # CUDA/C++ kernels
-    "sgl-kernel/csrc"
-    "sgl-kernel/include"
-    "sgl-kernel/python"
-    "sgl-kernel/tests"
-    "sgl-kernel/benchmark"
+    # CUDA/C++ kernels (AOT) + JIT/ops kernels
+    "python/sglang/kernels"
     # 示例和文档
     "examples"
     "benchmark"
@@ -79,8 +76,9 @@ check "$REPO_DIR/python/sglang/srt/layers/attention" "SRT attention layers"
 check "$REPO_DIR/python/sglang/srt/models" "SRT models"
 check "$REPO_DIR/python/sglang/srt/managers" "SRT managers"
 check "$REPO_DIR/python/sglang/srt/mem_cache" "SRT mem_cache"
-check "$REPO_DIR/python/sglang/jit_kernel" "JIT kernels"
-check "$REPO_DIR/sgl-kernel/csrc" "sgl-kernel CUDA source"
+check "$REPO_DIR/python/sglang/kernels/jit" "JIT kernels"
+check "$REPO_DIR/python/sglang/kernels/ops" "kernel ops (Python)"
+check "$REPO_DIR/python/sglang/kernels/aot/csrc" "sgl-kernel CUDA source (kernels/aot)"
 check "$REPO_DIR/examples" "Examples"
 check "$REPO_DIR/docs" "Documentation"
 

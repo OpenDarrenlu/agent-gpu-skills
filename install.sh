@@ -532,7 +532,7 @@ verify_agent() {
 
     local SGLANG_REPO="$SKILL_DIR/sglang-skill/repos/sglang"
     check "$SGLANG_REPO/python/sglang/srt" "SGLang SRT core"
-    check "$SGLANG_REPO/sgl-kernel/csrc" "sgl-kernel CUDA source"
+    check "$SGLANG_REPO/python/sglang/kernels/aot/csrc" "sgl-kernel CUDA source (kernels/aot)"
 
     local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
     check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"

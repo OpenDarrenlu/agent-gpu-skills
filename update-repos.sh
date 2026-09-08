@@ -161,15 +161,12 @@ cutlass_dirs=(
 )
 
 # SGLang sparse checkout 目录
+# 注: 上游已重构 —— sgl-kernel/ 移至 python/sglang/kernels/aot/,
+# python/sglang/jit_kernel/ 移至 python/sglang/kernels/{jit,ops}/
 sglang_dirs=(
     "python/sglang/srt"
-    "python/sglang/jit_kernel"
+    "python/sglang/kernels"
     "python/sglang/lang"
-    "sgl-kernel/csrc"
-    "sgl-kernel/include"
-    "sgl-kernel/python"
-    "sgl-kernel/tests"
-    "sgl-kernel/benchmark"
     "examples"
     "benchmark"
     "docs"

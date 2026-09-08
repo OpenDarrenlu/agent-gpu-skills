@@ -305,8 +305,8 @@ NVIDIA CUDA 全套文档转换为可搜索的 Markdown:
 | 内容 | 路径 |
 |:-----|:-----|
 | SRT 推理引擎 | `sglang/python/sglang/srt/` |
-| JIT 内核 | `sglang/python/sglang/jit_kernel/` |
-| SGL-Kernel (CUDA) | `sglang/sgl-kernel/` |
+| JIT 内核 | `sglang/python/sglang/kernels/jit/`、`sglang/python/sglang/kernels/ops/` |
+| SGL-Kernel (CUDA) | `sglang/python/sglang/kernels/aot/` |
 
 ## colfax-research-skill
 

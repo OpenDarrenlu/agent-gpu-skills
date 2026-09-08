@@ -91,7 +91,7 @@ SGLANG_REPO/python/sglang/srt/
 ### JIT Kernels (Python CUDA/Triton Kernels)
 
 ```
-SGLANG_REPO/python/sglang/jit_kernel/
+SGLANG_REPO/python/sglang/kernels/ops/  (+ jit/ 下的 JIT csrc)
 ├── flash_attention/        # Flash Attention 自定义实现
 ├── flash_attention_v4.py   # Flash Attention v4
 ├── cutedsl_gdn.py          # CuTeDSL GDN kernel
@@ -107,10 +107,10 @@ SGLANG_REPO/python/sglang/jit_kernel/
 └── diffusion/              # Diffusion model kernels
 ```
 
-### sgl-kernel (C++/CUDA Custom Kernels)
+### sgl-kernel (C++/CUDA Custom Kernels，上游已移至 kernels/aot)
 
 ```
-SGLANG_REPO/sgl-kernel/
+SGLANG_REPO/python/sglang/kernels/aot/
 ├── csrc/
 │   ├── attention/          # Custom attention CUDA kernels
 │   ├── cutlass_extensions/ # CUTLASS GEMM extensions
@@ -207,7 +207,7 @@ rg "load_weight\|weight_map" $SGLANG_REPO/python/sglang/srt/model_loader/
 rg "TopK\|router\|expert" $SGLANG_REPO/python/sglang/srt/layers/moe/
 
 # MoE CUDA kernels
-rg "moe" $SGLANG_REPO/sgl-kernel/csrc/moe/
+rg "moe" $SGLANG_REPO/python/sglang/kernels/aot/csrc/moe/
 ```
 
 ### 量化
@@ -255,9 +255,9 @@ rg "disagg\|prefill_worker\|decode_worker" $SGLANG_REPO/python/sglang/srt/disagg
 | CUDA Graph | SRT compilation | `srt/compilation/` |
 | 模型加载 | SRT model_loader | `srt/model_loader/` |
 | 启动入口 | SRT entrypoints | `srt/entrypoints/` |
-| JIT Triton kernels | jit_kernel | `jit_kernel/` |
-| Custom CUDA kernels | sgl-kernel | `sgl-kernel/csrc/` |
-| CUTLASS extensions | sgl-kernel | `sgl-kernel/csrc/cutlass_extensions/` |
+| JIT kernels | kernels/jit, kernels/ops | `python/sglang/kernels/jit/`, `python/sglang/kernels/ops/` |
+| Custom CUDA kernels | sgl-kernel (kernels/aot) | `python/sglang/kernels/aot/csrc/` |
+| CUTLASS extensions | sgl-kernel (kernels/aot) | `python/sglang/kernels/aot/csrc/cutlass_extensions/` |
 | 前端 DSL | lang | `python/sglang/lang/` |
 | 使用示例 | examples | `examples/` |
 
