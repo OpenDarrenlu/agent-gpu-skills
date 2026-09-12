@@ -1,9 +1,9 @@
 [submodule "kernel-design-agents"]
 	path = kernel-design-agents
-	url = git@github.com:OpenDarrenlu/kernel-design-agents.git
+	url = https://github.com/OpenDarrenlu/kernel-design-agents.git
 [submodule "repos/cursor-skills"]
 	path = repos/cursor-skills
-	url = git@github.com:Saddss/cursor-skills.git
+	url = https://github.com/Saddss/cursor-skills.git
 [submodule "repos/nvidia-skills"]
 	path = repos/nvidia-skills
 	url = https://github.com/NVIDIA/skills.git
