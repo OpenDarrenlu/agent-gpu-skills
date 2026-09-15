@@ -22,6 +22,7 @@ GPU 开发与科研论文 Agent Skill 集合，适用于 Cursor / Claude Code / 
 | **gpu-kernel-authoring-router** | 路由 (写 kernel) | 将 CUDA/Triton/CUTLASS/CuTe/GEMM/attention kernel 写作问题分流到具体 skill |
 | **llm-serving-router** | 路由 (LLM Serving) | 将 SGLang/KV cache/attention backend/MoE/吞吐延迟问题分流到具体 skill |
 | **gpu-development-catchall** | 兜底 (任意 GPU 问题) | 最大化命中率：任何 GPU/CUDA/算子/性能/通信/推理相关问题先命中它，再路由到具体 skill |
+| **salary-negotiation-skill** | 职业发展 (薪资谈判) | 谈薪信息收集、策略制定、HR 压力场景模拟、Offer 评估与后续跟进 |
 | **amd-gpu-docs** | AMD 文档知识库 | 同步并检索 ROCm、HIP、Instinct、ROCm 组件、ROCm Blog、Ryzen AI、Quark、GPUOpen 与本地 AMD skills |
 | **amd-instinct-isa** | AMD 多代 ISA 参考 | 查询 CDNA1–CDNA5 指令、寄存器、LDS、内存、同步、矩阵指令和编码，并报告 PDF 页码 |
 | **amd-instinct-cdna4-isa** | AMD ISA 参考 | 按需检索 AMD 官方 CDNA4 Instruction Set Architecture PDF；回答指令、寄存器、LDS、内存、同步、矩阵指令和编码问题 |
@@ -201,6 +202,12 @@ agent-gpu-skills/
 │   └── SKILL.md                     # LLM Serving 路由 skill
 ├── gpu-development-catchall/
 │   └── SKILL.md                     # 兜底：任意 GPU 相关问题先命中它再路由
+├── salary-negotiation-skill/
+│   ├── SKILL.md                     # 谈薪全流程指导与 HR 场景模拟
+│   ├── references/                   # 薪资数据与谈判话术
+│   ├── scripts/                      # 薪资区间计算器
+│   ├── agents/openai.yaml            # Codex 显示配置
+│   └── assets/icon.svg               # Skill 图标
 ├── amd-gpu-docs/
 │   ├── SKILL.md                     # 广域 AMD/ROCm 本地知识库说明
 │   ├── sources.json                  # 官方资料源与 profile

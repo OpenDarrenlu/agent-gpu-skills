@@ -111,6 +111,7 @@ SKILL_NAMES=(
     llm-serving-router
     gpu-development-catchall
     iket-profiling
+    salary-negotiation-skill
 )
 SKILL_DIRS=(
     cuda_skill
@@ -134,6 +135,7 @@ SKILL_DIRS=(
     llm-serving-router
     gpu-development-catchall
     iket-profiling
+    salary-negotiation-skill
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）

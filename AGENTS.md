@@ -33,6 +33,7 @@ If a router points to a more specific skill, read that downstream skill before p
 - NCCL / NVSHMEM / GPUDirect / RDMA / collectives overview: `gpu-communication-libraries`
 - NCCL API / debugging / tuning / plugins / Device API / GIN / source internals: `nccl-skill`
 - Colfax Research articles and reading order: `colfax-research-skill`
+- Salary negotiation / offer negotiation / compensation coaching: `salary-negotiation-skill`
 
 ## Research Paper Skill Routing
 
