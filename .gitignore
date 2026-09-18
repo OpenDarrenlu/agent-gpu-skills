@@ -1,5 +1,5 @@
 # Sparse-checkout repos (use update-repos.sh to restore)
-*/repos/
+**/repos/
 
 # Python
 __pycache__/
@@ -10,12 +10,12 @@ __pycache__/
 .DS_Store
 
 # AMD CDNA4 ISA is fetched locally only; the official document is not vendored.
-amd-instinct-cdna4-isa/references/amd-instinct-cdna4-instruction-set-architecture.pdf
-amd-instinct-cdna4-isa/references/*.txt
+skills/other/amd-instinct-cdna4-isa/references/amd-instinct-cdna4-instruction-set-architecture.pdf
+skills/other/amd-instinct-cdna4-isa/references/*.txt
 
 # Multi-generation AMD Instinct ISA PDFs are licensed local references only.
-amd-instinct-isa/references/*.pdf
-amd-instinct-isa/references/manifest.json
+skills/other/amd-instinct-isa/references/*.pdf
+skills/other/amd-instinct-isa/references/manifest.json
 
 # AMD documentation mirror is always local; sources have mixed licenses/terms.
-amd-gpu-docs/cache/
+**/cache/

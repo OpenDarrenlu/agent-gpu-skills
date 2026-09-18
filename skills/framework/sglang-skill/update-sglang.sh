@@ -18,8 +18,8 @@ if [ "$1" = "--full" ]; then
 fi
 
 # sparse checkout 的目录列表
-# 注: 上游已重构 —— sgl-kernel/ 移至 python/sglang/kernels/aot/,
-# python/sglang/jit_kernel/ 移至 python/sglang/kernels/{jit,ops}/
+# 注: 上游已将 sgl-kernel 合并到 python/sglang/kernels/aot/，
+# 同时保留 python/sglang/kernels/{jit,ops} 的 Python kernel 入口。
 SPARSE_DIRS=(
     # Python 核心
     "python/sglang/srt"
@@ -37,6 +37,8 @@ if [ -d "$REPO_DIR/.git" ]; then
     echo "更新 SGLang 源码..."
     cd "$REPO_DIR"
     git pull --ff-only origin "$BRANCH" 2>/dev/null || git pull origin "$BRANCH"
+    git sparse-checkout init --cone >/dev/null 2>&1 || true
+    git sparse-checkout set "${SPARSE_DIRS[@]}"
     echo "更新完成."
 else
     echo "首次 clone SGLang 源码..."

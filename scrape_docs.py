@@ -1190,7 +1190,7 @@ class NsightDocsScraper(DocumentationScraper):
             print(f"  ⚠ ProfilingGuide.md not found in {self.output_dir}, skipping copy")
             return
 
-        ncu_skill_dir = Path("ncu-report-skill")
+        ncu_skill_dir = Path("skills/kernel/ncu-report-skill")
         refs_dir = ncu_skill_dir / "references"
         refs_dir.mkdir(parents=True, exist_ok=True)
         dst = refs_dir / "ProfilingGuide.md"
@@ -1280,7 +1280,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        help="Output directory (default: cuda_skill/references/<api>-docs)",
+        help="Output directory (default: skills/kernel/cuda-skill/references/<api>-docs)",
     )
     parser.add_argument(
         "--skip-download",
@@ -1295,7 +1295,7 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    refs_base = Path("cuda_skill/references")
+    refs_base = Path("skills/kernel/cuda-skill/references")
 
     if args.api_type == "all":
         all_apis = [

@@ -5,13 +5,15 @@ description: 检索和总结用户关注的知乎博主文章知识库。当用�
 
 # 知乎知识库检索 Skill
 
-本Skill用于检索用户关注的258位知乎博主的文章知识库（共1028篇文章，约612万字），并根据用户问题找到最相关的文章进行总结。
+本 Skill 用于检索用户关注的知乎博主文章知识库，并根据用户问题找到最相关的文章进行总结。
 
 ## 知识库位置
 
-- 文章存储: `/Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/articles/`
-- 索引数据库: `/Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/index/zhihu_articles.db`
-- 搜索脚本: `/Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/scripts/zhihu_search.py`
+所有路径都相对于当前 `SKILL.md` 所在的 skill 目录：
+
+- 文章存储: `articles/`
+- 索引数据库: `index/zhihu_articles.db`
+- 搜索脚本: `scripts/zhihu_search.py`
 
 ## 使用流程
 
@@ -20,7 +22,8 @@ description: 检索和总结用户关注的知乎博主文章知识库。当用�
 当用户提出技术问题时，先用搜索脚本找到相关文章：
 
 ```bash
-python3 /Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/scripts/zhihu_search.py search "<关键词>" <数量>
+SKILL_DIR="/path/to/zhihu-knowledge-base"
+python3 "$SKILL_DIR/scripts/zhihu_search.py" search "<关键词>" <数量>
 ```
 
 关键词建议：
@@ -33,7 +36,7 @@ python3 /Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/scripts/zh
 获取最相关文章的完整内容：
 
 ```bash
-python3 /Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/scripts/zhihu_search.py content <article_id>
+python3 "$SKILL_DIR/scripts/zhihu_search.py" content <article_id>
 ```
 
 ### 3. 总结核心思想

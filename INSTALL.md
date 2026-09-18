@@ -49,7 +49,7 @@ bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
-#    同时安装 NVIDIA skills、AMD skills、Cursor skills、CCFA Skills、GPU router skills
+#    同时安装 TileLang skills、NVIDIA skills、AMD skills、Cursor skills、CCFA Skills、GPU router skills
 bash install.sh
 
 # 不想要 VeloQ 时:
@@ -60,6 +60,9 @@ bash install.sh --no-amd-skills
 
 # 不安装 CCFA 论文研究 skills 时:
 bash install.sh --no-ccfa-skills
+
+# 不安装 TileLang/CUDA 工作流 skills 时:
+bash install.sh --no-tilelang-skills
 ```
 
 ## AMD 文档本地知识库
@@ -68,14 +71,14 @@ bash install.sh --no-ccfa-skills
 
 ```bash
 # ROCm + Instinct 核心目录
-python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile core
+python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
 
 # 加上 ROCm Blog、Ryzen AI、Quark、GPUOpen 当前技术目录
-python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile all
+python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile all
 
 # 查询本地文档和 amd/skills
-python3 amd-gpu-docs/scripts/query_amd_docs.py "hipGraph"
-python3 amd-gpu-docs/scripts/query_amd_docs.py "gfx950" --limit 20
+python3 skills/other/amd-gpu-docs/scripts/query_amd_docs.py "hipGraph"
+python3 skills/other/amd-gpu-docs/scripts/query_amd_docs.py "gfx950" --limit 20
 ```
 
 同步器是增量式的：已存在的页面默认复用，`--refresh` 才会重新下载；`--workers 4` 等参数可降低站点压力。AMD 文档站偶尔会返回 Cloudflare `429` challenge，脚本会对 429/5xx/超时退避重试并保留已成功页面，稍后可重新运行续抓。`all` 表示当前公开技术目录，不包含私有支持门户、无限历史版本或营销页面。
@@ -83,11 +86,11 @@ python3 amd-gpu-docs/scripts/query_amd_docs.py "gfx950" --limit 20
 PDF 默认不抓取。只有在逐份确认 AMD 的 Specification Agreement/文档许可后，才运行：
 
 ```bash
-python3 amd-gpu-docs/scripts/sync_amd_docs.py --profile all \
+python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile all \
   --include-pdfs --accept-document-terms
 ```
 
-PDF 以及 HTML/Markdown 缓存均位于 `amd-gpu-docs/cache/`，该目录不会进入 Git；查询 PDF 需要额外安装 `pdfplumber`，然后加 `--include-pdfs`。
+PDF 以及 HTML/Markdown 缓存均位于 `skills/other/amd-gpu-docs/cache/`，该目录不会进入 Git；查询 PDF 需要额外安装 `pdfplumber`，然后加 `--include-pdfs`。
 
 ## 安装目标
 
@@ -151,6 +154,25 @@ bash install.sh --agent codex
 
 如不需要论文 idea、文献、实验、科研绘图、写作、评审、投稿和 rebuttal 工作流，可传入 `--no-ccfa-skills`。
 
+## TileLang/CUDA Skills
+
+本仓库通过 `repos/tilelang-cuda-skills/` 接入
+[`sablin39/tilelang-cuda-skills`](https://github.com/sablin39/tilelang-cuda-skills)。
+它提供 TileLang kernel 编写、调试、优化、profiling、PyTorch baseline 分析、
+前后向测试、设计文档和 TileFoundry 工作流。`install.sh` 默认安装这些
+TileLang skills，并保留上游提交的 submodule pin 以便复现。
+
+上游仓库中的 `cuda_skill` 与本仓库的 `cuda-skill` 职责重叠，因此不额外
+安装第二份 CUDA skill。TileLang skills 仍可调用本地 `cuda-skill`、NCU
+和 NSYS 相关 skills。
+
+如需单独更新：
+
+```bash
+bash update-repos.sh tilelang-cuda-skills
+bash install.sh --agent codex
+```
+
 ## AMD 官方 skills 与 Instinct ISA
 
 `install.sh` 默认从 `repos/amd-skills/skills/` 安装 AMD 官方稳定 skills；可用 `--no-amd-skills` 跳过。`bootstrap.sh` 会自动初始化该 submodule，也可以单独运行：
@@ -163,8 +185,8 @@ bash install.sh --agent codex
 `amd-instinct-cdna4-isa` 是本仓库额外提供的 ISA 检索 skill。由于 AMD 官方 PDF 的 Specification Agreement 限制复制和再分发，PDF 不随 Git 仓库或 `install.sh` 分发。接受 AMD 条款后，在源仓库或安装后的 skill 目录运行：
 
 ```bash
-bash amd-instinct-cdna4-isa/download-cdna4-isa.sh
-bash amd-instinct-cdna4-isa/query-cdna4-isa.sh "v_mfma"
+bash skills/other/amd-instinct-cdna4-isa/download-cdna4-isa.sh
+bash skills/other/amd-instinct-cdna4-isa/query-cdna4-isa.sh "v_mfma"
 ```
 
 检索脚本优先使用 `pdftotext`（macOS: `brew install poppler`；Debian/Ubuntu: `apt install poppler-utils`），没有时可回退到 Python `pdfplumber`。提取文本不会提交到仓库；`pdftotext` 路径只使用临时文件并在脚本退出时删除。
@@ -172,23 +194,23 @@ bash amd-instinct-cdna4-isa/query-cdna4-isa.sh "v_mfma"
 多代 AMD Instinct ISA 使用 `amd-instinct-isa`。它维护 CDNA1、CDNA2、CDNA3、CDNA4 和 CDNA5 的官方入口，并允许在新 PDF 尚未加入目录时用 `--url` 登记。用户确认文档条款后可执行：
 
 ```bash
-python3 amd-instinct-isa/scripts/amd_instinct_isa.py list
-python3 amd-instinct-isa/scripts/amd_instinct_isa.py download cdna5-isa \
+python3 skills/other/amd-instinct-isa/scripts/amd_instinct_isa.py list
+python3 skills/other/amd-instinct-isa/scripts/amd_instinct_isa.py download cdna5-isa \
   --accept-document-terms
-python3 amd-instinct-isa/scripts/amd_instinct_isa.py query "WMMA" \
+python3 skills/other/amd-instinct-isa/scripts/amd_instinct_isa.py query "WMMA" \
   --document cdna5-isa
 ```
 
 下载新一代 ISA 或 white paper：
 
 ```bash
-python3 amd-instinct-isa/scripts/amd_instinct_isa.py download \
+python3 skills/other/amd-instinct-isa/scripts/amd_instinct_isa.py download \
   --url https://www.amd.com/path/to/new-document.pdf \
   --id cdna6-isa --title "AMD Instinct CDNA6 ISA" \
   --accept-document-terms
 ```
 
-下载的 PDF 只保存在 `amd-instinct-isa/references/`，不会提交到 Git。`amd-instinct-cdna4-isa` 作为旧命令入口继续保留。
+下载的 PDF 只保存在 `skills/other/amd-instinct-isa/references/`，不会提交到 Git。`amd-instinct-cdna4-isa` 作为旧命令入口继续保留。
 
 ## VeloQ（profile 查询 CLI）
 

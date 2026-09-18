@@ -107,7 +107,7 @@ SGLANG_REPO/python/sglang/kernels/ops/  (+ jit/ 下的 JIT csrc)
 └── diffusion/              # Diffusion model kernels
 ```
 
-### sgl-kernel (C++/CUDA Custom Kernels，上游已移至 kernels/aot)
+### sgl-kernel (C++/CUDA Custom Kernels，已合并到 kernels/aot)
 
 ```
 SGLANG_REPO/python/sglang/kernels/aot/
@@ -207,7 +207,7 @@ rg "load_weight\|weight_map" $SGLANG_REPO/python/sglang/srt/model_loader/
 rg "TopK\|router\|expert" $SGLANG_REPO/python/sglang/srt/layers/moe/
 
 # MoE CUDA kernels
-rg "moe" $SGLANG_REPO/python/sglang/kernels/aot/csrc/moe/
+rg "moe" $SGLANG_REPO/python/sglang/kernels/aot/csrc/
 ```
 
 ### 量化

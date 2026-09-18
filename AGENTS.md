@@ -1,51 +1,77 @@
 # Agent Guidance
 
-This repository is a skill bundle for GPU development agents and also includes the
-CCFA research-paper skill family. When working here, prefer the most specific
-installed skill before answering detailed technical questions.
+This repository is an Agent Skill bundle. Local skills are organized under
+`skills/kernel`, `skills/framework`, `skills/other`, and `skills/routers`;
+external catalogs remain under `repos/` and are installed without being copied
+into this repository.
 
-## Skill Routing
+## Routing
 
-Use a router first when the user does not name a skill:
+When the user does not name a skill, start with `gpu-development-catchall`.
+Choose the narrowest route:
 
-- `gpu-development-catchall`: any GPU/CUDA/ROCm/kernel/performance/communication/serving question where the right domain is unclear; it routes to the most specific skill.
-- `gpu-performance-router`: GPU profiling, "why is this slow", NCU/NSYS, SM/TC utilization, stalls, occupancy, roofline, B200/H100/A100 optimization.
-- `gpu-kernel-authoring-router`: writing or changing CUDA, PTX, Triton, Gluon, CUTLASS, CuTe, GEMM, attention, or fused GPU kernels.
-- `llm-serving-router`: SGLang, LLM inference, KV cache, attention backends, FlashInfer, MLA, MoE, throughput, latency, benchmarks, capacity planning.
+- `gpu-kernel-authoring-router`: write or change CUDA, PTX, Triton, Gluon,
+  CUTLASS, CuTe, GEMM, attention, reduction, or fused kernels.
+- `gpu-performance-router`: a kernel is slow, NCU/NSYS evidence, occupancy,
+  warp stalls, SM/TC utilization, roofline, persistent-kernel diagnosis, or
+  optimization planning.
+- `gpu-framework-router`: framework/runtime behavior, SGLang/vLLM serving,
+  PyTorch profiler, end-to-end benchmark, launch/scheduling overhead, or
+  framework-level Nsight analysis.
+- `llm-serving-router`: LLM serving, KV cache, attention backends, batching,
+  capacity planning, TTFT/TBT, deployment, and serving benchmarks.
 
-If a router points to a more specific skill, read that downstream skill before producing the detailed answer or code.
+If a router points to a downstream skill, read that skill's `SKILL.md` before
+producing detailed advice or code.
 
 ## Direct Skill Preferences
 
-- CUDA C++ / PTX / NVIDIA API / architecture docs: `cuda-skill`
-- AMD/ROCm/HIP documentation and broad local knowledge-base queries: `amd-gpu-docs`
-- AMD Instinct / CDNA1-CDNA5 ISA / AMD GPU assembly: `amd-instinct-isa`
+### Kernel
+
+- CUDA C++ / PTX / NVIDIA API: `cuda-skill`
 - Triton / Gluon / Python GPU kernels: `triton-skill`
 - CUTLASS / CuTe / CuTeDSL / template GEMM: `cutlass-skill`
-- DeepGEMM / grouped GEMM / MoE GEMM / contiguous or masked expert layouts: `deepgemm-skill`
-- SGLang serving/runtime/kernel integration: `sglang-skill`
-- Nsight Compute / `.ncu-rep` / kernel bottleneck reports: `ncu-report-skill`
+- DeepGEMM / grouped GEMM / MoE GEMM: `deepgemm-skill`
+- Blackwell/Hopper kernel wiki and upstream PR references: `KernelWiki`
+- Nsight Compute / `.ncu-rep`: `ncu-report-skill`
 - Persistent kernel NCU diagnosis: `ncu-persistent-kernel-diagnosis`
-- Persistent kernel scheduling / CLC / Stream-K: `persistent-kernel-scheduling`
-- Persistent kernel utilization tuning: `persistent-kernel-utilization`
-- IKET in-kernel profiling for CuTe DSL kernels (run-iket, per-warp timelines): `iket-profiling`
-- Analytical GPU performance modeling: `nv-gpu-kernel-performance-modeling`
-- NCCL / NVSHMEM / GPUDirect / RDMA / collectives overview: `gpu-communication-libraries`
-- NCCL API / debugging / tuning / plugins / Device API / GIN / source internals: `nccl-skill`
-- Colfax Research articles and reading order: `colfax-research-skill`
-- Salary negotiation / offer negotiation / compensation coaching: `salary-negotiation-skill`
+- Persistent scheduling / CLC / Stream-K: `persistent-kernel-scheduling`
+- Persistent utilization / pipeline bubbles: `persistent-kernel-utilization`
+- IKET CuTe DSL timelines: `iket-profiling`
+- Analytical kernel modeling: `nv-gpu-kernel-performance-modeling`
+- TileLang kernel authoring: `writing-tilelang-kernels`
+- TileLang debugging/lowering: `debugging-tilelang-programs`
+- TileLang optimization loop: `tilelang-optimization-loop`
+- TileLang kernel profiling: `profiling-tilelang-programs`
+- TileLang PyTorch baseline profiling: `torch-profiling-tilelang-programs`
+- TileLang forward/backward validation: `testing-fwd-bwd-kernels`
+- TileFoundry HIR and placement design: `designing-with-tilefoundry`
+- CUTLASS/CuTe/FlashAttention research: `colfax-research-skill`
 
-## Research Paper Skill Routing
+### Framework
 
-For paper-project requests, use the most specific installed `ccf-*` skill from
-`repos/ccfa-skills`. Route idea shaping/review, literature work, experiment design,
-visual composition, writing, review, integrity auditing, submission checks, and
-rebuttals to their matching CCFA owner skill. Use `ccf-pipeline-orchestrator` for
-multi-stage coordination and `ccf-common` for the shared routing and artifact rules.
+- SGLang runtime and backend integration: `sglang-skill`
+- Serving design and capacity planning: `llm-serving-router`
+- Whole-application timeline: `nsys-profile-analysis` or `perf-nsight-systems`
+- Serving workload benchmark: `llm-serving-auto-benchmark`
+- PyTorch/runtime profiling: `llm-torch-profiler-analysis`
+
+### Other
+
+- AMD/ROCm/HIP docs: `amd-gpu-docs`
+- AMD Instinct/CDNA ISA: `amd-instinct-isa`
+- NCCL/NVSHMEM/RDMA/collectives: `gpu-communication-libraries` or `nccl-skill`
+- Local technical article retrieval: `zhihu-knowledge-base` or
+  `giantpandallm-knowledge`
+- Research-paper workflow: the matching `ccf-*` skill in `repos/ccfa-skills`
+- Salary/offer negotiation: `salary-negotiation-skill`
 
 ## Operating Rules
 
-- Do not require the user to mention a skill explicitly. Infer from domain words, symptoms, tools, and file types.
-- For performance work, prefer profile evidence over speculation. If evidence is missing, propose the smallest profiling step.
-- For implementation work, verify correctness before performance tuning.
-- Keep answers grounded in the chosen skill's local references, scripts, and repo paths when available.
+- Infer the skill from domain words, symptoms, tools, and file types; do not
+  require the user to name it.
+- For performance work, prefer profile evidence over speculation. If evidence is
+  missing, propose the smallest profiling step.
+- Verify correctness before performance tuning.
+- Keep answers grounded in the selected skill's local references, scripts, and
+  source maps.

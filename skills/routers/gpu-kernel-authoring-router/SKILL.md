@@ -38,6 +38,12 @@ Use this router when the user wants implementation guidance or code for GPU kern
 - **Python DSL kernels, Triton, Gluon, tl.* APIs, autotune**: use `triton-skill`.
 - **DeepGEMM, grouped/MoE GEMM, contiguous/masked expert layouts**: use `deepgemm-skill`.
 - **CUTLASS/CuTe/CuTeDSL templates, GEMM builders, layout algebra**: use `cutlass-skill`.
+- **TileLang kernel implementation, PrimFunc/JIT, tensor contracts, or templates**:
+  use `writing-tilelang-kernels`.
+- **TileLang compiler lowering, runtime failures, or numerical bugs**:
+  use `debugging-tilelang-programs`.
+- **TileFoundry HIR, topology, placement, or static cost analysis**:
+  use `designing-with-tilefoundry`.
 - **Persistent kernel design or scheduling**: use `persistent-kernel-scheduling`.
 - **Need theoretical performance before coding**: use `nv-gpu-kernel-performance-modeling`.
 - **Need reference articles or reading order**: use `colfax-research-skill`.

@@ -35,6 +35,11 @@ Use this router to pick the most specific GPU performance skill before answering
 ## Route
 
 - **NCU / Nsight Compute / .ncu-rep / single-kernel bottleneck**: use `ncu-report-skill`.
+- **Whole-application timeline, launch causality, CPU/GPU overlap, or NVTX**:
+  use `nsys-profile-analysis` or `perf-nsight-systems`.
+- **Framework/workload benchmark or end-to-end latency**: hand off to
+  `gpu-framework-router`, then use `llm-serving-auto-benchmark` or
+  `perf-workload-profiling`.
 - **Persistent kernel NCU diagnosis**: use `ncu-persistent-kernel-diagnosis`.
 - **Persistent scheduling choice, CLC, Stream-K, tail effect**: use `persistent-kernel-scheduling`.
 - **Persistent utilization tuning, SM/TC utilization, pipeline bubbles**: use `persistent-kernel-utilization`.
@@ -43,6 +48,10 @@ Use this router to pick the most specific GPU performance skill before answering
 - **Triton kernel performance**: use `triton-skill`, then use `ncu-report-skill` if profiling evidence is needed.
 - **DeepGEMM grouped/MoE kernel performance**: use `deepgemm-skill`, then use `ncu-report-skill` for profiling evidence.
 - **CUTLASS/CuTe kernel performance**: use `cutlass-skill`, then use `ncu-report-skill` if profiling evidence is needed.
+- **TileLang kernel profiling and benchmark design**: use `profiling-tilelang-programs`.
+- **TileLang measured tuning, autotuning, layouts, or pipelining**: use `optimizing-tilelang-programs` or `tilelang-optimization-loop`.
+- **PyTorch baseline attribution for a TileLang kernel**: use `torch-profiling-tilelang-programs`.
+- **Blackwell/Hopper kernel patterns and upstream PR references**: use `KernelWiki`.
 
 ## Workflow
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Agent Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -25,6 +25,7 @@ AGENT="cursor"
 DEST_DIR=""
 COPY_MODE=false
 INSTALL_VELOQ=true
+INSTALL_TILELANG=true
 INSTALL_NVIDIA=true
 INSTALL_AMD=true
 INSTALL_CURSOR_SKILLS=true
@@ -36,12 +37,13 @@ while [[ $# -gt 0 ]]; do
         --dest)     DEST_DIR="$2"; shift 2 ;;
         --copy)     COPY_MODE=true; shift ;;
         --no-veloq) INSTALL_VELOQ=false; shift ;;
+        --no-tilelang-skills) INSTALL_TILELANG=false; shift ;;
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
         --no-amd-skills) INSTALL_AMD=false; shift ;;
         --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
         --no-ccfa-skills) INSTALL_CCFA_SKILLS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills]"
             echo ""
             echo "首次安装:"
             echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor/CCFA skills)"
@@ -57,6 +59,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --dest DIR        安装到自定义 skill 目录（便于隔离安装/CI 验证）"
             echo "  --copy            全量复制（适用于无法软链接的场景）"
             echo "  --no-veloq        跳过 VeloQ（profile 查询 CLI + nsys/ncu-profile-analysis skill）"
+            echo "  --no-tilelang-skills 跳过 sablin39/tilelang-cuda-skills 中的 TileLang skills"
             echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
             echo "  --no-amd-skills   跳过 AMD 官方 skills（来自 amd/skills）"
             echo "  --no-cursor-skills 跳过 Saddss/cursor-skills 仓库中的 skills"
@@ -82,8 +85,8 @@ get_skill_dir() {
     esac
 }
 
-if [ ! -d "$SCRIPT_DIR/cuda_skill" ]; then
-    echo "错误: 未找到 cuda_skill/ 目录"
+if [ ! -d "$SCRIPT_DIR/skills/kernel/cuda-skill" ]; then
+    echo "错误: 未找到 skills/kernel/cuda-skill/ 目录"
     echo "请在项目根目录下运行此脚本"
     exit 1
 fi
@@ -108,34 +111,58 @@ SKILL_NAMES=(
     amd-instinct-cdna4-isa
     gpu-performance-router
     gpu-kernel-authoring-router
+    gpu-framework-router
     llm-serving-router
     gpu-development-catchall
     iket-profiling
+    tilelang-optimization-loop
+    designing-with-tilefoundry
+    debugging-tilelang-programs
+    optimizing-tilelang-programs
+    profiling-tilelang-programs
+    testing-fwd-bwd-kernels
+    torch-profiling-tilelang-programs
+    writing-tilelang-design-docs
+    writing-tilelang-kernels
+    giantpandallm-knowledge
+    zhihu-knowledge-base
     salary-negotiation-skill
 )
 SKILL_DIRS=(
-    cuda_skill
-    triton_skill
-    cutlass_skill
-    deepgemm-skill
-    sglang_skill
-    nv-gpu-kernel-performance-modeling
-    colfax-research-skill
-    nccl_skill
-    gpu-communication-libraries
-    ncu-persistent-kernel-diagnosis
-    persistent-kernel-scheduling
-    persistent-kernel-utilization
-    ncu-report-skill
-    amd-gpu-docs
-    amd-instinct-isa
-    amd-instinct-cdna4-isa
-    gpu-performance-router
-    gpu-kernel-authoring-router
-    llm-serving-router
-    gpu-development-catchall
-    iket-profiling
-    salary-negotiation-skill
+    skills/kernel/cuda-skill
+    skills/kernel/triton-skill
+    skills/kernel/cutlass-skill
+    skills/kernel/deepgemm-skill
+    skills/framework/sglang-skill
+    skills/kernel/nv-gpu-kernel-performance-modeling
+    skills/kernel/colfax-research-skill
+    skills/other/nccl-skill
+    skills/other/gpu-communication-libraries
+    skills/kernel/ncu-persistent-kernel-diagnosis
+    skills/kernel/persistent-kernel-scheduling
+    skills/kernel/persistent-kernel-utilization
+    skills/kernel/ncu-report-skill
+    skills/other/amd-gpu-docs
+    skills/other/amd-instinct-isa
+    skills/other/amd-instinct-cdna4-isa
+    skills/routers/gpu-performance-router
+    skills/routers/gpu-kernel-authoring-router
+    skills/routers/gpu-framework-router
+    skills/routers/llm-serving-router
+    skills/routers/gpu-development-catchall
+    skills/kernel/iket-profiling
+    repos/tilelang-cuda-skills/skills/tilelang-optimization-loop
+    repos/tilelang-cuda-skills/skills/designing-with-tilefoundry
+    repos/tilelang-cuda-skills/skills/tilelang/debugging-tilelang-programs
+    repos/tilelang-cuda-skills/skills/tilelang/optimizing-tilelang-programs
+    repos/tilelang-cuda-skills/skills/tilelang/profiling-tilelang-programs
+    repos/tilelang-cuda-skills/skills/tilelang/testing-fwd-bwd-kernels
+    repos/tilelang-cuda-skills/skills/tilelang/torch-profiling-tilelang-programs
+    repos/tilelang-cuda-skills/skills/tilelang/writing-tilelang-design-docs
+    repos/tilelang-cuda-skills/skills/tilelang/writing-tilelang-kernels
+    skills/other/giantpandallm-knowledge
+    skills/other/zhihu-knowledge-base
+    skills/other/salary-negotiation-skill
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
@@ -175,11 +202,23 @@ install_to_agent() {
 
     mkdir -p "$SKILL_DIR"
 
+    if [ "$INSTALL_TILELANG" = true ]; then
+        ensure_submodule_path "tilelang-cuda-skills" "repos/tilelang-cuda-skills" "repos/tilelang-cuda-skills/skills" || true
+        if [ -d "$SCRIPT_DIR/repos/tilelang-cuda-skills" ]; then
+            git -C "$SCRIPT_DIR" submodule update --init --recursive repos/tilelang-cuda-skills >/dev/null 2>&1 || \
+                echo "  warn: 无法初始化 tilelang-cuda-skills 的嵌套 submodule" >&2
+        fi
+    fi
+
     for i in "${!SKILL_NAMES[@]}"; do
         skill_name="${SKILL_NAMES[$i]}"
         src_dir="${SKILL_DIRS[$i]}"
         src_path="$SCRIPT_DIR/$src_dir"
         target="$SKILL_DIR/$skill_name"
+
+        if [ "$INSTALL_TILELANG" = false ] && [[ "$src_dir" == repos/tilelang-cuda-skills/* ]]; then
+            continue
+        fi
 
         echo "--- $skill_name ---"
 
@@ -222,6 +261,35 @@ install_to_agent() {
         fi
     done
     echo ""
+
+    # Kernel Design Agents 的 KernelWiki 是外部 skill，但属于本仓库的 kernel
+    # 路由面；本地 ncu-report-skill 仍然优先，避免重复覆盖。
+    local kernelwiki_src="$SCRIPT_DIR/kernel-design-agents/skills/KernelWiki"
+    local kernelwiki_target="$SKILL_DIR/KernelWiki"
+    if [ ! -f "$kernelwiki_src/SKILL.md" ]; then
+        echo "--- KernelWiki ---"
+        echo "  初始化 kernel-design-agents 及其嵌套 skills..."
+        git -C "$SCRIPT_DIR" submodule update --init --recursive kernel-design-agents || true
+    fi
+    if [ -f "$kernelwiki_src/SKILL.md" ]; then
+        rm -rf "$kernelwiki_target"
+        if [ "$COPY_MODE" = true ]; then
+            cp -r "$kernelwiki_src" "$kernelwiki_target"
+        else
+            mkdir -p "$kernelwiki_target"
+            cp "$kernelwiki_src/SKILL.md" "$kernelwiki_target/SKILL.md"
+            for item in "$kernelwiki_src"/*; do
+                local kernelwiki_item
+                kernelwiki_item="$(basename "$item")"
+                [ "$kernelwiki_item" = "SKILL.md" ] && continue
+                ln -sf "$item" "$kernelwiki_target/$kernelwiki_item"
+            done
+        fi
+        echo "--- KernelWiki ---"
+        echo "  已安装 KernelWiki"
+    else
+        echo "  可选缺失: KernelWiki（运行 git submodule update --init --recursive kernel-design-agents）"
+    fi
 
     # NVIDIA skills 自动遍历安装
     if [ "$INSTALL_NVIDIA" = true ]; then
@@ -509,10 +577,14 @@ verify_agent() {
 
     for i in "${!SKILL_NAMES[@]}"; do
         skill_name="${SKILL_NAMES[$i]}"
+        src_dir="${SKILL_DIRS[$i]}"
+        if [ "$INSTALL_TILELANG" = false ] && [[ "$src_dir" == repos/tilelang-cuda-skills/* ]]; then
+            continue
+        fi
         check "$SKILL_DIR/$skill_name/SKILL.md" "$skill_name/SKILL.md"
     done
 
-    REFS="$SCRIPT_DIR/cuda_skill/references"
+    REFS="$SCRIPT_DIR/skills/kernel/cuda-skill/references"
     check "$REFS/ptx-docs" "CUDA 文档: ptx-docs"
     check "$REFS/cuda-guide" "CUDA 文档: cuda-guide"
     check "$REFS/cuda-runtime-docs" "CUDA 文档: cuda-runtime-docs"
@@ -550,8 +622,27 @@ verify_agent() {
     check "$COLFAX_SKILL/colfax_knowledge_base/articles" "Colfax: articles"
     check "$COLFAX_SKILL/scripts/update_kb.py" "Colfax: 更新脚本"
 
+    local ZHIHU_SKILL="$SKILL_DIR/zhihu-knowledge-base"
+    check "$ZHIHU_SKILL/index/zhihu_articles.db" "知乎知识库: SQLite 索引"
+    check "$ZHIHU_SKILL/articles" "知乎知识库: articles"
+    check "$ZHIHU_SKILL/scripts/zhihu_search.py" "知乎知识库: 搜索脚本"
+
+    if [ "$INSTALL_TILELANG" = true ]; then
+        local TILELANG_REPO="$SCRIPT_DIR/repos/tilelang-cuda-skills"
+        check "$TILELANG_REPO/skills/tilelang-optimization-loop/SKILL.md" "TileLang: optimization loop"
+        check "$TILELANG_REPO/skills/tilelang/writing-tilelang-kernels/SKILL.md" "TileLang: kernel authoring"
+        check "$TILELANG_REPO/skills/tilelang/profiling-tilelang-programs/SKILL.md" "TileLang: profiling"
+        check "$TILELANG_REPO/skills/tilelang/debugging-tilelang-programs/references/compiler-tools.md" "TileLang: compiler inspection"
+    fi
+
     local NCU_SKILL="$SKILL_DIR/ncu-report-skill"
     check "$NCU_SKILL/references/ProfilingGuide.md" "NCU ProfilingGuide (参考文档)"
+    if [ -e "$SKILL_DIR/KernelWiki/SKILL.md" ]; then
+        echo "  OK: KernelWiki（kernel 知识库）"
+        PASS=$((PASS + 1))
+    else
+        echo "  可选缺失: KernelWiki（运行 git submodule update --init --recursive kernel-design-agents）"
+    fi
 
     if [ "$INSTALL_VELOQ" = true ]; then
         if [ -e "$SKILL_DIR/nsys-profile-analysis/SKILL.md" ]; then

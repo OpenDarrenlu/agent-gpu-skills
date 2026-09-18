@@ -5,18 +5,36 @@
 """
 
 import sqlite3
-import os
 import sys
 import json
-import re
+from pathlib import Path
 
-DB_PATH = '/Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/index/zhihu_articles.db'
-ARTICLES_DIR = '/Users/moonshot/Documents/kimi/workspace/zhihu_knowledge_base/articles'
+SKILL_DIR = Path(__file__).resolve().parents[1]
+DB_PATH = SKILL_DIR / 'index' / 'zhihu_articles.db'
+ARTICLES_DIR = SKILL_DIR / 'articles'
+
+
+def resolve_article_path(filepath):
+    """Resolve paths stored in the imported database after repository relocation."""
+    candidate = Path(filepath)
+    local_candidate = ARTICLES_DIR / candidate.name
+    if local_candidate.exists():
+        return local_candidate
+    if candidate.exists():
+        return candidate
+    return local_candidate
+
+
+def normalize_result_paths(results):
+    for result in results:
+        if result.get('filepath'):
+            result['filepath'] = str(resolve_article_path(result['filepath']))
+    return results
 
 
 def search_articles(query, limit=10):
     """根据查询搜索相关文章"""
-    if not os.path.exists(DB_PATH):
+    if not DB_PATH.exists():
         print(f"错误: 数据库不存在: {DB_PATH}")
         return []
     
@@ -34,7 +52,7 @@ def search_articles(query, limit=10):
             ORDER BY rank
             LIMIT ?
         ''', (query, limit))
-        results = [dict(row) for row in c.fetchall()]
+        results = normalize_result_paths([dict(row) for row in c.fetchall()])
     except:
         # FTS搜索失败，回退到LIKE搜索
         c.execute('''
@@ -44,7 +62,7 @@ def search_articles(query, limit=10):
             ORDER BY content_length DESC
             LIMIT ?
         ''', (f'%{query}%', f'%{query}%', f'%{query}%', limit))
-        results = [dict(row) for row in c.fetchall()]
+        results = normalize_result_paths([dict(row) for row in c.fetchall()])
     
     conn.close()
     return results
@@ -61,11 +79,11 @@ def get_article_content(article_id):
     if not row:
         return None
     
-    filepath = row[0]
-    if not os.path.exists(filepath):
+    filepath = resolve_article_path(row[0])
+    if not filepath.exists():
         return None
-    
-    with open(filepath, 'r', encoding='utf-8') as f:
+
+    with filepath.open('r', encoding='utf-8') as f:
         return f.read()
 
 
@@ -120,8 +138,8 @@ def get_stats():
         'total_articles': total_articles,
         'total_authors': total_authors,
         'total_chars': total_chars,
-        'db_path': DB_PATH,
-        'articles_dir': ARTICLES_DIR
+        'db_path': str(DB_PATH),
+        'articles_dir': str(ARTICLES_DIR)
     }
 
 

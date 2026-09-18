@@ -68,19 +68,25 @@ a more specific downstream skill.
 | AMD/ROCm/HIP docs, libraries, tools, broad local AMD knowledge | `amd-gpu-docs` |
 | AMD Instinct, CDNA1-CDNA5 ISA, gfx950, AMD GPU assembly | `amd-instinct-isa` |
 | Writing/modifying CUDA, PTX, Triton, CUTLASS, CuTe, DeepGEMM kernels | `gpu-kernel-authoring-router` |
+| TileLang kernel authoring, debugging, optimization, or profiling | `gpu-kernel-authoring-router` or `gpu-performance-router` |
 | A kernel is slow, performance bottleneck, NCU/NSYS, profiling | `gpu-performance-router` |
+| Framework/runtime behavior, end-to-end profiling, PyTorch profiler, launch/scheduling overhead | `gpu-framework-router` |
 | SGLang, LLM serving, KV cache, attention backend, throughput/latency | `llm-serving-router` |
 | NCCL, NVSHMEM, multi-GPU/multi-node communication, RDMA, collectives | `gpu-communication-libraries` |
 | CUDA API, PTX ISA, architecture, occupancy, memory, CUDA tools | `cuda-skill` |
 | Triton/Gluon Python kernels | `triton-skill` |
 | CUTLASS/CuTe/CuTeDSL templates and GEMM | `cutlass-skill` |
 | DeepGEMM grouped/MoE GEMM | `deepgemm-skill` |
+| TileLang kernel implementation and compiler lowering | `writing-tilelang-kernels` or `debugging-tilelang-programs` |
+| TileLang optimization loop and measured tuning | `tilelang-optimization-loop` or `optimizing-tilelang-programs` |
+| TileLang profiling or PyTorch baseline attribution | `profiling-tilelang-programs` or `torch-profiling-tilelang-programs` |
 | SGLang runtime/serving | `sglang-skill` |
 | Analytical performance modeling, roofline, latency prediction | `nv-gpu-kernel-performance-modeling` |
 | Persistent kernel scheduling, CLC, Stream-K, tail effect | `persistent-kernel-scheduling` |
 | Persistent kernel utilization, SM/TC bubbles, setmaxnreg | `persistent-kernel-utilization` |
 | NCU diagnosis of persistent kernels | `ncu-persistent-kernel-diagnosis` |
 | NCU report analysis, .ncu-rep, source/SASS | `ncu-report-skill` |
+| Blackwell/Hopper kernel knowledge base and upstream PR references | `KernelWiki` |
 | Colfax Research articles and reading order | `colfax-research-skill` |
 
 ## Workflow
