@@ -32,11 +32,12 @@
 
 ## Framework
 
-框架、运行时、端到端 serving 与 framework-level profiling：
+框架、运行时、端到端 serving、RL 后训练与 framework-level profiling：
 
 | Skill | 用途 |
 |---|---|
 | `sglang-skill` | SGLang runtime、KV cache、attention backend、scheduler |
+| `verl-skill` | verl/HybridFlow RL 后训练：PPO/GRPO、model engine、rollout 权重同步、reward、agent loop、训推一致 |
 | `llm-serving-router` | LLM serving、吞吐/延迟、容量规划与部署 |
 | `gpu-framework-router` | 框架问题与 kernel 问题之间的分流 |
 | `nsys-profile-analysis` | VeloQ 的 whole-application timeline 分析 |

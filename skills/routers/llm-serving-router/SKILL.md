@@ -37,6 +37,7 @@ Use this router for LLM inference and serving questions, especially when GPU ker
 ## Route
 
 - **SGLang implementation, runtime, model/backend changes, serving bugs**: use `sglang-skill`.
+- **Inference engine used as an RL rollout backend (verl hybrid engine, weight sync, sleep/wake, rollout log-prob mismatch)**: use `verl-skill`.
 - **Serving benchmark or automated latency/throughput testing**: use `llm-serving-auto-benchmark` when installed.
 - **Capacity planning, tokens/sec, GPU count, concurrency, SLA sizing**: use `llm-serving-capacity-planner` when installed.
 - **Pipeline/runtime bottleneck analysis**: use `llm-pipeline-analysis` when installed.

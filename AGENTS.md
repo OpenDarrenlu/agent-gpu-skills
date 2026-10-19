@@ -16,8 +16,8 @@ Choose the narrowest route:
   warp stalls, SM/TC utilization, roofline, persistent-kernel diagnosis, or
   optimization planning.
 - `gpu-framework-router`: framework/runtime behavior, SGLang/vLLM serving,
-  PyTorch profiler, end-to-end benchmark, launch/scheduling overhead, or
-  framework-level Nsight analysis.
+  verl RL post-training, PyTorch profiler, end-to-end benchmark,
+  launch/scheduling overhead, or framework-level Nsight analysis.
 - `llm-serving-router`: LLM serving, KV cache, attention backends, batching,
   capacity planning, TTFT/TBT, deployment, and serving benchmarks.
 
@@ -51,6 +51,8 @@ producing detailed advice or code.
 ### Framework
 
 - SGLang runtime and backend integration: `sglang-skill`
+- verl/HybridFlow RL post-training (PPO/GRPO, rollout, reward, agent loop,
+  train-inference mismatch): `verl-skill`
 - Serving design and capacity planning: `llm-serving-router`
 - Whole-application timeline: `nsys-profile-analysis` or `perf-nsight-systems`
 - Serving workload benchmark: `llm-serving-auto-benchmark`

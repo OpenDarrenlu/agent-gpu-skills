@@ -98,6 +98,7 @@ SKILL_NAMES=(
     cutlass-skill
     deepgemm-skill
     sglang-skill
+    verl-skill
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
     nccl-skill
@@ -134,6 +135,7 @@ SKILL_DIRS=(
     skills/kernel/cutlass-skill
     skills/kernel/deepgemm-skill
     skills/framework/sglang-skill
+    skills/framework/verl-skill
     skills/kernel/nv-gpu-kernel-performance-modeling
     skills/kernel/colfax-research-skill
     skills/other/nccl-skill
@@ -607,6 +609,12 @@ verify_agent() {
     local SGLANG_REPO="$SKILL_DIR/sglang-skill/repos/sglang"
     check "$SGLANG_REPO/python/sglang/srt" "SGLang SRT core"
     check "$SGLANG_REPO/python/sglang/kernels/aot/csrc" "sgl-kernel CUDA source (kernels/aot)"
+
+    local VERL_REPO="$SKILL_DIR/verl-skill/repos/verl"
+    check "$VERL_REPO/verl/trainer/ppo/core_algos.py" "verl PPO/GRPO 算法注册表"
+    check "$VERL_REPO/verl/trainer/ppo/v1" "verl V1 trainer"
+    check "$VERL_REPO/verl/workers/engine_workers.py" "verl engine workers"
+    check "$VERL_REPO/verl/checkpoint_engine" "verl checkpoint engine"
 
     local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
     check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"

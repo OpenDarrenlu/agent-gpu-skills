@@ -259,6 +259,7 @@ bash update-repos.sh triton
 bash update-repos.sh cutlass
 bash update-repos.sh deepgemm
 bash update-repos.sh sglang
+bash update-repos.sh verl
 bash update-repos.sh nccl
 bash update-repos.sh nvidia-skills
 bash update-repos.sh amd-skills

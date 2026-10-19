@@ -3,13 +3,14 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   skills/kernel/triton-skill/repos/triton/
 #   skills/kernel/cutlass-skill/repos/cutlass/
 #   skills/kernel/deepgemm-skill/repos/deepgemm/
 #   skills/framework/sglang-skill/repos/sglang/
+#   skills/framework/verl-skill/repos/verl/
 #   skills/other/nccl-skill/repos/nccl/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/amd-skills/     (AMD skills submodule)
@@ -179,6 +180,17 @@ sglang_dirs=(
     "test"
 )
 
+# verl (HybridFlow) sparse checkout 目录
+# 注: recipe/ 在部分上游版本中是独立仓库或 submodule；不存在时 cone 模式会忽略。
+verl_dirs=(
+    "verl"
+    "examples"
+    "recipe"
+    "docs"
+    "scripts"
+    "tests"
+)
+
 # NCCL sparse checkout 目录
 nccl_dirs=(
     "src"
@@ -220,6 +232,9 @@ case "$TARGET" in
     sglang)
         clone_or_update "sglang" "skills/framework/sglang-skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
         ;;
+    verl)
+        clone_or_update "verl" "skills/framework/verl-skill" "https://github.com/verl-project/verl.git" "main" "${verl_dirs[@]}"
+        ;;
     nccl)
         clone_or_update "nccl" "skills/other/nccl-skill" "https://github.com/NVIDIA/nccl.git" "master" "${nccl_dirs[@]}"
         ;;
@@ -251,6 +266,7 @@ case "$TARGET" in
         clone_or_update "cutlass" "skills/kernel/cutlass-skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
         clone_recursive_repo "deepgemm" "skills/kernel/deepgemm-skill" "https://github.com/deepseek-ai/DeepGEMM.git" "main"
         clone_or_update "sglang" "skills/framework/sglang-skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
+        clone_or_update "verl" "skills/framework/verl-skill" "https://github.com/verl-project/verl.git" "main" "${verl_dirs[@]}"
         clone_or_update "nccl" "skills/other/nccl-skill" "https://github.com/NVIDIA/nccl.git" "master" "${nccl_dirs[@]}"
         update_veloq
         update_submodule "kernel-design-agents" "kernel-design-agents"
@@ -264,14 +280,14 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|all]"
         exit 1
         ;;
 esac
 
 echo ""
 echo "=== 总览 ==="
-for sk in skills/kernel/triton-skill skills/kernel/cutlass-skill skills/kernel/deepgemm-skill skills/framework/sglang-skill skills/other/nccl-skill; do
+for sk in skills/kernel/triton-skill skills/kernel/cutlass-skill skills/kernel/deepgemm-skill skills/framework/sglang-skill skills/framework/verl-skill skills/other/nccl-skill; do
     if [ -d "$SCRIPT_DIR/$sk/repos" ]; then
         du -sh "$SCRIPT_DIR/$sk/repos/"*/ 2>/dev/null
     fi

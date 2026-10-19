@@ -7,7 +7,8 @@ This repository is an Agent Skill bundle, not an application. Read
 
 - `skills/kernel/`: CUDA, PTX, Triton, CUTLASS, DeepGEMM, kernel profiling,
   persistent-kernel tuning, performance modeling, and kernel references.
-- `skills/framework/`: SGLang and framework/runtime-facing skills.
+- `skills/framework/`: SGLang, verl (RL post-training), and framework/runtime-facing
+  skills.
 - `skills/other/`: communication, AMD/ROCm, local knowledge bases, and
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers.

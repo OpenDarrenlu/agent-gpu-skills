@@ -1,6 +1,6 @@
 ---
 name: gpu-framework-router
-description: Route GPU framework, runtime, serving, and framework-level profiling questions to the right skill. Use for SGLang, vLLM-like serving, PyTorch runtime behavior, attention backends, KV cache, end-to-end latency, workload benchmarks, Nsight Systems traces, framework-level Nsight Compute profiling, or deciding whether a problem belongs to the framework or the underlying kernel.
+description: Route GPU framework, runtime, serving, RL post-training, and framework-level profiling questions to the right skill. Use for SGLang, vLLM-like serving, verl/HybridFlow RL training (PPO/GRPO, rollout, reward, agent loop), PyTorch runtime behavior, attention backends, KV cache, end-to-end latency, workload benchmarks, Nsight Systems traces, framework-level Nsight Compute profiling, or deciding whether a problem belongs to the framework or the underlying kernel.
 ---
 
 # GPU Framework Router
@@ -12,17 +12,23 @@ runtime rather than a standalone kernel.
 
 1. **SGLang internals, model/backend integration, KV cache, scheduler, or serving
    regressions**: use `sglang-skill`.
-2. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
+2. **RL post-training with verl/HybridFlow** (PPO/GRPO/DAPO trainers, Ray single
+   controller, FSDP/Megatron model engines, vLLM/SGLang rollout integration,
+   actor-to-rollout weight sync, reward functions, agent loops, async RL,
+   train-inference mismatch, RL step OOM/throughput): use `verl-skill`. If the
+   problem is inside the SGLang rollout server itself, continue with
+   `sglang-skill`; weight-sync collective hangs go to `nccl-skill`.
+3. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
    capacity, TTFT/TBT, or deployment strategy**: use `llm-serving-router`.
-3. **Framework-level workload profiling or benchmark design**: use
+4. **Framework-level workload profiling or benchmark design**: use
    `llm-serving-auto-benchmark` or `perf-workload-profiling` when installed.
    For a PyTorch baseline that will become a TileLang kernel, use
    `torch-profiling-tilelang-programs`.
-4. **Whole-application CPU/GPU timeline, launch causality, overlap, or NVTX
+5. **Whole-application CPU/GPU timeline, launch causality, overlap, or NVTX
    analysis**: use `perf-nsight-systems` or `nsys-profile-analysis`.
-5. **A framework dispatches a slow individual CUDA/Triton/CUTLASS kernel**:
+6. **A framework dispatches a slow individual CUDA/Triton/CUTLASS kernel**:
    hand off to `gpu-performance-router`, then use the most specific kernel skill.
-6. **PyTorch profiler, compiler, or host-side runtime behavior**: use
+7. **PyTorch profiler, compiler, or host-side runtime behavior**: use
    `llm-torch-profiler-analysis`, `torch-profiling-tilelang-programs`,
    `perf-host-analysis`, or `perf-host-optimization` when installed.
 

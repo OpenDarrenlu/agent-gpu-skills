@@ -13,6 +13,7 @@ Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 | kernel 慢、NCU/NSYS、occupancy、stall、SM/TC 利用率 | `gpu-performance-router` |
 | TileLang kernel 编写、调试、优化、profiling | `writing-tilelang-kernels` / `profiling-tilelang-programs` |
 | SGLang/vLLM、PyTorch、端到端延迟、框架 profiling | `gpu-framework-router` |
+| verl RL 后训练（PPO/GRPO、rollout、reward、agent loop、训推一致） | `verl-skill` |
 | LLM serving、KV cache、吞吐/延迟、容量规划 | `llm-serving-router` |
 | Blackwell/Hopper kernel 资料与上游 PR | `KernelWiki` |
 
@@ -70,6 +71,7 @@ bash update-repos.sh triton
 bash update-repos.sh cutlass
 bash update-repos.sh deepgemm
 bash update-repos.sh sglang
+bash update-repos.sh verl
 bash update-repos.sh nccl
 bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills
