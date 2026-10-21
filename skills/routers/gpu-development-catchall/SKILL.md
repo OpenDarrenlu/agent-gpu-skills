@@ -91,6 +91,7 @@ a more specific downstream skill.
 | NCU report analysis, .ncu-rep, source/SASS | `ncu-report-skill` |
 | Blackwell/Hopper kernel knowledge base and upstream PR references | `KernelWiki` |
 | Colfax Research articles and reading order | `colfax-research-skill` |
+| Writing, rewriting, proofreading, or reviewing a Chinese technical report, design doc, 原理报告, 源码解析, 性能分析报告, or turning screenshots/notes into an article | `tech-doc-style-chinese` (plus the domain skill above for the technical facts) |
 
 ## Workflow
 
@@ -99,3 +100,6 @@ a more specific downstream skill.
 2. Route to the matching router or direct skill above.
 3. Do not answer the question from this skill alone; always delegate to a downstream
    skill that has the actual references and source code maps.
+4. When the deliverable is a Chinese document (技术原理报告、设计文档、性能报告、文章),
+   load `tech-doc-style-chinese` for structure, evidence levels, and typography, and
+   keep using the domain skill for facts, measurements, and source references.

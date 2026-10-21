@@ -67,6 +67,10 @@ producing detailed advice or code.
   `giantpandallm-knowledge`
 - Research-paper workflow: the matching `ccf-*` skill in `repos/ccfa-skills`
 - Salary/offer negotiation: `salary-negotiation-skill`
+- Chinese technical writing (kernel/inference/training 原理报告, design docs,
+  performance reports, source walkthroughs, screenshot-to-article, API docs,
+  runbooks): `tech-doc-style-chinese` (local GPU-customized override of
+  Fenng/Tech-Doc-Style-Chinese; upstream clone in `repos/tech-doc-style-chinese`)
 
 ## Operating Rules
 
@@ -77,3 +81,5 @@ producing detailed advice or code.
 - Verify correctness before performance tuning.
 - Keep answers grounded in the selected skill's local references, scripts, and
   source maps.
+- For Chinese reports and articles, combine the domain skill (facts, evidence)
+  with `tech-doc-style-chinese` (structure, evidence levels, typography).

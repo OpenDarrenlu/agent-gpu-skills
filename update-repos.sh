@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   skills/kernel/triton-skill/repos/triton/
@@ -17,6 +17,8 @@
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
 #   repos/ccfa-skills/    (mikubaka88/CCFA-Skills submodule)
 #   repos/tilelang-cuda-skills/ (sablin39/tilelang-cuda-skills submodule)
+#   repos/tech-doc-style-chinese/ (Fenng/Tech-Doc-Style-Chinese 上游 clone，git-ignored；
+#                                  本地定制版在 skills/other/tech-doc-style-chinese/，见其 README.md)
 
 set -e
 
@@ -261,6 +263,10 @@ case "$TARGET" in
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
         ;;
+    tech-doc-style-chinese)
+        clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
+        echo "  上游已更新；按 skills/other/tech-doc-style-chinese/README.md 的「同步上游」步骤合并到本地定制版。"
+        ;;
     all)
         clone_or_update "triton" "skills/kernel/triton-skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "skills/kernel/cutlass-skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
@@ -277,10 +283,11 @@ case "$TARGET" in
         update_submodule "tilelang-cuda-skills" "repos/tilelang-cuda-skills"
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
+        clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|all]"
         exit 1
         ;;
 esac

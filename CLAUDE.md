@@ -31,6 +31,10 @@ bash update-repos.sh triton
 bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills
 bash update-repos.sh nvidia-skills
+bash update-repos.sh tech-doc-style-chinese   # upstream clone, for diffing only
+
+# Test the customized Chinese technical-writing skill.
+for t in skills/other/tech-doc-style-chinese/tests/test_*.py; do python3 "$t"; done
 
 # Install into an isolated directory for validation.
 bash install.sh --dest /tmp/agent-gpu-skills-test --no-veloq
@@ -52,6 +56,9 @@ python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
 - Do not commit AMD PDFs, documentation caches, sparse checkouts, or generated
   profile output.
 - Local skills win over same-named skills from external catalogs.
+- `skills/other/tech-doc-style-chinese` overrides the upstream clone in
+  `repos/tech-doc-style-chinese`; its `README.md` lists which files are
+  verbatim upstream copies and which are customized. Keep that table accurate.
 - The TileLang suite's upstream `cuda_skill` is intentionally not installed;
   use the local `cuda-skill` as the canonical CUDA entry.
 - When an upstream repository moves a referenced path, update

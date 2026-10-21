@@ -63,6 +63,7 @@
 | `giantpandallm-knowledge` | GiantPandaLLM 技术文章知识库 |
 | `zhihu-knowledge-base` | 知乎技术文章本地知识库 |
 | `salary-negotiation-skill` | 薪资谈判与 offer 评估 |
+| `tech-doc-style-chinese` | 中文技术文档与技术原理报告（算子/推理/训练框架）：结构模板、证据等级、术语与排版检查；Fenng/Tech-Doc-Style-Chinese 的本地定制版 |
 
 ## Routers
 

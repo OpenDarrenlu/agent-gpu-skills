@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chinese Technical Writing (GPU / AI Infra)"
+  short_description: "Write and refine Chinese technical reports on GPU kernels, inference and training frameworks without changing facts"
+  default_prompt: "Use $tech-doc-style-chinese to write or rewrite this Chinese technical report clearly, keeping facts, evidence levels, measurement conditions and machine-readable text intact."

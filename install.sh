@@ -128,6 +128,7 @@ SKILL_NAMES=(
     giantpandallm-knowledge
     zhihu-knowledge-base
     salary-negotiation-skill
+    tech-doc-style-chinese
 )
 SKILL_DIRS=(
     skills/kernel/cuda-skill
@@ -165,6 +166,7 @@ SKILL_DIRS=(
     skills/other/giantpandallm-knowledge
     skills/other/zhihu-knowledge-base
     skills/other/salary-negotiation-skill
+    skills/other/tech-doc-style-chinese
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
@@ -634,6 +636,11 @@ verify_agent() {
     check "$ZHIHU_SKILL/index/zhihu_articles.db" "知乎知识库: SQLite 索引"
     check "$ZHIHU_SKILL/articles" "知乎知识库: articles"
     check "$ZHIHU_SKILL/scripts/zhihu_search.py" "知乎知识库: 搜索脚本"
+
+    local TECHDOC_SKILL="$SKILL_DIR/tech-doc-style-chinese"
+    check "$TECHDOC_SKILL/references/gpu-report-structures.md" "中文技术写作: 报告结构模板"
+    check "$TECHDOC_SKILL/assets/report-template.html" "中文技术写作: HTML 报告模板"
+    check "$TECHDOC_SKILL/scripts/lint_copy_rules.py" "中文技术写作: 检查器"
 
     if [ "$INSTALL_TILELANG" = true ]; then
         local TILELANG_REPO="$SCRIPT_DIR/repos/tilelang-cuda-skills"

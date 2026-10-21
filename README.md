@@ -16,6 +16,7 @@ Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 | verl RL 后训练（PPO/GRPO、rollout、reward、agent loop、训推一致） | `verl-skill` |
 | LLM serving、KV cache、吞吐/延迟、容量规划 | `llm-serving-router` |
 | Blackwell/Hopper kernel 资料与上游 PR | `KernelWiki` |
+| 写/改/审中文技术原理报告、设计文档、性能报告、源码解析 | `tech-doc-style-chinese` |
 
 完整分类索引见 [`skills/README.md`](skills/README.md)，路由规则见
 [`AGENTS.md`](AGENTS.md)。
@@ -79,7 +80,12 @@ bash update-repos.sh nvidia-skills
 bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
 bash update-repos.sh ccfa-skills
+bash update-repos.sh tech-doc-style-chinese
 ```
+
+`tech-doc-style-chinese` 的上游 [Fenng/Tech-Doc-Style-Chinese](https://github.com/Fenng/Tech-Doc-Style-Chinese)
+clone 到 git-ignored 的 `repos/tech-doc-style-chinese/`，只用于比对；安装的是
+`skills/other/tech-doc-style-chinese/` 中的本地定制版，同步步骤见其 `README.md`。
 
 `repos/nvidia-skills`、`repos/amd-skills`、`repos/cursor-skills`、
 `repos/ccfa-skills`、`repos/tilelang-cuda-skills` 和 `kernel-design-agents`

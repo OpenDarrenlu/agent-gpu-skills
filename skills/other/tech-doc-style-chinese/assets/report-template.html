@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>〔算子名〕：〔一句话说明设计要点〕</title>
+<!--
+  单文件技术报告模板（tech-doc-style-chinese 定制版）。
+  约定：自包含、离线可读；图用内联 SVG；证据等级用 .ev-* 标签；
+  原材料之外新增的内容用 .badge-supplement / aside.supplement 标记。
+  替换所有〔〕占位内容，删除不适用的章节。
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f7f8fa;
+    --sheet: #ffffff;
+    --ink: #1d2430;
+    --muted: #5b6576;
+    --rule: #d9dee6;
+    --link: #2f5bd3;
+    --measured: #0b7a55;
+    --estimate: #9a5b00;
+    --source: #3949ab;
+    --compiled: #6b4aa5;
+    --cited: #5b6576;
+    --supplement: #c0266d;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif;
+    --serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0; color: var(--ink); font-family: var(--sans);
+    font-size: 16px; line-height: 1.8; -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 46rem; margin: 2.5rem auto 4rem; padding: 2.5rem 2.75rem 3rem;
+    background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  }
+  h1 { font-family: var(--serif); font-size: 2rem; line-height: 1.35; font-weight: 700; margin: 0 0 1.25rem; }
+  h2 { font-size: 1.35rem; line-height: 1.45; margin: 2.75rem 0 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--rule); }
+  h3 { font-size: 1.08rem; margin: 1.75rem 0 0.5rem; }
+  p, li { margin: 0.6rem 0; }
+  a { color: var(--link); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  code, pre, .formula { font-family: var(--mono); font-size: 0.88em; }
+  code { background: #eef1f5; padding: 0.1em 0.35em; border-radius: 3px; }
+  pre { background: #f2f4f7; border: 1px solid var(--rule); border-radius: 4px; padding: 0.9rem 1rem; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; padding: 0; }
+
+  /* 元信息块 */
+  .meta { display: grid; grid-template-columns: 6.5em 1fr; gap: 0.2rem 1rem; margin: 0 0 1.5rem; font-size: 0.92rem; color: var(--muted); }
+  .meta dt { font-weight: 600; color: var(--ink); }
+  .meta dd { margin: 0; }
+
+  /* 结论摘要 */
+  .summary { border-left: 4px solid var(--ink); background: #f3f5f8; padding: 0.9rem 1.2rem; margin: 1.5rem 0; }
+  .summary h2 { border: 0; margin: 0 0 0.4rem; padding: 0; font-size: 1.1rem; }
+
+  /* 证据等级标签 */
+  .ev { display: inline-block; font-size: 0.75rem; line-height: 1.5; padding: 0 0.45em; margin: 0 0.15em; border: 1px solid currentColor; border-radius: 3px; vertical-align: 0.1em; white-space: nowrap; }
+  .ev-measured { color: var(--measured); }
+  .ev-estimate { color: var(--estimate); }
+  .ev-source { color: var(--source); }
+  .ev-compiled { color: var(--compiled); }
+  .ev-cited { color: var(--cited); }
+  .ev-concept { color: var(--muted); border-style: dashed; }
+  .ev-design { color: var(--link); border-style: dashed; }
+  .legend { font-size: 0.85rem; color: var(--muted); margin: -0.5rem 0 1.5rem; }
+
+  /* 补充标记：原材料之外新增的内容 */
+  .badge-supplement { display: inline-block; font-size: 0.75rem; line-height: 1.5; padding: 0 0.45em; margin-right: 0.3em; color: #fff; background: var(--supplement); border-radius: 3px; vertical-align: 0.1em; }
+  aside.supplement { border: 1px dashed var(--supplement); border-left-width: 4px; border-radius: 4px; padding: 0.6rem 1rem; margin: 1rem 0; background: #fdf4f8; }
+
+  /* 待补充、待确认占位 */
+  .todo { color: var(--estimate); background: #fff6e5; padding: 0 0.2em; border-radius: 2px; }
+
+  /* 图 */
+  figure { margin: 1.75rem 0; }
+  figure svg { width: 100%; height: auto; display: block; font-family: var(--sans); }
+  figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; }
+  figcaption strong { color: var(--ink); }
+  figcaption .takeaway { display: block; color: var(--ink); margin-top: 0.2rem; }
+
+  /* 表 */
+  .table-wrap { overflow-x: auto; margin: 1.25rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { border-bottom: 1px solid var(--rule); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  th { font-weight: 600; border-bottom: 2px solid var(--ink); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  caption { caption-side: bottom; text-align: left; font-size: 0.85rem; color: var(--muted); padding-top: 0.5rem; }
+
+  .formula { display: block; padding: 0.6rem 1rem; background: #f7f8fa; border-radius: 4px; overflow-x: auto; }
+  nav.toc ol { padding-left: 1.4rem; margin: 0.4rem 0; }
+  details { border: 1px solid var(--rule); border-radius: 4px; padding: 0.5rem 0.9rem; margin: 1rem 0; }
+  summary { cursor: pointer; font-weight: 600; }
+
+  @media (max-width: 640px) {
+    main { margin: 0; padding: 1.25rem 1.1rem 2rem; border: 0; border-radius: 0; }
+    h1 { font-size: 1.6rem; }
+    .meta { grid-template-columns: 1fr; }
+  }
+  @media print {
+    html, body { background: #fff; }
+    main { border: 0; margin: 0; max-width: none; padding: 0; }
+    a { color: inherit; }
+    details { border: 0; padding: 0; }
+    h2, h3, figure, table { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>〔算子名〕：〔一句话说明设计要点〕</h1>
+    <dl class="meta">
+      <dt>状态</dt><dd>〔提案 / 实现中 / 已实现 / 已验证〕</dd>
+      <dt>范围</dt><dd>〔shape 范围、dtype、前向/反向、causal/varlen；不支持的情况〕</dd>
+      <dt>环境</dt><dd>〔GPU 与架构、驱动与 CUDA 版本、实现方式、仓库@commit〕</dd>
+      <dt>证据日期</dt><dd>〔YYYY-MM-DD〕</dd>
+    </dl>
+    <p class="legend">证据等级：<span class="ev ev-concept">示意</span><span class="ev ev-design">设计</span><span class="ev ev-cited">引用</span><span class="ev ev-source">源码</span><span class="ev ev-estimate">估算</span><span class="ev ev-compiled">编译产物</span><span class="ev ev-measured">实测</span>；<span class="badge-supplement">补充</span>表示原材料之外新增的内容。</p>
+  </header>
+
+  <section class="summary" id="summary">
+    <h2>结论摘要</h2>
+    <p>〔3 至 5 句：要解决的问题、采用的方法、关键数字及其条件和基线、结论、主要局限。〕</p>
+  </section>
+
+  <nav class="toc" aria-label="目录">
+    <ol>
+      <li><a href="#semantics">算子语义</a></li>
+      <li><a href="#design">设计</a></li>
+      <li><a href="#results">数值与性能结果</a></li>
+      <li><a href="#limits">局限与后续</a></li>
+    </ol>
+  </nav>
+
+  <section id="semantics">
+    <h2>1. 算子语义</h2>
+    <p>〔数学定义、输入输出 shape/dtype/layout。张量记作 <code>[B, S, H, D]</code>，首次出现时定义每个维度。〕</p>
+    <span class="formula">FLOP = 2 · B · H_q · S_q · S_k · (D_qk + D_v)　（attention 前向，非 causal，只计 QKᵀ 与 PV）</span>
+    <p>〔计算量、访存量与算术强度的估算结果〕<span class="ev ev-estimate">估算</span></p>
+  </section>
+
+  <section id="design">
+    <h2>2. 设计</h2>
+    <h3>2.1 流水线与同步</h3>
+    <p>〔stage 数、生产者/消费者角色、mbarrier、buffer 复用条件。〕</p>
+
+    <figure>
+      <svg viewBox="0 0 640 190" role="img" aria-labelledby="fig1-title">
+        <title id="fig1-title">双 stage 生产者/消费者流水线示意</title>
+        <g font-size="13" fill="#1d2430">
+          <text x="10" y="52">Producer</text>
+          <text x="10" y="132">Consumer</text>
+        </g>
+        <g stroke="#2f5bd3" fill="#e8eefc">
+          <rect x="100" y="32" width="120" height="30" rx="3"/>
+          <rect x="230" y="32" width="120" height="30" rx="3"/>
+          <rect x="360" y="32" width="120" height="30" rx="3"/>
+        </g>
+        <g stroke="#0b7a55" fill="#e3f3ec">
+          <rect x="230" y="112" width="120" height="30" rx="3"/>
+          <rect x="360" y="112" width="120" height="30" rx="3"/>
+          <rect x="490" y="112" width="120" height="30" rx="3"/>
+        </g>
+        <g font-size="12" fill="#1d2430" text-anchor="middle">
+          <text x="160" y="52">加载 tile 0 → S0</text>
+          <text x="290" y="52">加载 tile 1 → S1</text>
+          <text x="420" y="52">加载 tile 2 → S0</text>
+          <text x="290" y="132">MMA tile 0（S0）</text>
+          <text x="420" y="132">MMA tile 1（S1）</text>
+          <text x="550" y="132">MMA tile 2（S0）</text>
+        </g>
+        <g stroke="#5b6576" stroke-dasharray="4 3" fill="none">
+          <path d="M220 62 L240 112"/>
+          <path d="M350 62 L370 112"/>
+          <path d="M350 112 L370 62"/>
+        </g>
+        <text x="100" y="178" font-size="11" fill="#5b6576">虚线：mbarrier 等待（数据就绪或 stage 释放）。示意图不按时间比例绘制。</text>
+      </svg>
+      <figcaption>
+        <strong>图 1｜双 stage 流水线</strong> <span class="ev ev-concept">示意</span>〔特化或 shape〕
+        <span class="takeaway">〔一句话结论：读者应从图中看出什么，例如 tile 2 必须等 tile 0 的 MMA 释放 S0 后才能写入。〕</span>
+      </figcaption>
+    </figure>
+
+    <aside class="supplement">
+      <span class="badge-supplement">补充</span>〔原材料之外新增的解释、背景或推导。整理截图或笔记时，原文保持原样，补充内容放在这里。〕
+    </aside>
+  </section>
+
+  <section id="results">
+    <h2>3. 数值与性能结果</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>shape（B, S, H, D）</th><th class="num">基线耗时（µs）</th><th class="num">本实现耗时（µs）</th><th class="num">加速比（相对〔基线〕）</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>〔1, 8192, 32, 128〕</code></td><td class="num"><span class="todo">待补充</span></td><td class="num"><span class="todo">待补充</span></td><td class="num"><span class="todo">待补充</span></td></tr>
+        </tbody>
+        <caption><span class="ev ev-measured">实测</span>〔GPU、驱动与 CUDA、框架@commit；warmup 与重复次数；统计方式（中位数）；计时方式〕</caption>
+      </table>
+    </div>
+    <details>
+      <summary>原始数据与复现命令</summary>
+      <pre><code>〔可直接复制运行的命令，包括必要的环境变量〕</code></pre>
+    </details>
+  </section>
+
+  <section id="limits">
+    <h2>4. 局限与后续</h2>
+    <ul>
+      <li>〔不支持或会退化的 shape 与配置〕</li>
+      <li>〔尚未验证的结论，以及验证需要的证据〕</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
