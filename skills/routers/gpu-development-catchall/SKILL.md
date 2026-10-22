@@ -83,7 +83,8 @@ a more specific downstream skill.
 | TileLang optimization loop and measured tuning | `tilelang-optimization-loop` or `optimizing-tilelang-programs` |
 | TileLang profiling or PyTorch baseline attribution | `profiling-tilelang-programs` or `torch-profiling-tilelang-programs` |
 | SGLang runtime/serving | `sglang-skill` |
-| verl/HybridFlow RL post-training, PPO/GRPO, rollout weight sync, reward, agent loop, 训推一致 | `verl-skill` |
+| verl/HybridFlow RL post-training, PPO/GRPO, rollout weight sync, reward, agent loop, verl-side mismatch metrics and rollout correction | `verl-skill` |
+| Bitwise train-inference consistency (true on-policy RL), vLLM batch invariance, rollout vs training logprob 0 diff, BI kernels, backward/STE validation, 训推一致 | `train-inference-consistency` |
 | Analytical performance modeling, roofline, latency prediction | `nv-gpu-kernel-performance-modeling` |
 | Persistent kernel scheduling, CLC, Stream-K, tail effect | `persistent-kernel-scheduling` |
 | Persistent kernel utilization, SM/TC bubbles, setmaxnreg | `persistent-kernel-utilization` |

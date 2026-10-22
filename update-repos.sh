@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm)
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   skills/kernel/triton-skill/repos/triton/
@@ -11,6 +11,7 @@
 #   skills/kernel/deepgemm-skill/repos/deepgemm/
 #   skills/framework/sglang-skill/repos/sglang/
 #   skills/framework/verl-skill/repos/verl/
+#   skills/framework/train-inference-consistency/repos/vllm/  (固定 commit 的稀疏浅 clone：.agents/skills 与 batch invariance 相关目录)
 #   skills/other/nccl-skill/repos/nccl/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/amd-skills/     (AMD skills submodule)
@@ -88,6 +89,46 @@ clone_full_repo() {
 
     du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
 }
+
+# 固定到某个 commit（或分支名）的稀疏浅 clone：只取 commit 本身和 sparse 目录里的 blob。
+# 用于从大型仓库中摘取少量文件（例如 vLLM 仓库里的 .agents/skills）。
+# 用法: clone_sparse_at_ref <name> <repo_dir> <url> <ref> <sparse_dir>...
+clone_sparse_at_ref() {
+    local name="$1"
+    local repo_dir="$2"
+    local url="$3"
+    local ref="$4"
+    shift 4
+
+    echo ""
+    echo "=== $name @ $ref ==="
+
+    if [ ! -d "$repo_dir/.git" ]; then
+        echo "  首次 clone (blobless + sparse)..."
+        mkdir -p "$(dirname "$repo_dir")"
+        git clone --filter=blob:none --no-checkout --depth 1 --sparse "$url" "$repo_dir"
+    fi
+
+    # cone 模式：sparse 目录 + 仓库根目录下的文件（例如 LICENSE）。
+    git -C "$repo_dir" sparse-checkout init --cone
+    git -C "$repo_dir" sparse-checkout set "$@"
+    git -C "$repo_dir" fetch --depth 1 origin "$ref"
+    git -C "$repo_dir" checkout -q --detach FETCH_HEAD
+    echo "  HEAD: $(git -C "$repo_dir" rev-parse HEAD)"
+    du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
+}
+
+# vLLM 仓库内置的 agent skills（.agents/skills/），以及 train-inference-consistency
+# 引用的 batch invariance 文档、实现、测试和 RL 示例。默认固定到下面的 commit；
+# 同步上游时可用 VLLM_SKILLS_REF=main bash update-repos.sh vllm。
+VLLM_SKILLS_REF="${VLLM_SKILLS_REF:-2d8efee9a73366d6b4e753780af32443d2fef91a}"
+vllm_skills_dirs=(
+    ".agents/skills"
+    "docs/features"
+    "vllm/model_executor/determinism"
+    "tests/v1/determinism"
+    "examples/rl"
+)
 
 # 完整递归 clone，用于需要第三方源码子模块的 kernel 仓库。
 clone_recursive_repo() {
@@ -267,6 +308,9 @@ case "$TARGET" in
         clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
         echo "  上游已更新；按 skills/other/tech-doc-style-chinese/README.md 的「同步上游」步骤合并到本地定制版。"
         ;;
+    vllm|vllm-skills)
+        clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
+        ;;
     all)
         clone_or_update "triton" "skills/kernel/triton-skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "skills/kernel/cutlass-skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
@@ -284,17 +328,18 @@ case "$TARGET" in
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
         clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
+        clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|all]"
         exit 1
         ;;
 esac
 
 echo ""
 echo "=== 总览 ==="
-for sk in skills/kernel/triton-skill skills/kernel/cutlass-skill skills/kernel/deepgemm-skill skills/framework/sglang-skill skills/framework/verl-skill skills/other/nccl-skill; do
+for sk in skills/kernel/triton-skill skills/kernel/cutlass-skill skills/kernel/deepgemm-skill skills/framework/sglang-skill skills/framework/verl-skill skills/framework/train-inference-consistency skills/other/nccl-skill; do
     if [ -d "$SCRIPT_DIR/$sk/repos" ]; then
         du -sh "$SCRIPT_DIR/$sk/repos/"*/ 2>/dev/null
     fi

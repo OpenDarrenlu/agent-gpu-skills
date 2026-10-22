@@ -18,6 +18,12 @@ runtime rather than a standalone kernel.
    train-inference mismatch, RL step OOM/throughput): use `verl-skill`. If the
    problem is inside the SGLang rollout server itself, continue with
    `sglang-skill`; weight-sync collective hangs go to `nccl-skill`.
+   For the end-to-end engineering workflow that makes training and vLLM rollout
+   logprobs bitwise identical (true on-policy RL: C0–C10 gates, batch-invariant
+   kernels, training forward reusing inference kernels, backward/STE and
+   quantization contracts, delivery and paired acceptance), use
+   `train-inference-consistency`; keep verl-specific metrics and config in
+   `verl-skill`.
 3. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
    capacity, TTFT/TBT, or deployment strategy**: use `llm-serving-router`.
 4. **Framework-level workload profiling or benchmark design**: use

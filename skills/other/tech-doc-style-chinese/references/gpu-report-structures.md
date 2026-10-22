@@ -255,6 +255,8 @@ loss/奖励曲线、训推差异指标；需要时链接训推一致报告
 
 读者要带走：差异有多大，比较的是哪两个量，差异来自哪里，哪些原因已确认，修复的代价是什么。
 
+目标是 bitwise 0 diff（true on-policy）并按 `train-inference-consistency` 的 C0–C10 流程推进时，交付报告的字段以该 skill 的 `workflow/report-template.md` 为准，本模板用于组织中文分析报告。
+
 ```markdown
 # <模型或场景> 训推一致性分析：<一句话结论>
 

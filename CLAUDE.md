@@ -7,8 +7,8 @@ This repository is an Agent Skill bundle, not an application. Read
 
 - `skills/kernel/`: CUDA, PTX, Triton, CUTLASS, DeepGEMM, kernel profiling,
   persistent-kernel tuning, performance modeling, and kernel references.
-- `skills/framework/`: SGLang, verl (RL post-training), and framework/runtime-facing
-  skills.
+- `skills/framework/`: SGLang, verl (RL post-training), train-inference
+  consistency (from vLLM), and framework/runtime-facing skills.
 - `skills/other/`: communication, AMD/ROCm, local knowledge bases, and
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers.
@@ -32,6 +32,7 @@ bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills
 bash update-repos.sh nvidia-skills
 bash update-repos.sh tech-doc-style-chinese   # upstream clone, for diffing only
+bash update-repos.sh vllm                     # pinned sparse vLLM checkout for train-inference-consistency
 
 # Test the customized Chinese technical-writing skill.
 for t in skills/other/tech-doc-style-chinese/tests/test_*.py; do python3 "$t"; done
@@ -59,6 +60,10 @@ python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
 - `skills/other/tech-doc-style-chinese` overrides the upstream clone in
   `repos/tech-doc-style-chinese`; its `README.md` lists which files are
   verbatim upstream copies and which are customized. Keep that table accurate.
+- `skills/framework/train-inference-consistency` is a pinned copy of vLLM's
+  `.agents/skills/train-inference-consistency`; its sparse vLLM checkout lives
+  in the skill's git-ignored `repos/vllm`. Its `README.md` lists the local
+  modifications and the sync procedure.
 - The TileLang suite's upstream `cuda_skill` is intentionally not installed;
   use the local `cuda-skill` as the canonical CUDA entry.
 - When an upstream repository moves a referenced path, update

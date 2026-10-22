@@ -14,6 +14,7 @@ Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 | TileLang kernel 编写、调试、优化、profiling | `writing-tilelang-kernels` / `profiling-tilelang-programs` |
 | SGLang/vLLM、PyTorch、端到端延迟、框架 profiling | `gpu-framework-router` |
 | verl RL 后训练（PPO/GRPO、rollout、reward、agent loop、训推一致） | `verl-skill` |
+| bitwise 训推一致（vLLM batch invariance、logprob 0 diff、BI kernel） | `train-inference-consistency` |
 | LLM serving、KV cache、吞吐/延迟、容量规划 | `llm-serving-router` |
 | Blackwell/Hopper kernel 资料与上游 PR | `KernelWiki` |
 | 写/改/审中文技术原理报告、设计文档、性能报告、源码解析 | `tech-doc-style-chinese` |
@@ -73,6 +74,7 @@ bash update-repos.sh cutlass
 bash update-repos.sh deepgemm
 bash update-repos.sh sglang
 bash update-repos.sh verl
+bash update-repos.sh vllm
 bash update-repos.sh nccl
 bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills

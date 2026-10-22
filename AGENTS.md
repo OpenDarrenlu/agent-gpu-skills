@@ -53,6 +53,9 @@ producing detailed advice or code.
 - SGLang runtime and backend integration: `sglang-skill`
 - verl/HybridFlow RL post-training (PPO/GRPO, rollout, reward, agent loop,
   train-inference mismatch): `verl-skill`
+- Bitwise train-inference consistency / true on-policy RL (vLLM batch
+  invariance, logprob 0 diff, BI kernels, backward/STE, C0–C10 gates):
+  `train-inference-consistency` (from vllm-project/vllm `.agents/skills`)
 - Serving design and capacity planning: `llm-serving-router`
 - Whole-application timeline: `nsys-profile-analysis` or `perf-nsight-systems`
 - Serving workload benchmark: `llm-serving-auto-benchmark`

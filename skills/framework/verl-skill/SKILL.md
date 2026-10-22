@@ -48,6 +48,7 @@ verl 是 ByteDance Seed 开源、现由 `verl-project` 维护的 LLM/VLM 强化�
 | 已定位到单个 kernel 慢（attention、GEMM、fused CE） | `gpu-performance-router` → 具体 kernel skill |
 | 整机 nsys 时间线解读 | `nsys-profile-analysis` / `perf-nsight-systems` |
 | 纯 serving 部署 / 容量规划（不涉及训练） | `llm-serving-router` |
+| bitwise 训推一致的完整工程流程（C0–C10 gate、vLLM batch invariance、训练前向复用推理 kernel、反向/STE 与量化契约、交付验收） | `train-inference-consistency` |
 
 ## Source Code Locations
 
@@ -395,7 +396,8 @@ rollout log-prob 与训练重算 log-prob 偏离，可能引发 RL collapse。ve
 
 排查顺序：先看 `rollout_probs_diff` 是否随 step 增长 → 对齐 dtype / logprobs_mode / 采样参数
 （temperature、top_p）→ MoE 开 router replay → 再考虑 rollout correction；需要 kernel 级对齐时
-转 `gpu-performance-router`。
+转 `gpu-performance-router`。目标是 rollout 与训练 logprob bitwise 0 diff（true on-policy）时，
+按 `train-inference-consistency` 的 C0–C10 流程推进，本节只提供 verl 侧的指标与配置入口。
 
 ## 性能与显存排查
 

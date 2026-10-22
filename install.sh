@@ -99,6 +99,7 @@ SKILL_NAMES=(
     deepgemm-skill
     sglang-skill
     verl-skill
+    train-inference-consistency
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
     nccl-skill
@@ -137,6 +138,7 @@ SKILL_DIRS=(
     skills/kernel/deepgemm-skill
     skills/framework/sglang-skill
     skills/framework/verl-skill
+    skills/framework/train-inference-consistency
     skills/kernel/nv-gpu-kernel-performance-modeling
     skills/kernel/colfax-research-skill
     skills/other/nccl-skill
@@ -617,6 +619,14 @@ verify_agent() {
     check "$VERL_REPO/verl/trainer/ppo/v1" "verl V1 trainer"
     check "$VERL_REPO/verl/workers/engine_workers.py" "verl engine workers"
     check "$VERL_REPO/verl/checkpoint_engine" "verl checkpoint engine"
+
+    local TIC_SKILL="$SKILL_DIR/train-inference-consistency"
+    check "$TIC_SKILL/workflow/README.md" "训推一致: C0-C10 workflow"
+    check "$TIC_SKILL/guides/bi-kernels.md" "训推一致: BI kernel guide"
+    local VLLM_REPO="$TIC_SKILL/repos/vllm"
+    check "$VLLM_REPO/docs/features/batch_invariance.md" "vLLM batch invariance 文档"
+    check "$VLLM_REPO/vllm/model_executor/determinism/batch_invariant.py" "vLLM batch invariant 实现"
+    check "$VLLM_REPO/tests/v1/determinism" "vLLM batch invariance 测试"
 
     local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
     check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"

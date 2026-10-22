@@ -174,7 +174,7 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 
 ## 与其他 skill 的分工
 
-本 Skill 只负责表达和结构，不替代技术验证。报告中的技术事实和证据先从对应 skill 获取：kernel 实现找 `gpu-kernel-authoring-router`，性能证据找 `ncu-report-skill` 或 `gpu-performance-router`，建模估算找 `nv-gpu-kernel-performance-modeling`，推理框架找 `sglang-skill` 或 `llm-serving-router`，RL 后训练找 `verl-skill`，通信找 `gpu-communication-libraries` 或 `nccl-skill`，TileLang 设计文档同时参考 `writing-tilelang-design-docs`。性能报告覆盖 `ncu-report-skill` 报告模板的全部章节，可以作为其 `REPORT.md` 的中文写法。
+本 Skill 只负责表达和结构，不替代技术验证。报告中的技术事实和证据先从对应 skill 获取：kernel 实现找 `gpu-kernel-authoring-router`，性能证据找 `ncu-report-skill` 或 `gpu-performance-router`，建模估算找 `nv-gpu-kernel-performance-modeling`，推理框架找 `sglang-skill` 或 `llm-serving-router`，RL 后训练找 `verl-skill`，bitwise 训推一致找 `train-inference-consistency`，通信找 `gpu-communication-libraries` 或 `nccl-skill`，TileLang 设计文档同时参考 `writing-tilelang-design-docs`。性能报告覆盖 `ncu-report-skill` 报告模板的全部章节，可以作为其 `REPORT.md` 的中文写法。
 
 ## 项目覆盖规则
 

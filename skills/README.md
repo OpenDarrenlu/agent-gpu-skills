@@ -38,6 +38,7 @@
 |---|---|
 | `sglang-skill` | SGLang runtime、KV cache、attention backend、scheduler |
 | `verl-skill` | verl/HybridFlow RL 后训练：PPO/GRPO、model engine、rollout 权重同步、reward、agent loop、训推一致 |
+| `train-inference-consistency` | bitwise 训推一致（true on-policy RL）：vLLM batch invariance、C0–C10 gate、BI kernel、反向/STE 与量化契约；来自 vLLM 仓库 `.agents/skills` |
 | `llm-serving-router` | LLM serving、吞吐/延迟、容量规划与部署 |
 | `gpu-framework-router` | 框架问题与 kernel 问题之间的分流 |
 | `nsys-profile-analysis` | VeloQ 的 whole-application timeline 分析 |
