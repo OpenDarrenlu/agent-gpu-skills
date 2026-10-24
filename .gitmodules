@@ -17,3 +17,6 @@
 [submodule "repos/tilelang-cuda-skills"]
 	path = repos/tilelang-cuda-skills
 	url = https://github.com/sablin39/tilelang-cuda-skills.git
+[submodule "repos/ponytail"]
+	path = repos/ponytail
+	url = https://github.com/DietrichGebert/ponytail.git

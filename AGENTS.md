@@ -63,6 +63,9 @@ producing detailed advice or code.
 
 ### Other
 
+- 简化实现、避免过度设计、通用代码审查与仓库审计：`ponytail` /
+  `ponytail-review` / `ponytail-audit`（来自 `repos/ponytail/skills`；GPU 事实与性能结论仍使用领域 skill）。
+
 - AMD/ROCm/HIP docs: `amd-gpu-docs`
 - AMD Instinct/CDNA ISA: `amd-instinct-isa`
 - NCCL/NVSHMEM/RDMA/collectives: `gpu-communication-libraries` or `nccl-skill`

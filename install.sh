@@ -131,6 +131,12 @@ SKILL_NAMES=(
     salary-negotiation-skill
     tech-doc-style-chinese
     zotero-cli
+    ponytail
+    ponytail-review
+    ponytail-audit
+    ponytail-debt
+    ponytail-gain
+    ponytail-help
 )
 SKILL_DIRS=(
     skills/kernel/cuda-skill
@@ -171,6 +177,12 @@ SKILL_DIRS=(
     skills/other/salary-negotiation-skill
     skills/other/tech-doc-style-chinese
     skills/other/zotero-cli
+    repos/ponytail/skills/ponytail
+    repos/ponytail/skills/ponytail-review
+    repos/ponytail/skills/ponytail-audit
+    repos/ponytail/skills/ponytail-debt
+    repos/ponytail/skills/ponytail-gain
+    repos/ponytail/skills/ponytail-help
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
@@ -217,6 +229,8 @@ install_to_agent() {
                 echo "  warn: 无法初始化 tilelang-cuda-skills 的嵌套 submodule" >&2
         fi
     fi
+
+    ensure_submodule_path "ponytail" "repos/ponytail" "repos/ponytail/skills/ponytail/SKILL.md" || true
 
     for i in "${!SKILL_NAMES[@]}"; do
         skill_name="${SKILL_NAMES[$i]}"

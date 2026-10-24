@@ -85,6 +85,7 @@ bash update-repos.sh ccfa-skills
 bash update-repos.sh tech-doc-style-chinese
 bash update-repos.sh iket-profiling
 bash update-repos.sh salary-negotiation
+bash update-repos.sh ponytail
 # 文档单独刷新，耗时较长；提交前检查索引与抓取完整性
 bash update-repos.sh docs
 ```
@@ -94,7 +95,7 @@ clone 到 git-ignored 的 `repos/tech-doc-style-chinese/`，只用于比对；�
 `skills/other/tech-doc-style-chinese/` 中的本地定制版，同步步骤见其 `README.md`。
 
 `repos/nvidia-skills`、`repos/amd-skills`、`repos/cursor-skills`、
-`repos/ccfa-skills`、`repos/tilelang-cuda-skills` 和 `kernel-design-agents`
+`repos/ccfa-skills`、`repos/tilelang-cuda-skills`、`repos/ponytail` 和 `kernel-design-agents`
 是 submodule。更新后需要提交主仓库中的 submodule 指针变化。
 
 ## TileLang Skills
@@ -130,3 +131,9 @@ ISA 只在用户明确接受官方文档条款后下载到 git-ignored 本地目
 [verl 课程笔记](notes/verl-course/README.md)收录按源码快照编写的离线 HTML 笔记。
 文献检索与 Zotero 阅读使用 `skills/other/zotero-cli`，随本地 skills 一起安装；
 使用前运行 `zotero-cli config` 检查本机连接。Agent 的安装副本和本机 MCP 配置不提交到仓库。
+
+## Ponytail
+
+[Ponytail](https://github.com/DietrichGebert/ponytail) 通过 `repos/ponytail` 子模块接入，
+安装器安装其 6 个 skill：ponytail、review、audit、debt、gain、help。
+完整 Codex 插件及生命周期 hooks 的安装见 [安装指南](INSTALL.md#ponytail)。

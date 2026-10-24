@@ -63,6 +63,7 @@
 | `amd-instinct-cdna4-isa` | CDNA4 ISA 兼容入口 |
 | `giantpandallm-knowledge` | GiantPandaLLM 技术文章知识库 |
 | `zhihu-knowledge-base` | 知乎技术文章本地知识库 |
+| `ponytail` / `ponytail-review` / `ponytail-audit` | 最小完整实现、改动审查、仓库审计；来自 `repos/ponytail`，另含 debt/gain/help |
 | `zotero-cli` | Zotero 文献搜索、PDF 阅读、元数据与笔记管理 |
 | `salary-negotiation-skill` | 薪资谈判与 offer 评估 |
 | `tech-doc-style-chinese` | 中文技术文档与技术原理报告（算子/推理/训练框架）：结构模板、证据等级、术语与排版检查；Fenng/Tech-Doc-Style-Chinese 的本地定制版 |

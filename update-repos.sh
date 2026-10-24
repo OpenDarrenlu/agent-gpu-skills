@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm / iket-profiling / salary-negotiation / docs)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm / iket-profiling / salary-negotiation / ponytail / docs)
 # docs 不在 all 中：重新抓取 CUDA/PTX/Nsight 文档、Colfax 文章库和 AMD 文档缓存，耗时较长。
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
@@ -352,6 +352,9 @@ case "$TARGET" in
     salary-negotiation)
         clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
         ;;
+    ponytail)
+        update_submodule "ponytail" "repos/ponytail"
+        ;;
     docs)
         update_docs
         ;;
@@ -368,6 +371,7 @@ case "$TARGET" in
         update_veloq
         update_submodule "kernel-design-agents" "kernel-design-agents"
         update_kda_nested
+        update_submodule "ponytail" "repos/ponytail"
         update_submodule "nvidia-skills" "repos/nvidia-skills"
         update_submodule "amd-skills" "repos/amd-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
@@ -382,7 +386,7 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|docs|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|ponytail|docs|all]"
         exit 1
         ;;
 esac

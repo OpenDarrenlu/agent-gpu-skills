@@ -295,3 +295,23 @@ bash install.sh   # 安装时自动运行验证
 | 其他内容 | 无限制 | 是 |
 
 注: 以上规则在 Cursor 上验证通过。其他工具的 SKILL.md 发现和软链接行为可能不同，遇到问题可以让对应工具的 AI 协助排查。
+
+## Ponytail
+
+Ponytail 上游保留在 `repos/ponytail` 子模块。`install.sh` 将它的 6 个 skill 安装到所选 agent，
+不自动修改 agent 的插件或 hooks 配置。更新源码运行：
+
+```bash
+bash update-repos.sh ponytail
+```
+
+Codex 的完整插件按上游方式单独安装（包含生命周期 hooks）：
+
+```bash
+codex plugin marketplace add DietrichGebert/ponytail
+codex plugin add ponytail@ponytail
+```
+
+随后在 Codex 的 `/hooks` 中审核并信任插件 hooks，重启桌面应用或开始新会话。
+插件与独立 skill 都提供相同指令；安装完整插件后可使用插件命名空间，例如
+`$ponytail:ponytail-review`。仅通过 `install.sh` 安装 skill 时不包含自动激活 hooks。
