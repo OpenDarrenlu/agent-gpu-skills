@@ -2,25 +2,25 @@
 name: claude-delegate
 description: >-
   Delegate a coding task to a separate Claude Code CLI process or another Claude session as an
-  implementer, then review its diff and land it yourself. Use only when the user explicitly asks to
-  delegate implementation to Claude Code, another Claude session, or the `claude` CLI — for example,
+  implementer, then review its diff and land it yourself. Use when the user asks to delegate
+  implementation to Claude Code, another Claude session, or the `claude` CLI, including a standing
+  delegation preference recorded in applicable instructions — for example,
   "have another Claude implement this", "delegate this to Claude Code", or "run this queue through a
   separate Claude session." Do not trigger merely because the current orchestrator is Claude, and do
   not use when the user asks the current Claude to implement directly without delegation.
 license: MIT
-compatibility: Requires the `claude` CLI (Claude Code) installed and authenticated, Node 18+, and git. The orchestrating agent must be able to run shell commands and read files. Claude's shell sandbox requires macOS, Linux, or WSL2; on native Windows the npm `claude.cmd` launch is verified and a direct `claude.exe` launch is pending verification. The optional --autocompact flag requires claude 2.1.221 or newer.
 metadata:
-  version: 0.5.0
+  version: 0.5.2
 ---
 
 # Claude Delegate
 
-You are the **orchestrator**. Delegate one bounded coding task to a separate **implementer** — a Claude
-Code CLI session — then review what it produced and land it yourself. You write the brief and own the
-judgment; the separate Claude session edits the working tree; you verify and commit.
+You are the **orchestrator**. Make a short plan and acceptance criteria, then hand a complete,
+independently verifiable task to a separate Claude Code session early. Claude edits the tree;
+you review the result, rerun the important gates, and land accepted work.
 
-This skill is not a signal for the current Claude to implement directly. Use it only after the human
-explicitly asks for delegation to another Claude Code process or session.
+This skill is not a signal for the current Claude to implement directly. Use it when the human
+requests delegation, including a standing preference in applicable instructions.
 
 ## When not to use this
 
@@ -31,6 +31,9 @@ explicitly asks for delegation to another Claude Code process or session.
   provide. Use an isolated container or VM for that requirement.
 
 ## Prerequisites
+
+The relay requires Node 18+ and git. The orchestrator must be able to run shell commands and read
+files. Claude's shell sandbox requires macOS, Linux, or WSL2; native Windows has no shell sandbox.
 
 1. `claude --version` succeeds.
 2. `claude auth status` reports an authenticated session. On macOS the live credentials sit in the
@@ -45,19 +48,42 @@ explicitly asks for delegation to another Claude Code process or session.
 
 ## The loop
 
-### 1. Write the brief
+### 1. Plan briefly and write the brief
 
 The separate session has no orchestrator chat history. It receives the brief on stdin and can inspect
 the target working tree.
 
-Claude Code automatically discovers the target project's `CLAUDE.md` and normal local Claude
-configuration because the relay does not use `--bare`. It does **not** generically auto-load
-`AGENTS.md`. Read `AGENTS.md` yourself and copy every load-bearing constraint and the real gate
+Decide the target behavior, scope, and acceptance criteria without doing the implementer's
+investigation first. Give Claude enough context to implement and verify the whole bounded task;
+include exact gate commands and a report contract. Claude Code automatically discovers the target
+project's `CLAUDE.md` and normal local Claude configuration because the relay does not use `--bare`.
+It does **not** generically auto-load `AGENTS.md`. Read `AGENTS.md` yourself and copy every load-bearing constraint and the real gate
 commands into the brief. Tell the implementer not to commit. Keep one task per brief.
 
 Template and details: [references/writing-the-brief.md](references/writing-the-brief.md).
 
-### 2. Dispatch
+### 2. Preflight Claude's Bash environment
+
+Before a write-capable task dispatch on macOS, Linux, or WSL2, invoke the **same registered relay and workspace** with
+`--preflight-only` and a short timeout (90 seconds or less). With codex-background, use a separate
+`delegate_run` and a fresh runId; pass `relayArgs: ["--preflight-only"]`. Its brief path is required
+by the adapter but is ignored by this relay mode. For shell use:
+
+```bash
+node "<skill-dir>/scripts/relay.mjs" --preflight-only --cd /path/to/repo
+```
+
+The relay starts a fresh Claude process with the normal permission and sandbox settings, allows only
+Bash, requests one `pwd` call, and stops at its tool result. It caps the probe at two turns, $0.50,
+and 90 seconds. **Check `result.json` for `preflight.passed === true`**, not just a zero Claude exit
+or `PRECHECK_OK` in its final text. If the probe fails, times out, or lacks a Bash result, stop this
+delegation round and report the error. Do not dispatch the implementation, retry unsandboxed, or
+spend the task timeout investigating the sandbox. A shell command run by Codex is not this preflight.
+
+The probe uses a separate Claude session. Keep its session ID out of the task run; resume only the
+task's session when review finds concrete fixes.
+
+### 3. Dispatch
 
 For **Codex orchestration of background work**, install and configure the separate
 **codex-background** support utility first. If its MCP tools or registry are missing, stop and
@@ -70,7 +96,6 @@ steps. Other orchestrators keep the shell workflow below.
 ```bash
 node "<skill-dir>/scripts/relay.mjs" --brief brief.txt --cd /path/to/repo
 # review/diagnosis only:                 add --read-only
-# continue the latest session:           add --resume-last
 # continue the recorded session:         add --session <id>
 # choose limits:                         add --max-turns 40 --max-budget-usd 10
 # set the auto-compact window:           add --autocompact 400k
@@ -86,7 +111,7 @@ never commits. See [references/dispatch-and-poll.md](references/dispatch-and-pol
 
 `--autocompact <auto|tokens>` passes Claude Code's auto-compact window setting on every new or resumed invocation, and needs Claude Code `2.1.221` or newer — older builds fail the dispatch with `unknown option '--autocompact'`. The installed CLI owns the accepted range (`auto`, or 100k–1M tokens); the relay records the requested value but does not claim that Claude applied or enforced it.
 
-### 3. Wait
+### 4. Wait
 
 Codex using codex-background keeps the original MCP request pending: no model-driven sleep,
 status or log polling. Use `delegate_wait` only to reattach after an interrupted request.
@@ -101,7 +126,7 @@ the foreground and wait. Completion means the process exited and `result.json` e
 
 Read `finalMessage`, `touchedFiles`, `resultSubtype`, and the raw artifact paths from `result.json`.
 
-### 4. Review
+### 5. Review
 
 Treat the implementer's report and gate outcomes as claims:
 
@@ -113,10 +138,11 @@ Treat the implementer's report and gate outcomes as claims:
 
 Full checklist: [references/review-and-land.md](references/review-and-land.md).
 
-### 5. Land
+### 6. Land
 
 The **orchestrator commits** only after the gates pass and the diff holds. For rework, resume the same
-Claude session with a delta brief:
+task Claude session with a delta brief listing only concrete review findings, affected behavior,
+and the gates to rerun. Do not send a new broad task or use a new session for ordinary corrections:
 
 ```bash
 echo "Keep the implementation, replace the mocked DB test with the migrated fixture, and remove the
@@ -135,6 +161,12 @@ The normal profile is deliberately explicit:
   dependencies and no unsandboxed retry. Commands that stay sandboxed are auto-approved so ordinary
   gates can run headlessly. The sandbox governs shell processes and their children only; merged
   local or managed sandbox settings can add effective paths or exclusions.
+- In a detected Docker, Podman, or Kubernetes container, the relay adds Claude's documented
+  `enableWeakerNestedSandbox` compatibility setting and allows Unix sockets for that child invocation.
+  This reuses the outer container's `/proc` and skips Claude's broken nested seccomp helper while
+  retaining bwrap filesystem isolation and network proxying. Sandboxed commands can see container
+  process information and connect to Unix sockets visible inside the container. The settings live
+  only in the relay's per-run `profile.json`; ordinary Claude sessions are unaffected.
 - Configured MCP discovery and Claude.ai connectors are disabled, all MCP tools are denied, and
   skills, commands, and Claude's Agent tool are unavailable to the child. Project `CLAUDE.md`, hooks,
   normal authentication, session persistence, and other local settings still load.

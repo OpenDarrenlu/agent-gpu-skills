@@ -69,6 +69,8 @@
  *   --session <id>                    Map to Claude's --resume <id>.
  *                                     Mutually exclusive with --resume-last.
  *   --read-only                       Plan mode with Read, Glob, and Grep only.
+ *   --preflight-only                  Probe Claude's actual Bash sandbox with `pwd`.
+ *                                     Never send the task brief or resume a session.
  *   --dangerously-skip-permissions    Opt into Claude's bypassPermissions mode.
  *                                     Mutually exclusive with --read-only.
  *   -h, --help                        Show this help.
@@ -131,6 +133,8 @@ const MAX_TIMER_MS = 2_147_483_647;
 const EFFORT_LEVELS = new Set(["low", "medium", "high", "xhigh", "max", "ultracode"]);
 const SAFE_MODEL = /^[A-Za-z0-9][A-Za-z0-9._:@\/\[\]-]*$/;
 const SAFE_SESSION = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
+const PREFLIGHT_BRIEF = "Preflight only. Invoke Bash exactly once with command `pwd`. Do not edit files or perform task work. Stop after the tool result; do not retry or bypass the sandbox.";
+const PREFLIGHT_TIMEOUT_MS = 90_000;
 
 const IMPLEMENTER_KEY = "claude";
 
@@ -275,6 +279,7 @@ function parseArgs(argv) {
     resumeLast: false,
     session: null,
     readOnly: false,
+    preflightOnly: false,
     dangerouslySkipPermissions: false,
   };
 
@@ -306,6 +311,7 @@ function parseArgs(argv) {
       case "--resume-last": opts.resumeLast = true; break;
       case "--session": opts.session = next(); break;
       case "--read-only": opts.readOnly = true; flagged.add("readOnly"); break;
+      case "--preflight-only": opts.preflightOnly = true; break;
       case "--dangerously-skip-permissions":
         opts.dangerouslySkipPermissions = true;
         flagged.add("dangerouslySkipPermissions");
@@ -321,6 +327,15 @@ function parseArgs(argv) {
   }
   if (opts.readOnly && opts.dangerouslySkipPermissions) {
     fail("--read-only and --dangerously-skip-permissions are mutually exclusive");
+  }
+  if (opts.preflightOnly && (opts.readOnly || opts.resumeLast || opts.session)) {
+    fail("--preflight-only requires a fresh write-capable session; omit --read-only and resume flags");
+  }
+  if (opts.preflightOnly && opts.dangerouslySkipPermissions) {
+    fail("--preflight-only requires the normal permission profile; omit --dangerously-skip-permissions");
+  }
+  if (opts.preflightOnly && process.platform === "win32") {
+    fail("--preflight-only requires Claude's Bash sandbox; native Windows does not provide it");
   }
   if (opts.timeout !== null && parseDuration(opts.timeout) === null) {
     fail(`--timeout "${opts.timeout}" is invalid or too long; use a positive h/m/s duration no longer than about 24 days`);
@@ -348,6 +363,12 @@ function parseArgs(argv) {
   }
   if (opts.autocompact !== null && !/^(?:auto|[1-9]\d*[km]?)$/i.test(opts.autocompact)) {
     fail('--autocompact must be "auto" or a positive integer optionally followed by k or m');
+  }
+  if (opts.preflightOnly) {
+    // Cap the probe even when lane defaults or caller flags request more.
+    opts.maxTurns = "2";
+    opts.maxBudgetUsd = "0.5";
+    if (opts.timeout === null || parseDuration(opts.timeout) > PREFLIGHT_TIMEOUT_MS) opts.timeout = "90s";
   }
   try {
     if (!statSync(opts.cd).isDirectory()) fail(`--cd is not a directory: ${opts.cd}`);
@@ -504,13 +525,35 @@ function selectedPermissionMode(opts) {
 }
 
 function toolSurface(opts) {
+  if (opts.preflightOnly) return shellTool();
   if (opts.readOnly) return "Read,Glob,Grep";
   return `Read,Glob,Grep,Edit,Write,${shellTool()}`;
+}
+
+function usesContainerCompatibleSandbox() {
+  if (process.platform === "win32") return false;
+  if (
+    process.env.KUBERNETES_SERVICE_HOST ||
+    process.env.CONTAINER ||
+    existsSync("/.dockerenv") ||
+    existsSync("/run/.containerenv")
+  ) return true;
+  try {
+    const mountInfo = readFileSync("/proc/1/mountinfo", "utf8");
+    return (
+      mountInfo.includes("/var/lib/containerd/") ||
+      mountInfo.includes("/var/lib/kubelet/pods/") ||
+      mountInfo.includes("/containers/")
+    );
+  } catch {
+    return false;
+  }
 }
 
 function profileSettings(opts) {
   const shell = shellTool();
   const shellSandboxEnabled = !opts.readOnly && process.platform !== "win32";
+  const containerCompatibleSandbox = shellSandboxEnabled && usesContainerCompatibleSandbox();
   return {
     disableClaudeAiConnectors: true,
     ...(process.platform === "win32"
@@ -544,6 +587,19 @@ function profileSettings(opts) {
             autoAllowBashIfSandboxed: true,
             allowUnsandboxedCommands: false,
             excludedCommands: [],
+            ...(containerCompatibleSandbox
+              ? {
+                  // An unprivileged outer container cannot mount a fresh
+                  // procfs. Claude's optional nested seccomp helper also
+                  // fails after bwrap makes setgroups permanently deny.
+                  // Keep filesystem and proxy isolation, bind the container's
+                  // existing /proc, and skip only Unix-socket seccomp.
+                  enableWeakerNestedSandbox: true,
+                  network: {
+                    allowAllUnixSockets: true,
+                  },
+                }
+              : {}),
             filesystem: {
               disabled: false,
             },
@@ -627,6 +683,7 @@ function eventSessionId(event) {
 
 function handleEvent(event, state, run) {
   if (!event || typeof event !== "object") return;
+  if (state.preflight) observePreflight(event, state.preflight);
   const sessionId = eventSessionId(event);
   if (typeof sessionId === "string" && sessionId) state.sessionId = sessionId;
 
@@ -649,6 +706,43 @@ function handleEvent(event, state, run) {
   const turns = event.num_turns ?? event.numTurns;
   state.numTurns = typeof turns === "number" && Number.isFinite(turns) ? turns : null;
   writeFileSync(run.finalPath, state.finalMessage, "utf8");
+}
+
+function preflightContent(value) {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map((item) => typeof item === "string" ? item : item?.text || "").join("\n");
+  return "";
+}
+
+function preflightToolFailed(item, event) {
+  if (item.is_error === true) return true;
+  const result = event.tool_use_result;
+  if (result && typeof result === "object" && result.is_error === true) return true;
+  const content = preflightContent(item.content);
+  const exitCode = /(?:^|\n)Exit code (\d+)\b/.exec(content);
+  return exitCode !== null && Number(exitCode[1]) !== 0;
+}
+
+function observePreflight(event, preflight) {
+  if (preflight.observed) return;
+  for (const item of event.message?.content || []) {
+    if (event.type === "assistant" && item.type === "tool_use" && item.name === "Bash") {
+      preflight.toolUseId = item.id;
+      preflight.command = item.input?.command || null;
+      if (preflight.command !== "pwd") {
+        preflight.observed = true;
+        preflight.error = "Claude did not use the required `pwd` Bash probe";
+      }
+    }
+    if (event.type === "user" && item.type === "tool_result" && item.tool_use_id === preflight.toolUseId) {
+      const output = preflightContent(item.content);
+      preflight.observed = true;
+      preflight.output = output.slice(0, 4000);
+      const lastLine = output.trim().split(/\r?\n/).at(-1);
+      preflight.passed = !preflightToolFailed(item, event) && lastLine === preflight.cwd;
+      if (!preflight.passed) preflight.error = output || "Bash did not return the expected working directory";
+    }
+  }
 }
 
 // Porcelain status alone cannot see every write. A path that is " M file" before a run and
@@ -951,6 +1045,7 @@ function makeResultWriter(opts, version, run, state, beforeTree, beforeFingerpri
       ...(opts.autocompact === null ? {} : { autocompact: opts.autocompact }),
       timeout: opts.timeout,
       readOnly: opts.readOnly,
+      ...(opts.preflightOnly ? { preflight: state.preflight } : {}),
       resumed: Boolean(opts.resumeLast || opts.session),
       resumeLast: opts.resumeLast,
       permissionMode: state.permissionMode || selectedPermissionMode(opts),
@@ -959,7 +1054,9 @@ function makeResultWriter(opts, version, run, state, beforeTree, beforeFingerpri
         ? "not-applicable"
         : process.platform === "win32"
           ? "unsupported-on-native-windows"
-          : "strict",
+          : usesContainerCompatibleSandbox()
+            ? "container-compatible"
+            : "strict",
       dangerouslySkipPermissions: opts.dangerouslySkipPermissions,
       claudeVersion: version,
       sessionId: state.sessionId,
@@ -1019,6 +1116,7 @@ function reportUnavailable(writeResult, opts, run) {
     signal: null,
     finalMessage: "",
     touchedFiles: gitTouchedFiles(opts.cd),
+    ...(opts.preflightOnly ? { error: "Claude CLI unavailable; Bash preflight could not run" } : {}),
   });
   printSummary(result, run.resultPath);
   process.stderr.write("relay: `claude` not found on PATH. Install Claude Code and run `claude auth login`.\n");
@@ -1038,13 +1136,15 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
       windowsVerbatimArguments: spec.windowsVerbatimArguments,
     });
   } catch (error) {
+    const message = error && error.message ? error.message : String(error);
+    if (state.preflight) state.preflight.error = message;
     const result = writeResult({
       status: "failed",
       exitCode: 1,
       signal: null,
       finalMessage: state.finalMessage,
       touchedFiles: gitTouchedFiles(opts.cd),
-      error: error && error.message ? error.message : String(error),
+      error: message,
     });
     printSummary(result, run.resultPath);
     process.exit(1);
@@ -1052,7 +1152,20 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
   }
 
   const stdoutDecoder = new StringDecoder("utf8");
-  const scan = makeEventScanner((event) => handleEvent(event, state, run));
+  let preflightTerminationRequested = false;
+  const scan = makeEventScanner((event) => {
+    handleEvent(event, state, run);
+    if (opts.preflightOnly && state.preflight.observed && !preflightTerminationRequested) {
+      preflightTerminationRequested = true;
+      // Stop at the first Bash result. Give Claude a moment to emit its
+      // terminal event; then terminate the probe so a stuck model cannot
+      // consume the task timeout.
+      const stop = setTimeout(() => {
+        if (!settled && child.exitCode === null && child.signalCode === null) killChild(child);
+      }, 500);
+      if (typeof stop.unref === "function") stop.unref();
+    }
+  });
   child.stdout.on("data", (chunk) => {
     appendFileSync(run.eventsPath, chunk);
     scan(stdoutDecoder.write(chunk));
@@ -1106,6 +1219,7 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
         stderrTail: stderrTail(run.stderrPath),
         error: `the relay was killed by ${signalName}; claude was terminated with it — inspect the working tree before re-dispatching`,
       });
+      if (state.preflight) state.preflight.error = fields().error;
       const result = writeResult(fields());
       printSummary(result, run.resultPath);
       setTimeout(() => {
@@ -1140,6 +1254,8 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
     settled = true;
     clearWatchdog();
     const unavailable = error && error.code === "ENOENT";
+    const message = error && error.message ? error.message : String(error);
+    if (state.preflight) state.preflight.error = message;
     const result = writeResult({
       status: unavailable ? "claude_unavailable" : "failed",
       exitCode: unavailable ? 127 : 1,
@@ -1147,7 +1263,7 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
       finalMessage: state.finalMessage,
       touchedFiles: gitTouchedFiles(opts.cd),
       ...(unavailable ? {} : { stderrTail: stderrTail(run.stderrPath) }),
-      error: error && error.message ? error.message : String(error),
+      error: message,
     });
     printSummary(result, run.resultPath);
     process.exit(result.exitCode);
@@ -1159,6 +1275,25 @@ function dispatch(opts, brief, launcher, env, run, state, writeResult) {
     clearWatchdog();
     scan(stdoutDecoder.end());
     if (watchdogFired) killChild(child, "SIGKILL");
+
+    if (opts.preflightOnly) {
+      const passed = state.preflight.passed === true && !watchdogFired;
+      const error = passed ? null : watchdogFired
+        ? `Bash preflight did not finish within ${opts.timeout}`
+        : state.preflight.error || "Claude did not return a Bash tool result for `pwd`";
+      if (error) state.preflight.error = error;
+      const result = writeResult({
+        status: passed ? "completed" : watchdogFired ? "timeout" : "failed",
+        exitCode: passed ? 0 : 1,
+        signal: signalName ?? null,
+        finalMessage: state.finalMessage,
+        touchedFiles: gitTouchedFiles(opts.cd),
+        ...(passed ? {} : { error, stderrTail: stderrTail(run.stderrPath) }),
+      });
+      printSummary(result, run.resultPath);
+      process.exit(result.exitCode);
+      return;
+    }
 
     const missingResult = !state.sawResult;
     const terminalError = state.resultIsError || missingResult;
@@ -1204,6 +1339,10 @@ function printSummary(result, resultPath) {
     `relay: ${result.status} (exit ${result.exitCode}${result.signal ? `, killed by ${result.signal}` : ""})  ·  claude ${result.claudeVersion ?? "?"}`,
   );
   lines.push(`permission mode: ${result.permissionMode}  ·  shell sandbox: ${result.shellSandbox}`);
+  if (result.preflight) {
+    lines.push(`Bash preflight: ${result.preflight.passed ? "passed" : "failed"}`);
+    if (result.preflight.error) lines.push(`preflight error: ${result.preflight.error}`);
+  }
   if (result.dangerouslySkipPermissions) {
     lines.push("warning: bypassPermissions was explicitly enabled; direct file tools can reach beyond normal permission boundaries.");
   }
@@ -1250,7 +1389,7 @@ function printSummary(result, resultPath) {
 
 function main() {
   const opts = parseArgs(process.argv.slice(2));
-  const brief = readBrief(opts);
+  const brief = opts.preflightOnly ? PREFLIGHT_BRIEF : readBrief(opts);
   if (!brief.trim()) fail("empty brief (pass --brief <file> or pipe the brief on stdin)");
   const briefBytes = Buffer.byteLength(brief, "utf8");
   if (briefBytes > MAX_BRIEF_BYTES) {
@@ -1283,10 +1422,20 @@ function main() {
     numTurns: null,
     usage: null,
     totalCostUsd: null,
+    preflight: opts.preflightOnly ? {
+      passed: false,
+      observed: false,
+      cwd: realpathSync(opts.cd),
+      toolUseId: null,
+      command: null,
+      output: null,
+      error: null,
+    } : null,
   };
   const writeResult = makeResultWriter(opts, version, run, state, beforeTree, beforeFingerprints);
 
   if (!launcher || version === null) {
+    if (state.preflight) state.preflight.error = "Claude CLI unavailable; Bash preflight could not run";
     reportUnavailable(writeResult, opts, run);
     return;
   }

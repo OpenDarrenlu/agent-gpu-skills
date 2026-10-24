@@ -11,7 +11,11 @@ claude --version
 claude auth status
 ```
 
-The relay performs its own `claude --version` preflight and records the answer as `claudeVersion`.
+The relay performs its own `claude --version` check and records the answer as `claudeVersion`.
+That check does not exercise Claude's Bash sandbox. Before the task, run the same relay with
+`--preflight-only` in the target workspace. It uses the normal permission/sandbox settings,
+restricts the tool surface to Bash, invokes `pwd`, and terminates at the Bash result. Inspect
+`result.json`'s `preflight.passed`; stop the delegation round unless it is `true`.
 When an orchestrator is itself Claude Code, the relay removes only inherited `CLAUDECODE` from the
 child environment so a separate CLI process can start. It preserves credentials,
 `CLAUDE_CODE_CHILD_SESSION`, and every other environment entry. Version preflight uses that same
@@ -40,6 +44,7 @@ node "<skill-dir>/scripts/relay.mjs" --brief brief.txt --cd /path/to/repo
 | `--resume-last` | Resume the latest session for this cwd with Claude's `--continue`; send a delta brief. |
 | `--session <id>` | Resume a specific session with Claude's `--resume <id>`; mutually exclusive with `--resume-last`. |
 | `--read-only` | Plan mode with only Read, Glob, and Grep, plus a Git-visible change tripwire. |
+| `--preflight-only` | Fresh Bash sandbox probe on macOS, Linux, or WSL2; ignores the task brief, caps at two turns, $0.50 and 90 seconds, and writes `preflight.passed` to `result.json`. Cannot combine with read-only, permission bypass, or resume flags; rejects native Windows. |
 | `--dangerously-skip-permissions` | Opt into Claude's `bypassPermissions`; mutually exclusive with `--read-only`. |
 | `-h`, `--help` | Print the relay header and option reference. |
 
@@ -93,6 +98,11 @@ The generated `profile.json`:
 - on macOS, Linux, and WSL2, enables Claude's Bash sandbox with `failIfUnavailable: true`,
   `autoAllowBashIfSandboxed: true`, `allowUnsandboxedCommands: false`, and filesystem isolation
   explicitly enabled;
+- in a detected Docker, Podman, or Kubernetes container, adds `enableWeakerNestedSandbox: true` and
+  `network.allowAllUnixSockets: true` to that run's inline profile. This binds the outer container's
+  existing `/proc` and skips the optional Unix-socket seccomp helper, which cannot create its nested
+  user namespace after bwrap. Filesystem isolation and proxy-based network restriction remain, while
+  container process information and container-visible Unix sockets become reachable;
 - on native Windows, leaves the unsupported sandbox unconfigured and enables Claude's PowerShell
   tool through its documented settings environment switch;
 - disables Claude.ai connectors for every profile.
@@ -167,6 +177,9 @@ Core fields:
 - `touchedFiles` — final `git status --porcelain` lines for `--cd`; `null` means git could not report,
   while `[]` means git reported a clean tree. This is the whole final tree, not attribution.
 - `readOnlyViolation` — present only on `--read-only`, with the three-state meaning above.
+- `preflight` — present only on `--preflight-only`. `passed` is true only when the Bash tool
+  returned the target working directory; `error` records the failure. A successful Claude exit
+  or final text alone is not evidence that Bash worked.
 
 Run metadata includes `workdir`, `model`, `effort`, `maxTurns`, `maxBudgetUsd`, optional
 `autocompact`, `timeout`, `readOnly`,

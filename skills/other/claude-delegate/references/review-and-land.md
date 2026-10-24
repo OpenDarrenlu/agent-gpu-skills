@@ -72,8 +72,9 @@ Generated code can satisfy tests while remaining wrong. Check every diff for:
 - guards for impossible internal states that obscure real trust-boundary validation;
 - network or filesystem assumptions hidden by the implementer's environment.
 
-Run relevant guard skills when installed. Anything blocking goes back through a delta brief or is
-fixed in the tree, and either choice is reported to the human.
+Run relevant guard skills when installed. Send concrete blocking implementation findings back to the
+recorded task session with a delta brief. Keep the original acceptance criteria and ask Claude to
+rerun the affected gates.
 
 ## Preserve interrupted work
 
@@ -92,9 +93,9 @@ remove the unused import, rerun the original gates, and leave the tree uncommitt
   node "<skill-dir>/scripts/relay.mjs" --session <id> --cd /path/to/repo
 ```
 
-Use `--resume-last` only when the latest session for that cwd is unambiguous. `--session <id>` is safer
-when several Claude sessions exist. The relay maps them to `--continue` and `--resume`, respectively,
-and re-passes the permission profile.
+Use `--session <id>` with the recorded task session ID. The Bash preflight has its own session, so
+`--resume-last` can select the wrong one. The relay maps `--session` to `--resume` and re-passes the
+permission profile.
 
 Rework gets the same test review, gate rerun, diff review, and implementer sweep. Repeat until the work
 holds.

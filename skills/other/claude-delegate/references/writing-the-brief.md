@@ -28,6 +28,10 @@ not automatic Claude Code behavior.
 
 ## A compact structure
 
+Codex's own plan should be short: desired result, boundaries, and acceptance criteria. Dispatch
+once those are known. Claude should own the detailed investigation and implementation. Make the
+brief self-contained enough to verify without another clarification round.
+
 Use a bounded, block-structured brief:
 
 ```xml
@@ -93,7 +97,7 @@ One brief → one separate Claude session → one reviewed commit keeps scope an
 mixed request such as "fix the bug, redesign the API, update unrelated docs, and propose a roadmap"
 into separate dispatches.
 
-Use a resumed session only for rework on the same task. Start unrelated queue items in fresh sessions.
+Use a resumed session only for concrete rework on the same task. Start unrelated queue items in fresh sessions.
 
 ## Premises freeze at dispatch
 
@@ -103,8 +107,9 @@ working tree before sending a corrected brief. Do not discard partial edits befo
 
 ## Delta briefs for resumed sessions
 
-`--resume-last` maps to Claude's `--continue`; `--session <id>` maps to `--resume <id>`. Both retain the
-conversation, so send only what changed:
+`--resume-last` maps to Claude's `--continue`; `--session <id>` maps to `--resume <id>`. Use the
+recorded task session ID so a preflight or another task cannot be resumed by mistake. Both retain
+the conversation, so send only the specific review findings and required verification:
 
 ```xml
 <review_delta>
