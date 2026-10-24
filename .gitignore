@@ -19,3 +19,9 @@ skills/other/amd-instinct-isa/references/manifest.json
 
 # AMD documentation mirror is always local; sources have mixed licenses/terms.
 **/cache/
+
+# Agent installation copies and machine-local connector settings
+/.agents/
+/.claude/
+/.codex/
+/skills-lock.json

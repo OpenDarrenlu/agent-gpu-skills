@@ -3,7 +3,8 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm / iket-profiling / salary-negotiation / docs)
+# docs 不在 all 中：重新抓取 CUDA/PTX/Nsight 文档、Colfax 文章库和 AMD 文档缓存，耗时较长。
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
 #   skills/kernel/triton-skill/repos/triton/
@@ -11,7 +12,7 @@
 #   skills/kernel/deepgemm-skill/repos/deepgemm/
 #   skills/framework/sglang-skill/repos/sglang/
 #   skills/framework/verl-skill/repos/verl/
-#   skills/framework/train-inference-consistency/repos/vllm/  (固定 commit 的稀疏浅 clone：.agents/skills 与 batch invariance 相关目录)
+#   skills/framework/train-inference-consistency/repos/vllm/  (支持指定 commit 的稀疏浅 clone：.agents/skills 与 batch invariance 相关目录)
 #   skills/other/nccl-skill/repos/nccl/
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/amd-skills/     (AMD skills submodule)
@@ -76,18 +77,38 @@ clone_full_repo() {
     echo ""
     echo "=== $name ==="
 
+    # branch 为空时跟随远端默认分支。
     if [ -d "$repo_dir/.git" ]; then
         echo "  更新中..."
-        cd "$repo_dir"
-        git pull --ff-only origin "$branch" 2>/dev/null || git pull origin "$branch"
+        if [ -n "$branch" ]; then
+            git -C "$repo_dir" pull --ff-only origin "$branch" || return $?
+        else
+            git -C "$repo_dir" pull --ff-only || return $?
+        fi
         echo "  更新完成."
     else
         echo "  首次 clone..."
-        git clone --depth 1 --branch "$branch" "$url" "$repo_dir"
+        if [ -n "$branch" ]; then
+            git clone --depth 1 --branch "$branch" "$url" "$repo_dir"
+        else
+            git clone --depth 1 "$url" "$repo_dir"
+        fi
         echo "  Clone 完成."
     fi
+    echo "  HEAD: $(git -C "$repo_dir" rev-parse --short HEAD) ($(git -C "$repo_dir" log -1 --format=%cs))"
 
     du -sh "$repo_dir" 2>/dev/null | awk '{print "  大小: "$1}'
+}
+
+# kernel-design-agents 内的 KernelWiki、ncu-report-skill 是知识库 / skill 仓库，
+# 跟随各自远端最新（--remote），而不是 kernel-design-agents 记录的旧指针。
+update_kda_nested() {
+    local kda="$SCRIPT_DIR/kernel-design-agents"
+    [ -f "$kda/.gitmodules" ] || return 0
+    echo "  更新 kernel-design-agents 内嵌 submodules 到远端最新..."
+    git -C "$kda" submodule sync --recursive
+    git -C "$kda" submodule update --init --recursive --remote
+    git -C "$kda" submodule status --recursive
 }
 
 # 固定到某个 commit（或分支名）的稀疏浅 clone：只取 commit 本身和 sparse 目录里的 blob。
@@ -119,9 +140,9 @@ clone_sparse_at_ref() {
 }
 
 # vLLM 仓库内置的 agent skills（.agents/skills/），以及 train-inference-consistency
-# 引用的 batch invariance 文档、实现、测试和 RL 示例。默认固定到下面的 commit；
-# 同步上游时可用 VLLM_SKILLS_REF=main bash update-repos.sh vllm。
-VLLM_SKILLS_REF="${VLLM_SKILLS_REF:-2d8efee9a73366d6b4e753780af32443d2fef91a}"
+# 引用的 batch invariance 文档、实现、测试和 RL 示例。默认跟随 main；
+# 需要复现某个版本时用 VLLM_SKILLS_REF=<commit> bash update-repos.sh vllm。
+VLLM_SKILLS_REF="${VLLM_SKILLS_REF:-main}"
 vllm_skills_dirs=(
     ".agents/skills"
     "docs/features"
@@ -260,6 +281,22 @@ update_veloq() {
     fi
 }
 
+# 文档类来源：CUDA/PTX/Nsight 文档（提交到 git）、Colfax 文章库（提交到 git）、
+# AMD 文档缓存（本地、git-ignored）。
+update_docs() {
+    echo ""
+    echo "=== docs: CUDA / PTX / Nsight ==="
+    (cd "$SCRIPT_DIR" && python3 scrape_docs.py all --force)
+    local py="$SCRIPT_DIR/.venv-docs/bin/python"
+    [ -x "$py" ] || py=python3
+    echo ""
+    echo "=== docs: Colfax Research 文章库 ==="
+    (cd "$SCRIPT_DIR" && "$py" skills/kernel/colfax-research-skill/scripts/update_kb.py) || echo "  warn: Colfax 更新失败（不影响其他步骤）"
+    echo ""
+    echo "=== docs: AMD 文档缓存（本地） ==="
+    (cd "$SCRIPT_DIR" && "$py" skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core --refresh) || echo "  warn: AMD 文档同步失败（不影响其他步骤）"
+}
+
 TARGET="${1:-all}"
 
 case "$TARGET" in
@@ -283,6 +320,7 @@ case "$TARGET" in
         ;;
     kernel-design-agents)
         update_submodule "kernel-design-agents" "kernel-design-agents"
+        update_kda_nested
         ;;
     veloq)
         update_veloq
@@ -308,6 +346,15 @@ case "$TARGET" in
         clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
         echo "  上游已更新；按 skills/other/tech-doc-style-chinese/README.md 的「同步上游」步骤合并到本地定制版。"
         ;;
+    iket-profiling)
+        clone_full_repo "iket-profiling-skill" "$SCRIPT_DIR/repos/iket-profiling-skill" "https://github.com/humanfia/iket-profiling-skill.git" "" || echo "  warn: iket-profiling-skill 上游拉取失败（不影响其他步骤）"
+        ;;
+    salary-negotiation)
+        clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
+        ;;
+    docs)
+        update_docs
+        ;;
     vllm|vllm-skills)
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
         ;;
@@ -320,6 +367,7 @@ case "$TARGET" in
         clone_or_update "nccl" "skills/other/nccl-skill" "https://github.com/NVIDIA/nccl.git" "master" "${nccl_dirs[@]}"
         update_veloq
         update_submodule "kernel-design-agents" "kernel-design-agents"
+        update_kda_nested
         update_submodule "nvidia-skills" "repos/nvidia-skills"
         update_submodule "amd-skills" "repos/amd-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
@@ -329,10 +377,12 @@ case "$TARGET" in
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
         clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
+        clone_full_repo "iket-profiling-skill" "$SCRIPT_DIR/repos/iket-profiling-skill" "https://github.com/humanfia/iket-profiling-skill.git" "" || echo "  warn: iket-profiling-skill 上游拉取失败（不影响其他步骤）"
+        clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|docs|all]"
         exit 1
         ;;
 esac

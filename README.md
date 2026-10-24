@@ -83,6 +83,10 @@ bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
 bash update-repos.sh ccfa-skills
 bash update-repos.sh tech-doc-style-chinese
+bash update-repos.sh iket-profiling
+bash update-repos.sh salary-negotiation
+# 文档单独刷新，耗时较长；提交前检查索引与抓取完整性
+bash update-repos.sh docs
 ```
 
 `tech-doc-style-chinese` 的上游 [Fenng/Tech-Doc-Style-Chinese](https://github.com/Fenng/Tech-Doc-Style-Chinese)
@@ -120,3 +124,9 @@ bash install.sh --no-tilelang-skills
 
 AMD ISA PDF、AMD 文档缓存和按需下载的上游源码不会提交到仓库。AMD 文档和
 ISA 只在用户明确接受官方文档条款后下载到 git-ignored 本地目录。
+
+## 研究笔记与文献工具
+
+[verl 课程笔记](notes/verl-course/README.md)收录按源码快照编写的离线 HTML 笔记。
+文献检索与 Zotero 阅读使用 `skills/other/zotero-cli`，随本地 skills 一起安装；
+使用前运行 `zotero-cli config` 检查本机连接。Agent 的安装副本和本机 MCP 配置不提交到仓库。

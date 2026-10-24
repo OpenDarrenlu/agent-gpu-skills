@@ -130,6 +130,7 @@ SKILL_NAMES=(
     zhihu-knowledge-base
     salary-negotiation-skill
     tech-doc-style-chinese
+    zotero-cli
 )
 SKILL_DIRS=(
     skills/kernel/cuda-skill
@@ -169,6 +170,7 @@ SKILL_DIRS=(
     skills/other/zhihu-knowledge-base
     skills/other/salary-negotiation-skill
     skills/other/tech-doc-style-chinese
+    skills/other/zotero-cli
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
