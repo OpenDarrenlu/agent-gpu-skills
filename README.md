@@ -18,6 +18,7 @@ Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 | LLM serving、KV cache、吞吐/延迟、容量规划 | `llm-serving-router` |
 | Blackwell/Hopper kernel 资料与上游 PR | `KernelWiki` |
 | 写/改/审中文技术原理报告、设计文档、性能报告、源码解析 | `tech-doc-style-chinese` |
+| 把任务委托给 Claude Code（Codex 需额外注册 MCP，见[下文](#claude-委托)） | `claude-delegate` |
 
 完整分类索引见 [`skills/README.md`](skills/README.md)，路由规则见
 [`AGENTS.md`](AGENTS.md)。
@@ -120,6 +121,34 @@ TileLang 工作流：
 ```bash
 bash install.sh --no-tilelang-skills
 ```
+
+## Claude 委托
+
+`claude-delegate` 把任务交给本机的 Claude Code CLI 执行；在 Codex 中它依赖
+支撑 skill `codex-background` 提供的后台 MCP server。两者原样复制自
+[`amElnagdy/delegate-skills`](https://github.com/amElnagdy/delegate-skills)
+commit `3aa72d681a79e2a9d09bd9a316353003ae1cb4a7`，放在
+`skills/other/claude-delegate/` 和 `skills/other/codex-background/`；许可为
+MIT，见各目录下的 `LICENSE`。
+
+前置条件：
+
+- Node.js 18+；Linux 下 `codex-background` 还需要 `/usr/bin/cc` 和 procfs。
+- Claude Code CLI：`claude` 在 `PATH` 上，并已完成登录认证。Linux 下执行
+  Claude 的受限 shell 命令还需要 `bubblewrap` 和 `socat`。
+
+安装器为所有 agent 安装 `claude-delegate`，`codex-background` 只在
+`--agent codex` 时安装。注册 MCP server 会写入全局 Codex 配置，所以安装器
+不会自动执行这一步。Codex 用户需在安装后手动运行，然后重启 Codex 使其生效：
+
+```bash
+bash install.sh --agent codex
+node ~/.codex/skills/codex-background/scripts/bootstrap.mjs
+```
+
+使用 `--dest DIR` 时，脚本路径换成 `DIR/codex-background/scripts/bootstrap.mjs`。
+默认混合模式下，已安装 skill 的 `scripts/` 是指向本仓库的软链接；移动或删除
+本仓库后，需要重新安装并重新运行 bootstrap。
 
 ## 许可边界
 

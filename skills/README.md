@@ -67,6 +67,8 @@
 | `zotero-cli` | Zotero 文献搜索、PDF 阅读、元数据与笔记管理 |
 | `salary-negotiation-skill` | 薪资谈判与 offer 评估 |
 | `tech-doc-style-chinese` | 中文技术文档与技术原理报告（算子/推理/训练框架）：结构模板、证据等级、术语与排版检查；Fenng/Tech-Doc-Style-Chinese 的本地定制版 |
+| `claude-delegate` | 把任务委托给 Claude Code CLI；原样复制自 amElnagdy/delegate-skills（MIT） |
+| `codex-background` | `claude-delegate` 在 Codex 中所需的后台 MCP server，只为 Codex 安装；安装后需运行 `scripts/bootstrap.mjs` 注册并重启 Codex，见[根目录 README](../README.md#claude-委托) |
 
 ## Routers
 

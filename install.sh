@@ -137,6 +137,8 @@ SKILL_NAMES=(
     ponytail-debt
     ponytail-gain
     ponytail-help
+    claude-delegate
+    codex-background
 )
 SKILL_DIRS=(
     skills/kernel/cuda-skill
@@ -183,6 +185,8 @@ SKILL_DIRS=(
     repos/ponytail/skills/ponytail-debt
     repos/ponytail/skills/ponytail-gain
     repos/ponytail/skills/ponytail-help
+    skills/other/claude-delegate
+    skills/other/codex-background
 )
 
 # 检查是否为本地 skill（避免外部 catalog 覆盖本地路由/参考 skill）
@@ -239,6 +243,10 @@ install_to_agent() {
         target="$SKILL_DIR/$skill_name"
 
         if [ "$INSTALL_TILELANG" = false ] && [[ "$src_dir" == repos/tilelang-cuda-skills/* ]]; then
+            continue
+        fi
+        # codex-background 是 claude-delegate 在 Codex 中的 MCP 支撑 skill，其他 agent 不安装。
+        if [ "$skill_name" = "codex-background" ] && [ "$agent" != "codex" ]; then
             continue
         fi
 
@@ -603,6 +611,9 @@ verify_agent() {
         if [ "$INSTALL_TILELANG" = false ] && [[ "$src_dir" == repos/tilelang-cuda-skills/* ]]; then
             continue
         fi
+        if [ "$skill_name" = "codex-background" ] && [ "$agent" != "codex" ]; then
+            continue
+        fi
         check "$SKILL_DIR/$skill_name/SKILL.md" "$skill_name/SKILL.md"
     done
 
@@ -667,6 +678,13 @@ verify_agent() {
     check "$TECHDOC_SKILL/references/gpu-report-structures.md" "中文技术写作: 报告结构模板"
     check "$TECHDOC_SKILL/assets/report-template.html" "中文技术写作: HTML 报告模板"
     check "$TECHDOC_SKILL/scripts/lint_copy_rules.py" "中文技术写作: 检查器"
+
+    check "$SKILL_DIR/claude-delegate/scripts/relay.mjs" "Claude 委托: relay 脚本"
+    if [ "$agent" = "codex" ]; then
+        local CODEX_BG_SKILL="$SKILL_DIR/codex-background"
+        check "$CODEX_BG_SKILL/scripts/bootstrap.mjs" "Codex 后台: MCP 注册脚本"
+        check "$CODEX_BG_SKILL/scripts/server.mjs" "Codex 后台: MCP server"
+    fi
 
     if [ "$INSTALL_TILELANG" = true ]; then
         local TILELANG_REPO="$SCRIPT_DIR/repos/tilelang-cuda-skills"
@@ -830,5 +848,12 @@ verify_agent() {
 }
 
 verify_agent "$AGENT"
+
+# codex-background 的 bootstrap 会写入全局 Codex 配置，安装器只提示、不自动执行。
+if [ "$AGENT" = "codex" ]; then
+    echo "提示: 在 Codex 中使用 claude-delegate 前，手动注册 codex-background MCP server 并重启 Codex:"
+    echo "  node \"$(get_skill_dir codex)/codex-background/scripts/bootstrap.mjs\""
+    echo ""
+fi
 
 echo "安装完成."
