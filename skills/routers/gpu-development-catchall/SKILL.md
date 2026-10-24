@@ -40,20 +40,11 @@ triggers:
   - "nsys"
   - "profiling"
   - "为什么慢"
-  - "优化"
-  - "分析下"
   - "多卡"
-  - "如何实现"
-  - "帮忙看一下"
-  - "怎么写"
   - "怎么这么慢"
   - "性能"
   - "推理"
-  - "推荐"
-  - "有没有资料"
   - "算子"
-  - "解释下"
-  - "讲一下"
   - "通信"
 ---
 
@@ -61,7 +52,9 @@ triggers:
 
 This skill exists to maximize the hit rate of the `agent-gpu-skills` bundle.
 When the user's query touches anything GPU-related, use this skill first to pick
-a more specific downstream skill.
+a more specific downstream skill. It is a GPU-only entry: if the request is not
+about GPU, kernels, or GPU performance (for example papers, writing, general
+code review, WeChat data, or a mixed task), use `agent-skill-router` instead.
 
 ## Routing Table
 

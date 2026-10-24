@@ -30,9 +30,18 @@ bash bootstrap.sh --agent kimi
 
 `bootstrap.sh` 会依次运行：
 
-1. `git submodule update --init --recursive`
-2. `bash update-repos.sh`
-3. `bash install.sh --agent <agent>`
+1. `git submodule update --init --recursive`（总是执行，即使 `--no-update`）
+2. `bash update-repos.sh`（`--no-update` 时跳过，改为 `install-external.sh` 只 clone 缺失项，不拉取已有 checkout）
+3. 外部来源与运行时 CLI：`bash install-external.sh`（见下文「外部来源」）
+4. `bash install.sh --agent <agent>`
+5. REA MCP（仅 codex，且清单声明了 rea 运行时）：`bash install-rea-mcp.sh --agent codex`
+6. 路由清单重新生成：`python3 skills/routers/agent-skill-router/scripts/build_inventory.py`（`--dest` 下不修改受 git 跟踪的清单）
+
+真实 Codex 安装的推荐命令：
+
+```bash
+bash bootstrap.sh --agent codex
+```
 
 可继续传入 `install.sh` 的选项：
 
@@ -40,6 +49,69 @@ bash bootstrap.sh --agent kimi
 bash bootstrap.sh --agent codex --no-nvidia-skills --no-amd-skills --no-ccfa-skills --no-veloq
 bash bootstrap.sh --agent cursor --copy
 ```
+
+`bootstrap.sh` 专用选项：
+
+| 选项 | 行为 |
+|---|---|
+| `--no-update` | 跳过 `update-repos.sh`；仍初始化缺失的 submodule，并补齐缺失的外部来源 |
+| `--no-integrations` | 跳过 `sources/external-sources.conf` 中的外部来源（获取、运行时、skill） |
+| `--no-rea-mcp` | 跳过 REA 的 Codex MCP 注册（`--no-integrations` 同样跳过） |
+| `--dest DIR` | 隔离安装：只写 `DIR`。不初始化 submodule、不跑 `update-repos.sh`、不获取外部来源、不安装运行时、不注册 MCP、不修改受 git 跟踪的路由清单，不写真实 HOME |
+
+## 外部来源
+
+`sources/external-sources.conf` 是唯一的外部来源清单（tracked）。checkout 放在 git-ignored 的 `repos/<name>/`，不 vendored 进本仓库。
+
+| 来源 | 远端 | 检出 commit | 安装模式 | 运行时（需宿主执行） |
+|---|---|---|---|---|
+| sepia | `Nanako0129/sepia` | `fb06be76…` | skills（`skills/`，含 sepia 与五个操作入口） | 无 |
+| wx-cli | `Steady775/wx-cli`（fork） | `08af8945…` | skills（根 SKILL.md） | `npm install -g @jackwener/wx-cli@0.3.0`（官方 npm 包，`wx`） |
+| rea | `morluto/rea` | `3ce31175…` | skills（npm 包的 `runtime-skills`） | `npm install -g rea-agents@6.7.0`（`rea`） |
+| mattpocock-skills | `mattpocock/skills` | `5beb35b0…` | skills（engineering、productivity、misc） | 无 |
+
+完整来源、许可与版本说明见 [`sources/external-sources.conf`](sources/external-sources.conf) 与 [`docs/skills-usage-review.md`](docs/skills-usage-review.md) §2。
+
+`mode` 与 `runtime` 的含义：
+
+- `skills`：递归查找 `skills_dir`（可用逗号分隔多个目录，`.` 为仓库根）下的 `SKILL.md`；skill 名取 frontmatter `name`。`rea` 的 `runtime-skills` 由 `install-external.sh` 在 npm 安装后链接到全局安装包的 `skills/`。
+- `none`：只获取源码，不安装运行时。
+- `npm:<包名@版本>:<可执行名>`：`npm install -g <包名@版本>`，版本必须固定；安装后检查 `command -v <可执行名>` 且 `<可执行名> --version` 成功。
+- `uv:<相对目录>:<可执行名>`：`uv tool install --force <checkout>/<相对目录>`。
+
+运行时安装写入用户的全局位置（npm 全局前缀或 uv tool 目录），并需要 registry 访问。登录、授权、账号绑定和 WeChat 的 `wx init` 不由安装器执行。REA 的 Codex MCP 注册随 bootstrap 执行，见下文。
+
+### 单条命令（Codex）
+
+```bash
+bash bootstrap.sh --agent codex --no-update
+```
+
+运行前请确保 PATH 中的 `node`/`npm` 满足 rea 的 engines（见下文「首次机器的前提」）。如果当前 Node 版本不满足，安装器会在执行 npm 之前以 BLOCKED 退出。
+
+一次运行依次完成：补齐缺失的 submodule 与外部来源 → 安装 wx-cli、rea 的 npm CLI（版本固定，`npm install -g`）并检查 `--version` → 链接 rea 的 `runtime-skills` → 安装 skill → 为 Codex 注册 REA MCP → 重新生成路由清单（`skills/routers/agent-skill-router/references/inventory.tsv`）。任一步失败都返回非零，并在末尾说明，不会报告“完成”。
+
+REA MCP 注册：`install-rea-mcp.sh` 只在清单声明了 `rea-agents` 运行时时执行，且只针对 `--agent codex`，执行 `rea setup --client codex --skill=false --yes --json`。备份、保留其他 MCP 设置与用户级 symlink 由 REA 自身完成；安装器不解析也不编辑 `~/.codex` 的配置。不使用 `--all-detected`、`--install-hopper`。其他 agent 只获得 CLI 与 skill，不会被报告为已注册 MCP。`--no-rea-mcp` 或 `--no-integrations` 跳过注册；`--dest` 下也不执行。
+
+### 首次机器的前提
+
+- 必需：Git、Bash（系统 Bash 3.2 可用）、Python 3（路由清单与测试）。
+- npm 运行时（wx-cli、rea）：需要 Node/npm。安装器按已发布的 `rea-agents@6.7.0` npm 包的 engines（`^22.19.0 || ^24.11.0 || >=26.0.0`）检查 PATH 中的 node，不满足时以 BLOCKED 退出并给出指引；不会自动修改全局 Node。源码 checkout 的 `package.json` 中同一版本号的 engines 较新（`^22.23.4 || ^24.22.1 || >=26.12.1`），但运行时是从 npm 安装的，因此不以源码 engines 为准。
+- 满足 engines 的 Node 放在 PATH 前面即可，例如（本机示例，路径因机器而异）：
+
+  ```bash
+  PATH="$HOME/.nvm/versions/node/v24.22.1/bin:$PATH" bash bootstrap.sh --agent codex --no-update
+  ```
+
+  安装器不修改全局 Node，也不切换版本。
+- 不保证在空白机器上直接可用：需要用户自行安装上述工具。
+
+### 不由安装器执行的步骤（需要用户单独授权）
+
+- wx-cli 读取真实聊天数据：需要用户执行 SKILL.md 中的 `wx init`（可能需要 sudo、内存扫描、codesign、`tccutil reset` 或重启微信）。安装器只做 npm 安装与 `wx --version`。
+- REA 原生 provider（Hopper、Ghidra、IDA）与 Frida 相关安装脚本：不在本安装范围内，未经验证。npm 11 对 frida 可选安装脚本给出过策略警告，核心 `rea --version` 仍然通过；不要为此放宽全局 npm 策略。
+
+同名 skill 按先到先得：本地 skill → KernelWiki → NVIDIA → cursor-skills → CCFA → AMD → 外部来源。被占用或受保护的名称不会被覆盖，计入对应 catalog 的“跳过同名或受保护”数量；用户级 symlink（如 `claude-delegate`、`codex-background`）以及任何指向本仓库之外的顶层 symlink 都不会被替换。
 
 如果需要手动分步执行：
 
@@ -142,6 +214,8 @@ bash install.sh --agent kimi       # Kimi Code CLI
 ```bash
 bash install.sh --agent codex --dest /absolute/path/to/test-skills --no-veloq
 ```
+
+`--dest` 是隔离安装：只写入指定目录下的 skill；不运行 VeloQ，不运行 `install-external.sh`，也不安装运行时 CLI。外部来源缺失时只提示，不返回失败。
 
 ## CCFA 论文研究 Skills
 
@@ -284,6 +358,17 @@ bash install.sh                    # 或 --agent claude 等
 
 ```bash
 bash install.sh   # 安装时自动运行验证
+```
+
+验证结果决定退出码：任一已请求的组件（本地 skill、submodule 内的文档与源码、外部来源）缺失时返回非零，末尾打印“安装未完成”。
+`--dest` 隔离安装中外部来源的缺失只显示为“可选缺失”，不计为失败。
+
+仓库自检（不访问网络、不写真实 HOME）：
+
+```bash
+bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh
+python3 -m unittest discover -s tests -p 'test_install_integrations.py' -v
+python3 -m unittest discover -s tests -p 'test_skills_router.py' -v
 ```
 
 ## Skill 发现规则

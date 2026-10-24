@@ -7,8 +7,11 @@ into this repository.
 
 ## Routing
 
-When the user does not name a skill, start with `gpu-development-catchall`.
-Choose the narrowest route:
+When the user does not name a skill, first decide whether the task is GPU-only.
+A named skill always wins; check that it is installed before relying on it.
+
+For GPU-only work, start with `gpu-development-catchall` and choose the
+narrowest route:
 
 - `gpu-kernel-authoring-router`: write or change CUDA, PTX, Triton, Gluon,
   CUTLASS, CuTe, GEMM, attention, reduction, or fused kernels.
@@ -20,6 +23,14 @@ Choose the narrowest route:
   launch/scheduling overhead, or framework-level Nsight analysis.
 - `llm-serving-router`: LLM serving, KV cache, attention backends, batching,
   capacity planning, TTFT/TBT, deployment, and serving benchmarks.
+
+For mixed or non-GPU work, use `agent-skill-router`. It covers papers and
+literature (Zotero, paper review, rebuttal, submission checks), Chinese technical
+writing, general code review and software design (TDD, architecture, diagnosis,
+issues, plans), WeChat data (only with explicit authorization), and the
+sources in `sources/external-sources.conf`. Run its `scripts/route_skill.py` for
+the primary skill and at most two companions, then read only the chosen
+`SKILL.md` files.
 
 If a router points to a downstream skill, read that skill's `SKILL.md` before
 producing detailed advice or code.

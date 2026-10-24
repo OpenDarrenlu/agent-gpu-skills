@@ -19,6 +19,12 @@ Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 | Blackwell/Hopper kernel 资料与上游 PR | `KernelWiki` |
 | 写/改/审中文技术原理报告、设计文档、性能报告、源码解析 | `tech-doc-style-chinese` |
 | 把任务委托给 Claude Code（Codex 需额外注册 MCP，见[下文](#claude-委托)） | `claude-delegate` |
+| 论文阅读、文献检索、审稿、rebuttal、Zotero 文库 | `ccf-*` / `zotero-cli`（经 `agent-skill-router`） |
+| 通用代码审查、TDD、架构、拆 issue、微信聊天记录（需授权） | `agent-skill-router` |
+
+不确定、跨域或非 GPU 的任务，使用 `agent-skill-router`。它按显式点名、制品后缀和强短语选择一个主 skill 与至多两个伴随 skill，见
+[`skills/routers/agent-skill-router/SKILL.md`](skills/routers/agent-skill-router/SKILL.md)。
+审查报告与路由覆盖情况见 [`docs/skills-usage-review.md`](docs/skills-usage-review.md)。
 
 完整分类索引见 [`skills/README.md`](skills/README.md)，路由规则见
 [`AGENTS.md`](AGENTS.md)。
@@ -52,19 +58,28 @@ bash bootstrap.sh --agent gemini
 bash bootstrap.sh --agent kimi
 ```
 
-只安装本地 skills 并跳过大型外部 catalog：
+`bootstrap.sh` 依次完成：初始化缺失的 submodule → 更新仓库（`--no-update` 时只补齐缺失项）→
+获取 `sources/external-sources.conf` 中的外部来源并安装其运行时 CLI → 安装 skills → 为 Codex 注册 REA MCP →
+重新生成路由清单。任何已请求的组件缺失或安装失败时以非零退出，并列出缺失项；不会报告“安装完成”。
+首次机器的前提与 Codex 的单条命令见 [`INSTALL.md`](INSTALL.md#外部来源)。
+
+安装本地与专项 skills，并跳过大型外部 catalog：
 
 ```bash
 bash bootstrap.sh --agent codex \
   --no-nvidia-skills --no-amd-skills --no-cursor-skills --no-ccfa-skills --no-veloq
 ```
 
-验证安装器而不修改用户目录：
+隔离验证（只写指定目录；不运行 VeloQ、不安装运行时 CLI、不 fetch、不写真实 HOME）：
 
 ```bash
-bash install.sh --dest /tmp/agent-gpu-skills-test --no-veloq \
+bash install.sh --agent codex --dest "$TMPDIR/agent-gpu-skills-test" --no-veloq \
   --no-nvidia-skills --no-amd-skills --no-cursor-skills --no-ccfa-skills
 ```
+
+请求的外部来源（sepia、wx-cli、rea、mattpocock/skills）已固定到 commit 并写入 `sources/external-sources.conf`。
+其中 wx-cli 与 rea 还需要 `npm` 全局安装的运行时 CLI（`bootstrap.sh` 会执行），未安装时真实安装返回非零。
+宿主侧步骤与不由安装器执行的步骤见 [`INSTALL.md`](INSTALL.md#外部来源)。
 
 ## 更新
 
@@ -87,9 +102,28 @@ bash update-repos.sh tech-doc-style-chinese
 bash update-repos.sh iket-profiling
 bash update-repos.sh salary-negotiation
 bash update-repos.sh ponytail
+# 只更新外部来源（sources/external-sources.conf）与其运行时 CLI
+bash update-repos.sh external
 # 文档单独刷新，耗时较长；提交前检查索引与抓取完整性
 bash update-repos.sh docs
 ```
+
+路由清单与 skill 清单变化后，重新生成并校验：
+
+```bash
+python3 skills/routers/agent-skill-router/scripts/build_inventory.py
+python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
+```
+
+## 测试
+
+```bash
+bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh
+python3 -m unittest discover -s tests -p 'test_install_integrations.py' -v
+python3 -m unittest discover -s tests -p 'test_skills_router.py' -v
+```
+
+测试只使用临时目录和本地 git 仓库，不访问网络，也不写入真实 HOME。
 
 `tech-doc-style-chinese` 的上游 [Fenng/Tech-Doc-Style-Chinese](https://github.com/Fenng/Tech-Doc-Style-Chinese)
 clone 到 git-ignored 的 `repos/tech-doc-style-chinese/`，只用于比对；安装的是
@@ -150,6 +184,12 @@ node ~/.codex/skills/codex-background/scripts/bootstrap.mjs
 默认混合模式下，已安装 skill 的 `scripts/` 是指向本仓库的软链接；移动或删除
 本仓库后，需要重新安装并重新运行 bootstrap。
 
+### macOS 与已有用户级副本
+
+- 安装器对受保护名 `claude-delegate`、`codex-background` 永远不替换已存在的目标（包括指向本仓库之外的 symlink）。
+- 真实安装且目标缺失时，若 `~/.agents/skills/<name>/SKILL.md` 已存在，只创建指向它的别名（不改动原链接）；否则复制仓库内的 bundled 版本。`--dest` 隔离安装从不读取真实 HOME。
+- 上游 `codex-background` 的 bootstrap 仅支持 Linux 与 Windows。macOS 上若已配置补丁版用户级副本，保持现有 MCP 注册即可，不要按上文命令替换；安装器在 macOS 上只提示这一点，不自动注册。
+
 ## 许可边界
 
 AMD ISA PDF、AMD 文档缓存和按需下载的上游源码不会提交到仓库。AMD 文档和
@@ -160,6 +200,13 @@ ISA 只在用户明确接受官方文档条款后下载到 git-ignored 本地目
 [verl 课程笔记](notes/verl-course/README.md)收录按源码快照编写的离线 HTML 笔记。
 文献检索与 Zotero 阅读使用 `skills/other/zotero-cli`，随本地 skills 一起安装；
 使用前运行 `zotero-cli config` 检查本机连接。Agent 的安装副本和本机 MCP 配置不提交到仓库。
+
+## 外部来源（sources/）
+
+[`sources/external-sources.conf`](sources/external-sources.conf) 记录不 vendored 的外部来源：
+checkout 位于 git-ignored 的 `repos/<name>/`，skill 由 `install.sh` 安装，运行时 CLI 由
+`install-external.sh` 安装。来源模式为 `skills`（递归发现 `SKILL.md`）或 `none`；`pending` 只用于尚未检视的来源，
+真实安装会把它视为失败。当前四个请求来源的 pin、用途与安装方式见 INSTALL.md。
 
 ## Ponytail
 

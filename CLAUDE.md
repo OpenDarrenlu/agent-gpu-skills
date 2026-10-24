@@ -11,8 +11,14 @@ This repository is an Agent Skill bundle, not an application. Read
   consistency (from vLLM), and framework/runtime-facing skills.
 - `skills/other/`: communication, AMD/ROCm, local knowledge bases, and
   non-GPU specialties.
-- `skills/routers/`: catch-all and domain routers.
-- `repos/`: external skill catalogs as git submodules.
+- `skills/routers/`: catch-all and domain routers, plus `agent-skill-router`
+  (broad router, generated inventory, and `scripts/route_skill.py`).
+- `repos/`: external skill catalogs as git submodules, plus git-ignored
+  checkouts of the external sources listed in `sources/external-sources.conf`.
+- `sources/external-sources.conf`: tracked manifest of non-submodule external
+  sources (ref, mode, runtime, provenance). Consumed by `install-external.sh`
+  and `install.sh`.
+- `tests/`: unittest suites for the installers and the router.
 - `repos/tilelang-cuda-skills/`: TileLang kernel authoring, debugging,
   optimization, profiling, and design skills.
 - `kernel-design-agents/`: KDA workflow plus the nested `KernelWiki` skill.
@@ -37,8 +43,22 @@ bash update-repos.sh vllm                     # pinned sparse vLLM checkout for 
 # Test the customized Chinese technical-writing skill.
 for t in skills/other/tech-doc-style-chinese/tests/test_*.py; do python3 "$t"; done
 
-# Install into an isolated directory for validation.
+# Install into an isolated directory for validation (skills only; no VeloQ, no runtimes, no real HOME writes).
 bash install.sh --dest /tmp/agent-gpu-skills-test --no-veloq
+
+# Fetch external sources (sources/external-sources.conf) and install their runtime CLIs.
+bash install-external.sh            # clone missing checkouts, install runtimes
+bash update-repos.sh external       # update to pinned refs
+bash install-rea-mcp.sh --agent codex   # REA MCP for codex: rea setup --client codex --skill=false --yes
+
+# Repository self-checks (no network, temp dirs only).
+bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh install-rea-mcp.sh scripts/node-preflight.sh
+python3 -m unittest discover -s tests -p 'test_install_integrations.py' -v
+python3 -m unittest discover -s tests -p 'test_skills_router.py' -v
+
+# Regenerate and verify the router's skill inventory after changing checkouts.
+python3 skills/routers/agent-skill-router/scripts/build_inventory.py
+python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 
 # Refresh CUDA documentation.
 python3 scrape_docs.py all --force
@@ -69,3 +89,27 @@ python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
 - When an upstream repository moves a referenced path, update
   `update-repos.sh`, the skill documentation, and install verification checks
   together.
+- A source in `sources/external-sources.conf` needs a 40-character `ref`, a
+  `mode`, and a `runtime` chosen after reading its README, manifests, and
+  license. Record the findings in `provenance`. `pending` is only for a source
+  that has not been inspected; a real install must fail on it, never report it
+  as installed. Use a version-pinned npm spec (`npm:pkg@version:bin`) for CLIs.
+- `install.sh` never lets a catalog overwrite a local skill, a user-level
+  symlink, or a name claimed by an earlier catalog. Keep the protected names
+  (`claude-delegate`, `codex-background`) in `PROTECTED_SKILL_NAMES` when adding
+  new delegate-style skills.
+- After changing `install.sh` arrays, the external source manifest, or the
+  checked-out catalogs, regenerate `skills/routers/agent-skill-router/references/inventory.tsv`
+  and make sure `build_inventory.py --check` passes. A real `bootstrap.sh` run
+  does this automatically as its last preparation step; `--dest` never does.
+- REA MCP registration is scoped: Codex only, `rea setup --client codex
+  --skill=false --yes --json`, REA's own backup logic. Never add
+  `--all-detected` or `--install-hopper`, and never parse or edit a user's
+  Codex config from our scripts.
+- Node engine rules for npm runtimes live in `scripts/node-preflight.sh`. They
+  follow the engines of the published npm package that the installer installs,
+  not the source checkout's `package.json`, which can carry newer engines under
+  the same version number. Do not change global Node versions from installer code.
+- Bash constructs: write `${VAR}` before any non-ASCII punctuation (for example
+  `${url}（`). Bash on macOS can read the first byte of a full-width character as
+  part of the variable name.

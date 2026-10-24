@@ -21,6 +21,9 @@
 #   repos/tilelang-cuda-skills/ (sablin39/tilelang-cuda-skills submodule)
 #   repos/tech-doc-style-chinese/ (Fenng/Tech-Doc-Style-Chinese 上游 clone，git-ignored；
 #                                  本地定制版在 skills/other/tech-doc-style-chinese/，见其 README.md)
+#   repos/<name>/       sources/external-sources.conf 中的外部来源（git-ignored；由 install-external.sh 获取与安装 runtime）
+#
+# external: 只更新 sources/external-sources.conf 中的外部来源并安装其 runtime CLI（等同 install-external.sh --update）。
 
 set -e
 
@@ -297,6 +300,14 @@ update_docs() {
     (cd "$SCRIPT_DIR" && "$py" skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core --refresh) || echo "  warn: AMD 文档同步失败（不影响其他步骤）"
 }
 
+# --no-integrations: 跳过外部来源（sources/external-sources.conf）的获取与运行时安装，在任何目标上都生效。
+SKIP_INTEGRATIONS=false
+if [ "${1:-}" = "--no-integrations" ]; then
+    SKIP_INTEGRATIONS=true
+    shift
+fi
+EXTERNAL_RC=0
+
 TARGET="${1:-all}"
 
 case "$TARGET" in
@@ -355,6 +366,13 @@ case "$TARGET" in
     ponytail)
         update_submodule "ponytail" "repos/ponytail"
         ;;
+    external)
+        if [ "$SKIP_INTEGRATIONS" = true ]; then
+            echo "跳过外部来源（--no-integrations）"
+        else
+            bash "$SCRIPT_DIR/install-external.sh" --update || EXTERNAL_RC=$?
+        fi
+        ;;
     docs)
         update_docs
         ;;
@@ -383,10 +401,15 @@ case "$TARGET" in
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
         clone_full_repo "iket-profiling-skill" "$SCRIPT_DIR/repos/iket-profiling-skill" "https://github.com/humanfia/iket-profiling-skill.git" "" || echo "  warn: iket-profiling-skill 上游拉取失败（不影响其他步骤）"
         clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
+        if [ "$SKIP_INTEGRATIONS" = true ]; then
+            echo "跳过外部来源（--no-integrations）"
+        else
+            bash "$SCRIPT_DIR/install-external.sh" --update || EXTERNAL_RC=$?
+        fi
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|ponytail|docs|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|ponytail|external|docs|all]"
         exit 1
         ;;
 esac
@@ -447,3 +470,6 @@ if [ -d "$SCRIPT_DIR/repos/tilelang-cuda-skills" ]; then
     done
     echo "  TileLang skills 数量: $tilelang_count"
 fi
+
+# 外部来源失败时以其退出码结束（all 中其他步骤仍会执行）。
+exit "$EXTERNAL_RC"
