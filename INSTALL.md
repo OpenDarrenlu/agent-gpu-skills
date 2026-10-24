@@ -101,12 +101,16 @@ REA MCP 注册：`install-rea-mcp.sh` 只在清单声明了 `rea-agents` 运行�
 - bootstrap 只在自身进程内把 `~/.local/bin` 前置到 PATH，用于安装验证与 REA 注册；不修改你的全局 PATH。如果 `~/.local/bin` 不在你的 PATH 中，bootstrap 会打印提示，请自行把它加入 shell 配置。
 - `--dest` 与 `--no-integrations` 不写入任何 launcher。
 
-### 修复状态（需要重新安装）
+### 已验证的安装结果
 
-- 2026-10-24 的一次真实 bootstrap（Node v24.22.1）退出码为 0，安装验证为 101 项通过、0 失败。这个结果**不完整**，不能当作功能完整的安装：
-  1. `repos/rea/runtime-skills` 是指向 npm 全局包 `skills/` 的 symlink，但安装器的 `find` 没有跟随根目录的 symlink，因此 `reverse-engineer-anything` 没有被安装，验证也没有发现这一点。代码修复已完成：枚举改用 `find -H`，“存在但没有任何 SKILL.md”的源目录会被判为缺失，不再算作成功。
-  2. wx、rea 的 npm 全局 bin 不在默认 PATH 中。代码修复已完成：生成上述 managed launcher，并在 bootstrap 进程内前置 `~/.local/bin`。
-- 上述修复已经通过自动化测试，但实时重新安装、在默认 PATH 下验证 `wx --version` 与 `rea --version`，以及确认 `~/.codex/skills/reverse-engineer-anything/SKILL.md` 存在，仍需在提交并推送后由 Codex 执行。在那之前，不应把这次安装描述为功能完整。
+2026-10-24 在本机 macOS 上执行 `bash bootstrap.sh --agent codex --no-update`（Node v24.22.1）：退出码 0，安装器校验 101 项通过、0 失败。另做独立核对：
+
+- 清单中 552 个普通安装名全部存在，四个新增来源的 `SKILL.md` 与来源字节一致；两个受保护的委派 skill 复用已有 macOS 补丁版，原用户级链接未改动。
+- 默认 PATH 下 `wx --version` 为 0.3.0，`rea --version` 为 6.7.0，均通过 `~/.local/bin` 的入口运行。
+- REA MCP 已注册；按注册命令完成独立 stdio 握手并取得 207 个工具。安装不代表原生分析引擎或 Frida 已配置。
+- 130 项自动化测试通过；隔离安装与清单逐项核对，REA 的 symlink 源根会被枚举，空源不会被报告为成功。
+
+首次 clone 使用 `bash bootstrap.sh --agent codex`，以恢复其他 GPU skill 的 git-ignored 源码依赖；已有依赖的机器可以用 `--no-update` 跳过刷新。
 
 ### 首次机器的前提
 

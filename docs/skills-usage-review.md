@@ -1,7 +1,7 @@
 # Skill 使用审查与高效使用方案
 
 本文基于 2026-10-24 的工作区。四个请求来源已固定 commit 并检视；安装器与路由器已实现并测试。
-**实时安装尚未执行**，等待 Codex 验收、提交并推送之后由 Codex 执行。
+**本机安装已完成并独立验证**：清单内 552 个普通 skill 全部存在，默认 PATH 下 wx 0.3.0、REA 6.7.0 可运行；REA MCP 握手成功。
 所有 skill 名都已对照 `skills/routers/agent-skill-router/references/inventory.tsv` 核对；§5.3 的结果来自本轮对路由脚本的实际重跑。
 
 ## 1. 结论
@@ -112,9 +112,10 @@ python3 skills/routers/agent-skill-router/scripts/route_skill.py '用 tdd skill 
 
 ### 5.4 描述负担与未实现的部分
 
-- 552 个 skill 的 frontmatter 描述（每条不超过 140 字符，合计约 136 KB 的清单）仍会被宿主在启动时索引，这取决于宿主。**路由器没有实现宿主的选择性索引**，只减少选中后的 skill 正文加载。
+- `inventory.tsv` 将每条描述截为最多 140 字符，约 136 KB 是清单大小。宿主可能读取完整 frontmatter；实际索引量与上下文成本取决于宿主，不能用清单大小代替。**路由器没有实现宿主的选择性索引**，只减少选中后的 skill 正文加载。
 - 未实现：按项目的选择性安装或索引。合理的后续方向是每个项目一个 profile，只列出该项目需要的 catalog（如 GPU 项目列 GPU 与通用工程，不列 BioNeMo、DOCA、Earth2）。profile 尚未设计或实现，本文不把它当作现状。
 - 当前安装仍包含全部 catalog。若要减少负担，应通过显式的 profile 或安装参数，而不是在路由中隐藏。
+- 本机另有 514 个名称同时出现在 `~/.agents/skills` 与 `~/.codex/skills`，两处 `gpu-development-catchall` 正文不同。宿主是否索引两份、同名时选择哪份尚未测量。建议下一步统一 skill 发现目录，再按 GPU 研究、论文写作、通用工程等项目 profile 启用 catalog；迁移时保留现有委派补丁链接，并验证实际选择结果。当前 router 已减少正文加载，目录统一和 profile 尚未实现。
 
 ### 5.5 中文技术写作的分工
 
@@ -134,7 +135,7 @@ python3 skills/routers/agent-skill-router/scripts/route_skill.py '用 tdd skill 
 
 | 序号 | 严重度 | 内容 | 处理 |
 |---|---|---|---|
-| R1 | 高 | 2026-10-24 的真实 bootstrap 退出码 0、101 项通过，但不完整：REA 的 runtime-skills 未被安装（根 symlink 未被跟随），wx/rea 不在默认 PATH 中。代码修复已测试；实时重装与默认 PATH 验证待 Codex 执行（见 INSTALL.md「修复状态」） | Codex 提交并推送后重新安装，并核对安装名与清单一致 |
+| R1 | 已解决 | REA 根 symlink 漏装与 npm bin 不在默认 PATH 的问题已修复：本机重装后 552 个安装名全部存在，wx/rea 默认 PATH 可用，REA MCP 握手通过 | `find -H`、稳定 launcher、安装名与清单一致性检查 |
 | R2 | 中 | 宿主自动选择行为未测量；路由器只报告脚本输出 | 不作为结论 |
 | R3 | 中 | wx-cli 的 skill 文本来自 fork，二进制来自上游 npm 包 | 在清单与 requires 中写明 |
 | R4 | 中 | REA skill 来自 npm 包，没有 tarball 完整性校验 | 版本一致性已检查；完整性未检查 |
@@ -161,9 +162,9 @@ Codex 还在隔离的 npm 前缀中（Node v24.22.1）安装了 `@jackwener/wx-c
 - wx 对真实聊天数据的访问（需用户自行 `wx init`）。
 - 空白机器的端到端安装。
 
-## 8. 实时安装（待 Codex 执行）
+## 8. 本机安装验证与复用
 
-验收、提交与推送完成后，由 Codex 执行单条命令：
+以下命令已在本机执行并验证；已有源码依赖的机器可复用：
 
 ```bash
 bash bootstrap.sh --agent codex --no-update
@@ -180,5 +181,9 @@ PATH="$HOME/.nvm/versions/node/v24.22.1/bin:$PATH" bash bootstrap.sh --agent cod
 ## 9. 未测量
 
 - 宿主 agent 的自动 skill 选择行为。
-- 实时安装的结果（尚未执行）。
+- 空白机器的完整安装与宿主自动选中 skill 的准确率。
 - 原生 REA provider、Frida、wx 的真实数据访问。
+
+最终本机结果（2026-10-24）：安装器退出码 0、101 项校验通过；独立核对 552/552 个普通安装名存在，四个新来源的副本与源码字节一致。默认 PATH 下 wx 0.3.0、REA 6.7.0 可运行；按 Codex 注册命令完成 MCP initialize 与 tools/list，REA 6.7.0 返回 207 个工具。原用户级委派链接保留；首次注册时独立验证其他 Codex 配置不变，最终重装的 `rea setup` 为 `ready` 且无配置写入动作。没有访问微信聊天数据或启用原生分析引擎。
+
+首次 clone 运行 `bash bootstrap.sh --agent codex`，以恢复其他 GPU skill 的 git-ignored 源码依赖；不要在缺少这些依赖时跳过更新。
