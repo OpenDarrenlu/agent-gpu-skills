@@ -2,11 +2,11 @@
 url: https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/async-copies.html
 ---
 
-# 4.11. Asynchronous Data Copies
+# 4.12. Asynchronous Data Copies
 
 Building on [Section 3.2.5](../03-advanced/advanced-kernel-programming.html#advanced-kernels-async-copies), this section provides detailed guidance and examples for asynchronous data movement within the GPU memory hierarchy. It covers LDGSTS for element-wise copies, the Tensor Memory Accelerator (TMA) for bulk (one-dimensional and multi-dimensional) transfers, and STAS for register to distributed shared memory copies, and shows how these mechanisms integrate with [asynchronous barriers](async-barriers.html#asynchronous-barriers) and [pipelines](pipelines.html#pipelines).
 
-## 4.11.1. Using LDGSTS
+## 4.12.1. Using LDGSTS
 
 Many CUDA applications require frequent data movement between global and shared memory. Often, this involves copying smaller data elements or performing irregular memory access patterns. The primary goal of LDGSTS (CC 8.0+, see [PTX documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-non-bulk-copy)) is to provide an efficient asynchronous data transfer mechanism from global memory to shared memory for smaller, element-wise data transfers while enabling better utilization of compute resources through overlapped execution.
 
@@ -30,20 +30,20 @@ global | shared::cta | shared memory barrier, pipeline |
 global | shared::cluster |  |   
 shared::cluster | shared::cta |  |   
 shared::cta | shared::cta |  |   
-  
+
 In the following sections, we will demonstrate how to use LDGSTS through examples and explain the differences between the different APIs.
 
-### 4.11.1.1. Batching Loads in Conditional Code
+### 4.12.1.1. Batching Loads in Conditional Code
 
 In this stencil example, the first warp of the thread block is responsible for collectively loading all the required data from the center as well as the left and right halos. With synchronous copies, due to the conditional nature of the code, the compiler may choose to generate a sequence of load-from-global (LDG) store-to-shared (STS) instructions instead of 3 LDGs followed by 3 STSs, which would be the optimal way to load the data to hide the global memory latency.
-    
-    
+
+
     __global__ void stencil_kernel(const float *left, const float *center, const float *right)
     {
         // Left halo (8 elements) - center (32 elements) - right halo (8 elements)
         __shared__ float buffer[8 + 32 + 8];
         const int tid = threadIdx.x;
-    
+
         if (tid < 8) {
             buffer[tid] = left[tid]; // Left halo
         } else if (tid >= 32 - 8) {
@@ -53,19 +53,19 @@ In this stencil example, the first warp of the thread block is responsible for c
           buffer[tid + 8] = center[tid]; // Center
         }
         __syncthreads();
-    
+
         // Compute stencil
     }
-    
+
 
 To ensure that the data is loaded in the optimal way, we can replace the synchronous memory copies with asynchronous copies that load data directly from global memory to shared memory. This not only reduces register usage by copying the data directly to shared memory, but also ensures all loads from global memory are in-flight.
 
 CUDA C++ `cuda::memcpy_async`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda/barrier>
-    
+
     __global__ void stencil_kernel(const float *left, const float *center, const float *right)
     {
         auto block = cooperative_groups::this_thread_block();
@@ -73,13 +73,13 @@ CUDA C++ `cuda::memcpy_async`
         using barrier_t = cuda::barrier<cuda::thread_scope_block>;
         __shared__ barrier_t barrier;
         __shared__ float buffer[8 + 32 + 8];
-        
+
         // Initialize synchronization object.
         if (block.thread_rank() == 0) {
             init(&barrier, block.size());
         }
         __syncthreads();
-    
+
         // Version 1: Issue the copies in individual threads.
         if (tid < 8) {
             cuda::memcpy_async(buffer + tid, left + tid, cuda::aligned_size_t<4>(sizeof(float)), barrier); // Left halo
@@ -92,60 +92,60 @@ CUDA C++ `cuda::memcpy_async`
             cuda::memcpy_async(buffer + 40, right + tid, cuda::aligned_size_t<4>(sizeof(float)), barrier); // Center
             // or cuda::memcpy_async(thread, buffer + 40, right + tid, cuda::aligned_size_t<4>(sizeof(float)), barrier);
         }
-        
+
         // Version 2: Cooperatively issue the copies across all threads.
         cuda::memcpy_async(block, buffer, left, cuda::aligned_size_t<4>(8 * sizeof(float)), barrier); // Left halo
         cuda::memcpy_async(block, buffer + 8, center, cuda::aligned_size_t<4>(32 * sizeof(float)), barrier); // Center
         cuda::memcpy_async(block, buffer + 40, right, cuda::aligned_size_t<4>(8 * sizeof(float)), barrier); // Right halo
-        
+
         // Wait for all copies to complete.
         barrier.arrive_and_wait();
         __syncthreads();
-    
+
         // Compute stencil      
     }
-      
-  
+
+
 ---  
-  
+
 CUDA C++ `cooperative_groups::memcpy_async`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cooperative_groups/memcpy_async.h>
-    
+
     namespace cg = cooperative_groups;
-    
+
     __global__ void stencil_kernel(const float *left, const float *center, const float *right)
     {
         cg::thread_block block = cg::this_thread_block();
         // Left halo (8 elements) - center (32 elements) - right halo (8 elements). 
         __shared__ float buffer[8 + 32 + 8];
-    
+
         // Cooperatively issue the copies across all threads.
         cg::memcpy_async(block, buffer, left, 8 * sizeof(float)); // Left halo
         cg::memcpy_async(block, buffer + 8, center, 32 * sizeof(float)); // Center
         cg::memcpy_async(block, buffer + 40, right, 8 * sizeof(float)); // Right halo
         cg::wait(block); // Waits for all copies to complete.
         __syncthreads();
-    
+
         // Compute stencil.
     }
-      
-  
+
+
 ---  
-  
+
 CUDA C primitives
-    
-    
+
+
     #include <cuda_pipeline.h>
-    
+
     __global__ void stencil_kernel(const float *left, const float *center, const float *right)
     {
         // Left halo (8 elements) - center (32 elements) - right halo (8 elements).
         __shared__ float buffer[8 + 32 + 8];
         const int tid = threadIdx.x;
-    
+
         if (tid < 8) {
             __pipeline_memcpy_async(buffer + tid, left + tid, sizeof(float)); // Left halo
         } else if (tid >= 32 - 8) {
@@ -157,13 +157,13 @@ CUDA C primitives
         __pipeline_commit();
         __pipeline_wait_prior(0);
         __syncthreads();
-    
+
         // Compute stencil.
     }
-      
-  
+
+
 ---  
-  
+
 The `cuda::memcpy_async` overload for `cuda::barrier` enables synchronizing asynchronous data transfers using an [asynchronous barrier](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers). This overload executes the copy operation as-if performed by another thread bound to the barrier by incrementing the expected count of the current phase on creation, and decrementing it on completion of the copy operation, such that the phase of the `barrier` will only advance when all threads participating in the barrier have arrived, and all `memcpy_async` bound to the current phase of the barrier have completed. We use a block-wide `barrier`, where all threads in the block participate, and merge the arrival and wait on the barrier with `arrive_and_wait`, since we do not perform any work between the phases.
 
 Note that we can either use thread-level copies (version 1) or collective copies (version 2) to achieve the same result. In version 2, the API will automatically handle how the copies are done under the hood. In both versions, we use `cuda::aligned_size_t<4>()` to inform the compiler that the data is aligned to 4 bytes and the size of the data to copy is a multiple of 4 to enable use of LDGSTS. Note that for interoperability with `cuda::barrier`, `cuda::memcpy_async` from the `cuda/barrier` header is used here.
@@ -176,42 +176,42 @@ Note
 
 The `cooperative_groups::memcpy_async` API is less efficient than the other APIs in this example because it automatically commits each copy operation immediately upon launch, preventing the optimization of batching multiple copies before a single commit operation that the other APIs enable.
 
-### 4.11.1.2. Prefetching Data
+### 4.12.1.2. Prefetching Data
 
 In this example, we will demonstrate how to use asynchronous data copies to prefetch data from global memory to shared memory. In an iterative copy and compute pattern, this allows hiding the latency of data transfers of future iterations with computation on the current iteration, potentially increasing bytes-in-flight.
 
 CUDA C++ `cuda::memcpy_async`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda/pipeline>
-    
+
     template <size_t num_stages = 2 /* Pipeline with num_stages stages */>
     __global__ void prefetch_kernel(int* global_out, int const* global_in, size_t size, size_t batch_size) {
         auto grid = cooperative_groups::this_grid();
         auto block = cooperative_groups::this_thread_block();
         auto thread = cooperative_groups::this_thread();
         assert(size == batch_size * grid.size()); // Assume input size fits batch_size * grid_size
-    
+
         extern __shared__ int shared[]; // num_stages * block.size() * sizeof(int) bytes
         size_t shared_offset[num_stages];
         for (int s = 0; s < num_stages; ++s) shared_offset[s] = s * block.size();
-    
+
         cuda::pipeline<cuda::thread_scope_thread> pipeline = cuda::make_pipeline();
-    
+
         auto block_batch = [&](size_t batch) -> int {
             return block.group_index().x * block.size() + grid.size() * batch;
         };
-    
+
         // Fill the pipeline with the first ``num_stages`` batches.
         for (int s = 0; s < num_stages; ++s) {
             pipeline.producer_acquire();
             cuda::memcpy_async(shared + shared_offset[s] + tid, global_in + block_batch(s) + tid, cuda::aligned_size_t<4>(sizeof(int)), pipeline);
             pipeline.producer_commit();
         }
-    
+
         int stage = 0;
-    
+
         // compute_batch: next batch to process
         // fetch_batch:   next batch to fetch from global memory
         for (size_t compute_batch = 0, fetch_batch = num_stages; compute_batch < batch_size; ++compute_batch, ++fetch_batch) {
@@ -219,14 +219,14 @@ CUDA C++ `cuda::memcpy_async`
             constexpr size_t pending_batches = num_stages - 1;
             cuda::pipeline_consumer_wait_prior<pending_batches>(pipeline);
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Compute on the current batch
             compute(global_out + block_batch(compute_batch) + tid, shared + shared_offset[stage] + tid);
-            
+
             // Release the current stage.
             pipeline.consumer_release();
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Load future stage ``num_stages`` ahead of current compute batch.
             pipeline.producer_acquire();
             if (fetch_batch < batch_size) {
@@ -236,42 +236,42 @@ CUDA C++ `cuda::memcpy_async`
             stage = (stage + 1) % num_stages;
         }
     }
-      
-  
+
+
 ---  
-  
+
 CUDA C++ `cooperative_groups::memcpy_async`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cooperative_groups/memcpy_async.h>
-    
+
     namespace cg = cooperative_groups;
-    
+
     template <size_t num_stages = 2 /* Pipeline with num_stages stages */>
     __global__ void prefetch_kernel(int* global_out, int const* global_in, size_t size, size_t batch_size) {
         auto grid = cooperative_groups::this_grid();
         auto block = cooperative_groups::this_thread_block();
         assert(size == batch_size * grid.size()); // Assume input size fits batch_size * grid_size
-    
+
         extern __shared__ int shared[]; // num_stages * block.size() * sizeof(int) bytes
         size_t shared_offset[num_stages];
         for (int s = 0; s < num_stages; ++s) shared_offset[s] = s * block.size();
-    
+
         cuda::pipeline<cuda::thread_scope_thread> pipeline = cuda::make_pipeline();
-    
+
         auto block_batch = [&](size_t batch) -> int {
             return block.group_index().x * block.size() + grid.size() * batch;
         };
-    
+
         // Fill the pipeline with the first ``num_stages`` batches.
         for (int s = 0; s < num_stages; ++s) {
             size_t block_batch_idx = block_batch(s);
             cg::memcpy_async(block, shared + shared_offset[s], global_in + block_batch_idx, cuda::aligned_size_t<4>(sizeof(int));
         }
-    
+
         int stage = 0;
-    
+
         // compute_batch: next batch to process
         // fetch_batch:   next batch to fetch from global memory
         for (size_t compute_batch = 0, fetch_batch = num_stages; compute_batch < batch_size; ++compute_batch, ++fetch_batch) {
@@ -279,12 +279,12 @@ CUDA C++ `cooperative_groups::memcpy_async`
             size_t pending_batches = (fetch_batch < batch_size - num_stages) ? num_stages - 1 : batch_size - fetch_batch - 1;
             cg::wait_prior(pending_batches);
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Compute on the current batch.
             compute(global_out + block_batch(compute_batch) + tid, shared + shared_offset[stage] + tid);
-            
+
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Load future stage ``num_stages`` ahead of current compute batch.
             size_t fetch_batch_idx = block_batch(fetch_batch);
             if (fetch_batch < batch_size) {
@@ -293,36 +293,36 @@ CUDA C++ `cooperative_groups::memcpy_async`
             stage = (stage + 1) % num_stages;
         }
     }
-      
-  
+
+
 ---  
-  
+
 CUDA C primitives
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda_awbarrier_primitives.h>
-    
+
     template <size_t num_stages = 2 /* Pipeline with num_stages stages */>
     __global__ void prefetch_kernel(int* global_out, int const* global_in, size_t size, size_t batch_size) {
         auto grid = cooperative_groups::this_grid();
         auto block = cooperative_groups::this_thread_block();
         assert(size == batch_size * grid.size()); // Assume input size fits batch_size * grid_size
-    
+
         extern __shared__ int shared[]; // num_stages * block.size() * sizeof(int) bytes
         size_t shared_offset[num_stages];
         for (int s = 0; s < num_stages; ++s) shared_offset[s] = s * block.size();
-    
+
         auto block_batch = [&](size_t batch) -> int {
             return block.group_index().x * block.size() + grid.size() * batch;
         };
-    
+
         // Fill the pipeline with the first ``num_stages`` batches.
         for (int s = 0; s < num_stages; ++s) {
             __pipeline_memcpy_async(shared + shared_offset[s] + tid, global_in + block_batch(s)+ tid, cuda::aligned_size_t<4>(sizeof(int)));
             __pipeline_commit();
         }
-    
+
         // compute_batch: next batch to process
         // fetch_batch:   next batch to fetch from global memory
         for (size_t compute_batch = 0, fetch_batch = num_stages; compute_batch < batch_size; ++compute_batch, ++fetch_batch) {
@@ -330,12 +330,12 @@ CUDA C primitives
             constexpr size_t pending_batches = num_stages - 1;
             __pipeline_wait_prior<pending_batches>();
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Compute on the current batch.
             compute(global_out + block_batch(compute_batch) + tid, shared + shared_offset[stage] + tid);
-            
+
             __syncthreads(); // Not required if each thread works on the data it copied.
-    
+
             // Load future stage ``num_stages`` ahead of current compute batch.
             if (fetch_batch < batch_size) {
                 __pipeline_memcpy_async(shared + shared_offset[stage] + tid, global_in + block_batch(fetch_batch) + tid, cuda::aligned_size_t<4>(sizeof(int)));
@@ -344,10 +344,10 @@ CUDA C primitives
             stage = (stage + 1) % num_stages;
         }
     }
-      
-  
+
+
 ---  
-  
+
 The `cuda::memcpy_async` implementation demonstrates a multi-stage data prefetching using `cuda::pipeline` (see [Pipelines](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-pipelines)) with `cuda::memcpy_async`. It:
 
   * Initializes a pipeline that is local to the thread.
@@ -363,20 +363,20 @@ The CUDA C primitives implementation demonstrates multi-stage data prefetching u
 
 An important detail to enable efficient code generation in this example is to keep `num_stages` batches in the pipeline, even if there are no more batches to fetch. This is done by committing to the pipeline even if there are no more batches to fetch (`pipeline.producer_commit()` or `__pipeline_commit()`). Note that this is not possible with the cooperative groups API as we have no access to the internal pipeline.
 
-### 4.11.1.3. Producer-Consumer Pattern Through Warp Specialization
+### 4.12.1.3. Producer-Consumer Pattern Through Warp Specialization
 
 In this example, we will demonstrate how to implement a producer-consumer pattern where a single warp is specialized as the producer performing asynchronous data copies from global to shared memory, while the remaining warps consume the data from shared memory and perform computations. To enable concurrency between the producer and the consumer threads, we use double-buffering in shared memory. While consumer warps process data in one buffer, the producer warp asynchronously fetches the next batch of data into the other buffer.
 
 CUDA C++ `cuda::memcpy_async`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda/pipeline>
-    
+
     #pragma nv_diag_suppress static_var_with_dynamic_init
-    
+
     using pipeline = cuda::pipeline<cuda::thread_scope_block>;
-    
+
     __device__ void produce(pipeline &pipe, int num_stages, int stage, int num_batches, int batch, float *buffer, int buffer_len, float *in, int N)
     {
       if (batch < num_batches)
@@ -387,38 +387,38 @@ CUDA C++ `cuda::memcpy_async`
         pipe.producer_commit();
       }
     }
-    
+
     __device__ void consume(pipeline &pipe, int num_stages, int stage, int num_batches, int batch, float *buffer, int buffer_len, float *out, int N)
     {
       pipe.consumer_wait();
       /* consume buffer(stage) and update out(batch) */
       pipe.consumer_release();
     }
-    
+
     __global__ void producer_consumer_pattern(float *in, float *out, int N, int buffer_len)
     {
       auto block = cooperative_groups::this_thread_block();
       constexpr int warpSize = 32;
-    
+
       /* Shared memory buffer declared below is of size 2 * buffer_len
          so that we can alternatively work between two buffers.
          buffer_0 = buffer and buffer_1 = buffer + buffer_len */
       __shared__ extern float buffer[];
-    
+
       const int num_batches = N / buffer_len;
-    
+
       // Create a partitioned pipeline with 2 stages where the first warp is the producer and the other warps are consumers.
       constexpr auto scope = cuda::thread_scope_block;
       constexpr int num_stages = 2;
       cuda::std::size_t producer_count = warpSize;
       __shared__ cuda::pipeline_shared_state<scope, num_stages> shared_state;
       pipeline pipe = cuda::make_pipeline(block, &shared_state, producer_count);
-    
+
       // Producer fills the pipeline
       if (block.thread_rank() < producer_count)
         for (int s = 0; s < num_stages; ++s)
           produce(pipe, num_stages, s, num_batches, s, buffer, buffer_len, in, N);
-    
+
       // Process the batches
       int stage = 0;
       for (size_t b = 0; b < num_batches; ++b)
@@ -436,16 +436,16 @@ CUDA C++ `cuda::memcpy_async`
         stage = (stage + 1) % num_stages;
       }
     }
-      
-  
+
+
 ---  
-  
+
 CUDA C primitives
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda_awbarrier_primitives.h>
-    
+
     __device__ void produce(__mbarrier_t ready[], __mbarrier_t filled[], float *buffer, int buffer_len, float *in, int N)
     {
       for (int i = 0; i < N / buffer_len; ++i)
@@ -458,7 +458,7 @@ CUDA C primitives
         __mbarrier_arrive(filled[i % 2]);  /* buffer_(i%2) is filled */
       }
     }
-    
+
     __device__ void consume(__mbarrier_t ready[], __mbarrier_t filled[], float *buffer, int buffer_len, float *out, int N)
     {
       __mbarrier_arrive(&ready[0]); /* buffer_0 is ready for initial fill */
@@ -471,39 +471,39 @@ CUDA C primitives
         __mbarrier_arrive(&ready[i % 2]); /* buffer_(i%2) is ready to be re-filled */
       }
     }
-    
+
     __global__ void producer_consumer_pattern(int N, float *in, float *out, int buffer_len)
     {
-    
+
       /* Shared memory buffer declared below is of size 2 * buffer_len
          so that we can alternatively work between two buffers.
          buffer_0 = buffer and buffer_1 = buffer + buffer_len */
       __shared__ extern float buffer[];
-    
+
       /* bar[0] and bar[1] track if buffers buffer_0 and buffer_1 are ready to be filled,
          while bar[2] and bar[3] track if buffers buffer_0 and buffer_1 are filled-in respectively */
       __shared__ __mbarrier_t bar[4];
-    
+
       // Initialize the barriers
       auto block = cooperative_groups::this_thread_block();
       if (block.thread_rank() < 4)
         __mbarrier_init(bar + block.thread_rank(), block.size());
       __syncthreads();
-    
+
       if (block.thread_rank() < warpSize)
         produce(bar, bar + 2, buffer, buffer_len, in, N);
       else
         consume(bar, bar + 2, buffer, buffer_len, out, N);
     }
-      
-  
+
+
 ---  
-  
+
 The `cuda::memcpy_async` implementation demonstrates the API with the highest level of abstraction with `cuda::memcpy_async` and a `cuda::pipeline` with 2 stages. It uses a partitioned pipeline (see [Pipelines](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-pipelines)) where the first warp serves as a producer and the remaining warps as consumers. Producers initially fill both pipeline stages. Then, in the main processing loop, while consumers process the current batch, producers fetch data for future batches, maintaining a steady flow of work.
 
 The CUDA C primitives implementation based on primitives combines `__pipeline_memcpy_async()` with [shared memory barriers](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers) as the completion mechanism to coordinate the asynchronous memory transfers. The `__pipeline_arrive_on()` function associates the memory copy with the barrier. It increments the barrier arrival count by one and when all asynchronous operations sequenced before it have completed, the arrival count is automatically decremented by one and hence the net effect on the arrival count is zero. For this reason, we also need to explicitly arrive at the barrier with `__mbarrier_arrive()`.
 
-## 4.11.2. Using the Tensor Memory Accelerator (TMA)
+## 4.12.2. Using the Tensor Memory Accelerator (TMA)
 
 Many applications need to move large amounts of data to and from global memory. Often, the data is laid out in global memory as a multi-dimensional array with non-sequential data access patterns. To reduce global memory accesses, sub-tiles of such arrays are copied to shared memory before use in computations. The loading and storing involves address-calculations that can be error-prone and repetitive. To offload these computations, compute capability 9.0 (Hopper) and later (see [PTX documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-cp-async-bulk)) have a _tensor memory accelerator_ (TMA). The primary goal of the TMA is to provide an efficient data transfer mechanism from global memory to shared memory for multi-dimensional arrays.
 
@@ -511,7 +511,7 @@ Many applications need to move large amounts of data to and from global memory. 
 
 **Dimensions**. TMA supports copying both one-dimensional and multi-dimensional arrays (up to 5-dimensional). The programming model for bulk-asynchronous copies of one-dimensional contiguous arrays is different from the programming model for bulk-tensor asynchronous copies of multi-dimensional arrays. To perform a bulk-tensor asynchronous copy of a multi-dimensional array, the hardware requires a [tensor map](https://docs.nvidia.com/cuda/cuda-driver-api/structCUtensorMap.html#structCUtensorMap). This object describes the layout of the multi-dimensional array in global and shared memory. A tensor map is typically created on the host using the [cuTensorMapEncode API](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html#group__CUDA__TENSOR__MEMORY) and then transferred from host to device as a `const` kernel parameter annotated with `__grid_constant__` (see [__grid_constant__ Parameters](../05-appendices/cpp-language-extensions.html#grid-constant)). The tensor map is transferred from host to device as a `const` kernel parameter annotated with `__grid_constant__`, and can be used on the device to copy a tile of data between shared and global memory. In contrast, performing a bulk-asynchronous copy of a contiguous one-dimensional array does not require a tensor map: it can be performed on-device with a pointer and size parameter.
 
-**Source and destination**. The source and destination addresses of TMA operations can be in shared or global memory. The operations can read data from global to shared memory, write data from shared to global memory, and also copy from shared memory to [distributed shared memory](../02-basics/writing-cuda-kernels.html#writing-cuda-kernels-distributed-shared-memory) of another block in the same cluster. In addition, when in a cluster, a bulk-asynchronous tensor operation can be specified as being _multicast_. In this case, data can be transferred from global memory to the shared memory of multiple blocks within the cluster. The multicast feature is optimized for target architecture `sm_90a` and may have [significantly reduced performance](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async-bulk-tensor) on other targets. Hence, it is advised to be used with [compute architecture](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list) `sm_90a`.
+**Source and destination**. The source and destination addresses of TMA operations can be in shared or global memory. The operations can read data from global to shared memory, write data from shared to global memory, and also copy from shared memory to [distributed shared memory](../02-basics/writing-cuda-kernels.html#writing-cuda-kernels-distributed-shared-memory) of another block in the same cluster. In addition, when in a cluster, a bulk-asynchronous tensor operation can be specified as being _multicast_. In this case, data can be transferred from global memory to the shared memory of multiple blocks within the cluster. The multicast feature is optimized for global memory accesses to the current device - that is, not for accesses over NVLink from peer devices - and for certain data-center GPU target architectures documented in the [PTX multicast Target ISA notes](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async-bulk) . It may have [significantly reduced performance](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async-bulk-tensor) on other targets. Hence, it is advised to only use it access to global memory on the local GPU and only on GPUs with the recommended compute capabilities described in the [PTX multicast Target ISA notes](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async-bulk)
 
 **Asynchronicity**. Data transfers using TMA are [asynchronous](../03-advanced/advanced-kernel-programming.html#advanced-kernels-hardware-implementation-asynchronous-execution-features) and are modeled as async proxy operations (see [Async Thread and Async Proxy](../03-advanced/advanced-kernel-programming.html#advanced-kernels-hardware-implementation-asynchronous-execution-features-async-thread-proxy)). This allows the initiating thread to continue computing while the hardware asynchronously copies the data. _Whether the data transfer occurs asynchronously in practice is up to the hardware implementation and may change in the future_. There are several [completion mechanisms](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms) that bulk-asynchronous operations can use to signal that they have completed. When the operation reads from global to shared memory, any thread in the block can wait for the data to be readable in shared memory by waiting on a [shared memory barrier](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers). When the bulk-asynchronous operation writes data from shared memory to global or distributed shared memory, only the initiating thread can wait for the operation to have completed. This is accomplished using a _bulk async-group_ based completion mechanism. A table describing the completion mechanisms can be found below and in the [PTX ISA](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async-bulk).
 
@@ -524,8 +524,8 @@ global | shared::cta | shared memory barrier
 global | shared::cluster | shared memory barrier (multicast)  
 shared::cta | shared::cluster | shared memory barrier  
 shared::cta | shared::cta |   
-  
-### 4.11.2.1. Using TMA to transfer one-dimensional arrays
+
+### 4.12.2.1. Using TMA to transfer one-dimensional arrays
 
 The following table summarizes the possible source and destination memory spaces and completion mechanisms for bulk-asynchronous TMA along with the API that exposes it.
 
@@ -538,14 +538,14 @@ global | shared::cta | shared memory barrier | [cuda::memcpy_async](https://nvid
 global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
 shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk.html)  
 shared::cta | shared::cta |  |   
-  
+
 Some functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) library. The availability of these wrappers can be checked with the following code:
-    
-    
+
+
     #if defined(__CUDA_MINIMUM_ARCH__) && __CUDA_MINIMUM_ARCH__ < 900
     static_assert(false, "Device code is being compiled with older architectures that are incompatible with TMA.");
     #endif // __CUDA_MINIMUM_ARCH__
-    
+
 
 Note that `cuda::memcpy_async` uses TMA if the source and destination addresses are 16-byte aligned and the size is a multiple of 16 bytes, otherwise it falls back to synchronous copies. On the other hand, `cuda::device::memcpy_async_tx` and `cuda::ptx::cp_async_bulk` always use TMA and will result in undefined behavior if the requirements are not met.
 
@@ -566,16 +566,16 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
   7. Wait for the bulk-asynchronous copy to have finished reading shared memory.
 
 
-    
-    
+
+
     #include <cuda/barrier>
     #include <cuda/ptx>
-    
+
     using barrier = cuda::barrier<cuda::thread_scope_block>;
     namespace ptx = cuda::ptx;
-    
+
     static constexpr size_t buf_len = 1024;
-    
+
     __device__ inline bool is_elected()
     {
         unsigned int tid = threadIdx.x;
@@ -583,13 +583,13 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
         unsigned int uniform_warp_id = __shfl_sync(0xFFFFFFFF, warp_id, 0); // Broadcast from lane 0.
         return (uniform_warp_id == 0 && ptx::elect_sync(0xFFFFFFFF)); // Elect a leader thread among warp 0.
     }
-    
+
     __global__ void add_one_kernel(int* data, size_t offset)
     {
       // Shared memory buffer. The destination shared memory buffer of
       // a bulk operation should be 16 byte aligned.
       __shared__ alignas(16) int smem_data[buf_len];
-    
+
       // 1. Initialize shared memory barrier with the number of threads participating in the barrier.
       #pragma nv_diag_suppress static_var_with_dynamic_init
       __shared__ barrier bar;
@@ -597,17 +597,17 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
         init(&bar, blockDim.x);
       }
       __syncthreads();
-    
+
       // 2. Initiate TMA transfer to copy global to shared memory from a single thread.
       if (is_elected()) {
         // Launch the async copy and communicate how many bytes are expected to come in (the transaction count).
-        
+
         // Version 1: cuda::memcpy_async
         cuda::memcpy_async(
             smem_data, data + offset, 
             cuda::aligned_size_t<16>(sizeof(smem_data)),
             bar);
-        
+
         // Version 2: cuda::device::memcpy_async_tx
         // cuda::device::memcpy_async_tx(
         //   smem_data, data + offset, 
@@ -616,7 +616,7 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
         // cuda::device::barrier_expect_tx(
         //     cuda::device::barrier_native_handle(bar),
         //     sizeof(smem_data));
-    
+
         // Version 3: cuda::ptx::cp_async_bulk
         // ptx::cp_async_bulk(
         //     ptx::space_shared, ptx::space_global,
@@ -627,23 +627,23 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
         //     cuda::device::barrier_native_handle(bar),
         //     sizeof(smem_data));
       }
-      
+
       // 3a. All threads arrive on the barrier.
       barrier::arrival_token token = bar.arrive();
-      
+
       // 3b. Wait for the data to have arrived.
       bar.wait(std::move(token));
-    
+
       // 4. Compute saxpy and write back to shared memory.
       for (int i = threadIdx.x; i < buf_len; i += blockDim.x) {
         smem_data[i] += 1;
       }
-    
+
       // 5. Wait for shared memory writes to be visible to TMA engine.
       ptx::fence_proxy_async(ptx::space_shared);
       __syncthreads();
       // After syncthreads, writes by all threads are visible to TMA engine.
-    
+
       // 6. Initiate TMA transfer to copy shared memory to global memory.
       if (is_elected()) {
         ptx::cp_async_bulk(
@@ -656,7 +656,7 @@ In the following, we demonstrate how to use bulk-asynchronous copies through an 
         ptx::cp_async_bulk_wait_group_read(ptx::n32_t<0>());
       }
     }
-    
+
 
 **Barrier initialization**. The barrier is initialized with the number of threads participating in the block. As a result, the barrier will flip only if all threads have arrived on this barrier. Shared memory barriers are described in more detail in [shared memory barriers](../03-advanced/advanced-kernel-programming.html#advanced-kernels-advanced-sync-primitives-barriers).
 
@@ -682,21 +682,21 @@ Global memory address | Must be 16 byte aligned.
 Shared memory address | Must be 16 byte aligned.  
 Shared memory barrier address | Must be 8 byte aligned (this is guaranteed by `cuda::barrier`).  
 Size of transfer | Must be a multiple of 16 bytes.  
-  
-#### 4.11.2.1.1. Prefetching Data
+
+#### 4.12.2.1.1. Prefetching Data
 
 In this example, we will demonstrate how to use TMA to prefetch data from global memory to shared memory. In an iterative copy and compute pattern, this allows hiding the latency of data transfers of future iterations with computation on the current iteration, potentially increasing bytes-in-flight.
 
 CUDA C++ `cuda::device::memcpy_async_tx`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda/barrier>
     #include <cuda/ptx>
-    
+
     namespace ptx = cuda::ptx;
     namespace cg = cooperative_groups;
-    
+
     __device__ inline bool is_elected()
     {
         unsigned int tid = threadIdx.x;
@@ -704,23 +704,23 @@ CUDA C++ `cuda::device::memcpy_async_tx`
         unsigned int uniform_warp_id = __shfl_sync(0xFFFFFFFF, warp_id, 0); // Broadcast from lane 0.
         return (uniform_warp_id == 0 && ptx::elect_sync(0xFFFFFFFF)); // Elect a leader thread among warp 0.
     }
-    
+
     template <int block_size, int num_stages>
     __global__ void prefetch_kernel(int* global_out, int const* global_in, size_t size, size_t batch_size) {
         auto grid = cg::this_grid();
         auto block = cg::this_thread_block();
         const int tid = threadIdx.x;
         assert(size == batch_size * grid.size()); // Assume input size fits batch_size * grid_size
-    
+
         // 1. Initialization Phase
         __shared__ int shared[num_stages * block_size];
         size_t shared_offset[num_stages];
         for (int s = 0; s < num_stages; ++s) shared_offset[s] = s * block.size();
-    
+
         auto block_batch = [&](size_t batch) -> int {
             return block.group_index().x * block.size() + grid.size() * batch;
         };
-    
+
         // Initialize shared memory barrier with the number of threads participating in the barrier.
         // We will use explicit phase tracking for the barrier, which allows us to have only one 
         // thread arrive on the barrier to set the transaction count and other threads wait for 
@@ -734,18 +734,18 @@ CUDA C++ `cuda::device::memcpy_async_tx`
             }
         }
         __syncthreads();
-    
+
         // Fill the pipeline with the first ``num_stages`` batches.
         if (is_elected()) {
             size_t num_bytes = block_size * sizeof(int);
-    
+
             #pragma unroll num_stages
             for (int s = 0; s < num_stages; ++s) {
                 cuda::device::memcpy_async_tx(&shared[shared_offset[s]], &global_in[block_batch(s)], cuda::aligned_size_t<16>(num_bytes), bar[s]);
                 (void)cuda::device::barrier_arrive_tx(bar[s], 1, num_bytes);
             }
         }
-    
+
         // 2. Main Processing Loop.
         // compute_batch: next batch to process.
         // fetch_batch:   next batch to fetch from global memory.
@@ -754,18 +754,18 @@ CUDA C++ `cuda::device::memcpy_async_tx`
         for (size_t compute_batch = 0, fetch_batch = num_stages; compute_batch < batch_size; ++compute_batch, ++fetch_batch) {
             // (a) Wait on current batch.
             while (!ptx::mbarrier_try_wait_parity(ptx::sem_acquire, ptx::scope_cta, cuda::device::barrier_native_handle(bar[stage]), parity)) {}
-    
+
             // (b) Compute on the current batch.
             compute(global_out + block_batch(compute_batch) + tid, shared + shared_offset[stage] + tid);
             __syncthreads();
-    
+
             // (c) Load next stage ``num_stages`` ahead of current compute batch.
             if (is_elected() && fetch_batch < batch_size) {
                 size_t num_bytes = block_size * sizeof(int);
                 cuda::device::memcpy_async_tx(&shared[shared_offset[stage]], &global_in[block_batch(fetch_batch)], cuda::aligned_size_t<16>(num_bytes), bar[stage]);
                 (void)cuda::device::barrier_arrive_tx(bar[stage], 1, num_bytes);
             }
-    
+
             // (d) Stage management.
             stage++;
             if (stage == num_stages) {
@@ -774,10 +774,10 @@ CUDA C++ `cuda::device::memcpy_async_tx`
             }
         }
     }
-      
-  
+
+
 ---  
-  
+
 This example implements _multi-stage data prefetching_ using `cuda::device::memcpy_async_tx` for the TMA copies and employs shared memory barriers with explicit phase tracking for synchronization of the copies.
 
   1. **Initialization Phase** : Sets up shared memory barriers (one per stage) and pre-loads the first `num_stages` batches into different shared memory sections.
@@ -793,7 +793,7 @@ This example implements _multi-stage data prefetching_ using `cuda::device::memc
      4. **Stage Management** : Cycles through stages using a rotating buffer approach and tracks barrier parity.
 
 
-### 4.11.2.2. Using TMA to transfer multi-dimensional arrays
+### 4.12.2.2. Using TMA to transfer multi-dimensional arrays
 
 In this section, we will focus on multi-dimensional TMA copies. The primary difference between the one-dimensional and multi-dimensional case is that a tensor map must be created on the host and passed to the CUDA kernel.
 
@@ -808,30 +808,30 @@ global | shared::cta | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor]
 global | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
 shared::cta | shared::cluster | shared memory barrier | [cuda::ptx::cp_async_bulk_tensor](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/cp_async_bulk_tensor.html)  
 shared::cta | shared::cta |  |   
-  
+
 All functionality requires inline PTX that is currently made available through the `cuda::ptx` namespace in the [CUDA Standard C++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx_api.html) library.
 
 In the following, we describe how to create a tensor map using the CUDA driver API, how to pass it to the device, and how to use it on the device.
 
 **Driver API**. A tensor map is created using the [cuTensorMapEncodeTiled](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html) driver API. This API can be accessed by linking to the driver directly (`-lcuda`) or by using the [cudaGetDriverEntryPointByVersion](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DRIVER__ENTRY__POINT.html) API. Below, we show how to get a pointer to the `cuTensorMapEncodeTiled` API. For more information, refer to [Driver Entry Point Access](driver-entry-point-access.html#driver-entry-point-access).
-    
-    
+
+
     #include <cudaTypedefs.h> // PFN_cuTensorMapEncodeTiled, CUtensorMap
-    
+
     PFN_cuTensorMapEncodeTiled_v12000 get_cuTensorMapEncodeTiled() {
       // Get pointer to cuTensorMapEncodeTiled
       cudaDriverEntryPointQueryResult driver_status;
       void* cuTensorMapEncodeTiled_ptr = nullptr;
       CUDA_CHECK(cudaGetDriverEntryPointByVersion("cuTensorMapEncodeTiled", &cuTensorMapEncodeTiled_ptr, 12000, cudaEnableDefault, &driver_status));
       assert(driver_status == cudaDriverEntryPointSuccess);
-    
+
       return reinterpret_cast<PFN_cuTensorMapEncodeTiled_v12000>(cuTensorMapEncodeTiled_ptr);
     }
-    
+
 
 **Creation**. Creating a tensor map requires many parameters. Among them are the base pointer to an array in global memory, the size of the array (in number of elements), the stride from one row to the next (in bytes), the size of the shared memory buffer (in number of elements). The code below creates a tensor map to describe a two-dimensional row-major array of size `GMEM_HEIGHT x GMEM_WIDTH`. Note the order of the parameters: the fastest moving dimension comes first.
-    
-    
+
+
       CUtensorMap tensor_map{};
       // rank is the number of dimensions of the array.
       constexpr uint32_t rank = 2;
@@ -845,10 +845,10 @@ In the following, we describe how to create a tensor map using the CUDA driver A
       // The distance between elements in units of sizeof(element). A stride of 2
       // can be used to load only the real component of a complex-valued tensor, for instance.
       uint32_t elem_stride[rank] = {1, 1};
-    
+
       // Get a function pointer to the cuTensorMapEncodeTiled driver API.
       auto cuTensorMapEncodeTiled = get_cuTensorMapEncodeTiled();
-    
+
       // Create the tensor descriptor.
       CUresult res = cuTensorMapEncodeTiled(
         &tensor_map,                // CUtensorMap *tensorMap,
@@ -870,13 +870,13 @@ In the following, we describe how to create a tensor map using the CUDA driver A
         // Any element that is outside of bounds will be set to zero by the TMA transfer.
         CUtensorMapFloatOOBfill::CU_TENSOR_MAP_FLOAT_OOB_FILL_NONE
       );
-    
+
 
 **Host-to-device transfer**. There are three ways to make a tensor map accessible to device code. The recommended approach is to pass the tensor map as a const `__grid_constant__` parameter to a kernel. The other possibilities are copying the tensor map into device `__constant__` memory using `cudaMemcpyToSymbol` or accessing it via global memory. When passing the tensor map as a parameter, some versions of the GCC C++ compiler issue the warning “the ABI for passing parameters with 64-byte alignment has changed in GCC 4.6”. This warning can be ignored.
-    
-    
+
+
     #include <cuda.h>
-    
+
     __global__ void kernel(const __grid_constant__ CUtensorMap tensor_map)
     {
        // Use tensor_map here.
@@ -886,13 +886,13 @@ In the following, we describe how to create a tensor map using the CUDA driver A
       // [ ..Initialize map.. ]
       kernel<<<1, 1>>>(map);
     }
-    
+
 
 As an alternative to the `__grid_constant__` kernel parameter, a global `__constant__` variable can be used. An example is included below.
-    
-    
+
+
     #include <cuda.h>
-    
+
     __constant__ CUtensorMap global_tensor_map;
     __global__ void kernel()
     {
@@ -904,15 +904,15 @@ As an alternative to the `__grid_constant__` kernel parameter, a global `__const
       cudaMemcpyToSymbol(global_tensor_map, &local_tensor_map, sizeof(CUtensorMap));
       kernel<<<1, 1>>>();
     }
-    
+
 
 Finally, it is possible to copy the tensor map to global memory. Using a pointer to a tensor map in global device memory requires a fence in each thread block before any thread in the block uses the updated tensor map. Further uses of the tensor map by that thread block do not need to be fenced unless the tensor map is modified again. Note that this mechanism may be slower than the two mechanisms described above.
-    
-    
+
+
     #include <cuda.h>
     #include <cuda/ptx>
     namespace ptx = cuda::ptx;
-    
+
     __device__ CUtensorMap global_tensor_map;
     __global__ void kernel(CUtensorMap *tensor_map)
     {
@@ -931,17 +931,17 @@ Finally, it is possible to copy the tensor map to global memory. Using a pointer
       cudaMemcpy(&global_tensor_map, &local_tensor_map, sizeof(CUtensorMap), cudaMemcpyHostToDevice);
       kernel<<<1, 1>>>(global_tensor_map);
     }
-    
+
 
 **Use**. The kernel below loads a 2D tile of size `SMEM_HEIGHT x SMEM_WIDTH` from a larger 2D array. The top-left corner of the tile is indicated by the indices `x` and `y`. The tile is loaded into shared memory, modified, and written back to global memory.
-    
-    
+
+
     #include <cuda.h>         // CUtensormap
     #include <cuda/barrier>
-    
+
     using barrier = cuda::barrier<cuda::thread_scope_block>;
     namespace ptx = cuda::ptx;
-    
+
     __device__ inline bool is_elected()
     {
         unsigned int tid = threadIdx.x;
@@ -949,23 +949,23 @@ Finally, it is possible to copy the tensor map to global memory. Using a pointer
         unsigned int uniform_warp_id = __shfl_sync(0xFFFFFFFF, warp_id, 0); // Broadcast from lane 0.
         return (uniform_warp_id == 0 && ptx::elect_sync(0xFFFFFFFF)); // Elect a leader thread among warp 0.
     }
-    
+
     __global__ void kernel(const __grid_constant__ CUtensorMap tensor_map, int x, int y) {
       // The destination shared memory buffer of a bulk tensor operation should be
       // 128 byte aligned.
       __shared__ alignas(128) int smem_buffer[SMEM_HEIGHT][SMEM_WIDTH];
-    
+
       // Initialize shared memory barrier with the number of threads participating in the barrier.
       #pragma nv_diag_suppress static_var_with_dynamic_init
       __shared__ barrier bar;
-    
+
       if (threadIdx.x == 0) {
         // Initialize barrier. All `blockDim.x` threads in block participate.
         init(&bar, blockDim.x);
       }
       // Syncthreads so initialized barrier is visible to all threads.
       __syncthreads();
-    
+
       barrier::arrival_token token;
       if (is_elected()) {
         // Initiate bulk tensor copy.
@@ -982,15 +982,15 @@ Finally, it is possible to copy the tensor map to global memory. Using a pointer
       }
       // Wait for the data to have arrived.
       bar.wait(std::move(token));
-    
+
       // Symbolically modify a value in shared memory.
       smem_buffer[0][threadIdx.x] += threadIdx.x;
-    
+
       // Wait for shared memory writes to be visible to TMA engine.
       ptx::fence_proxy_async(ptx::space_shared);
       __syncthreads();
       // After syncthreads, writes by all threads are visible to TMA engine.
-    
+
       // Initiate TMA transfer to copy shared memory to global memory
       if (is_elected()) {
         int32_t tensor_coords[2] = { x, y };
@@ -1003,7 +1003,7 @@ Finally, it is possible to copy the tensor map to global memory. Using a pointer
         // Wait for the group to have completed reading from shared memory.
         ptx::cp_async_bulk_wait_group_read(ptx::n32_t<0>());
       }
-    
+
       // Destroy barrier. This invalidates the memory region of the barrier. If
       // further computations were to take place in the kernel, this allows the
       // memory location of the shared memory barrier to be reused.
@@ -1011,7 +1011,7 @@ Finally, it is possible to copy the tensor map to global memory. Using a pointer
         (&bar)->~barrier();
       }
     }
-    
+
 
 **Negative indices and out of bounds**. When part of the tile that is being _read_ from global to shared memory is out of bounds, the shared memory that corresponds to the out of bounds area is zero-filled. The top-left corner indices of the tile may also be negative. When _writing_ from shared to global memory, parts of the tile may be out of bounds, but the top left corner cannot have any negative indices.
 
@@ -1025,8 +1025,8 @@ Global memory strides | Must be multiples of 16 bytes.
 Shared memory address | Must be 128 byte aligned.  
 Shared memory barrier address | Must be 8 byte aligned (this is guaranteed by `cuda::barrier`).  
 Size of transfer | Must be a multiple of 16 bytes.  
-  
-#### 4.11.2.2.1. Encoding a Tensor Map on Device
+
+#### 4.12.2.2.1. Encoding a Tensor Map on Device
 
 Previous sections have described how to create a tensor map on the host using the CUDA driver API.
 
@@ -1042,23 +1042,23 @@ The recommended pattern is as follows:
 
 
 The high-level code structure is as follows:
-    
-    
+
+
     // Initialize device context:
     CUDA_CHECK(cudaDeviceSynchronize());
-    
+
     // Create a tensor map template using the cuTensorMapEncodeTiled driver function
     CUtensorMap template_tensor_map = make_tensormap_template();
-    
+
     // Allocate tensor map and tensor in global memory
     CUtensorMap* global_tensor_map;
     CUDA_CHECK(cudaMalloc(&global_tensor_map, sizeof(CUtensorMap)));
     char* global_buf;
     CUDA_CHECK(cudaMalloc(&global_buf, 8 * 256));
-    
+
     // Fill global buffer with data.
     fill_global_buf<<<1, 1>>>(global_buf);
-    
+
     // Define the parameters of the tensor map that will be created on device.
     tensormap_params p{};
     p.global_address    = global_buf;
@@ -1070,20 +1070,20 @@ The high-level code structure is as follows:
     p.global_stride[0]  = 256; //
     p.element_stride[0] = 1;   //
     p.element_stride[1] = 1;   //
-    
+
     // Encode global_tensor_map on device:
     encode_tensor_map<<<1, 32>>>(template_tensor_map, p, global_tensor_map);
-    
+
     // Use it from another kernel:
     consume_tensor_map<<<1, 1>>>(global_tensor_map);
-    
+
     // Check for errors:
     CUDA_CHECK(cudaDeviceSynchronize());
-    
+
 
 The following sections describe the high-level steps. Throughout the examples, the following `tensormap_params` struct contains the new values of the fields to be updated. It is included here to reference when reading the examples.
-    
-    
+
+
     struct tensormap_params {
       void* global_address;
       int rank;
@@ -1092,9 +1092,9 @@ The following sections describe the high-level steps. Throughout the examples, t
       size_t global_stride[4];
       uint32_t element_stride[5];
     };
-    
 
-#### 4.11.2.2.2. Device-side Encoding and Modification of a Tensor Map
+
+#### 4.12.2.2.2. Device-side Encoding and Modification of a Tensor Map
 
 The recommended process of encoding a tensor map in global memory proceeds as follows.
 
@@ -1122,12 +1122,12 @@ On sm_90a, a zero-initialized buffer in shared memory may also be used as the in
 Note
 
 On-device modification is only supported for tiled-type tensor maps; other tensor map types cannot be modified on device. For more information on the tensor map types, refer to the [Driver API reference](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html#group__CUDA__TENSOR__MEMORY).
-    
-    
+
+
     #include <cuda/ptx>
-    
+
     namespace ptx = cuda::ptx;
-    
+
     // launch with 1 warp.
     __launch_bounds__(32)
     __global__ void encode_tensor_map(const __grid_constant__ CUtensorMap template_tensor_map, tensormap_params p, CUtensorMap* out) {
@@ -1135,13 +1135,13 @@ On-device modification is only supported for tiled-type tensor maps; other tenso
        if (threadIdx.x == 0) {
           // Copy template to shared memory:
           smem_tmap = template_tensor_map;
-    
+
           const auto space_shared = ptx::space_shared;
           ptx::tensormap_replace_global_address(space_shared, &smem_tmap, p.global_address);
           // For field .rank, the operand new_val must be ones less than the desired
           // tensor rank as this field uses zero-based numbering.
           ptx::tensormap_replace_rank(space_shared, &smem_tmap, p.rank - 1);
-    
+
           // Set box dimensions:
           if (0 < p.rank) { ptx::tensormap_replace_box_dim(space_shared, &smem_tmap, ptx::n32_t<0>{}, p.box_dim[0]); }
           if (1 < p.rank) { ptx::tensormap_replace_box_dim(space_shared, &smem_tmap, ptx::n32_t<1>{}, p.box_dim[1]); }
@@ -1165,7 +1165,7 @@ On-device modification is only supported for tiled-type tensor maps; other tenso
           if (2 < p.rank) { ptx::tensormap_replace_element_size(space_shared, &smem_tmap, ptx::n32_t<2>{}, p.element_stride[2]); }
           if (3 < p.rank) { ptx::tensormap_replace_element_size(space_shared, &smem_tmap, ptx::n32_t<3>{}, p.element_stride[3]); }
           if (4 < p.rank) { ptx::tensormap_replace_element_size(space_shared, &smem_tmap, ptx::n32_t<4>{}, p.element_stride[4]); }
-    
+
           // These constants are documented in this table:
           // https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensormap-new-val-validity
           auto u8_elem_type = ptx::n32_t<0>{};
@@ -1185,9 +1185,9 @@ On-device modification is only supported for tiled-type tensor maps; other tenso
        ptx::n32_t<128> bytes_128;
        ptx::tensormap_cp_fenceproxy(ptx::sem_release, ptx::scope_gpu, out, &smem_tmap, bytes_128);
     }
-    
 
-#### 4.11.2.2.3. Usage of a Modified Tensor Map
+
+#### 4.12.2.2.3. Usage of a Modified Tensor Map
 
 In contrast to using a tensor map that is passed as a `const __grid_constant__` kernel parameter, using a tensor map in global memory requires explicitly establishing a release-acquire pattern in the tensor map proxy between the threads that modify the tensor map and the threads that use it.
 
@@ -1196,18 +1196,18 @@ The release part of the pattern was shown in the previous section. It is accompl
 The acquire part is accomplished using the [cuda::ptx::fence_proxy_tensormap_generic](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/fence.html) function that wraps the [fence.proxy.tensormap::generic.acquire](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#parallel-synchronization-and-communication-instructions-membar) instruction. If the two threads participating in the release-acquire pattern are on the same device, the `.gpu` scope suffices. If the threads are on different devices, the `.sys` scope must be used. Once a tensor map has been acquired by one thread, it can be used by other threads in the block after sufficient synchronization, for example, using `__syncthreads()`. The thread that uses the tensor map and the thread that performs the fence must be in the same block. That is, if the threads are in, for example, two different thread blocks of the same cluster, the same grid, or a different kernel, synchronization APIs such as `cooperative_groups::cluster` or `grid_group::sync()` or stream-order synchronization do not suffice to establish ordering for tensor map updates, that is, threads in these other thread blocks still need to acquire the tensor map proxy at the right scope before using the updated tensor map. If there are no intermediate modifications, the fence does not have to be repeated before each `cp.async.bulk.tensor` instruction.
 
 The `fence` and subsequent use of the tensor map is shown in the following example.
-    
-    
+
+
     // Consumer of tensor map in global memory:
     __global__ void consume_tensor_map(CUtensorMap* tensor_map) {
       // Fence acquire tensor map:
       ptx::n32_t<128> size_bytes;
       ptx::fence_proxy_tensormap_generic(ptx::sem_acquire, ptx::scope_sys, tensor_map, size_bytes);
       // Safe to use tensor_map after fence.
-    
+
       __shared__ uint64_t bar;
       __shared__ alignas(128) char smem_buf[4][128];
-    
+
       if (threadIdx.x == 0) {
         // Initialize barrier
         ptx::mbarrier_init(&bar, 1);
@@ -1219,7 +1219,7 @@ The `fence` and subsequent use of the tensor map is shown in the following examp
       const int parity = 0;
       // Wait for load to have completed
       while (!ptx::mbarrier_try_wait_parity(&bar, parity)) {}
-    
+
       // print items:
       printf("Got:\n\n");
       for (int j = 0; j < 4; ++j) {
@@ -1230,21 +1230,21 @@ The `fence` and subsequent use of the tensor map is shown in the following examp
         printf("\n");
       }
     }
-    
 
-#### 4.11.2.2.4. Creating a Template Tensor Map Value Using the Driver API
+
+#### 4.12.2.2.4. Creating a Template Tensor Map Value Using the Driver API
 
 The following code creates a minimal tiled-type tensor map that can be subsequently modified on device.
-    
-    
+
+
     CUtensorMap make_tensormap_template() {
       CUtensorMap template_tensor_map{};
       auto cuTensorMapEncodeTiled = get_cuTensorMapEncodeTiled();
-    
+
       uint32_t dims_32         = 16;
       uint64_t dims_strides_64 = 16;
       uint32_t elem_strides    = 1;
-    
+
       // Create the tensor descriptor.
       CUresult res = cuTensorMapEncodeTiled(
         &template_tensor_map, // CUtensorMap *tensorMap,
@@ -1259,13 +1259,13 @@ The following code creates a minimal tiled-type tensor map that can be subsequen
         CUtensorMapSwizzle::CU_TENSOR_MAP_SWIZZLE_NONE,
         CUtensorMapL2promotion::CU_TENSOR_MAP_L2_PROMOTION_NONE,
         CUtensorMapFloatOOBfill::CU_TENSOR_MAP_FLOAT_OOB_FILL_NONE);
-    
+
       CU_CHECK(res);
       return template_tensor_map;
     }
-    
 
-#### 4.11.2.2.5. Shared-Memory Bank Swizzling
+
+#### 4.12.2.2.5. Shared-Memory Bank Swizzling
 
 By default, the TMA engine loads data to shared memory in the same order as it is laid out in global memory. However, this layout may not be optimal for certain shared memory access patterns, as it could cause shared memory bank conflicts. To improve performance and reduce bank conflicts, we can change the shared memory layout by applying a ‘swizzle pattern’.
 
@@ -1290,23 +1290,23 @@ Figure 51 In the shared memory data layout without swizzle, the shared memory in
 [![The shared memory data layout with CU_TENSOR_MAP_SWIZZLE_128B swizzle.](https://docs.nvidia.com/cuda/cuda-programming-guide/_images/swizzle-example2.png) ](../_images/swizzle-example2.png)
 
 Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzle. One row is stored in a column, each matrix element is from a different bank for both the rows and columns, and so without any bank conflicts.
-    
-    
+
+
     __global__ void kernel_tma(const __grid_constant__ CUtensorMap tensor_map) {
        // The destination shared memory buffer of a bulk tensor operation
        // with the 128-byte swizzle mode, it should be 1024 bytes aligned.
        __shared__ alignas(1024) int4 smem_buffer[8][8];
        __shared__ alignas(1024) int4 smem_buffer_tr[8][8];
-    
+
        // Initialize shared memory barrier
        #pragma nv_diag_suppress static_var_with_dynamic_init
        __shared__ barrier bar;
-    
+
        if (threadIdx.x == 0) {
          init(&bar, blockDim.x);
        }
        __syncthreads();
-    
+
        barrier::arrival_token token;
        if (is_elected()) {
          // Initiate bulk tensor copy from global to shared memory,
@@ -1320,9 +1320,9 @@ Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
        } else {
          token = bar.arrive();
        }
-    
+
        bar.wait(std::move(token));
-    
+
        /* Matrix transpose
         *  When using the normal shared memory layout, there are eight
         *  8-way shared memory bank conflict when storing to the transpose.
@@ -1335,11 +1335,11 @@ Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
              smem_buffer_tr[sidx_j][swiz_i_idx_tr] = smem_buffer[sidx_i][swiz_j_idx];
           }
        }
-    
+
        // Wait for shared memory writes to be visible to TMA engine.
        ptx::fence_proxy_async(ptx::space_shared);
        __syncthreads();
-    
+
        /* Initiate TMA transfer to copy the transposed shared memory buffer back to global memory,
         * it will 'unswizzle' the data. */
        if (is_elected()) {
@@ -1350,20 +1350,20 @@ Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
           ptx::cp_async_bulk_commit_group();
           ptx::cp_async_bulk_wait_group_read(ptx::n32_t<0>());
        }
-    
+
        // Destroy barrier
        if (threadIdx.x == 0) {
          (&bar)->~barrier();
        }
     }
-    
+
     // --------------------------------- main ----------------------------------------
-    
+
     int main(){
-    
+
     ...
        void* tensor_ptr = d_data;
-    
+
        CUtensorMap tensor_map{};
        // rank is the number of dimensions of the array.
        constexpr uint32_t rank = 2;
@@ -1373,9 +1373,9 @@ Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
        uint64_t stride[rank - 1] = {8 * sizeof(int4)};
        // The inner shared memory box dimension in bytes, equal to the swizzle span.
        uint32_t box_size[rank] = {4*8, 8};
-    
+
        uint32_t elem_stride[rank] = {1, 1};
-    
+
        // Create the tensor descriptor.
        CUresult res = cuTensorMapEncodeTiled(
            &tensor_map,                // CUtensorMap *tensorMap,
@@ -1392,11 +1392,11 @@ Figure 52 The shared memory data layout with `CU_TENSOR_MAP_SWIZZLE_128B` swizzl
            CUtensorMapL2promotion::CU_TENSOR_MAP_L2_PROMOTION_NONE,
            CUtensorMapFloatOOBfill::CU_TENSOR_MAP_FLOAT_OOB_FILL_NONE
        );
-    
+
        kernel_tma<<<1, 8>>>(tensor_map);
      ...
     }
-    
+
 
 **Remark.** This example is supposed to show the use of swizzle and ‘as-is’ is not performant nor does it scale beyond the given dimensions.
 
@@ -1428,14 +1428,14 @@ Table 24 Swizzle Pattern Pointer Offset Formula and Index Relation Swizzle Mode 
 CU_TENSOR_MAP_SWIZZLE_128B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%8` | `smem[y][x] <-> smem[y][((y+offset)%8)^x]`  
 CU_TENSOR_MAP_SWIZZLE_64B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%4` | `smem[y][x] <-> smem[y][((y+offset)%4)^x]`  
 CU_TENSOR_MAP_SWIZZLE_32B | `(reinterpret_cast <uintptr_t>(smem_ptr)/128)%2` | `smem[y][x] <-> smem[y][((y+offset)%2)^x]`  
-  
+
 In [Figure 53](#figure-swizzle-overview), this offset represents the initial row offset, thus, in the swizzle index calculation, it is added to the row index `y`. The following snippet shows how to access the swizzled shared memory in the `CU_TENSOR_MAP_SWIZZLE_128B` mode.
-    
-    
+
+
     data_t* smem_ptr = &smem[0][0];
     int offset = (reinterpret_cast<uintptr_t>(smem_ptr)/128)%8;
     smem[y][((y+offset)%8)^x] = ...
-    
+
 
 **Summary.** The following [Table 25](#table-swizzle-pattern-properties-and-requirements) summarizes the requirements and properties of the different swizzle patterns for Compute Capability 9.
 
@@ -1445,8 +1445,8 @@ CU_TENSOR_MAP_SWIZZLE_128B | 128 bytes | <=128 bytes | 1024 bytes | 128 bytes | 
 CU_TENSOR_MAP_SWIZZLE_64B | 64 bytes | <=64 bytes | 512 bytes | 128 bytes | 128 bytes  
 CU_TENSOR_MAP_SWIZZLE_32B | 32 bytes | <=32 bytes | 256 bytes | 128 bytes | 128 bytes  
 CU_TENSOR_MAP_SWIZZLE_NONE (default) |  |  |  | 128 bytes | 16 bytes  
-  
-## 4.11.3. Using STAS
+
+## 4.12.3. Using STAS
 
 CUDA applications using [thread block clusters](../02-basics/intro-to-cuda-cpp.html#thread-block-clusters) may need to move small data elements between thread blocks within the cluster. STAS instructions (CC 9.0+, see [PTX documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-st-async)) enable asynchronous data copies directly from registers to distributed shared memory. STAS is only exposed through a lower-level `cuda::ptx::st_async` API available in the [libcu++](https://nvidia.github.io/cccl/unstable/libcudacxx/ptx/instructions/st_async.html?highlight=st_async#) library.
 
@@ -1466,76 +1466,76 @@ In the following example, we show how to use STAS to implement a producer-consum
 To implement this pattern, we need 2 shared memory barriers per thread block, one to notify the consumer block that the data has been copied to the shared memory buffer (`filled`) and one to notify the producer block that the buffer on the consumer is ready to be filled (`ready`).
 
 CUDA C++ `cuda::ptx`
-    
-    
+
+
     #include <cooperative_groups.h>
     #include <cuda/barrier>
     #include <cuda/ptx>
-    
+
     __global__ __cluster_dims__(8, 1, 1) void producer_consumer_kernel() 
     {
         using namespace cooperative_groups;
         using namespace cuda::device;
         using namespace cuda::ptx;
         using barrier_t = cuda::barrier<cuda::thread_scope_block>;
-    
+
         auto cluster = this_cluster();
-    
+
         #pragma nv_diag_suppress static_var_with_dynamic_init
         __shared__ int buffer[BLOCK_SIZE];
         __shared__ barrier_t filled;
         __shared__ barrier_t ready;
-        
+
         // Initialize shared memory barriers.
         if (threadIdx.x == 0) {
             init(&filled, 1);
             init(&ready, BLOCK_SIZE);
         }
-        
+
         // Sync cluster to ensure remote barriers are initialized.
         cluster.sync();
-        
+
         // Define my own and my neighbor's ranks.
         int rk = cluster.block_rank();
         int rk_next = (rk + 1) % 8;
         int rk_prev = (rk + 7) % 8;
-          
+
         // Get addresses of remote buffer we are writing to and remote barriers of previous and next blocks.
         auto buffer_next = cluster.map_shared_rank(buffer, rk_next);
         auto bar_next = cluster.map_shared_rank(barrier_native_handle(filled), rk_next);
         auto bar_prev = cluster.map_shared_rank(barrier_native_handle(ready), rk_prev);
-        
+
         int phase = 0;
         for (int it = 0; it < 1000; ++it) {
-            
+
             // As producers, send data to our right neighbor.
             st_async(&buffer_next[threadIdx.x], rk, bar_next);
-            
+
             if (threadIdx.x == 0) {
                 // Thread 0 arrives on local barrier and indicates it expects to receive a certain number of bytes.
                 mbarrier_arrive_expect_tx(sem_release, scope_cluster, space_shared, barrier_native_handle(filled), sizeof(buffer));
             }
-    
+
             // As consumers, wait on local barrier for data from left neighbor to arrive.
             while (!mbarrier_try_wait_parity(barrier_native_handle(filled), phase, 1000)) {}
-            
+
             // At this point, the data has been copied to our local buffer.
             int r = buffer[threadIdx.x];
-            
+
             // Use the data to do something.
-    
+
             // As consumers, notify our left neighbor that we are done with the data.
             mbarrier_arrive(sem_release, scope_cluster, space_cluster, bar_prev);
-            
+
             // As producers, wait on local barrier until the right neighbor is ready to receive new data.
             while (!mbarrier_try_wait_parity(barrier_native_handle(ready), phase, 1000)) {}
             phase ^= 1;
         }
     }
-      
-  
+
+
 ---  
-  
+
   * Shared memory barriers are initialized by the first thread of each block. Barrier `filled` is initialized to 1 and barrier `ready` is initialized to the number of threads in the block.
 
   * A cluster-wide synchronization is performed to ensure that all barriers are initialized before any thread starts communication.

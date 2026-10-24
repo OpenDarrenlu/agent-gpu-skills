@@ -2,7 +2,7 @@
 url: https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/inter-process-communication.html
 ---
 
-# 4.15. Interprocess Communication
+# 4.16. Interprocess Communication
 
 Communication between multiple GPUs managed by different host processes is supported through the use of interprocess communication (IPC) APIs and IPC-shareable memory buffers, by creating process-portable handles that are subsequently used to obtain process-local device pointers to the device memory on peer GPUs.
 
@@ -20,7 +20,7 @@ The CUDA IPC API is only currently supported on Linux platforms.
 
 The CUDA Virtual Memory Management APIs permit per-allocation control over peer accessibility and sharing at memory allocation time, but require the use of the CUDA Driver API.
 
-## 4.15.1. IPC using the Legacy Interprocess Communication API
+## 4.16.1. IPC using the Legacy Interprocess Communication API
 
 To share device memory pointers and events across processes, an application must use the CUDA Interprocess Communication API, which is described in detail in the reference manual. The IPC API permits an application to get the IPC handle for a given device memory pointer using `cudaIpcGetMemHandle()`. A CUDA IPC handle can be passed to another process using standard host operating system IPC mechanisms, e.g., interprocess shared memory or files. `cudaIpcOpenMemHandle()` uses the IPC handle to retrieve a valid device pointer that can be used within the other process. Event handles can be shared using similar entry points.
 
@@ -38,6 +38,6 @@ Allocations made by `cudaMalloc()` may be sub-allocated from a larger block of m
 
 Only the IPC events-sharing APIs are supported on L4T and embedded Linux Tegra devices with compute capability 7.x and higher. The IPC memory-sharing APIs are not supported on Tegra platforms.
 
-## 4.15.2. IPC using the Virtual Memory Management API
+## 4.16.2. IPC using the Virtual Memory Management API
 
 The CUDA Virtual Memory Management API allows the creation of IPC-shareable memory allocations, and it supports multiple operating systems by virtue of operating-system specific IPC handle data structures.

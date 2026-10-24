@@ -2,99 +2,27 @@
 url: https://docs.nvidia.com/nsight-compute/NsightComputeCli/index.html
 ---
 
-[ ![Logo](https://docs.nvidia.com/nsight-compute/_static/nsight-compute.png) ](../index.html)
-
-Nsight Compute
-
-  * [1\. Release Notes](../ReleaseNotes/index.html)
-  * [2\. Profiling Guide](../ProfilingGuide/index.html)
-  * [3\. Nsight Compute](../NsightCompute/index.html)
-  * [4\. Nsight Compute CLI](#)
-    * [4.1. Introduction](#introduction)
-    * [4.2. Quickstart](#quickstart)
-    * [4.3. Usage](#usage)
-      * [4.3.1. Modes](#modes)
-      * [4.3.2. Multi-Process Support](#multi-process-support)
-        * [Platform Support](#platform-support)
-        * [MPI Support](#mpi-support)
-        * [Mandatory Concurrent Kernels](#mandatory-concurrent-kernels)
-      * [4.3.3. Output Pages](#output-pages)
-      * [4.3.4. Profile Import](#profile-import)
-      * [4.3.5. Filtered Profile Export](#filtered-profile-export)
-      * [4.3.6. Metrics and Units](#metrics-and-units)
-      * [4.3.7. NVTX Filtering](#nvtx-filtering)
-      * [4.3.8. Config File](#config-file)
-      * [4.3.9. Kernel Renaming](#kernel-renaming)
-      * [4.3.10. CPU Call Stack Filtering](#cpu-call-stack-filtering)
-    * [4.4. Command Line Options](#command-line-options)
-      * [4.4.1. General](#general)
-      * [4.4.2. Launch](#launch)
-      * [4.4.3. Attach](#attach)
-      * [4.4.4. Profile](#profile)
-      * [4.4.5. PM Sampling](#pm-sampling)
-      * [4.4.6. Warp Sampling](#warp-sampling)
-      * [4.4.7. File](#file)
-      * [4.4.8. Console Output](#console-output)
-      * [4.4.9. Response File](#response-file)
-      * [4.4.10. File Macros](#file-macros)
-      * [4.4.11. MPS](#mps)
-    * [4.5. Environment Variables](#environment-variables)
-    * [4.6. Nvprof Transition Guide](#nvprof-transition-guide)
-
-
-Developer Interfaces
-
-  * [1\. Customization Guide](../CustomizationGuide/index.html)
-  * [2\. Python Report Interface](../PythonReportInterface/index.html)
-  * [3\. NvRules API](../NvRulesAPI/index.html)
-  * [4\. Occupancy Calculator Python Interface](../OccupancyCalculatorPythonInterface/index.html)
-
-
-Training
-
-  * [Training](../Training/index.html)
-
-
-Release Information
-
-  * [Archives](../Archives/index.html)
-
-
-Copyright and Licenses
-
-  * [Copyright and Licenses](../CopyrightAndLicenses/index.html)
-
-
-__[NsightCompute](../index.html)
-
-  * [](../index.html) »
-  * 4\. Nsight Compute CLI
-  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
-
-
-* * *
-
-# 4\. Nsight Compute CLI
+# 5\. Nsight Compute CLI
 
 The User Guide for Nsight Compute CLI.
 
-## 4.1. Introduction
+## 5.1. Introduction
 
 NVIDIA Nsight Compute CLI (ncu) provides a non-interactive way to profile applications from the command line. It can print the results directly on the command line or store them in a report file. It can also be used to simply launch the target application (see [General](index.html#command-line-options-general) for details) and later attach with NVIDIA Nsight Compute or another ncu instance.
 
-## 4.2. Quickstart
+## 5.2. Quickstart
 
   1. **Launch the target application with the command line profiler**
 
 The command line profiler launches the target application, instruments the target API, and collects profile results for the specified kernels. The CLI executable is called ncu. A shortcut with this name is located in the base directory of the NVIDIA Nsight Compute installation. The actual executable is located in the folder `target\windows-desktop-win7-x64` on Windows or `target/linux-desktop-glibc_2_11_3-x64` on Linux. By default, NVIDIA Nsight Compute is installed in `/usr/local/cuda-<cuda-version>/NsightCompute-<version>` on Linux and in `C:\Program Files\NVIDIA Corporation\Nsight Compute <version>` on Windows.
 
 To collect the `basic` set for all kernel launches in the target application, launch:
-         
+
          $ ncu -o profile CuVectorAddMulti.exe
-         
+
 
 The application runs in instrumented mode and for each kernel launch, a profile result is created. The results are written by default to profile.nsight-cuprof. Each output from the compute profiler starts with `==PROF==` The other lines are output from the application itself. For each profiled kernel, the name of the kernel function and the progress of data collection is shown. To collect all requested profile information, it may be required to replay the kernels multiple times. The total number of replay passes per kernel is shown after profiling has completed.
-         
+
          [Vector addition of 1144477 elements]
          ==PROF== Connected to process 5268
          Copy input data from the host memory to the CUDA device
@@ -106,7 +34,7 @@ The application runs in instrumented mode and for each kernel launch, a profile 
          Done
          ==PROF== Disconnected from process 5268
          ==PROF== Report: profile.ncu-rep
-         
+
 
   2. **Customizing data collection**
 
@@ -137,9 +65,9 @@ You can also specify the report file as a command line parameter to the executab
 The report opens in a new document window. For more information about the report, see the [Profiler Report](../NsightCompute/index.html#profiler-report) for collecting profile information through NVIDIA Nsight Compute.
 
 
-## 4.3. Usage
+## 5.3. Usage
 
-### 4.3.1. Modes
+### 5.3.1. Modes
 
 Modes change the fundamental behavior of the command line profiler. Depending on which mode is chosen, different [Command Line Options](index.html#command-line-options) become available. For example, [Launch](index.html#command-line-options-launch) is invalid if the _Attach_ mode is selected.
 
@@ -152,7 +80,7 @@ This is the default, and the only mode that supports profiling of child processe
   * **Attach:** The tool tries to connect to a target application previously launched using NVIDIA Nsight Compute or using the command line profiler’s _Launch_ mode. The tool can attach to a target on the local system or using a remote connection.
 
 
-### 4.3.2. Multi-Process Support
+### 5.3.2. Multi-Process Support
 
 The NVIDIA Nsight Compute CLI supports profiling multi-process applications. See [Launch](index.html#command-line-options-launch) for which command line options are available.
 
@@ -165,34 +93,34 @@ On x86_64 Windows, NVIDIA Nsight Compute CLI supports profiling 64-bit processes
 NVIDIA Nsight Compute CLI can be used to profile applications launched with the `mpirun` command.
 
   * To profile all ranks on a node and store all the profiling data in a single report file:
-        
+
         ncu --target-processes all -o <report-name> mpirun [mpi arguments] <app> [app arguments]
-        
+
 
   * To profile multi-node submissions, ensure that you specify unique report files per rank.
-        
+
         mpirun [mpi arguments] ncu -o report_%q{OMPI_COMM_WORLD_RANK} <app> [app arguments]
-        
+
 
 Alternatively, enable the multiprocess communicator:
-        
+
         mpirun [mpi arguments] ncu --communicator=tcp --communicator-num-peers=<number of MPI ranks> -o report <app> [app arguments]
-        
+
 
   * To profile a single rank one can use a wrapper script. The following script (called “wrap.sh”) profiles rank 0 only:
-        
+
         #!/bin/bash
         if [[ $OMPI_COMM_WORLD_RANK == 0 ]]; then
            ncu -o report_${OMPI_COMM_WORLD_RANK}  --target-processes all "$@"
         else
            "$@"
         fi
-        
+
 
 and then execute:
-        
+
         mpirun [mpi arguments] ./wrap.sh <app> [app arguments]
-        
+
 
 
 See below for profiling mandatory concurrent kernels across MPI processes.
@@ -248,7 +176,7 @@ Setting `--communicator-shmem-num-peers` to the number of processes participatin
 
 Launcher processes like `mpirun` or `torchrun` are auto-excluded from profiling. You can manually exclude others using the [–target-processes-filter](index.html#launch) option.
 
-### 4.3.3. Output Pages
+### 5.3.3. Output Pages
 
 The command line profiler supports printing results to the console using various pages. Each page has an equivalent in NVIDIA Nsight Compute’s _Profiler Report_. In the command line profiler, they are slightly adapted to fit console output. To select a page, use the `--page` option. By default, the details page is used. Note that if `--page` is not used but `--export` is, no results will be printed to the console.
 
@@ -263,21 +191,21 @@ Some metrics will show multiple values, separated by “;”, e.g. memory_l2_tra
 The first column shows the metric name. The second and third columns show the metric unit and value, respectively. Both metric unit and value are automatically adjusted to the most fitting order of magnitude. No unresolved regex:, group:, or breakdown: metrics are included.
 
 
-### 4.3.4. Profile Import
+### 5.3.4. Profile Import
 
 Using the `--import` option, saved reports can be imported into the command line profiler. When using this flag, most other options are not available, except for certain result filterting options. They are marked as such in the [Profile options](index.html#command-line-options-profile) table.
 
-### 4.3.5. Filtered Profile Export
+### 5.3.5. Filtered Profile Export
 
 Using the `--import` and `--export` options together, along with supported filtering options, you can export desired results from one report to another. Most of the filtering [Profile options](index.html#command-line-options-profile) that can be used with `--import` alone are also supported here, except for `--metrics` and `--section`.
 
-### 4.3.6. Metrics and Units
+### 5.3.6. Metrics and Units
 
 When available and applicable, metrics are shown along with their unit. This is to make it apparent if a metric represents cycles, threads, bytes/s, and so on.
 
 By default, units are scaled automatically so that metric values are shown with a reasonable order of magnitude. Units are scaled using their SI-factors, i.e. byte-based units are scaled using a factor of 1000 and the prefixes K, M, G, etc. Time-based units are also scaled using a factor of 1000, with the prefixes n, u and m. This scaling can be changed using a command line option, see [Console Output](index.html#command-line-options-console-output) options for details.
 
-### 4.3.7. NVTX Filtering
+### 5.3.7. NVTX Filtering
 
 `--nvtx-include <configuration> --nvtx-exclude <configuration>`
 
@@ -297,36 +225,36 @@ Quantifier | Description | Example
 + | Only one range between the two other ranges | `B range/+/Range D`  
 * | Zero or more range(s) between the two other ranges | `B range/\*/Range Z`  
 @ | Specify domain name. If not mentioned, assuming <default domain> | `Domain-A@A_range` `Domain B@A_range/\*/Range Z]`  
-  
+
 Include kernels wrapped inside push/pop range ‘A_range’ of ‘<default-domain>’:
-        
+
         ncu --nvtx --nvtx-include "A_range/" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside push/pop range ‘A_range’ of ‘Domain-A’:
-        
+
         ncu --nvtx --nvtx-include "Domain-A@A_range/" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside push/pop range ‘A_range’ of ‘<default domain>’, where ‘A_range’ is at the bottom of the stack:
-        
+
         ncu --nvtx --nvtx-include "[A_range" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside push/pop ranges ‘A_range’ and ‘B range’ of ‘<default domain>’, with zero or many ranges between them:
-        
+
         ncu --nvtx --nvtx-include "A_range/*/B range" CuNvtx.exe
-        
+
 
 Exclude kernels wrapped inside push/pop ranges ‘A_range’ and ‘B range’ of ‘<default domain>’, with zero or many ranges between them:
-        
+
         ncu --nvtx --nvtx-exclude "A_range/*/B range" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside only push/pop range ‘A_range’ of ‘<default domain>’ but not inside ‘B range’ at the top of the stack:
-        
+
         ncu --nvtx --nvtx-include "A_range/" --nvtx-exclude "B range]" CuNvtx.exe
-        
+
 
   * **Start-End Ranges**
 
@@ -334,84 +262,84 @@ Quantifier | Description | Example
 ---|---|---  
 , | Delimiter between range names | `A_range,B range` `B range,A_range,Range C`  
 @ | Specify domain name. If not mentioned, assuming <default domain> | `Domain-A@A_range` `Domain B@B range,Range Z`  
-  
+
 Include kernels wrapped inside start/end range ‘A_range’ of ‘Domain-A’:
-        
+
         ncu --nvtx --nvtx-include "Domain-A@A_range" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside both start/end ranges, ‘A_range’ and ‘B range’ of ‘<default domain>’:
-        
+
         ncu --nvtx --nvtx-include "A_range,B range" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside start/end ranges, ‘A_range’ or ‘B range’ of ‘<default domain>’:
-        
+
         ncu --nvtx --nvtx-include "A_range" --nvtx-include "B range" CuNvtx.exe
-        
+
 
 Include all kernels, except those which are wrapped inside start/end range ‘A_range’ of ‘<default domain>’:
-        
+
         ncu --nvtx --nvtx-exclude "A_range" CuNvtx.exe
-        
+
 
 Include kernels wrapped inside only start/end ‘B range’ and not ‘A_range’ of ‘<default domain>’:
-        
+
         ncu --nvtx --nvtx-include "B range"--nvtx-exclude "A_range" CuNvtx.exe
-        
+
 
   * **Regular Expression Support**
 
 The configuration syntax for both the types NvtxRangeStart/End and NvtxRangePush/Pop is the same. Additionally, to use regular expressions, follow the following syntax.
 
     * Provide prefix ‘regex:’ to treat nvtx config as regular expression.
-          
+
           ncu --nvtx --nvtx-include "regex:Domain[A-Z]@Range[0-9]/" CuNvtx.exe
-          
+
 
 The kernels wrapped inside push/pop range with matching regex ‘Range[0-9]’ of domain with matching regex ‘Domain[A-Z]’ are profiled.
 
     * Provide ‘/’ as a prefix to “[” or “]” only for the range part of the config if “[” or “]” is at the start or at the end of the range part, respectively. This is needed so that NCU can distinguish if “[” or “]” is part of the regex or represents the top/bottom of the stack.
-          
+
           ncu --nvtx --nvtx-include "regex:[0-9]domainA@/[0-9]rangeA,RangeC[0-9/]" CuNvtx.exe
-          
+
 
 The kernels wrapped inside start/end ranges with matching regex ‘[0-9]rangeA’ and ‘RangeC[0-9]’ of domain with matching regex ‘[0-9]domainA’ are profiled.
 
     * If any quantifier is part of the domain/range name, you need to use ‘\\\’ or ‘\’ as a prefix. For the “$” quantifier, only the ‘\\\’ prefix is valid.
 
   * **Additional Information**
-        
+
         --nvtx-include "DomainA@RangeA,DomainB@RangeB" //Not a valid config
-        
+
 
 In a single NVTX configuration, multiple ranges with regard to a single domain can be specified. Mentioning ranges from different domains inside a single NVTX config is not supported.
-        
+
         --nvtx-include "A_range\[i\]"
-        
+
 
 Quantifiers `@ , [ ] / * +`, including regular expression quantifiers, can be used in domain/range names using prefix ‘\’. The kernels wrapped inside ‘A_range[i]’ of ‘<default domain>’ in the application are profiled.
-        
+
         --nvtx-include "A_range"  //Start/End configuration
         --nvtx-inlcude "A_range/" //Push/Pop configuration
         --nvtx-inlcude "A_range]" //Push/Pop configuration
-        
+
 
 If the domain/range name contains ‘\’, you need to provide ‘\\\\\\\’ in the config.
 
 Do not use ‘\\\\\\\’ before any quantifier.
 
 Including/Excluding only single range for Push/Pop configuration without specifying stack frame position ‘[’ or ‘]’, use ‘/’ quantifier at the end.
-        
+
         --nvtx-include "A_range/*/B range"
-        
+
 
 The order in which you mention Push/Pop configurations is important. In the above example, ‘A_range’ should be below ‘B range’ in the stack of ranges so that the kernel is profiled.
 
 NVTX filtering honors cudaProfilerStart() and cudaProfilerStop(). There is no support for ranges with no name.
 
 
-### 4.3.8. Config File
+### 5.3.8. Config File
 
 Using the `--config-file on/off` option, parsing parameters from config file can be enabled or disabled.
 
@@ -429,18 +357,18 @@ ncu –mode attach | Attach
 ncu –list-sets, ncu –list-sections, ncu –list-rules and ncu –list-metrics | List  
 ncu –query-metrics | Query  
 ncu -i <MyReport.ncu-rep> | Import  
-  
+
 These general modes should be defined in the config file using INI-like syntax as:
-    
-    
+
+
     [<general-mode>]
     <parameter>=<value>
     ;<comments>
-    
+
 
 **Sample usage**
-    
-    
+
+
     [Launch-and-attach]
     -c = 1
     --section = LaunchStats, Occupancy
@@ -448,41 +376,41 @@ These general modes should be defined in the config file using INI-like syntax a
     --open-in-ui
     -c = 1
     --section = LaunchStats, Occupancy
-    
+
 
 From this configuration, ncu will parse parameters set under `[Launch-and-attach]` block whenever an application is profiled in `launch-and-attach` mode. In the same manner, parameters set under `[Import]` block will be parsed whenever a report is imported. Different modes can be clubbed together if there exists a set of parameters which is common to each mode. Sample shown above can be rewritten after clubbing both modes as:
-    
-    
+
+
     [Launch-and-attach, import]
     -c = 1
     --section = LaunchStats, Occupancy
     [Import]
     --open-in-ui
-    
+
 
 **Additional points**
 
   * Options like `--open-in-ui` do not expect any value to be set. These options should not be passed any value.
 
   * Options like `--section` can be passed multiple times in the command line. These options should be written only once under a general-mode with all required values seperated by comma as shown below. Explicitly setting values for these options will not overwrite the config file values. Instead, all values will be composed together and set to the option.
-        
+
         [<general-mode>]
         <parameter>=<value1>,<value2>,...
-        
 
 
-### 4.3.9. Kernel Renaming
+
+### 5.3.9. Kernel Renaming
 
 In some cases, it gets difficult to distinguish between results using the kernel function or mangled name. However, demangled names can be quite long and complex to understand. To handle such cases, kernel demangled names are auto-simplified to some extent. To see original kernel demangled names, disable kernel renaming using `--rename-kernels off` option. If a simplified kernel demangled name turns out to be not useful, you can rename it through the configuration file. A kernel renaming configuration file should be a YAML file written in the following format:
-    
-    
+
+
     -
      - Original: mergeRanksAndIndicesKernel(unsigned int *, unsigned int *, unsigned int, unsigned int, unsigned int)
      - Renamed: Merge Rank Kernel
     -
      - Original: void mergeSortSharedKernel<(unsigned int)1>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int)
      - Renamed: Merge Sort Kernel
-    
+
 
 By default, kernel renaming config file with name `ncu-kernel-renames.yaml` is searched in the similar way as [config file](index.html#config-file) is searched.
 
@@ -497,26 +425,26 @@ Similary, you can use the renamed names to filter the kernels while profiling as
 **Sample usage**
 
 To profile a kernel with demangled name ‘void SomeComplexKernel(unsigned int, unsigned int, unsigned int)’, you can import the following kernel renaming configuration file:
-    
-    
+
+
     -
      - Original: void SomeComplexKernel(unsigned int, unsigned int, unsigned int)
      - Renamed: MySimpleKernel
-    
-    
-    
+
+
+
     ncu
     --rename-kernels-path /path/to/ncu-kernel-renames.yaml
     --kernel-name-base demangled
     --kernel-name MySimpleKernel
     app.exe
-    
+
 
 If you export the report from the above command, you will see the kernel demangled name renamed to ‘MySimpleKernel’ in the report even if you remove the renaming configuration file. If you want to see the original demangled name in the report, you can always rename it again using the renaming configuration file or simply disable kernel renaming using `--rename-kernels off` option. Note that the renaming can be done on demangled names only. That’s why you need to use `--kernel-name-base demangled` option to use the renamed demangled names for kernel filtering.
 
 You can also use the kernel renaming configuration file while exporting kernels from one report to another using [Filtered Profile Export](index.html#filtered-profile-export) feature. For example, if you rename the kernels in the configuration file as:
-    
-    
+
+
     -
      - Original: KernelA(unsigned int, unsigned int, unsigned int)
      - Renamed: KernelA_Export
@@ -526,22 +454,22 @@ You can also use the kernel renaming configuration file while exporting kernels 
     -
      - Original: KernelC(unsigned int, unsigned int, unsigned int)
      - Renamed: KernelC_Export
-    
+
 
 And then use this configuration file while exporting kernels with the following command:
-    
-    
+
+
     ncu
     --export /path/to/NewReport.ncu-rep
     --import /path/to/OldReport.ncu-rep
     --rename-kernels-path /path/to/ncu-kernel-renames.yaml
     --kernel-name-base demangled
     --kernel-name regex:.*_Export
-    
+
 
 Then, only the kernels with renamed names ‘KernelA_Export’ and ‘KernelC_Export’ will be exported to the new report.
 
-### 4.3.10. CPU Call Stack Filtering
+### 5.3.10. CPU Call Stack Filtering
 
 CPU call stack filtering allows you to filter the launches based on their CPU call stacktrace. You can collect two types of CPU call stacks: “Native” and “Python” using the `--call-stack` or `--call-stack-type` option. You can filter the launches based on the collected call stack using the following options:
 
@@ -595,35 +523,35 @@ To use regular expressions, follow the following syntax.
     * Provide prefix ‘regex:’ to treat the config as regular expression.
 
 The kernels launched via function with matching regex ‘Func[0-9]’ of file with matching regex ‘File[A-Z]’ are profiled.
-          
+
           ncu --call-stack-type native --native-include "regex:File[A-Z]@Func[0-9]" CuApp.exe
-          
+
 
 The kernels launched via function with matching regex ‘Func[0-9]’ of file with matching regex ‘File[A-Z]’ of module with matching regex ‘Module[A-Z]’ are profiled.
-          
+
           ncu --call-stack-type native --native-include "regex:Module[A-Z]@File[A-Z]@Func[0-9]" CuApp.exe
-          
+
 
   * **Additional Information**
-        
+
         ncu --call-stack-type native --native-include "FileA.cpp@FuncA,FileB.cpp@FuncB" CuApp.exe
-        
+
 
 This will not work as you might expect. You cannot pass multiple configurations in a single include/exclude option. You must use the option multiple times to pass multiple configurations.
-        
+
         ncu --call-stack-type native --native-include @FuncA --native-include @FileA.cpp@FuncB CuApp.exe
-        
+
 
 Both configurations are invalid as you cannot pass an empty <file> or <module> before the delimiter ‘@’.
 
 
 Look at [NVTX Push/Pop Range Filtering](index.html#nvtx-filtering) section to understand the function expression format in detail.
 
-## 4.4. Command Line Options
+## 5.4. Command Line Options
 
 For long command line options, passing a unique initial substring can be sufficient.
 
-### 4.4.1. General
+### 5.4.1. General
 
 General Command Line Options Option | Description | Default  
 ---|---|---  
@@ -640,8 +568,8 @@ p,port | Base port used for connecting to target applications for `--mode launch
 max-connections | Maximum number of ports for connecting to target applications | 64  
 config-file | Use config.ncu-cfg config file to set parameters. Searches in the current working directory, in “$HOME/.config/NVIDIA Corporation” on Linux and in “%APPDATA%\NVIDIA Corporation\” on Windows. | on  
 config-file-path | Override the default path for config file. |   
-  
-### 4.4.2. Launch
+
+### 5.4.2. Launch
 
 Launch Command Line Options Option | Description | Default  
 ---|---|---  
@@ -692,18 +620,19 @@ target-processes-filter | Set the comma separated expressions to filter which pr
 The executable name part of the process will be considered in the match. Processing of filters stops at the first match. If any positive filter is specified, no process that is not matching a positive filter is profiled. | **Examples** `--target-processes-filter MatrixMul` Filter all processes having executable name exactly as “MatrixMul”. `--target-processes-filter regex:Matrix`Filter all processes that include the string “Matrix” in their executable name, e.g. “MatrixMul” and “MatrixAdd”. `--target-processes-filter MatrixMul,MatrixAdd`Filter all processes having executable name exactly as “MatrixMul” or “MatrixAdd”. `--target-processes-filter exclude:MatrixMul.exe` Exclude only “MatrixMul.exe”. `--target-processes-filter exclude-tree:ChildLauncher,ParentProcess` Exclude “ChildLauncher” and all its sub-processes. Include (only) “ParentProcess”, but not if it’s a child of “ChildLauncher”.  
 support-32bit | Support profiling processes launched from 32-bit applications. This option is only available on x86_64 Linux. On Windows, tracking 32-bit applications is enabled by default. | no  
 null-stdin | Launch the application with ‘/dev/null’ as its standard input. This avoids applications reading from standard input being stopped by `SIGTTIN` signals and hanging when running as backgrounded processes. | false  
-  
-### 4.4.3. Attach
+
+### 5.4.3. Attach
 
 Attach Command Line Options Option | Description | Default  
 ---|---|---  
 hostname | Set the hostname or IP address for connecting to the machine on which the target application is running. When attaching to a local target application, use 127.0.0.1. | 127.0.0.1  
-  
-### 4.4.4. Profile
+process-id | Attach only to the process with this process ID. If no matching attachable process is found, the profiler exits with an error. |   
+
+### 5.4.4. Profile
 
 Profile Command Line Options Option | Description | Default/Examples  
 ---|---|---  
-devices | List the GPU devices to enable profiling on, separated by comma. [1](#fn1) | All devices **Examples** `--devices 0,2`  
+devices | List the GPU devices to enable profiling on, separated by comma. [[1]](#fn1) | All devices **Examples** `--devices 0,2`  
 filter-mode | Set the filtering mode for kernel launches. Available modes:
 
   * **global:** Apply provided launch filters on kernel launches collectively.
@@ -719,14 +648,14 @@ kernel-id | Set the identifier to use for matching kernels. If the kernel does n
   * **kernel-name** is the expression to match the kernel name. By default, this is a full, literal match to what is specified by `--kernel-name-base`. When specifying the optional _regex_ name operator, this is a partial regular expression match to what is specified by `--kernel-name-base`.
   * **invocation-nr** is the N’th invocation of matching kernel. In the default `global` filter mode, invocations are counted per unique kernel name (and per context/stream ID, if provided). To count invocations separately on each device, use `--filter-mode per-gpu`. To count invocations separately for each unique launch configuration (i.e. Grid Size, Block Size, and Shared Memory), use `--filter-mode per-launch-config`. Multiple invocations can also be specified using regular expressions.
 
-If the context/stream ID is a positive number, it will be strictly matched against the CUDA context/stream ID. Otherwise it will be treated as a regular expression and matched against the context/stream name specified using the NVTX library. [1](#fn1) | **Examples** `--kernel-id ::foo:2` For kernel “foo”, match the second invocation. `--kernel-id :::".*5|3"` For all kernels, match the third invocation, and all for which the invocation number ends in “5”. `--kernel-id ::regex:^.*foo$:` Match all kernels ending in “foo”. `--kernel-id ::regex:^(?!foo):` Match all kernels except those starting with “foo”. Note that depending on your OS and shell, ` you might need to quote the expression, e.g. using single quotes in Linux _bash_ : `--kernel-id ::regex:'^(?!foo)':` `--kernel-id 1|5:2::7` Match all seventh kernel invocations of kernels lauched from context 1 + stream 2, and context 5 + stream 2.  
+If the context/stream ID is a positive number, it will be strictly matched against the CUDA context/stream ID. Otherwise it will be treated as a regular expression and matched against the context/stream name specified using the NVTX library. [[1]](#fn1) | **Examples** `--kernel-id ::foo:2` For kernel “foo”, match the second invocation. `--kernel-id :::".*5|3"` For all kernels, match the third invocation, and all for which the invocation number ends in “5”. `--kernel-id ::regex:^.*foo$:` Match all kernels ending in “foo”. `--kernel-id ::regex:^(?!foo):` Match all kernels except those starting with “foo”. Note that depending on your OS and shell, ` you might need to quote the expression, e.g. using single quotes in Linux _bash_ : `--kernel-id ::regex:'^(?!foo)':` `--kernel-id 1|5:2::7` Match all seventh kernel invocations of kernels lauched from context 1 + stream 2, and context 5 + stream 2.  
 k,kernel-name | Set the expression to use when matching kernel names.
 
   * `<kernel name>` Set the kernel name for an exact match.
   * `regex:<expression>` Set the regex to use for matching the kernel name. On shells that recognize regular expression symbols as special characters (e.g. Linux bash), the expression needs to be escaped with quotes, e.g. `--kernel-name regex:".*Foo"`.
 
-If the kernel name or the provided expression do not match, it will be ignored for profiling. [1](#fn1) | **Examples** `-k foo` Match all kernels named exactly “foo”. `-k regex:foo` Match all kernels that include the string “foo”, e.g. “foo” and “fooBar”. `-k regex:"foo|bar"` Match all kernels including the strings “foo” or “bar”, e.g. “foo”, “foobar”, “_bar2”.  
-kernel-name-base | Set the basis for `--kernel-name`, and `--kernel-id` kernel-name. [1](#fn1) Options are:
+If the kernel name or the provided expression do not match, it will be ignored for profiling. [[1]](#fn1) | **Examples** `-k foo` Match all kernels named exactly “foo”. `-k regex:foo` Match all kernels that include the string “foo”, e.g. “foo” and “fooBar”. `-k regex:"foo|bar"` Match all kernels including the strings “foo” or “bar”, e.g. “foo”, “foobar”, “_bar2”.  
+kernel-name-base | Set the basis for `--kernel-name`, and `--kernel-id` kernel-name. [[1]](#fn1) Options are:
 
   * **function:** Function name without parameters, templates etc. e.g. `dmatrixmul`
   * **demangled:** Demangled function name, including parameters, templates, etc. e.g. `dmatrixmul(float*,int,int)`. Use [Kernel Renaming](index.html#kernel-renaming) to rename the demangled name.
@@ -736,9 +665,9 @@ kernel-name-base | Set the basis for `--kernel-name`, and `--kernel-id` kernel-n
 rename-kernels | Perform simplification on the kernel demangled names. Rename demangled names using a config file. See [Kernel Renaming](index.html#kernel-renaming) for more details. | on  
 rename-kernels-export | Export demangled names from the report to a new file and specify mappings for renaming them. Use `--rename-kernels-path` option to specify the export file path. | off  
 rename-kernels-path | Override the default path of the configuration file which should be used while importing renamed kernels or exporting demangled names. Only valid while using `--rename-kernels` or `--rename-kernels-export`. |   
-c,launch-count | Limit the number of profiled kernel launches. The count is only incremented for launches that match the kernel filters.[1](#fn1) |   
-s,launch-skip | Set the number of kernel launches to skip before starting to profile kernels. The number takes into account only launches that match the kernel filters. [1](#fn1) | 0  
-launch-skip-before-match | Set the number of kernel launches to skip before starting to profile. The count is incremented for all launches, regardless of the kernel filters. [1](#fn1) | 0  
+c,launch-count | Limit the number of profiled kernel launches. The count is only incremented for launches that match the kernel filters.[[1]](#fn1) |   
+s,launch-skip | Set the number of kernel launches to skip before starting to profile kernels. The number takes into account only launches that match the kernel filters. [[1]](#fn1) | 0  
+launch-skip-before-match | Set the number of kernel launches to skip before starting to profile. The count is incremented for all launches, regardless of the kernel filters. [[1]](#fn1) | 0  
 range-filter | Filter to profile specified instance(s) of matching NVTX ranges or start/stop ranges created through cu(da)ProfilerStart/Stop APIs. Specify in format _[yes/no/on/off]:[start/stop range instance(s)]:[NVTX range instance(s)]_
 
   * [yes/no/on/off] : default is ‘no/off’. If set to ‘yes/on’ then NVTX range numbering starts from 1 inside every start/stop range.
@@ -802,7 +731,7 @@ section | Add a section identifier to collect in one of the following ways:
   * `<section identifier>` Set the section identifier for an exact match.
   * `regex:<expression>` Regular expression allows matching full section identifier. For example, `.*Stats`, matches all sections ending with ‘Stats’. On shells that recognize regular expression symbols as special characters (e.g. Linux bash), the expression needs to be escaped with quotes, e.g. `--section "regex:.*Stats"`.
 
-This option is ignored when used with `--import` and `--page raw` or `--page source`. [1](#fn1) | If no `--section` options are given, the sections associated with the `basic` set are collected. If no sets are found, all sections are collected.  
+This option is ignored when used with `--import` and `--page raw` or `--page source`. [[1]](#fn1) | If no `--section` options are given, the sections associated with the `basic` set are collected. If no sets are found, all sections are collected.  
 section-folder | Add a non-recursive search path for `.section` and `.py` rule files. Section files in this folder will be made available to the `--section` option. Individual files from directories including an `.ncu-ignore` file are ignored. | If no `--section-folder` options are given, the `sections` folder is added by default.  
 section-folder-recursive | Add a recursive search path for `.section` and `.py` rule files. Section files in this folder and all folders below will be made available to the `--section` option. Individual files from directories including an `.ncu-ignore` file are ignored. | If no `--section-folder` options are given, the `sections` folder is added by default.  
 list-rules | List all rules found in the searched section folders and exit. |   
@@ -857,7 +786,7 @@ metrics | Specify all metrics to be profiled, separated by comma. If no `--secti
   * `breakdown:<metric>` expands to the input metrics of the high-level throughput metric.
   * `pmsampling:<metric>` collects the metric using PM sampling. Only single-pass metrics that don’t require SASS-patching (_sass_) are supported. Using this prefix adds a timeline element to the report’s details page.
 
-Combining multiple prefixes is not supported. If a metric requires a suffix to be valid, and neither `regex:` nor `group:` are used, this option automatically expands the name to all available first-level sub-metrics. When importing a report, `:group` and `:breakdown` are not supported. When using `regex:`, the expression must not include any commas. [1](#fn1) |   
+Combining multiple prefixes is not supported. If a metric requires a suffix to be valid, and neither `regex:` nor `group:` are used, this option automatically expands the name to all available first-level sub-metrics. When importing a report, `:group` and `:breakdown` are not supported. When using `regex:`, the expression must not include any commas. [[1]](#fn1) |   
 metric-distribution-groups | Set the number of groups to distribute metrics to. | 1  
 disable-extra-suffixes | Disable the collection of extra suffixes (avg, min, max, sum) for all metrics. Only collect what is explicitly specified. |   
 list-chips | List all supported chips that can be used with `--chips`. |   
@@ -892,19 +821,18 @@ pipeline-boost-state | Control the Tensor Core boost state. Setting stable Tenso
   * **dynamic:** Set the Tensor Core boost state to dynamic.
 
 | stable  
-nvtx-include | Adds an include statement to the [NVTX filter](index.html#nvtx-filtering), which allows selecting kernels to profile based on NVTX ranges. [1](#fn1) |   
-nvtx-exclude | Adds an exclude statement to the [NVTX filter](index.html#nvtx-filtering), which allows selecting kernels to profile based on NVTX ranges. [1](#fn1) |   
-native-include | Adds an include statement to the [Native call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on native CPU stack frames. [1](#fn1) |   
-native-exclude | Adds an exclude statement to the [Native call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on native CPU stack frames. [1](#fn1) |   
-python-include | Adds an include statement to the [Python call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on python CPU stack frames. [1](#fn1) |   
-python-exclude | Adds an exclude statement to the [Python call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on python CPU stack frames. [1](#fn1) |   
-  
-1([1](#id7),[2](#id8),[3](#id9),[4](#id10),[5](#id11),[6](#id12),[7](#id13),[8](#id14),[9](#id15),[10](#id16),[11](#id17),[12](#id18),[13](#id19),[14](#id20),[15](#id21))
-    
+nvtx-include | Adds an include statement to the [NVTX filter](index.html#nvtx-filtering), which allows selecting kernels to profile based on NVTX ranges. [[1]](#fn1) |   
+nvtx-exclude | Adds an exclude statement to the [NVTX filter](index.html#nvtx-filtering), which allows selecting kernels to profile based on NVTX ranges. [[1]](#fn1) |   
+native-include | Adds an include statement to the [Native call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on native CPU stack frames. [[1]](#fn1) |   
+native-exclude | Adds an exclude statement to the [Native call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on native CPU stack frames. [[1]](#fn1) |   
+python-include | Adds an include statement to the [Python call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on python CPU stack frames. [[1]](#fn1) |   
+python-exclude | Adds an exclude statement to the [Python call stack filtering](index.html#cpu-stack-filtering), which allows selecting kernels to profile based on python CPU stack frames. [[1]](#fn1) |   
+
+[1] ([1](#id7),[2](#id8),[3](#id9),[4](#id10),[5](#id11),[6](#id12),[7](#id13),[8](#id14),[9](#id15),[10](#id16),[11](#id17),[12](#id18),[13](#id19),[14](#id20),[15](#id21))
 
 This filtering option is available when using `--import`.
 
-### 4.4.5. PM Sampling
+### 5.4.5. PM Sampling
 
 These options apply to [PM sampling](../ProfilingGuide/index.html#pm-sampling). See [here](index.html#warp-sampling) for options used in warp state sampling.
 
@@ -915,8 +843,8 @@ pm-sampling-buffer-size - | Set the size of the device-sided allocation for PM s
 pm-sampling-max-passes - | Set the maximum number of passes used for PM sampling, or determine dynamically when 0. | 0 (auto)  
 warp-samples-per-interval | Set the number of warp samples per PM sampling interval, or determine dynamically when 0. | 0 (auto)  
 disable-pm-warp-sampling | Disables warp state sampling during PM sampling. | By default, warp state sampling is enabled with the PM sampling.  
-  
-### 4.4.6. Warp Sampling
+
+### 5.4.6. Warp Sampling
 
 These options apply to [Warp State Sampling](../ProfilingGuide/index.html#statistical-sampler). See [here](index.html#pm-sampling) for options used in PM sampling.
 
@@ -925,8 +853,8 @@ Warp Sampling Command Line Options Option | Description | Default
 warp-sampling-interval | Set the sampling period in the range of [0..31]. The actual frequency is 2 ^ (5 + value) cycles. If set to ‘auto’, the profiler tries to automatically determine a high sampling frequency without skipping samples or overflowing the output buffer. | auto  
 warp-sampling-max-passes | Set maximum number of passes used for sampling (see the [Profiling Guide](../ProfilingGuide/index.html#overhead) for more details on profiling overhead). | 5  
 warp-sampling-buffer-size | Set the size of the device-sided allocation for samples in bytes. | 32*1024*1024  
-  
-### 4.4.7. File
+
+### 5.4.7. File
 
 File Command Line Options Option | Description | Default  
 ---|---|---  
@@ -936,8 +864,8 @@ f,force-overwrite | Force overwriting all output files. | By default, the profil
 i,import | Set the input file for reading the profile results. |   
 open-in-ui | Open report in UI instead of showing result on terminal. (Only available on host platforms) |   
 section-folder-restore | Restores stock files to the default section folder or the folder specified by an accompanying _–section-folder_ option. If the operation will overwrite modified files then the _–force-overwrite_ option is required. |   
-  
-### 4.4.8. Console Output
+
+### 5.4.8. Console Output
 
 Console Output Command Line Options Option | Description | Default  
 ---|---|---  
@@ -954,8 +882,12 @@ print-source | Select the source view:
 
   * **sass** Show SASS (assembly) instructions for each kernel launch.
   * **ptx** Show PTX source of every cubin whose at least one kernel is profiled.
-  * **cuda** Show entire CUDA-C source file which has kernel code as per kernel launch. CLI shows CUDA source only if file exists on the host machine.
-  * **cuda,sass** Show SASS CUDA-C source correlation for each kernel launch. CLI shows CUDA source only if file exists on the host machine.
+  * **tileir** Show Tile IR source for each kernel launch.
+  * **cuda** Show entire CUDA source file which has kernel code as per kernel launch. CLI shows CUDA source only if file exists on the host machine.
+  * **cuda,sass** Show CUDA source to SASS correlation for each kernel launch. CLI shows CUDA source only if source imported in the report or file exists on the host machine.
+  * **cuda,tileir** Show CUDA source to Tile IR correlation for each kernel launch.
+  * **tileir,ptx** Show Tile IR to PTX correlation for each kernel launch.
+  * **tileir,sass** Show Tile IR to SASS correlation for each kernel launch.
 
 Metric correlation with source is available in **sass** , and **cuda,sass** source view. Metrics specified with `--metrics` and specified section file with `--section` are correlated. Consider restricting the number of selected metrics such that values fit into a single output row. | sass  
 resolve-source-file | Resolve CUDA source file in the `--page source` output. Provide comma separated files full path. |   
@@ -1004,12 +936,12 @@ print-summary | Select the summary output mode. Available modes are:
   * **per-nvtx** Summary for each NVTX context.
 
 | none  
-  
-### 4.4.9. Response File
+
+### 5.4.9. Response File
 
 Response files can be specified by adding `@FileName` to the command line. The file name must immediately follow the `@` character. The content of each response file is inserted in place of the corresponding response file option.
 
-### 4.4.10. File Macros
+### 5.4.10. File Macros
 
 The file name specified with option `-o` or `--export` supports the following macro expansions. Occurrences of these macros in the report file name are replaced by the corresponding character sequence. If not specified otherwise, the macros cannot be used as part of the file path.
 
@@ -1020,8 +952,8 @@ Macro Expansions Macro | Description
 %p | Expands to the process ID of the command line profiler.  
 %i | Expands to the lowest unused positive integer number that guarantees the resulting file name is not yet used. This macro can only be used once in the output file name.  
 %% | Expands to a single `%` character in the output file name. This macro can be used in the file path and the file name.  
-  
-### 4.4.11. MPS
+
+### 5.4.11. MPS
 
 MPS Command Line Options Option | Description | Default  
 ---|---|---  
@@ -1037,14 +969,15 @@ mps | Select MPS behavior. Available modes are:
 | none  
 mps-num-clients | Number of MPS client processes. |   
 mps-timeout | Timeout (seconds) to discover MPS client processes. |   
+
 Behavior for Combinations of `mps-timeout` and `mps-num-clients` mps-timeout | mps-num-clients | Behavior  
 ---|---|---  
 Specified | Not Specified | Control Process waits for the specified timeout and if after the timeout no clients are discovered, it exits.  
 Not Specified | Specified | Control process waits until the specified number of clients are discovered.  
 Specified | Specified | Control Process waits up to the specified timeout and if number of clients discovered are not at least the number of clients specified, it exits.  
 Not Specified | Not Specified | **Error** : At least one of `--mps-timeout` or `--mps-num-clients` must be specified.  
-  
-## 4.5. Environment Variables
+
+## 5.5. Environment Variables
 
 The following environment variables can be set before launching NVIDIA Nsight Compute CLI, or the UI, respectively.
 
@@ -1055,8 +988,9 @@ NV_COMPUTE_PROFILER_LOCAL_CONNECTION_OVERRIDE | Override the default local conne
 NV_COMPUTE_PROFILER_DISABLE_SW_PRE_PASS | Disable the instruction-level software (SW) metric pre-pass. When collecting SW-patched metrics, such as `inst_executed`, the pre-pass is used to determine which functions are executed as part of the kernel and should be patched. This requires a separate replay pass, and if only instruction-level SW metrics are to be collected, prevents single-pass data collection. Disabling the pre-pass can improve performance if memory save-and-restore is undesirable and application replay is not possible. | Default: unset (use pre-pass when applicable) Set to “1” to disable pre-pass.  
 NV_COMPUTE_PROFILER_DISABLE_CONCURRENT_PROFILING | Disable concurrent profiling. If set, only one NCU process will be allowed to profile a kernel in the system at any given time. The default behavior is one NCU process per device or MIG instance. | Default: unset Set to “1” to disable concurrent profiling.  
 NV_COMPUTE_PROFILER_CUDA_LOG_LINES | Number of CUDA error log lines to be included in NVLOG output on unrecoverable profiling errors. Logs are reset after each profiling pass. | Default: 5  
-  
-## 4.6. Nvprof Transition Guide
+NV_NSIGHT_PYTHON_ISOLATED | Controls whether embedded Python processing for rules is isolated from user and site packages and Python environment variables. Isolation is enabled by default to prevent user Python installations from affecting rule loading. Set to “0” to disable isolation for rule processing that intentionally depends on the user’s Python environment. Set to “1” to enable isolation. Other values are ignored. | Default: unset (isolated) Values: “0”, “1”  
+
+## 5.6. Nvprof Transition Guide
 
 Refer to the [older documentation](../Archives/index.html).
 
@@ -1071,5 +1005,3 @@ Information furnished is believed to be accurate and reliable. However, NVIDIA C
 Trademarks
 
 NVIDIA and the NVIDIA logo are trademarks or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.
-
-* * *

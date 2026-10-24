@@ -79,3 +79,17 @@ When the device driver just-in-time compiles PTX code for an application, it aut
 How and when PTX is JIT compiled at runtime has been relaxed since the earliest versions of CUDA, allowing more flexibility for when and if to JIT compile some or all kernels. The section [Lazy Loading](../04-special-topics/lazy-loading.html#lazy-loading) describes the available options and how to control JIT behavior. There are also a few environment variables which control just-in-time compilation behavior, as described in [CUDA Environment Variables](../05-appendices/environment-variables.html#cuda-environment-variables).
 
 As an alternative to using `nvcc` to compile CUDA C++ device code, NVRTC can be used to compile CUDA C++ device code to PTX at runtime. NVRTC is a runtime compilation library for CUDA C++; more information can be found in the NVRTC User guide.
+
+### 1.3.4.4. Binary Finalization
+
+Beginning with compute capability 10.0, intra-family binary compatibility is software-managed by the NVIDIA driver. Cubins for CC 10.0 and later architectures use a format which extends the binary representation to provide intra-family binary compatibility. A binary generated (finalized) for a specific target architecture may execute directly on the target architecture or may be re-finalized at runtime to any [GPU which is guaranteed to have binary compatibility](#cuda-platform-compute-binary-compatibility). Cubins for compute capability 9.x and earlier are not eligible for runtime re-finalization.
+
+When a cubin for CC 10.0 or later which was generated for one target architecture is loaded on a different but compatible architecture in the same GPU family, the driver performs just-in-time finalization to bind the cubin to the architecture of the target GPU. This process is called _off-target finalization_.
+
+Off-target finalization enables _off-target execution_ , where a cubin finalized for one architecture runs on another compatible architecture in the same GPU family. Execution is considered on-target when the cubin is loaded on the architecture for which it was generated. No further finalization is required for on-target execution.
+
+Just-in-time finalization for off-target execution should not be confused with PTX just-in-time compilation. PTX JIT compilation compiles PTX code to GPU binary code that is already finalized for the target architecture. Off-target finalization of a cubin re-finalizes an existing cubin for another compatible architecture. Off-target finalization is significantly less expensive than PTX JIT compilation, but it can still increase module load time relative to on-target execution.
+
+The cost of off-target finalization depends on the amount of code being finalized, the host CPU resources available during module load, and the relationship between the source and target architectures. Applications that load large modules, or many modules, may observe increased startup time when cubins are finalized off-target.
+
+As with PTX JIT compilation, the NVIDIA driver may cache the results of off-target finalization of cubins to avoid repeating finalization work in subsequent invocations of the application. The cache is controlled by the same CUDA cache environment variables described in [Section 5.2.2](../05-appendices/environment-variables.html#cuda-environment-variables-compilation).

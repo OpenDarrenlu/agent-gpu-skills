@@ -15,7 +15,7 @@ A system with multiple GPUs may contain GPUs of different hardware versions and 
 
 When an application depends on the availability of certain hardware or software capabilities to enable certain functionality, the CUDA API can be queried for details about the configuration of the available device and for the installed software versions.
 
-The `cudaGetDeviceProperties()` function reports various features of the available devices, including the [CUDA Compute Capability](#cuda-compute-capability) of the device (see also the Compute Capabilities section of the CUDA C++ Programming Guide). See [Version Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART____VERSION.html#group__CUDART____VERSION) for details on how to query the available CUDA software API versions.
+The `cudaGetDeviceProperties()` function reports various features of the available devices, including the [CUDA Compute Capability](#cuda-compute-capability) of the device (see also the Compute Capabilities section of the CUDA Programming Guide). See [Version Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART____VERSION.html#group__CUDART____VERSION) for details on how to query the available CUDA software API versions.
 
 
 ##  17.2. Error Handling 
@@ -38,8 +38,8 @@ Each generation of CUDA-capable device has an associated _compute capability_ ve
 When an application is built for multiple compute capabilities simultaneously (using several instances of the `-gencode` flag to nvcc), the binaries for the specified compute capabilities are combined into the executable, and the CUDA Driver selects the most appropriate binary at runtime according to the compute capability of the present device. If an appropriate native binary (_cubin_) is not available, but the intermediate _PTX_ code (which targets an abstract virtual instruction set and is used for forward-compatibility) is available, then the kernel will be compiled _Just In Time_ (JIT) (see [Compiler JIT Cache Management Tools](#compiler-jit-cache-management)) from the PTX to the native cubin for the device. If the PTX is also not available, then the kernel launch will fail.
 
 **Windows**
-    
-    
+
+
     nvcc.exe -ccbin "C:\vs2008\VC\bin"
       -Xcompiler "/EHsc /W3 /nologo /O2 /Zi /MT"
       -gencode=arch=compute_30,code=sm_30
@@ -50,11 +50,11 @@ When an application is built for multiple compute capabilities simultaneously (u
       -gencode=arch=compute_75,code=sm_75
       -gencode=arch=compute_75,code=compute_75
       --compile -o "Release\mykernel.cu.obj" "mykernel.cu"
-    
+
 
 **Mac/Linux**
-    
-    
+
+
     /usr/local/cuda/bin/nvcc
       -gencode=arch=compute_30,code=sm_30
       -gencode=arch=compute_35,code=sm_35
@@ -64,14 +64,14 @@ When an application is built for multiple compute capabilities simultaneously (u
       -gencode=arch=compute_75,code=sm_75
       -gencode=arch=compute_75,code=compute_75
       -O2 -o mykernel.o -c mykernel.cu
-    
+
 
 Alternatively, the `nvcc` command-line option `-arch=sm_XX` can be used as a shorthand equivalent to the following more explicit `-gencode=` command-line options described above:
-    
-    
+
+
     -gencode=arch=compute_XX,code=sm_XX
     -gencode=arch=compute_XX,code=compute_XX
-    
+
 
 However, while the `-arch=sm_XX` command-line option does result in inclusion of a PTX back-end target by default (due to the `code=compute_XX` target it implies), it can only specify a single target `cubin` architecture at a time, and it is not possible to use multiple `-arch=` options on the same `nvcc` command line, which is why the examples above use `-gencode=` explicitly.
 
@@ -117,20 +117,20 @@ When redistributing the dynamically-linked versions of one or more CUDA librarie
 In a shared library on Linux, there is a string field called the `SONAME` that indicates the binary compatibility level of the library. The `SONAME` of the library against which the application was built must match the filename of the library that is redistributed with the application.
 
 For example, in the standard CUDA Toolkit installation, the files `libcublas.so` and `libcublas.so.5.5` are both symlinks pointing to a specific build of cuBLAS, which is named like `libcublas.so.5.5.x`, where _x_ is the build number (e.g., `libcublas.so.5.5.17`). However, the `SONAME` of this library is given as “`libcublas.so.5.5`”:
-    
-    
+
+
     $ objdump -p /usr/local/cuda/lib64/libcublas.so | grep SONAME
        SONAME               libcublas.so.5.5
-    
+
 
 Because of this, even if `-lcublas` (with no version number specified) is used when linking the application, the `SONAME` found at link time implies that “`libcublas.so.5.5`” is the name of the file that the dynamic loader will look for when loading the application and therefore must be the name of the file (or a symlink to the same) that is redistributed with the application.
 
 The `ldd` tool is useful for identifying the exact filenames of the libraries that the application expects to find at runtime as well as the path, if any, of the copy of that library that the dynamic loader would select when loading the application given the current library search path:
-    
-    
+
+
     $ ldd a.out | grep libcublas
        libcublas.so.5.5 => /usr/local/cuda/lib64/libcublas.so.5.5
-    
+
 
 **Mac**
 
@@ -139,12 +139,12 @@ In a shared library on Mac OS X, there is a field called the `install name` that
 For example, if the install name of the cuBLAS library is given as `@rpath/libcublas.5.5.dylib`, then the library is version 5.5 and the copy of this library redistributed with the application must be named `libcublas.5.5.dylib`, even though only `-lcublas` (with no version number specified) is used at link time. Furthermore, this file should be installed into the `@rpath` of the application; see [Where to Install Redistributed CUDA Libraries](#redistribution-where-to-install).
 
 To view a library’s install name, use the `otool -L` command:
-    
-    
+
+
     $ otool -L a.out
     a.out:
             @rpath/libcublas.5.5.dylib (...)
-    
+
 
 **Windows**
 
@@ -153,23 +153,23 @@ The binary compatibility version of the CUDA libraries on Windows is indicated a
 For example, a 64-bit application linked to cuBLAS 5.5 will look for `cublas64_55.dll` at runtime, so this is the file that should be redistributed with that application, even though `cublas.lib` is the file that the application is linked against. For 32-bit applications, the file would be `cublas32_55.dll`.
 
 To verify the exact DLL filename that the application expects to find at runtime, use the `dumpbin` tool from the Visual Studio command prompt:
-    
-    
+
+
     $ dumpbin /IMPORTS a.exe
     Microsoft (R) COFF/PE Dumper Version 10.00.40219.01
     Copyright (C) Microsoft Corporation.  All rights reserved.
-    
-    
+
+
     Dump of file a.exe
-    
+
     File Type: EXECUTABLE IMAGE
-    
+
       Section contains the following imports:
-    
+
         ...
         cublas64_55.dll
         ...
-    
+
 
 ####  17.4.1.2. Where to Install Redistributed CUDA Libraries 
 
@@ -178,20 +178,20 @@ Once the correct library files are identified for redistribution, they must be c
 On Windows, if the CUDA Runtime or other dynamically-linked CUDA Toolkit library is placed in the same directory as the executable, Windows will locate it automatically. On Linux and Mac, the `-rpath` linker option should be used to instruct the executable to search its local path for these libraries before searching the system paths:
 
 **Linux/Mac**
-    
-    
+
+
     nvcc -I $(CUDA_HOME)/include
       -Xlinker "-rpath '$ORIGIN'" --cudart=shared
       -o myprogram myprogram.cu
-    
+
 
 **Windows**
-    
-    
+
+
     nvcc.exe -ccbin "C:\vs2008\VC\bin"
       -Xcompiler "/EHsc /W3 /nologo /O2 /Zi /MT" --cudart=shared
       -o "Release\myprogram.exe" "myprogram.cu"
-    
+
 
 Note
 
@@ -200,20 +200,20 @@ It may be necessary to adjust the value of `-ccbin` to reflect the location of y
 To specify an alternate path where the libraries will be distributed, use linker options similar to those below:
 
 **Linux/Mac**
-    
-    
+
+
     nvcc -I $(CUDA_HOME)/include
       -Xlinker "-rpath '$ORIGIN/lib'" --cudart=shared
       -o myprogram myprogram.cu
-    
+
 
 **Windows**
-    
-    
+
+
     nvcc.exe -ccbin "C:\vs2008\VC\bin"
       -Xcompiler "/EHsc /W3 /nologo /O2 /Zi /MT /DELAY" --cudart=shared
       -o "Release\myprogram.exe" "myprogram.cu"
-    
+
 
 For Linux and Mac, the `-rpath` option is used as before. For Windows, the `/DELAY` option is used; this requires that the application call `SetDllDirectory()` before the first call to any CUDA API function in order to specify the directory containing the CUDA DLLs.
 

@@ -34,7 +34,7 @@ Several third-party debuggers support CUDA debugging as well; see: <https://deve
 
 ##  7.3. Numerical Accuracy and Precision 
 
-Incorrect or unexpected results arise principally from issues of floating-point accuracy due to the way floating-point values are computed and stored. The following sections explain the principal items of interest. Other peculiarities of floating-point arithmetic are presented in Features and Technical Specifications of the CUDA C++ Programming Guide as well as in a whitepaper and accompanying webinar on floating-point precision and performance available from <https://developer.nvidia.com/content/precision-performance-floating-point-and-ieee-754-compliance-nvidia-gpus>.
+Incorrect or unexpected results arise principally from issues of floating-point accuracy due to the way floating-point values are computed and stored. The following sections explain the principal items of interest. Other peculiarities of floating-point arithmetic are presented in Features and Technical Specifications of the CUDA Programming Guide as well as in a whitepaper and accompanying webinar on floating-point precision and performance available from <https://developer.nvidia.com/content/precision-performance-floating-point-and-ieee-754-compliance-nvidia-gpus>.
 
 ###  7.3.1. Single vs. Double Precision 
 
@@ -46,7 +46,7 @@ Each floating-point arithmetic operation involves a certain amount of rounding. 
 
 ###  7.3.3. IEEE 754 Compliance 
 
-All CUDA compute devices follow the IEEE 754 standard for binary floating-point representation, with some small exceptions. These exceptions, which are detailed in Features and Technical Specifications of the CUDA C++ Programming Guide, can lead to results that differ from IEEE 754 values computed on the host system.
+All CUDA compute devices follow the IEEE 754 standard for binary floating-point representation, with some small exceptions. These exceptions, which are detailed in Features and Technical Specifications of the CUDA Programming Guide, can lead to results that differ from IEEE 754 values computed on the host system.
 
 One of the key differences is the fused multiply-add (FMA) instruction, which combines multiply-add operations into a single instruction execution. Its result will often differ slightly from results obtained by doing the two operations separately.
 

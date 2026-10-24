@@ -13,24 +13,24 @@ To account for non-uniform thread synchronization costs that are not always low,
 ## 5.7.1. Thread Scopes
 
 A **thread scope** specifies the kind of threads that can synchronize with each other using a synchronization primitive such as [cuda::atomic](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/atomic.html) or [cuda::barrier](https://nvidia.github.io/cccl/unstable/libcudacxx/extended_api/synchronization_primitives/barrier.html).
-    
-    
+
+
     namespace cuda {
-    
+
     enum thread_scope {
       thread_scope_system,
       thread_scope_device,
       thread_scope_block,
       thread_scope_thread
     };
-    
+
     }  // namespace cuda
-    
+
 
 ### 5.7.1.1. Scope Relationships
 
 Each program thread is related to each other program thread by one or more thread scope relations:
-    
+
 
   * Each thread in the system is related to each other thread in the system by the _system_ thread scope: `cuda::thread_scope_system`.
 
@@ -53,17 +53,17 @@ An atomic operation is atomic at the scope it specifies if:
 
   * the scope is `cuda::thread_scope_system` **and** :
 
-    * it affects an object in [system allocated memory](../04-special-topics/unified-memory.html#um-details-intro) and [pageableMemoryAccess](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_146116bab1064b5d7d0642d78f6c27ce1) is `1` [0], **or**
+    * it affects an object in [system allocated memory](../04-special-topics/unified-memory.html#um-details-intro) and [pageableMemoryAccess](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_146116bab1064b5d7d0642d78f6c27ce1) is `1` [0,1], **or**
 
-    * it affects an object in [managed memory](../04-special-topics/unified-memory.html#um-details-intro) and [concurrentManagedAccess](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_116f9619ccc85e93bc456b8c69c80e78b) is `1`, **or**
+    * it affects an object in [managed memory](../04-special-topics/unified-memory.html#um-details-intro) and [concurrentManagedAccess](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_116f9619ccc85e93bc456b8c69c80e78b) is `1` [1], **or**
 
     * it affects an object in [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory) and [hostNativeAtomicSupported](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_1ef82fd7d1d0413c7d6f33287e5b6306f) is `1`, **or**
 
-    * it is a load or store that affects a naturally-aligned object of sizes `1`, `2`, `4`, `8`, or `16` bytes on [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory) [1], **or**
+    * it is a load or store that affects a naturally-aligned object of sizes `1`, `2`, `4`, `8`, or `16` bytes on [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory) [2], **or**
 
     * it affects an object in GPU memory, only GPU threads access it, **and**
 
-      * [cudaDeviceGetP2PAttribute](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html#group__CUDART__TYPES_1g2f597e2acceab33f60bd61c41fea0c1b) `(&val, cudaDevP2PAttrNativeAtomicSupported, srcDev, dstDev)` between each accessing `srcDev` and the GPU where the object resides, `dstDev`, is `1`, **or**
+      * [cudaDeviceGetP2PAttribute](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html#group__CUDART__TYPES_1g2f597e2acceab33f60bd61c41fea0c1b) `(&val, cudaDevP2PAttrNativeAtomicSupported, srcDev, dstDev)` between each accessing `srcDev` and the GPU where the object resides, `dstDev`, is `1` [1], **or**
 
       * only GPU threads from a single GPU concurrently access it.
 
@@ -72,7 +72,9 @@ Note
 
   * [0] If [PageableMemoryAccessUsesHostPagetables](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_1e9f1ed6bffd5606eb81d438728a844ca) is `0` then atomic operations to memory mapped file or `hugetlbfs` allocations are not atomic.
 
-  * [1] If [hostNativeAtomicSupported](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_1ef82fd7d1d0413c7d6f33287e5b6306f) is `0`, atomic load or store operations at system scope that affect a naturally-aligned 16-byte wide object in [system allocated memory](../04-special-topics/unified-memory.html#um-details-intro) or [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory) require system support. NVIDIA is not aware of any system that lacks this support and there is no CUDA API query available to detect such systems.
+  * [1] System-scope tensor reduction operations are only atomic at system-scope in these cases if [hostNativeAtomicSupported](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_1ef82fd7d1d0413c7d6f33287e5b6306f) is `1`. System-scope tensor reduction operations include PTX `{multimem.}cp.reduce.async.bulk.tensor.relaxed.sys` instruction families and APIs that expose them like, e.g., `cuda::ptx::cp_reduce_async_bulk_tensor`.
+
+  * [2] If [hostNativeAtomicSupported](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html#structcudaDeviceProp_1ef82fd7d1d0413c7d6f33287e5b6306f) is `0`, atomic load or store operations at system scope that affect a naturally-aligned 16-byte wide object in [system allocated memory](../04-special-topics/unified-memory.html#um-details-intro) or [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory) require system support. NVIDIA is not aware of any system that lacks this support and there is no CUDA API query available to detect such systems.
 
 
 For more information on [system allocated memory](../04-special-topics/unified-memory.html#um-details-intro), [managed memory](../04-special-topics/unified-memory.html#um-details-intro), [mapped memory](../02-basics/understanding-memory.html#memory-mapped-memory), CPU memory, and GPU memory, see the relevant sections of this guide.
@@ -113,52 +115,52 @@ The following example passes a message stored to the `x` variable by a thread in
 
 **Initially**  
 ---  
-      
-    
+
+
     int x = 0, f = 0;
-      
-  
+
+
 **Thread 0 Block 0**  
-      
-    
+
+
     x = 42;
     cuda::atomic_ref<int, cuda::thread_scope_device> flag(f);
     flag.store(1, memory_order_release);
-      
-  
+
+
 **Thread 0 Block 1**  
-      
-    
+
+
     cuda::atomic_ref<int, cuda::thread_scope_device> flag(f);
     while(flag.load(memory_order_acquire) != 1);
     assert(x == 42);
-      
-  
+
+
 In the following variation of the previous example, two threads concurrently access the `f` object without synchronization, which leads to a **data race** , and exhibits **undefined behavior** :
 
 **Initially**  
 ---  
-      
-    
+
+
     int x = 0, f = 0;
-      
-  
+
+
 **Thread 0 Block 0**  
-      
-    
+
+
     x = 42;
     cuda::atomic_ref<int, cuda::thread_scope_block> flag(f);
     flag.store(1, memory_order_release); // UB: data race
-      
-  
+
+
 **Thread 0 Block 1**  
-      
-    
+
+
     cuda::atomic_ref<int, cuda::thread_scope_device> flag(f);
     while(flag.load(memory_order_acquire) != 1); // UB: data race
     assert(x == 42);
-      
-  
+
+
 While the memory operations on `f` \- the store and the loads - are atomic, the scope of the store operation is “block scope”. Since the store is performed by Thread 0 of Block 0, it only includes all other threads of Block 0. However, the thread doing the loads is in Block 1, i.e., it is not in a scope included by the store operation performed in Block 0, causing the store and the load to not be “atomic”, and introducing a data-race.
 
 For more examples see the [PTX memory consistency model litmus tests](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#axioms).

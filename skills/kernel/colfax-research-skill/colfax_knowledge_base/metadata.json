@@ -434,8 +434,68 @@
       "content_type": "pdf",
       "scraped_at": "2026-06-04T04:34:17.087257",
       "local_markdown": "/home/lutingzhan/workspace/agent-gpu-skills/colfax-research-skill/colfax_knowledge_base/articles/nvidia-hopper-gemm-cutlass.md"
+    },
+    "https://research.colfax-intl.com/optimization-diaries-s-p-ping-pong-for-flashattention-4-decode/": {
+      "url": "https://research.colfax-intl.com/optimization-diaries-s-p-ping-pong-for-flashattention-4-decode/",
+      "title": "Optimization diaries: S/P ping-pong for FlashAttention-4 decode",
+      "date": "September 7, 2026",
+      "date_iso": "2026-09-07T10:59:28-07:00",
+      "categories": [],
+      "tags": [],
+      "excerpt": "LLM Inference is divided into a prefill phase and a decode phase. During prefill, the model processes a large number of input tokens and populates a key-value (KV) cache. During decode, it autoregressively generates one or a few new tokens at a time using the cached keys and values.",
+      "pdf_url": "",
+      "pdf_filename": "",
+      "pdf_local_path": "",
+      "content_type": "blog",
+      "scraped_at": "2026-10-24T14:34:45.530811",
+      "local_markdown": "/Users/tingzhan.lu/Documents/agent-gpu-skills/skills/kernel/colfax-research-skill/colfax_knowledge_base/articles/optimization-diaries-s-p-ping-pong-for-flashattention-4-decode.md"
+    },
+    "https://research.colfax-intl.com/optimization-diaries-improving-flashattention-4-backward-for-head-dimension-64/": {
+      "url": "https://research.colfax-intl.com/optimization-diaries-improving-flashattention-4-backward-for-head-dimension-64/",
+      "title": "Optimization diaries: Improving FlashAttention-4 backward pass kernel design for head dimension 64",
+      "date": "September 6, 2026",
+      "date_iso": "2026-09-06T14:45:28-07:00",
+      "categories": [],
+      "tags": [],
+      "excerpt": "In this blog post we discuss the backward pass ofFlashAttention-4(FA4) on NVIDIA Blackwell GPUs. For head dimension 128, FA4 backward is highly performant, achieving1237 TFLOP/s, or about55%of peak compute throughput on a B200 GPU. However, at head dimension 64, the same kernel achieves only30–37%of peak compute throughput for long sequence lengths. This suggests that there is plenty of room for improvement in this case. We will describe a optimization that leverages spare tensor memory (TMEM) t",
+      "pdf_url": "",
+      "pdf_filename": "",
+      "pdf_local_path": "",
+      "content_type": "blog",
+      "scraped_at": "2026-10-24T14:34:48.022500",
+      "local_markdown": "/Users/tingzhan.lu/Documents/agent-gpu-skills/skills/kernel/colfax-research-skill/colfax_knowledge_base/articles/optimization-diaries-improving-flashattention-4-backward-for-head-dimension-64.md"
+    },
+    "https://research.colfax-intl.com/optimizing-an-nvfp4-blockscaled-gemm-on-rtx-pro-6000-blackwell-gpu-sm120/": {
+      "url": "https://research.colfax-intl.com/optimizing-an-nvfp4-blockscaled-gemm-on-rtx-pro-6000-blackwell-gpu-sm120/",
+      "title": "Optimizing an NVFP4 Blockscaled GEMM on RTX PRO 6000 Blackwell GPU (SM120)",
+      "date": "August 9, 2026",
+      "date_iso": "2026-08-09T13:19:07-07:00",
+      "categories": [],
+      "tags": [],
+      "excerpt": "This article is a continuation of our series on NVFP4 blockscaling on SM12x GPUs. InPart 1, we covered relevant PTX instructions, scale-factor layout details, and implementation details in CuTe DSL, including how to convert a CUTLASS dense GEMM example into an NVFP4 blockscaled GEMM. In this article, we optimize the NVFP4 GEMM from Part 1 for the NVIDIA RTX Pro 6000 Blackwell Server Edition GPU. We iteratively apply a series of optimizations, outlining the logic behind each one as well as the im",
+      "pdf_url": "",
+      "pdf_filename": "",
+      "pdf_local_path": "",
+      "content_type": "blog",
+      "scraped_at": "2026-10-24T14:34:51.159064",
+      "local_markdown": "/Users/tingzhan.lu/Documents/agent-gpu-skills/skills/kernel/colfax-research-skill/colfax_knowledge_base/articles/optimizing-an-nvfp4-blockscaled-gemm-on-rtx-pro-6000-blackwell-gpu-sm120.md"
+    },
+    "https://research.colfax-intl.com/cutlass-tutorial-nvfp4-blockscaled-gemm-on-nvidia-rtx-pro-blackwell-gpus-sm12x/": {
+      "url": "https://research.colfax-intl.com/cutlass-tutorial-nvfp4-blockscaled-gemm-on-nvidia-rtx-pro-blackwell-gpus-sm12x/",
+      "title": "NVFP4 Blockscaled GEMM on NVIDIA RTX Pro Blackwell GPUs (SM12x)",
+      "date": "June 20, 2026",
+      "date_iso": "2026-06-20T10:46:55-07:00",
+      "categories": [],
+      "tags": [],
+      "excerpt": "In this article, we explore hardware-supported NVFP4 blockscaled GEMM on SM12x GPUs, such as the NVIDIA RTX Pro 6000 Blackwell Server Edition (SM120) or NVIDIA DGX Spark (SM121). We will first discuss features of these GPUs and their kernel programming paradigm, situating them relative to SM10x (e.g. B200 or B300) and SM8x (Ampere/Ada). Then, we will discuss sub-byte blockscaled GEMM on SM12x, covering the necessary PTX background and scale-factor layouts before moving on to implementation detai",
+      "pdf_url": "",
+      "pdf_filename": "",
+      "pdf_local_path": "",
+      "content_type": "blog",
+      "scraped_at": "2026-10-24T14:34:53.547090",
+      "local_markdown": "/Users/tingzhan.lu/Documents/agent-gpu-skills/skills/kernel/colfax-research-skill/colfax_knowledge_base/articles/cutlass-tutorial-nvfp4-blockscaled-gemm-on-nvidia-rtx-pro-blackwell-gpus-sm12x.md"
     }
   },
-  "last_full_update": "2026-06-04T04:34:20.219811",
-  "total_articles": 29
+  "last_full_update": "2026-10-24T14:34:54.567488",
+  "total_articles": 33
 }

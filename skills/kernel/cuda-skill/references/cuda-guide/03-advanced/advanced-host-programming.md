@@ -32,21 +32,21 @@ Section [Section 2.1.10.1](../02-basics/intro-to-cuda-cpp.html#intro-cpp-launchi
 ### 3.1.2.1. Launching with Clusters using cudaLaunchKernelEx
 
 Unlike [launching kernels using clusters with triple chevron notation](../02-basics/intro-to-cuda-cpp.html#intro-cpp-launching-cluster-triple-chevron), the size of the thread block cluster can be configured on a per-launch basis. The code example below shows how to launch a cluster kernel using `cudaLaunchKernelEx`.
-    
-    
+
+
     // Kernel definition
     // No compile time attribute attached to the kernel
     __global__ void cluster_kernel(float *input, float* output)
     {
-    
+
     }
-    
+
     int main()
     {
         float *input, *output;
         dim3 threadsPerBlock(16, 16);
         dim3 numBlocks(N / threadsPerBlock.x, N / threadsPerBlock.y);
-    
+
         // Kernel invocation with runtime cluster size
         {
             cudaLaunchConfig_t config = {0};
@@ -55,7 +55,7 @@ Unlike [launching kernels using clusters with triple chevron notation](../02-bas
             // The grid dimension should be a multiple of cluster size.
             config.gridDim = numBlocks;
             config.blockDim = threadsPerBlock;
-    
+
             cudaLaunchAttribute attribute[1];
             attribute[0].id = cudaLaunchAttributeClusterDimension;
             attribute[0].val.clusterDim.x = 2; // Cluster size in X-dimension
@@ -63,11 +63,11 @@ Unlike [launching kernels using clusters with triple chevron notation](../02-bas
             attribute[0].val.clusterDim.z = 1;
             config.attrs = attribute;
             config.numAttrs = 1;
-    
+
             cudaLaunchKernelEx(&config, cluster_kernel, input, output);
         }
     }
-    
+
 
 There are two `cudaLaunchAttribute` types which are relevant to thread block clusters clusters: `cudaLaunchAttributeClusterDimension` and `cudaLaunchAttributePreferredClusterDimension`.
 
@@ -80,26 +80,26 @@ All thread blocks will execute in clusters of at least the minimum cluster dimen
 ### 3.1.2.2. Blocks as Clusters
 
 When a kernel is defined with the `__cluster_dims__` annotation, the number of clusters in the grid is implicit and can be calculated from the size of the grid divided into the specified cluster size.
-    
-    
+
+
     __cluster_dims__((2, 2, 2)) __global__ void foo();
-    
+
     // 8x8x8 clusters each with 2x2x2 thread blocks.
     foo<<<dim3(16, 16, 16), dim3(1024, 1, 1)>>>();
-    
+
 
 In the above example, the kernel is launched as a grid of 16x16x16 thread blocks, which means a grid of of 8x8x8 clusters is used.
 
 A kernel can alternatively use the `__block_size__` annotation, which specifies both the required block size and cluster size at the time the kernel is defined. When this annotation is used, the triple chevron launch becomes the grid dimension in terms of clusters rather than thread blocks, as shown below.
-    
-    
+
+
     // Implementation detail of how many threads per block and blocks per cluster
     // is handled as an attribute of the kernel.
     __block_size__((1024, 1, 1), (2, 2, 2)) __global__ void foo();
-    
+
     // 8x8x8 clusters.
     foo<<<dim3(8, 8, 8)>>>();
-    
+
 
 `__block_size__` requires two fields each being a tuple of 3 elements. The first tuple denotes block dimension and second cluster size. The second tuple is assumed to be `(1,1,1)` if it’s not passed. When specifying a dynamic shared memory size and/or a stream during kernel launch, the second argument in `<<<>>>` must be the placeholder `1`. Any other value results in undefined behavior.
 
@@ -123,7 +123,7 @@ Table 4 Summary of explicit synchronization options with the host | Wait for spe
 ---|---|---|---  
 Non-blocking (would need a polling loop) | cudaStreamQuery() | cudaEventQuery() | N/A  
 Blocking | cudaStreamSynchronize() | cudaEventSynchronize() | cudaDeviceSynchronize()  
-  
+
 For synchronization, i.e., to express dependencies, between CUDA streams, use of non-timing CUDA events is recommended, as described in [CUDA Events](../02-basics/asynchronous-execution.html#cuda-events). A user can call `cudaStreamWaitEvent()` to force future submitted operations on a specific stream to wait for the completion of a previously recorded event (e.g., on another stream). Note that for any CUDA API waiting or querying an event, it is the responsibility of the user to ensure the cudaEventRecord API has been already called, as a non-recorded event will always return success.
 
 CUDA events carry, by default, timing information, as they can be used in `cudaEventElapsedTime()` API calls. However, a CUDA event that is solely used to express dependencies across streams does not need timing information. For such cases, it is recommended to create events with timing information disabled for improved performance. This is possible using `cudaEventCreateWithFlags()` API with the `cudaEventDisableTiming` flag.
@@ -133,17 +133,17 @@ CUDA events carry, by default, timing information, as they can be used in `cudaE
 The relative priorities of streams can be specified at creation time using `cudaStreamCreateWithPriority()`. The range of allowable priorities, ordered as [greatest priority, least priority] can be obtained using the `cudaDeviceGetStreamPriorityRange()` function. At runtime, the GPU scheduler utilizes stream priorities to determine task execution order, but these priorities serve as hints rather than guarantees. When selecting work to launch, pending tasks in higher-priority streams take precedence over those in lower-priority streams. Higher-priority tasks do not preempt already running lower-priority tasks. The GPU does not reassess work queues during task execution, and increasing a stream’s priority will not interrupt ongoing work. Stream priorities influence task execution without enforcing strict ordering, so users can leverage stream priorities to influence task execution without relying on strict ordering guarantees.
 
 The following code sample obtains the allowable range of priorities for the current device, and creates two non-blocking CUDA streams with the highest and lowest available priorities.
-    
-    
+
+
     // get the range of stream priorities for this device
     int leastPriority, greatestPriority;
     cudaDeviceGetStreamPriorityRange(&leastPriority, &greatestPriority);
-    
+
     // create streams with highest and lowest available priorities
     cudaStream_t st_high, st_low;
     cudaStreamCreateWithPriority(&st_high, cudaStreamNonBlocking, greatestPriority));
     cudaStreamCreateWithPriority(&st_low, cudaStreamNonBlocking, leastPriority);
-    
+
 
 ### 3.1.3.2. Explicit Synchronization
 
@@ -207,55 +207,55 @@ PDL has three main components.
 The following code snippet shows an example of how this can be done.
 
 Listing 3 Example of Programmatic Dependent Kernel Launch with two Kernels
-    
-    
+
+
     __global__ void primary_kernel() {
         // Initial work that should finish before starting secondary kernel
-    
+
         // Trigger the secondary kernel
         cudaTriggerProgrammaticLaunchCompletion();
-    
+
         // Work that can coincide with the secondary kernel
     }
-    
+
     __global__ void secondary_kernel()
     {
         // Initialization, Independent work, etc.
-    
+
         // Will block until all primary kernels the secondary kernel is dependent on have
         // completed and flushed results to global memory
         cudaGridDependencySynchronize();
-    
+
         // Dependent work
     }
-    
+
     // Launch the secondary kernel with the special attribute
-    
+
     // Set Up the attribute
     cudaLaunchAttribute attribute[1];
     attribute[0].id = cudaLaunchAttributeProgrammaticStreamSerialization;
     attribute[0].val.programmaticStreamSerializationAllowed = 1;
-    
+
     // Set the attribute in a kernel launch configuration
      cudaLaunchConfig_t config = {0};
-    
+
     // Base launch configuration
     config.gridDim = grid_dim;
     config.blockDim = block_dim;
     config.dynamicSmemBytes= 0;
     config.stream = stream;
-    
+
     // Add special attribute for PDL
     config.attrs = attribute;
     config.numAttrs = 1;
-    
+
     // Launch primary kernel
     primary_kernel<<<grid_dim, block_dim, 0, stream>>>();
-    
+
     // Launch secondary (dependent) kernel using the configuration with
     // the attribute
     cudaLaunchKernelEx(&config, secondary_kernel);
-    
+
 
 ## 3.1.5. Batched Memory Transfers
 
@@ -268,12 +268,12 @@ These considerations motivated the design of the `cudaMemcpyBatchAsync()` functi
 Let us first consider the simplest case of a simple batch transfer of data from pinned host memory to pinned device memory
 
 Listing 4 Example of Homogeneous Batched Memory Transfer from Pinned Host Memory to Pinned Device Memory
-    
-    
+
+
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
     std::vector<size_t> sizes(batch_size);
-    
+
     // Allocate the source and destination buffers
     // initialize with the stream number
     for (size_t i = 0; i < batch_size; i++) {
@@ -281,18 +281,18 @@ Listing 4 Example of Homogeneous Batched Memory Transfer from Pinned Host Memory
         cudaMalloc(&dsts[i], sizes[i]);
         cudaMemsetAsync(srcs[i], sizes[i], stream);
     }
-    
+
     // Setup attributes for this batch of copies
     cudaMemcpyAttributes attrs = {};
     attrs.srcAccessOrder = cudaMemcpySrcAccessOrderStream;
-    
+
     // All copies in the batch have same copy attributes.
     size_t attrsIdxs = 0;  // Index of the attributes
-    
+
     // Launch the batched memory transfer
     cudaMemcpyBatchAsync(&dsts[0], &srcs[0], &sizes[0], batch_size,
         &attrs, &attrsIdxs, 1 /*numAttrs*/, nullptr /*failIdx*/, stream);
-    
+
 
 The first few parameters to the `cudaMemcpyBatchAsync()` function seem immediately sensible. The are comprised of arrays containing the source and destination pointers, as well as the transfer sizes. Each array has to have``batch_size`` elements. The new information comes from the attributes. The function needs a pointer to an array of attributes, and a corresponding array of attribute indices. In principle it is also possible to pass an array of `size_t` and in this array the indices of an failed transfers can be recorded, however it is safe to pass a `nullptr` here, in this case the indices of failures will simply not be recorded.
 
@@ -303,38 +303,38 @@ Finally, we note that we have set the `srcAccessOrder` attribute to `cudaMemcpyS
 In the next example we will consider a more complex case of a heterogeneous batch transfer.
 
 Listing 5 Example of Heterogeneous Batched Memory Transfer using some Ephemeral Host Memory to Pinned Device Memory
-    
-    
+
+
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
     std::vector<size_t> sizes(batch_size);
-    
+
     // Allocate the src and dst buffers
     for (size_t i = 0; i < batch_size - 10; i++) {
         cudaMallocHost(&srcs[i], sizes[i]);
         cudaMalloc(&dsts[i], sizes[i]);
     }
-    
+
     int buffer[10];
-    
+
     for (size_t i = batch_size - 10; i < batch_size; i++) {
         srcs[i] = &buffer[10 - (batch_size - i];
         cudaMalloc(&dsts[i], sizes[i]);
     }
-    
+
     // Setup attributes for this batch of copies
     cudaMemcpyAttributes attrs[2] = {};
     attrs[0].srcAccessOrder = cudaMemcpySrcAccessOrderStream;
     attrs[1].srcAccessOrder = cudaMemcpySrcAccessOrderDuringApiCall;
-    
+
     size_t attrsIdxs[2];
     attrsIdxs[0] = 0;
     attrsIdxs[1] = batch_size - 10;
-    
+
     // Launch the batched memory transfer
     cudaMemcpyBatchAsync(&dsts[0], &srcs[0], &sizes[0], batch_size,
         &attrs, &attrsIdxs, 2 /*numAttrs*/, nullptr /*failIdx*/, stream);
-    
+
 
 Here we have two kinds of transfers: `batch_size-10` transfer from pinned host memory to pinned device memory, and 10 transfers from a host array to pinned device memory. Further, the buffer array is not only on the host but is only in existence in the current scope – its address is what is known as an _ephemeral pointer_. This pointer may not be valid after the API call completes (it is asynchronous). To perform the copies with such ephemeral pointers, the srcAccessOrder in the attribute must be set to cudaMemcpySrcAccessOrderDuringApiCall.
 
@@ -345,53 +345,53 @@ If instead of allocating the buffer array from the stack, we had allocated it fr
 The `cudaMemcpyBatchAsync` function also allows the programmer to provide hints about the source and destination locations. This is done by setting the `srcLocation` and `dstLocation` fields of the `cudaMemcpyAttributes` structure. The `srcLocation``and ``dstLocation` fields are both of type `cudaMemLocation` which is a structure that contains the type of the location and the ID of the location. This is the same `cudaMemLocation` structure that can be used to give prefetching hints to the runtime when using `cudaMemPrefetchAsync()`. We illustrate how to set up the hints for a transfer from the device, to a specific NUMA node of the host in the code example below:
 
 Listing 6 Example of Setting Source and Destination Location Hints
-    
-    
+
+
     // Allocate the source and destination buffers
     std::vector<void *> srcs(batch_size);
     std::vector<void *> dsts(batch_size);
     std::vector<size_t> sizes(batch_size);
-    
+
     // cudaMemLocation structures we will use tp provide location hints
     // Device device_id
     cudaMemLocation srcLoc = {cudaMemLocationTypeDevice, dev_id};
-    
+
     // Host with numa Node numa_id
     cudaMemLocation dstLoc = {cudaMemLocationTypeHostNuma, numa_id};
-    
+
     // Allocate the src and dst buffers
     for (size_t i = 0; i < batch_size; i++) {
         cudaMallocManaged(&srcs[i], sizes[i]);
         cudaMallocManaged(&dsts[i], sizes[i]);
-    
+
         cudaMemPrefetchAsync(srcs[i], sizes[i], srcLoc, 0, stream);
         cudaMemPrefetchAsync(dsts[i], sizes[i], dstLoc, 0, stream);
         cudaMemsetAsync(srcs[i], sizes[i], stream);
     }
-    
+
     // Setup attributes for this batch of copies
     cudaMemcpyAttributes attrs = {};
-    
+
     // These are managed memory pointers so Stream Order is appropriate
     attrs.srcAccessOrder = cudaMemcpySrcAccessOrderStream;
-    
+
     // Now we can specify the location hints here.
     attrs.srcLocHint = srcLoc;
     attrs.dstlocHint = dstLoc;
-    
+
     // All copies in the batch have same copy attributes.
     size_t attrsIdxs = 0;
-    
+
     // Launch the batched memory transfer
     cudaMemcpyBatchAsync(&dsts[0], &srcs[0], &sizes[0], batch_size,
         &attrs, &attrsIdxs, 1 /*numAttrs*/, nullptr /*failIdx*/, stream);
-    
+
 
 THe last thing to cover is the flag for hinting whether we want to use SM’s or CEs for the transfers. The field for this is the `cudaMemcpyAttributesflags::flags` and the possible values are:
 
   * `cudaMemcpyFlagDefault` – default behavior
 
-  * `cudaMemcpyFlagPreferOverlapWithCompute` – this hints that the system should prefer to use CEs for the transfers overlapping the transfer with computations. This flag is ignored on non-Tegra platforms
+  * `cudaMemcpyFlagPreferOverlapWithCompute` – this hints that the system should prefer to use CEs for the transfers overlapping the transfer with computations.
 
 
 In summary, the main points regarding “cudaMemcpyBatchAsync” are as follows:

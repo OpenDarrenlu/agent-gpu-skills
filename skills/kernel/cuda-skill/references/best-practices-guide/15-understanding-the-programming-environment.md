@@ -19,7 +19,7 @@ Figure 16 Sample CUDA configuration data reported by deviceQuery
 
 The major and minor revision numbers of the compute capability are shown on the seventh line of [Figure 16](#sample-cuda-configuration-data-reported-devicequery-figure). Device 0 of this system has compute capability 7.0.
 
-More details about the compute capabilities of various GPUs are in CUDA-Enabled GPUs and Compute Capabilities of the CUDA C++ Programming Guide. In particular, developers should note the number of multiprocessors on the device, the number of registers and the amount of memory available, and any special capabilities of the device.
+More details about the compute capabilities of various GPUs are in CUDA-Enabled GPUs and Compute Capabilities of the CUDA Programming Guide. In particular, developers should note the number of multiprocessors on the device, the number of registers and the amount of memory available, and any special capabilities of the device.
 
 
 ##  15.2. Additional Hardware Data 
@@ -66,4 +66,4 @@ It comprises two principal parts:
   * C++-style convenience wrappers (`cuda_runtime.h`) built on top of the C-style functions.
 
 
-For more information on the Runtime API, refer to CUDA Runtime of the CUDA C++ Programming Guide.
+For more information on the Runtime API, refer to CUDA Runtime of the CUDA Programming Guide.

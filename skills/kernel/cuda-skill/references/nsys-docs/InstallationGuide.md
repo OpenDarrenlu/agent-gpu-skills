@@ -8,7 +8,7 @@ NVIDIA Nsight Systems installation guide.
 
 ## Overview
 
-Nsight Systems is a statistical sampling profiler with tracing features. It is designed to work with devices and devkits based on NVIDIA Tegra SoCs (system-on-chip), Arm SBSA (server based system architecture) systems, and systems based on the x86_64 processor architecture that also include NVIDIA GPU(s).
+Nsight Systems is a statistical sampling profiler with tracing features. It is designed to work with devices and devkits based on NVIDIA Tegra SoCs (system-on-chip), Arm SBSA (server based system architecture) systems, Arm Windows systems, and systems based on the x86_64 processor architecture that also include NVIDIA GPU(s).
 
 Throughout this document we will refer to the device on which profiling happens as the **target** , and the computer on which the user works and controls the profiling session as the **host**. Note that for x86_64 based systems these may be on the same device, whereas with Tegra or Arm based systems they will always be separate.
 
@@ -21,7 +21,7 @@ Furthermore, three different activities are distinguished as follows:
   * **Tracing** — The process of collecting precise information about various activities happening in the profilee or in the system. For example, profilee API execution may be traced providing the exact time and duration of a function call.
 
 
-Nsight Systems supports multiple generations of Tegra SoCs, NVIDIA discrete GPUs, and various CPU architectures, as well as various target and host operating systems. This documentation describes the full set of features available in any version of Nsight Systems. In the event that a feature is not available in all versions, that will be noted in the text. In general, Nsight Systems Embedded Platforms Edition indicates the package that supports Tegra processors for the embedded and automotive market and Nsight Systems Workstation Edition supports x86_64 and Arm server (SBSA) processors for the workstation, cluster, and cloud markets.
+Nsight Systems supports multiple generations of Tegra SoCs, NVIDIA discrete GPUs, and various CPU architectures, as well as various target and host operating systems. This documentation describes the full set of features available in any version of Nsight Systems. In the event that a feature is not available in all versions, that will be noted in the text. In general, Nsight Systems Embedded Platforms Edition indicates the package that supports Tegra processors for the embedded and automotive market and Nsight Systems Workstation Edition supports x86_64, Arm server (SBSA), and Arm Windows processors for the workstation, cluster, and cloud markets.
 
 Common features that are supported by Nsight Systems on most platforms include the following:
 
@@ -53,7 +53,7 @@ With Nsight Systems, a user could:
 
 ## System Requirements
 
-Nsight Systems supports multiple platforms. For simplicity, think of these as Nsight Systems Embedded Platforms Edition and Nsight Systems Workstation Edition, where Nsight Systems Workstation Edition supports desktops, workstations, clusters, and clouds with x86_64 or Arm SBSA CPUs on Linux and Windows OSs, while Nsight Systems Embedded Platforms Edition supports NVIDIA Tegra products for the embedded and gaming space on Linux for Tegra and QNX OSs.
+Nsight Systems supports multiple platforms. For simplicity, think of these as Nsight Systems Embedded Platforms Edition and Nsight Systems Workstation Edition, where Nsight Systems Workstation Edition supports desktops, workstations, clusters, and clouds with x86_64 or Arm SBSA CPUs on Linux and x86_64 or Arm CPUs on Windows, while Nsight Systems Embedded Platforms Edition supports NVIDIA Tegra products for the embedded and gaming space on Linux for Tegra and QNX OSs.
 
 ### Supported Platforms
 
@@ -68,7 +68,7 @@ L4T (Linux for Tegra)
   * For older Tegra targets, see [NVIDIA JetPack Archives](https://developer.nvidia.com/embedded/jetpack-archive).
 
 
-x86_64 or Arm SBSA
+x86_64, Arm SBSA, or Arm Windows
 
   * NVIDIA GPU architectures starting with Turing
 
@@ -81,6 +81,10 @@ x86_64 or Arm SBSA
     * Amazon Linux 2023+
 
     * Win Server 2022+
+
+    * Windows 10 (x86_64)
+
+    * Windows 11 (x86_64, Arm)
 
     * MacOS 13+
 
@@ -109,7 +113,7 @@ CUDA Version | Driver minimum version
 10.2 | 440.30  
 10.1 | 418.39  
 10.0 | 410.48  
-  
+
 From CUDA 11.X on, any driver from 450 on will be supported, although new features introduced in more recent drivers will not be available.
 
 For information about which drivers were specifically released with each toolkit, see [CUDA Toolkit Release Notes - Major Component Versions](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-major-component-versions)
@@ -173,7 +177,7 @@ Nsight Systems requires write permission to the `/var/lock` directory on the tar
 
 **Docker** : See Container Support section of the User Guide for more information.
 
-### Requirements for x86_64 Targets on Windows
+### Requirements for x86_64 and Arm Targets on Windows
 
 **DX12 Requires** :
 
@@ -209,7 +213,7 @@ Hypervisor trace (VM context switches, interrupts, traps, etc. - collected throu
 VMProfiler (Cross-Hypervisor sampling) | 6.0.8.x  
 OSRT trace (trace of C runtime functions) | 6.0.8.x  
 NVTX trace (trace of user-added NVTX instrumentation) | 6.0.8.x  
-  
+
 Note
 
 For DRIVE OS installation details, more information on running environments or filesystem overlays, please refer to [NVIDIA DRIVE OS Documentation](https://docs.nvidia.com/drive).
@@ -234,6 +238,8 @@ Nsight Systems is available for multiple targets and multiple host OSs. To choos
   * For Tegra target systems, select Nsight Systems Embedded Platforms Edition available as part of [NVIDIA JetPack SDK](https://developer.nvidia.com/embedded/jetpack). For older Tegra targets, see [NVIDIA JetPack Archives](https://developer.nvidia.com/embedded/jetpack-archive).
 
   * For x86_64 or Arm SBSA select from the target packages from Nsight Systems Workstation Edition, available from <https://developer.nvidia.com/nsight-systems>. This web release will always contain the latest and greatest Nsight Systems features.
+
+  * For Arm Windows select the x86_64 Windows package from Nsight Systems Workstation Edition, which contains the Arm Windows target.
 
   * The x86_64 and Arm SBSA target versions of Nsight Systems are also available in the [CUDA Toolkit.](https://developer.nvidia.com/cuda-downloads)
 
@@ -269,6 +275,11 @@ After choosing an appropriate target version, select the package corresponding t
   * Arm SBSA CLI only - The Arm SBSA CLI is shipped in all host packages, but if you just want the CLI, we have a package for that. Install .deb or .rpm on Arm SBSA system. Enables only CLI collection, report can be imported or opened in GUI on any supported host platform.
 
 
+**Arm Windows packages**
+
+  * Windows host - Install the x86_64 Windows .msi on Windows machine. Enables remote access to Arm & x86_64 Windows devices for profiling as well as running on the local system.
+
+
 Note
 
 On Windows machines we recommend installing Nsight Systems to the default secure location under Program Files.
@@ -284,45 +295,53 @@ Users can download Nsight Systems (full package **nsight-systems** or CLI-only p
 **Ubuntu (minimal setup for containers)**
 
 These instructions assume that you have root in the container. Example command to launch a container: `sudo docker run -it --rm ubuntu:latest bash`
-    
-    
+
+
     apt update
-    apt install -y --no-install-recommends gnupg
-    echo "deb http://developer.download.nvidia.com/devtools/repos/ubuntu$(source /etc/lsb-release; echo "$DISTRIB_RELEASE" | tr -d .)/$(dpkg --print-architecture) /" | tee /etc/apt/sources.list.d/nvidia-devtools.list
-    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+    apt install -y --no-install-recommends gnupg2 wget ca-certificates
+    wget -O- https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub \
+      | gpg --dearmor \
+      | tee /usr/share/keyrings/nvidia-devtools-keyring.gpg > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/nvidia-devtools-keyring.gpg] \
+    https://developer.download.nvidia.com/devtools/repos/ubuntu$(source /etc/lsb-release; echo "$DISTRIB_RELEASE" | tr -d .)/$(dpkg --print-architecture)/ /" \
+      | tee /etc/apt/sources.list.d/nvidia-devtools.list
     apt update
     apt install nsight-systems-cli
-    
+
 
 **Ubuntu (desktop)**
-    
-    
-    sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-    sudo add-apt-repository "deb https://developer.download.nvidia.com/devtools/repos/ubuntu$(source /etc/lsb-release; echo "$DISTRIB_RELEASE" | tr -d .)/$(dpkg --print-architecture)/ /"
+
+
+    sudo apt install gnupg2 wget ca-certificates
+    wget -O- https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub \
+      | gpg --dearmor \
+      | sudo tee /usr/share/keyrings/nvidia-devtools-keyring.gpg > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/nvidia-devtools-keyring.gpg] \
+    https://developer.download.nvidia.com/devtools/repos/ubuntu$(source /etc/lsb-release; echo "$DISTRIB_RELEASE" | tr -d .)/$(dpkg --print-architecture)/ /" \
+      | sudo tee /etc/apt/sources.list.d/nvidia-devtools.list
+    sudo apt update
     sudo apt install nsight-systems
-    
+
 
 **CentOS and RHEL (minimal setup for containers)**
 
-Same as above for Ubuntu, these instructions assume that you have root in the container. Example command to launch a container: `sudo docker run -it --rm centos:latest bash`
-    
-    
+Same as above for Ubuntu, these instructions assume that you have root in the container. Example command to launch a container: `sudo docker run -it --rm rockylinux:9 bash`
+
+
     rpm --import https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
     dnf install -y 'dnf-command(config-manager)'
     dnf config-manager --add-repo "https://developer.download.nvidia.com/devtools/repos/rhel$(source /etc/os-release; echo ${VERSION_ID%%.*})/$(rpm --eval '%{_arch}' | sed s/aarch/arm/)/"
     dnf install -y nsight-systems-cli
-    
+
 
 **CentOS and RHEL (desktop)**
-    
-    
+
+
     sudo rpm --import https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
     sudo dnf install -y 'dnf-command(config-manager)'
     sudo dnf config-manager --add-repo "https://developer.download.nvidia.com/devtools/repos/rhel$(source /etc/os-release; echo ${VERSION_ID%%.*})/$(rpm --eval '%{_arch}' | sed s/aarch/arm/)/"
     sudo dnf install nsight-systems
-    
+
 
 ### Installing GUI on the Host System
 
@@ -345,10 +364,10 @@ The CLI can be found in the Target directory of the Nsight Systems installation.
 If you wish to run the CLI without root (recommended mode) you will want to install in a directory where you have full access.
 
 Once you have the CLI set up, you can use the `nsys status -e` command to check your environment.
-    
-    
+
+
     ~$ nsys status -e
-    
+
     Sampling Environment Check
     Linux Kernel Paranoid Level = 1: OK
     Linux Distribution = Ubuntu
@@ -357,7 +376,7 @@ Once you have the CLI set up, you can use the `nsys status -e` command to check 
     Sampling trigger event available: OK
     Intel(c) Last Branch Record support: Available
     Sampling Environment: OK
-    
+
 
 This status check allows you to ensure that the system requirements for CPU sampling using Nsight Systems are met in your local environment. If the Sampling Environment is not OK, you will still be able to run various trace operations.
 
@@ -373,128 +392,78 @@ Depending on your OS, Nsight Systems will have installed an icon on your host de
 
 ### Installing Advanced Analysis System
 
-The Nsight Systems advanced analysis system can be located in the `<install-dir>/target-linux-x64/python/packages` directory.
+The Nsight Systems advanced analysis system is located in the appropriate `<install-dir>/target-<os>-<arch>/python/packages/nsys_recipe` directory for your operating system and architecture.
 
 **Recipe Dependencies**
 
-The system is written in Python and depends on a set of Python packages. The prerequisites are Python 3.10 or newer with pip and venv. If you don’t have Python, you can install it from [python.org](https://www.python.org) or the Windows store or Linux package manager.
+The system is written in Python and depends on a set of Python packages. The prerequisites are Python 3.10 or newer with pip and venv.
 
-The recipe system is supported on the currently maintained Python releases, as shown in [this chart](https://www.python.org/downloads/). We are not able to develop and test the recipe system with older Python versions that are no longer supported by Python.
+Starting with Nsight Systems 2026.3.1, the analysis system executes using the version of Python that is bundled with the Nsight Systems installation (currently Python 3.12.12). The first time you run the analysis system, it installs the required Python packages into a virtual environment within your local directory in the following locations depending on your operating system:
 
-**Pip/venv on Ubuntu**
+  * Linux: `~/.nsightsystems/venv`
 
-If pip/venv were not installed with Python, run:
-    
-    
-    $ sudo apt-get install python3-pip
-    $ sudo apt-get install python3-venv
-    
+  * Windows: `%LOCALAPPDATA%\NVIDIA Nsight Systems\venv`
 
-On a fresh Ubuntu install, you need to run the following before the above commands:
-    
-    
-    $ sudo apt-get update
-    
+  * macOS: Recipe analysis will be supported in a future release, once the Nsys CLI is supported on macOS.
 
-The dependent packages can either be installed automatically by an automated script or manually.
 
-**Automated script**
+The virtual environment is created with the dependencies needed for the current analysis script. Some recipes may require additional dependencies, which automatically trigger additional installation steps. For example, if the analysis script requires the `dask` package, the analysis system automatically installs the `dask` package into the virtual environment. The installation can sometimes take a few minutes to complete, so be patient. You can monitor the installation progress by viewing the `recipe_dependencies_install_log.txt` file in the current working directory.
 
-The `<install-dir>/target-linux-x64/python/packages/nsys_recipe/install.py` script automates the installation of the recipe dependencies. You must select one of the following options when you run the script: `--current`, `--venv PATH`, or `--download`. Additionally, use `--offline` with `--current` or `--venv` to install from previously downloaded packages.
+**Advanced usage: Custom Python Environment**
+
+If you want to use a different version of Python than the one that is bundled with Nsight Systems, you can create a virtual environment with the desired version of Python and install the required Python packages into it. Consult the Python documentation for more information on how to create a virtual environment.
+
+For this to work, you must set the `NSYSPYTHONEXE` environment variable to point to the Python executable in the custom Python environment:
+
+
+    export NSYSPYTHONEXE=/path/to/python_executable
+
+
+You can then install the required Python packages into the custom Python environment using the `install.py` script provided with Nsight Systems. The `install.py` script automates the installation of the analysis system recipe dependencies. You must select one of the following options when you run the script: `--current`, `--venv PATH`, or `--download`. Additionally, use `--offline` with `--current` or `--venv` to install from previously downloaded packages.
+
+
+    <install-dir>/target-<os>-<arch>/python/packages/nsys_recipe/install.py
+
 
 Options:
 
   * `-h`: Display help
 
-  * `--current`: Install packages in the current environment. If a venv is active, packages will be installed there. Otherwise, packages will be installed in the system site-packages directory. It enables usage of `nsys recipe` without having to source a virtual environment. However, new packages risk colliding with existing ones if different versions are required.
+  * `--current`: Install packages in the current environment. If a venv is active, packages will be installed there. Otherwise, packages will be installed in the system site-packages directory, which enables usage of `nsys recipe` without having to activate a virtual environment. However, new packages risk colliding with existing ones if different versions are required.
 
-  * `--venv PATH`: Install packages in a virtual environment. If it doesn’t already exist, it is created. It prevents risk of package collision in the current environment but requires the virtual environment to be activated before running `nsys recipe`.
+  * `--venv PATH`: Install packages in a virtual environment. If the venv doesn’t already exist, it is created. Using a venv prevents the risk of package version collision in the current environment.
 
   * `--download`: Download wheel packages for offline installation
 
   * `--offline`: Install packages from downloaded wheels (offline mode)
 
-  * `--no-jupyter`: Do not install requirements for the jupyter notebook
+  * `--no-jupyter`: Do not install requirements for the Jupyter notebook
 
   * `--no-dask`: Do not install requirements for Dask
 
   * `--quiet`: Only display errors
 
 
-**Manual steps**
-
-If you would rather install the dependencies manually, please follow the following steps:
-
-  * Create a virtual environment.
-
-We recommend creating a virtual environment to avoid installing packages directly into your system Python. The commands create the virtual environment in the current working directory.
-
-See [venv - python doc](https://docs.python.org/3/library/venv.html).
-
-To create a venv named recipe_env:
-        
-        $ python3 -m venv recipe_env
-        $ source recipe_env/bin/activate
-        
-
-  * List of dependencies.
-
-We have three files located in `<install-dir>/target-linux-x64/python/packages/nsys_recipe/requirements` for the dependencies:
-
-    * Common.txt (required): dependencies needed by all recipes.
-
-    * Dask.txt (optional): dependencies needed by the Dask mode.
-
-    * Jupyter.txt (optional): dependencies needed to open the Jupyter notebook.
+For example, to install the minimum required Python packages for the analysis system into the currently active virtual environment, you can run the following command:
 
 
-**One-step installation**
+    <install-dir>/target-<os>-<arch>/python/packages/nsys_recipe/install.py --current --no-dask --no-jupyter
 
-The following command will install all dependencies for CLI and GUI. Please note that you will want to activate your venv first as described above, otherwise the modules will not be available in the venv.
-    
-    
-    $ python3 -m pip install -r nsys_recipe/requirements/dask.txt -r nsys_recipe/requirements/common.txt -r nsys_recipe/requirements/jupyter.txt
-    
-
-**Two-step installation (for machines without internet)**
-
-If you wish to download the dependencies on a machine without internet, you can download the wheel packages on a machine with internet, transfer them to the target machine and install the packages there.
-
-On the machine with internet:
-    
-    
-    $ python3 -m pip download -r nsys_recipe/requirements/dask.txt -r nsys_recipe/requirements/common.txt -r nsys_recipe/requirements/jupyter.txt -d recipe-deps
-    $ tar -cvzf recipe-deps.tar.gz recipe-deps
-    
-
-On the machine with no internet:
-    
-    
-    $ tar -xvzf recipe-deps.tar.gz
-    $ python3 -m pip install recipe-deps/*.whl --no-index
-    
 
 **Jupyter Notebook**
 
-The Nsight Systems UI has the ability to internally load a Jupyter notebook. It uses the Jupyter notebook installation associated with the Python on your $PATH, which is expected to be the Python installed into the virtual environment created in the earlier steps of this guide.
+The Nsight Systems UI has the ability to load and display Jupyter notebooks. When you open a Jupyter notebook, the UI first attempts to launch the JupyterLab server using the default Python environment on your `$PATH`. If that fails, the UI will attempt to launch JupyterLab using the Nsight Systems Python environment, creating the venv if necessary.
 
-If Jupyter is installed in a different location, you can add a third variable to the config.ini file that will override the default path to Jupyter:
-    
-    
-    JupyterPythonExe="/path/to/recipe_env/bin/python"
-    
+Note: macOS users should install JupyterLab into their default Python environment since the Nsys CLI and `install.py` script are not currently supported on macOS.
 
-This config.ini file should be placed in `<install_dir>/host-linux-x64`
+You can also use `NSYSPYTHONEXE` to run Jupyter from your custom Python environment. This variable should be set to the path to the Python executable in your custom environment and it will launch JupyterLab using that environment, like the following command:
 
-Note that on Windows, the path should use Windows slashes and they must be double slashes:
-    
-    
-    JupyterPythonExe="c:\\path\\to\\recipe_env\\bin\\python.exe"
-    
 
-Alternatively, you may launch Jupyter Lab independently to view the recipe outside of the Nsight Systems UI.
+    export NSYSPYTHONEXE=/path/to/python_executable
+    $NSYSPYTHONEXE -m jupyter lab
 
-Ensure that the appropriate virtual environment is activated first if you have configured one, then navigate to the recipe directory and run:
-    
-    
-    jupyter-lab
+
+Alternatively, you may launch JupyterLab independently to view the recipe outside of the Nsight Systems UI using:
+
+
+    jupyter lab <path-to-notebook>

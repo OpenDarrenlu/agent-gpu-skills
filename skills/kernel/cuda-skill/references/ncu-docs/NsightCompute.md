@@ -2,186 +2,15 @@
 url: https://docs.nvidia.com/nsight-compute/NsightCompute/index.html
 ---
 
-[ ![Logo](https://docs.nvidia.com/nsight-compute/_static/nsight-compute.png) ](../index.html)
-
-Nsight Compute
-
-  * [1\. Release Notes](../ReleaseNotes/index.html)
-  * [2\. Profiling Guide](../ProfilingGuide/index.html)
-  * [3\. Nsight Compute](#)
-    * [3.1. Introduction](#introduction)
-      * [3.1.1. Overview](#overview)
-    * [3.2. Quickstart](#quickstart)
-      * [3.2.1. Interactive Profile Activity](#interactive-profile-activity)
-      * [3.2.2. Non-Interactive Profile Activity](#non-interactive-profile-activity)
-      * [3.2.3. System Trace Activity](#system-trace-activity)
-      * [3.2.4. Navigate the Report](#navigate-the-report)
-    * [3.3. Start Activity Dialog](#start-activity-dialog)
-      * [3.3.1. Remote Connections](#remote-connections)
-      * [3.3.2. Interactive Profile Activity](#connection-activity-interactive)
-      * [3.3.3. Profile Activity](#profile-activity)
-      * [3.3.4. Reset](#reset)
-    * [3.4. Main Menu and Toolbar](#main-menu-and-toolbar)
-      * [3.4.1. Main Menu](#id2)
-      * [3.4.2. Main Toolbar](#main-toolbar)
-      * [3.4.3. Status Banners](#status-banners)
-    * [3.5. Tool Windows](#tool-windows)
-      * [3.5.1. API Statistics](#api-statistics)
-      * [3.5.2. API Stream](#api-stream)
-      * [3.5.3. Baselines](#baselines)
-      * [3.5.4. Metric Details](#metric-details)
-      * [3.5.5. Launch Details](#launch-details)
-        * [Header](#header)
-        * [Body](#body)
-      * [3.5.6. Function Stats](#function-stats)
-        * [Accessing Function Stats](#accessing-function-stats)
-        * [Basic Workflow](#basic-workflow)
-        * [Understanding the Function Stats Tree](#understanding-the-function-stats-tree)
-        * [Data Source](#data-source)
-        * [Metric Naming](#metric-naming)
-      * [3.5.7. NVTX](#nvtx)
-      * [3.5.8. CPU Call Stack](#cpu-call-stack)
-      * [3.5.9. Resources](#resources)
-        * [Memory Allocations](#memory-allocations)
-        * [Graphviz DOT and SVG exports](#graphviz-dot-and-svg-exports)
-      * [3.5.10. CUDA Graph Viewer](#cuda-graph-viewer)
-      * [3.5.11. Device Information](#device-information)
-      * [3.5.12. Search](#search)
-      * [3.5.13. Metric Selection](#metric-selection)
-    * [3.6. Profiler Report](#profiler-report)
-      * [3.6.1. Header](#profiler-report-header)
-      * [3.6.2. Report Pages](#report-pages)
-        * [Summary Page](#summary-page)
-          * [Properties](#properties)
-        * [Details Page](#details-page)
-          * [Overview](#id5)
-          * [Memory](#memory)
-          * [Occupancy](#occupancy)
-          * [Range Replay](#range-replay)
-          * [Rooflines](#rooflines)
-          * [Source](#source)
-          * [Timelines](#timelines)
-        * [Source Page](#source-page)
-          * [Navigation](#navigation)
-          * [Metrics](#metrics)
-            * [Metrics Correlation](#metrics-correlation)
-            * [Pre-Defined Source Metrics](#pre-defined-source-metrics)
-            * [Register Dependencies](#register-dependencies)
-          * [Profiles](#profiles)
-          * [Additional Tables](#additional-tables)
-            * [Instructions & Dependencies Table](#instructions-dependencies-table)
-            * [Inline Functions Table](#inline-functions-table)
-            * [Source Markers Table](#source-markers-table)
-            * [Statistics Table](#statistics-table)
-          * [Limitations](#limitations)
-        * [Context Page](#context-page)
-        * [Comments Page](#comments-page)
-        * [Raw Page](#raw-page)
-        * [Session Page](#session-page)
-      * [3.6.3. Metrics and Units](#metrics-and-units)
-      * [3.6.4. Filtered Profiler Report](#filtered-profiler-report)
-    * [3.7. Baselines](#id8)
-    * [3.8. Standalone Source Viewer](#standalone-source-viewer)
-    * [3.9. Source Comparison](#source-comparison)
-    * [3.10. Report Merge Tool](#report-merge-tool)
-      * [3.10.1. File Selection Tab](#file-selection-tab)
-      * [3.10.2. Metric Filters Tab](#metric-filters-tab)
-      * [3.10.3. Result Filters Tab](#result-filters-tab)
-        * [Result Merge Operations](#result-merge-operations)
-        * [Merged Report](#merged-report)
-    * [3.11. Clustering Window](#clustering-window)
-      * [3.11.1. How to Use Clustering](#how-to-use-clustering)
-      * [3.11.2. Clustering Tree](#clustering-tree)
-      * [3.11.3. Similarity Matrix](#similarity-matrix)
-    * [3.12. Occupancy Calculator](#occupancy-calculator)
-      * [3.12.1. Tables](#tables)
-      * [3.12.2. Utilization](#utilization)
-      * [3.12.3. Graphs](#graphs)
-      * [3.12.4. GPU Data](#gpu-data)
-    * [3.13. Green Contexts support](#green-contexts-support)
-    * [3.14. Acceleration Structure Viewer](#acceleration-structure-viewer)
-      * [3.14.1. Navigation](#as-viewer-nav)
-      * [3.14.2. Filtering and Highlighting](#filtering-and-highlighting)
-      * [3.14.3. Rendering Options](#rendering-options)
-      * [3.14.4. Exporting](#exporting)
-    * [3.15. Options](#options)
-      * [3.15.1. Profile](#profile)
-        * [Report Sections](#report-sections)
-        * [Report Rules](#report-rules)
-        * [Report UI](#report-ui)
-        * [Report Baselines](#report-baselines)
-        * [Report Metrics](#report-metrics)
-        * [Report Summary Page](#report-summary-page)
-        * [Report Details Page](#report-details-page)
-        * [Report Source Page](#report-source-page)
-        * [API Stream View](#api-stream-view)
-        * [CUDA Graph Viewer](#options-profile-graph-viewer)
-      * [3.15.2. Fonts and Colors](#fonts-and-colors)
-        * [Fonts](#fonts)
-        * [Colors](#colors)
-      * [3.15.3. Environment](#environment)
-        * [Visual Experience](#visual-experience)
-        * [Windowing](#windowing)
-        * [Documents Folder](#documents-folder)
-        * [Startup Behavior](#startup-behavior)
-        * [Updates](#updates)
-      * [3.15.4. Connection](#connection)
-        * [Target Connection Properties](#target-connection-properties)
-        * [Host Connection Properties](#host-connection-properties)
-        * [SSH ProxyJump Connection Properties](#ssh-proxyjump-connection-properties)
-      * [3.15.5. Timeline](#timeline)
-        * [Basic Settings](#basic-settings)
-      * [3.15.6. Source Lookup](#source-lookup)
-      * [3.15.7. Send Feedback…](#send-feedback)
-    * [3.16. Projects](#projects)
-      * [3.16.1. Project Dialogs](#project-dialogs)
-      * [3.16.2. Project Explorer](#project-explorer)
-    * [3.17. Visual Studio Integration Guide](#visual-studio-integration-guide)
-      * [3.17.1. Visual Studio Integration Overview](#visual-studio-integration-overview)
-  * [4\. Nsight Compute CLI](../NsightComputeCli/index.html)
-
-
-Developer Interfaces
-
-  * [1\. Customization Guide](../CustomizationGuide/index.html)
-  * [2\. Python Report Interface](../PythonReportInterface/index.html)
-  * [3\. NvRules API](../NvRulesAPI/index.html)
-  * [4\. Occupancy Calculator Python Interface](../OccupancyCalculatorPythonInterface/index.html)
-
-
-Training
-
-  * [Training](../Training/index.html)
-
-
-Release Information
-
-  * [Archives](../Archives/index.html)
-
-
-Copyright and Licenses
-
-  * [Copyright and Licenses](../CopyrightAndLicenses/index.html)
-
-
-__[NsightCompute](../index.html)
-
-  * [](../index.html) »
-  * 3\. Nsight Compute
-  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
-
-
-* * *
-
-# 3\. Nsight Compute
+# 4\. Nsight Compute
 
 The User Guide for Nsight Compute.
 
-## 3.1. Introduction
+## 4.1. Introduction
 
 NVIDIA Nsight Compute (UI) User Manual: Detailed documentation on views, controls, and workflows.
 
-### 3.1.1. Overview
+### 4.1.1. Overview
 
 This document is a user guide to the next-generation NVIDIA Nsight Compute profiling tools. NVIDIA Nsight Compute is an interactive kernel profiler for CUDA applications. It provides detailed performance metrics and API debugging via a user interface and command line tool. In addition, its baseline feature allows users to compare results within the tool. NVIDIA Nsight Compute provides a customizable and data-driven user interface and metric collection and can be extended with analysis scripts for post-processing results.
 
@@ -200,7 +29,7 @@ This document is a user guide to the next-generation NVIDIA Nsight Compute profi
   * Fully customizable reports and analysis rules
 
 
-## 3.2. Quickstart
+## 4.2. Quickstart
 
 The following sections provide brief step-by-step guides of how to setup and run NVIDIA Nsight Compute to collect profile information. All directories are relative to the base directory of NVIDIA Nsight Compute, unless specified otherwise.
 
@@ -212,7 +41,7 @@ After starting NVIDIA Nsight Compute, by default the _Welcome Page_ is opened. T
 
 Welcome Page
 
-### 3.2.1. Interactive Profile Activity
+### 4.2.1. Interactive Profile Activity
 
   1. **Launch the target application from NVIDIA Nsight Compute**
 
@@ -222,9 +51,9 @@ When starting NVIDIA Nsight Compute, the _Welcome Page_ will appear. Click on _Q
   2. **Launch the target application with tools instrumentation from the command line**
 
 The ncu can act as a simple wrapper that forces the target application to load the necessary libraries for tools instrumentation. The parameter `--mode=launch` specifies that the target application should be launched and suspended before the first instrumented API call. That way the application waits until we connect with the UI.
-         
+
          $ ncu --mode=launch CuVectorAddDrv.exe
-         
+
 
   3. **Launch NVIDIA Nsight Compute and connect to target application**
 
@@ -257,7 +86,7 @@ _Profile Series_ allows to configure the collection of a set of profile results 
 
 For a detailed description of the options available in this activity, see [Interactive Profile Activity](index.html#connection-activity-interactive).
 
-### 3.2.2. Non-Interactive Profile Activity
+### 4.2.2. Non-Interactive Profile Activity
 
   1. **Launch the target application from NVIDIA Nsight Compute**
 
@@ -273,7 +102,7 @@ For more details on these options, see [Command Line Options](../NsightComputeCl
 
 For a detailed description of the options available in this activity, see [Profile Activity](index.html#connection-activity-non-interactive).
 
-### 3.2.3. System Trace Activity
+### 4.2.3. System Trace Activity
 
   1. **Launch the target application from NVIDIA Nsight Compute**
 
@@ -290,7 +119,7 @@ For more details on these options, see [System-Wide Profiling Options](https://d
 ![../_images/quick-start-system-trace-timeline.png](https://docs.nvidia.com/nsight-compute/_images/quick-start-system-trace-timeline.png)
 
 
-### 3.2.4. Navigate the Report
+### 4.2.4. Navigate the Report
 
   1. **Navigate the report**
 
@@ -316,13 +145,13 @@ On the _Details_ page, many sections provide rules with valuable information on 
 ![../_images/quick-start-rule.png](https://docs.nvidia.com/nsight-compute/_images/quick-start-rule.png)
 
 
-## 3.3. Start Activity Dialog
+## 4.3. Start Activity Dialog
 
 Use the _Start Activity Dialog_ to launch and attach to applications on your local and remote platforms. Start by selecting the _Target Platform_ for profiling. By default (and if supported) your local platform will be selected. Select the platform on which you would like to start the target application or connect to a running process.
 
-[![../_images/connection-dialog.png](https://docs.nvidia.com/nsight-compute/_images/connection-dialog.png)](../_images/connection-dialog.png)
+[![../_images/connection-dialog.png](https://docs.nvidia.com/nsight-compute/_images/connection-dialog.png) ](../_images/connection-dialog.png)
 
-When using a remote platform, you will be asked to select or create a _Connection_ in the top drop down. To create a new connection, select _+_ and enter your connection details. When using the local platform, _localhost_ will be selected as the default and no further connection settings are required. You can still create or select a remote connection, if profiling will be on a remote system of the same platform. Use the _Device Information_ button to view system and GPU information for the selected device.
+When using a remote platform, you will be asked to select or create a _Connection_ in the top drop down. To create a new connection, select _+_ and enter your connection details. When using the local platform, _localhost_ will be selected as the default and no further connection settings are required. You can still create or select a remote connection, if profiling will be on a remote system of the same platform. Use the _Device Information_ button to view system, GPU, and CUDA information for the selected device.
 
 Depending on your target platform, select either _Launch_ or _Remote Launch_ to launch an application for profiling on the target. Note that _Remote Launch_ will only be available if supported on the target platform.
 
@@ -350,7 +179,7 @@ Finally, select the _Activity_ to be run on the target for the launched or attac
   * [Occupancy Calculator](index.html#occupancy-calculator)
 
 
-### 3.3.1. Remote Connections
+### 4.3.1. Remote Connections
 
 Remote devices that support SSH can also be configured as a target in the _Start Activity Dialog_. To configure a remote device, ensure an SSH-capable _Target Platform_ is selected, then press the _+_ button. The following configuration dialog will be presented.
 
@@ -403,7 +232,7 @@ Deployment Directory Placeholders Placeholder | Description
 %T | Temporary directory. Resolves to $TMPDIR, if empty resolves to /tmp  
 %u | User name. Resolves to $USER, if empty resolves to root  
 %S | State directory. Resolves to $XDG_STATE_HOME, if empty resolves to $HOME/.local/state  
-  
+
 For example, if you specify the _Deployment Directory_ as _%T/nsight-compute_ , the actual directory used will be _/tmp/nsight-compute_ on the remote device.
 
 When all information is entered, click the _Add_ button to make use of this new connection.
@@ -455,7 +284,7 @@ A known limitation of the remote profiling through SSH is that problems may aris
 
 For more information about available options for the _OpenSSH client_ and the ecosystem of tools it can be used with for authentication refer to the official [manual pages](https://www.openssh.com/manual.html).
 
-### 3.3.2. Interactive Profile Activity
+### 4.3.2. Interactive Profile Activity
 
 The _Interactive Profile_ activity allows you to initiate a session that controls the execution of the target application, similar to a debugger. You can step API calls and workloads (CUDA kernels), pause and resume, and interactively select the kernels of interest and which metrics to collect.
 
@@ -506,7 +335,7 @@ Set if CUDA graphs should be stepped and profiled as individual _Nodes_ or as co
 Control the Tensor Core boost state. It is recommended to set the stable Tensor Core boosting for application profiling, ensuring predictive run-to-run performance. By default, the boost state is set to `Auto`, which attempts to set the stable boost state on supported platforms and drivers.
 
 
-### 3.3.3. Profile Activity
+### 4.3.3. Profile Activity
 
 The _Profile_ activity provides a traditional, pre-configurable profiler. After configuring which kernels to profile, which metrics to collect, etc, the application is run under the profiler without interactive control. The activity completes once the application terminates. For applications that normally do not terminate on their own, e.g. interactive user interfaces, you can cancel the activity once all expected kernels are profiled.
 
@@ -514,7 +343,7 @@ This activity does not support attaching to processes previously launched via NV
 
   * **Output File**
 
-Path to report file where the collected profile should be stored. If not present, the report extension `.ncu-rep` is added automatically. The placeholder `%i` is supported for the filename component. It is replaced by a sequentially increasing number to create a unique filename. This maps to the `--export` command line option.
+Path to report file where the collected profile should be stored. If not present, the report extension `.ncu-repz` is added automatically. The placeholder `%i` is supported for the filename component. It is replaced by a sequentially increasing number to create a unique filename. This maps to the `--export` command line option.
 
   * **Force Overwrite**
 
@@ -539,19 +368,19 @@ Set if CUDA graphs should be profiled as individual _Nodes_ or as complete _Grap
 All remaining options map to their command line profiler equivalents. See the [Command Line Options](../NsightComputeCli/index.html#command-line-options) for details.
 
 
-### 3.3.4. Reset
+### 4.3.4. Reset
 
 Entries in the connection dialog are saved as part of the current [project](index.html#projects). When working in a custom project, simply close the project to reset the dialog.
 
 When not working in a custom project, entries are stored as part of the _default project_. You can delete all information from the default project by closing NVIDIA Nsight Compute and then [deleting the project file from disk](index.html#projects).
 
-## 3.4. Main Menu and Toolbar
+## 4.4. Main Menu and Toolbar
 
 Information on the main menu and toolbar.
 
 ![../_images/main-menu.png](https://docs.nvidia.com/nsight-compute/_images/main-menu.png)
 
-### 3.4.1. Main Menu
+### 4.4.1. Main Menu
 
   * File
 
@@ -589,6 +418,7 @@ cuh,h,hpp | Header File | No
 c,cpp,cu | Source File | No  
 txt | Text file | No  
 nsight-cuprof-report | Nsight Compute Profiler Report (legacy) | Yes  
+
     * **Save** Save the current file
 
     * **Save As** Save a copy of the current file with a different name or type or in a different location.
@@ -611,7 +441,7 @@ nsight-cuprof-report | Nsight Compute Profiler Report (legacy) | Yes
 
     * **Terminate** Disconnect from and terminate the current target application immediately.
 
-    * **Device Information** Open the [Device Information](index.html#tool-window-device-information) tool window to view system and GPU information for the selected device.
+    * **Device Information** Open the [Device Information](index.html#tool-window-device-information) tool window to view system, GPU, and CUDA information for the selected device.
 
   * Debug
 
@@ -704,19 +534,250 @@ Stepping now completes if the current thread arrives at the next API call or lau
     * **About** Opens the About dialog with information about the version of NVIDIA Nsight Compute.
 
 
-### 3.4.2. Main Toolbar
+### 4.4.2. Main Toolbar
 
 The main toolbar shows commonly used operations from the main menu. See [Main Menu](index.html#main-menu) for their description.
 
-### 3.4.3. Status Banners
+### 4.4.3. Status Banners
 
 Status banners are used to display important messages, such as profiler errors. The message can be dismissed by clicking the ‘X’ button. The number of banners shown at the same time is limited and old messages can get dismissed automatically if new ones appear. Use the _Output Messages_ window to see the complete message history.
 
 ![../_images/status-banner.png](https://docs.nvidia.com/nsight-compute/_images/status-banner.png)
 
-## 3.5. Tool Windows
+## 4.5. Nsight Copilot
 
-### 3.5.1. API Statistics
+Nsight Copilot is an AI-powered chat assistant integrated into NVIDIA Nsight Compute. It can answer questions related to NVIDIA Nsight Compute, CUDA, and NVIDIA GPUs, and can provide explanations about profile results and performance optimizations.
+
+Nsight Copilot is powered by Large Language Models (LLMs) and may not always provide accurate answers. Carefully evaluate the relevance of each answer to your specific problem.
+
+![../_images/nsight-copilot-start-page.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-start-page.png)
+
+Nsight Copilot start page
+
+### 4.5.1. Getting Started
+
+#### Opening the Nsight Copilot Tool Window
+
+The Nsight Copilot tool window can be opened from several locations:
+
+  * **Tools menu:** Select _Tools > Nsight Copilot…_ from the main menu.
+
+  * **Keyboard shortcut:** Press _F9_.
+
+  * **Toolbar button:** Click the Nsight Copilot button in the report navigation toolbar.
+
+  * **Search bar:** Click the search bar and switch to _Nsight Copilot_ mode (see [Search and Chat Bar](index.html#nsight-copilot-search-chat-bar)).
+
+  * **Copilot buttons:** Throughout the profiler report, Copilot buttons appear next to items that can be explained by Nsight Copilot. Clicking one opens the tool window and sends a pre-formulated query (see [Pre-formulated Report Queries](index.html#nsight-copilot-report-queries)).
+
+
+#### Installation
+
+If the Nsight Copilot package is not installed, an installation prompt is shown when the tool window is opened. The prompt reads “Nsight Copilot Package Not Installed” and provides an _Install_ button.
+
+Clicking _Install_ opens the installation dialog:
+
+![../_images/nsight-copilot-install-dialog.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-install-dialog.png)
+
+Nsight Copilot installation dialog
+
+  1. Select the Nsight Copilot package from _Version to Install_. The bundled version is included with the current Nsight Compute installation; previously downloaded updates appear as additional entries when available.
+
+  2. Select a Python interpreter (Python 3.11 through 3.13 is required). A virtual environment will be created automatically.
+
+  3. Click _Install_ to begin the installation. Installation progress can be viewed in the expandable _Installation Progress_ section, which also reports details of any errors that may occur.
+
+  4. When installation completes successfully, click _Finish_.
+
+
+Note
+
+The installation installs several Python packages into a virtual environment via pip. Key packages include: `grpcio`, `langchain`, `langchain-openai`, `langchain-nvidia-ai-endpoints`, `langgraph`, `openai`, `jinja2`, `pyyaml`, `requests`, `tabulate`, `tiktoken`, and their dependencies. For a complete list of packages, inspect the installed virtual environment. Users install these packages at their own discretion.
+
+#### Authentication
+
+Nsight Copilot requires authentication with an NVIDIA Developer account.
+
+![../_images/nsight-copilot-sign-in.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-sign-in.png)
+
+Nsight Copilot sign-in page
+
+  1. Click the _Sign in_ button or open the vertical ellipsis menu in the toolbar and select _Sign in_.
+
+  2. Enter your NVIDIA Developer account credentials in the authentication page.
+
+  3. Once signed in, the vertical ellipsis menu shows your full email address at the top.
+
+
+![../_images/nsight-copilot-signed-in.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-signed-in.png)
+
+Signed-in state with user menu
+
+To sign out, open the vertical ellipsis menu and select _Sign out_. A confirmation dialog warns that all chats will be removed.
+
+#### Configuration
+
+Nsight Copilot settings are available under _Tools > Options > Nsight Copilot_. They can also be opened from the vertical ellipsis menu in the Nsight Copilot tool window by selecting _Nsight Copilot Settings_.
+
+![../_images/nsight-copilot-settings.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-settings.png)
+
+Nsight Copilot settings
+
+Setting | Description  
+---|---  
+**Nsight Copilot version** | The currently installed Nsight Copilot package version. This value is read-only and shows “(not installed)” until the package has been installed.  
+**Check for updates automatically** | When enabled, Nsight Compute checks for Nsight Copilot updates on startup.  
+**Check for updates now** | Runs an immediate update check for Nsight Copilot.  
+**Reinstall Nsight Copilot** | Reinstalls the Nsight Copilot version that ships with the current Nsight Compute installation.  
+**Clean Nsight Copilot downloads** | Deletes downloaded Nsight Copilot update artifacts from the local downloads folder.  
+
+### 4.5.2. Chat Interface
+
+#### Sending Queries
+
+Enter your question in the input field at the bottom of the Copilot tool window. Press _Enter_ or click the _Send_ button to submit the query. You can also attach a profile result as context to your queries for context-aware responses (see [Context Attachment](index.html#nsight-copilot-context)).
+
+![../_images/nsight-copilot-chat.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-chat.png)
+
+Chat conversation with user query and response
+
+While a response is being generated, it is streamed in real time. The _Send_ button changes to a _Stop_ button, which can be clicked to cancel the query. Cancelled queries and their partial responses are removed from the chat history; the language model will not be aware of them in subsequent queries.
+
+Previous queries are available from a history dropdown in the input field. Click the input field to see autocomplete suggestions from earlier queries.
+
+#### Search and Chat Bar
+
+When Nsight Copilot is available, the search bar can also be used to start a chat with Nsight Copilot.
+
+![../_images/nsight-copilot-search-chat-bar.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-search-chat-bar.png)
+
+Search bar with mode selection popup
+
+Clicking the search bar opens a floating input widget with a mode selection popup. Two modes are available:
+
+  * **Search:** Performs a universal search across Nsight Compute (documentation, metrics, options, etc.).
+
+  * **Nsight Copilot:** Sends the query to the Nsight Copilot chat.
+
+
+You can switch modes by selecting a radio button in the popup, or by typing a command prefix:
+
+  * `/search <query>` — sends the query to universal search.
+
+  * `/chat <query>` — sends the query to Nsight Copilot.
+
+
+If no prefix is typed, the currently selected mode is used.
+
+#### Pre-formulated Report Queries
+
+On the profiler report Details page, Copilot buttons appear next to section headers and rule entries. Clicking one of these buttons opens the Nsight Copilot tool window and sends a pre-formulated query to explain the selected item.
+
+![../_images/nsight-copilot-report-query.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-report-query.png)
+
+Copilot buttons on the Details page
+
+  * **Section button:** Asks Nsight Copilot to explain the section in detail.
+
+  * **Rule button:** Asks Nsight Copilot to explain the rule in detail.
+
+
+The focused profile result is automatically attached as context to the query so that the response takes the specific profiling data into account.
+
+#### Agent Transparency
+
+During response generation, Nsight Copilot may show its processing steps in a collapsible “thinking” widget within the response. This allows you to follow the agent’s workflow.
+
+![../_images/nsight-copilot-thinking.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-thinking.png)
+
+Agent processing steps
+
+Click the toggle to expand or collapse the processing steps. When collapsed, only the most recent step is shown.
+
+#### References
+
+Responses may include references to source documents that were used to generate the answer. These appear in a collapsible _References_ section below the response.
+
+![../_images/nsight-copilot-references.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-references.png)
+
+Response references
+
+#### Response Actions
+
+Each bot response provides a set of action buttons:
+
+![../_images/nsight-copilot-feedback.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-feedback.png)
+
+Response action buttons
+
+Button | Description  
+---|---  
+**Retry** | Re-runs the query to get a new response.  
+**Copy** | Copies the response text to the clipboard.  
+**Thumbs Up** | Rates the response as helpful. The query and response are sent to help improve Nsight Copilot.  
+**Thumbs Down** | Rates the response as not helpful. The query and response are sent to help improve Nsight Copilot.  
+**Save** | Saves the current chat history to a file.  
+
+Feedback is not available for cancelled responses.
+
+#### Managing Chats
+
+Nsight Copilot supports multiple concurrent chat sessions. Each chat maintains its own conversation history and context.
+
+![../_images/nsight-copilot-multi-chat.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-multi-chat.png)
+
+Multiple chat sessions
+
+  * **New Chat:** Click the _+_ button to create a new chat session. Chats are named “Chat 1”, “Chat 2”, etc. by default.
+
+  * **Rename:** Click the chat name in the selector to edit it.
+
+  * **Switch:** Use the chat selector dropdown to switch between chats.
+
+  * **Delete:** Click the _paper-bin_ button. A confirmation is required before the chat is removed.
+
+
+### 4.5.3. Context Attachment
+
+Nsight Copilot can use profile results as context when answering queries. This enables context-aware responses that reference specific profiling data, metrics, and performance characteristics from your report.
+
+#### Attaching Context
+
+To attach a profile result as context, click the _Attach Context_ button below the input field. This selects a profile result from an open report and includes it in subsequent queries.
+
+![../_images/nsight-copilot-context-attachment.png](https://docs.nvidia.com/nsight-compute/_images/nsight-copilot-context-attachment.png)
+
+Context attachment controls
+
+When context is attached, the selected context is displayed below the input field. The profile result filename is shown.
+
+Context is also attached automatically when using the Copilot buttons on the Details page (see [Pre-formulated Report Queries](index.html#nsight-copilot-report-queries)).
+
+#### Including and Excluding Context
+
+The eye icon next to the selected context toggles whether the context is included in queries:
+
+  * **Included** (eye icon active): The context data is sent with each query.
+
+  * **Excluded** (eye icon inactive, text shown with strikethrough): The context is kept but not sent with queries.
+
+
+This allows you to temporarily exclude context without detaching it entirely. This is helpful when asking general questions that are not related to your profile data.
+
+### 4.5.4. Limitations
+
+The following limitations apply to the current version of Nsight Copilot:
+
+  * **Report must be saved to disk:** A profile report must be saved to disk before it can be used as context for Nsight Copilot queries.
+
+  * **Source code requires import:** For source code information to be available in context, the profile must have been collected with the `--import-source yes` option.
+
+  * **Data sent to the LLM:** Some extracted report data (such as metrics and section summaries) is sent to the language model for processing. The report file itself is not uploaded.
+
+
+## 4.6. Tool Windows
+
+### 4.6.1. API Statistics
 
 The _API Statistics_ window is available when NVIDIA Nsight Compute is connected to a target application. It opens by default as soon as the connection is established. It can be re-opened using _Debug > API Statistics_ from the main menu.
 
@@ -726,7 +787,7 @@ Whenever the target application is suspended, it shows a summary of tracked API 
 
 The _Reset_ button deletes all statistics collected to the current point and starts a new collection. Use the _Export to CSV_ button to export the current statistics to a CSV file.
 
-### 3.5.2. API Stream
+### 4.6.2. API Stream
 
 The _API Stream_ window is available when NVIDIA Nsight Compute is connected to a target application. It opens by default as soon as the connection is established. It can be re-opened using _Debug > API Stream_ from the main menu.
 
@@ -738,7 +799,7 @@ For each activity, further information is shown such as the kernel name or the f
 
 Use the _Current Thread_ dropdown to switch between the active threads. The dropdown shows the thread ID followed by the current API name. One of several options can be chosen in the trigger dropdown, which are executed by the adjacent _> >_ button. _Run to Next Kernel_ resumes execution until the next kernel launch is found in any enabled thread. _Run to Next API Call_ resumes execution until the next API call matching _Next Trigger_ is found in any enabled thread. _Run to Next Range Start_ resumes execution until the next start of an active profiler range is found. Profiler ranges are defined by using the `cu(da)ProfilerStart/Stop` API calls. _Run to Next Range Stop_ resumes execution until the next stop of an active profiler range is found. The _API Level_ dropdown changes which API levels are shown in the stream. The _Export to CSV_ button exports the currently visible stream to a CSV file.
 
-### 3.5.3. Baselines
+### 4.6.3. Baselines
 
 The _Baselines_ tool window can be opened by clicking the _Baselines_ entry in the _Profile_ menu. It provides a centralized place from which to manage configured baselines. (Refer to [Baselines](index.html#baselines), for information on how to create baselines from profile results.)
 
@@ -760,7 +821,7 @@ Baseline information can be loaded by clicking on the _Load Baselines_ button in
 
 Differences between the current result and the baselines can be visualized with graphical bars for metrics in Details page section headers. Use the _Difference Bars_ drop down to select the visualization mode. Bars are extending from left to right and have a fixed maximum.
 
-### 3.5.4. Metric Details
+### 4.6.4. Metric Details
 
 The _Metric Details_ tool window can be opened using the _Metric Details_ entry in the _Profile_ menu or the respective tool bar button. When a report and the tool window are open, a metric can be selected in the report to display additional information and its value for the current result in the tool window. It also contains a search bar to look up metrics in the focused report’s current result.
 
@@ -776,13 +837,13 @@ By default, selecting or searching for a new metric updates the current _Default
 
 Some metrics contain [Instance Values](../ProfilingGuide/index.html#metrics-structure). When available, they are listed in the tool window. Instance values can have a _Correlation ID_ that allows correlating the individual value with its associated entity, e.g. a function address or instruction name.
 
-For metrics collected with [PM sampling](../ProfilingGuide/index.html#pm-sampling), the correlation ID is the GPU timestamp in nanoseconds. It is shown relative to the first timestamp for this metric. Note that the instance values for PM sampling metrics are currently not [context-switched](../ProfilingGuide/index.html#ctx-switch-trace) , even if this is enabled in the corresponding timeline UI.
+For metrics collected with [PM sampling](../ProfilingGuide/index.html#pm-sampling), the correlation ID is the GPU timestamp in nanoseconds. It is shown relative to the first timestamp for this metric. Note that the instance values for PM sampling metrics are currently not [context-switched](../ProfilingGuide/index.html#context-switch-trace) , even if this is enabled in the corresponding timeline UI.
 
-### 3.5.5. Launch Details
+### 4.6.5. Launch Details
 
 The _Launch Details_ tool window can be opened using the _Launch Details_ entry in the _Profile_ menu or the respective tool bar button. When a result containing multiple sub-launches is selected and this tool window is open, it will display information about each sub-launch contained in the result.
 
-[![../_images/tool-window-launch-details.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-launch-details.png)](../_images/tool-window-launch-details.png)
+[![../_images/tool-window-launch-details.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-launch-details.png) ](../_images/tool-window-launch-details.png)
 
 This tool window is split into two sections:
 
@@ -810,14 +871,14 @@ The body of this tool window displays a table with sub-launch-specific metrics. 
   * _Aggregate Value_ : the aggregate value for this metric over all sub-launches in the selected result
 
 
-### 3.5.6. Function Stats
+### 4.6.6. Function Stats
 
 The _Function Stats_ tool window presents a hierarchical tree view of all functions in your profile result with top stalls for each function and source line. This window is connected with the PM Sampling timeline and automatically updates to show data for the selected time range in the timeline.
 
 #### Accessing Function Stats
 
 The Function Stats tool window can be opened using:
-    
+
 
   * The _Function Stats_ entry in the _Profile_ menu. See [Main Menu](index.html#main-menu) for details.
 
@@ -903,7 +964,7 @@ Warp Stall Sampling metrics are the **same underlying source counter metrics** ;
 
 In addition, a new group of **Warp Sampling** metrics that can be collected in this mode is available: \- group:smsp__pmwarpsamp_warp_stall_reasons
 
-### 3.5.7. NVTX
+### 4.6.7. NVTX
 
 The _NVTX_ window is available when NVIDIA Nsight Compute is connected to a target application. If closed, it can be re-opened using _Debug > NVTX_ from the main menu. Whenever the target application is suspended, the window shows the state of all active NVTX domains and ranges in the currently selected thread. Note that [NVTX](https://devblogs.nvidia.com/cuda-pro-tip-generate-custom-application-profile-timelines-nvtx/) information is only tracked if the launching command line profiler instance was started with `--nvtx` or NVTX was enabled in the NVIDIA Nsight Compute launch dialog.
 
@@ -913,7 +974,7 @@ Use the _Current Thread_ dropdown in the [API Stream](index.html#tool-window-api
 
 ![../_images/tool-window-nvtx-resources.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-nvtx-resources.png)
 
-### 3.5.8. CPU Call Stack
+### 4.6.8. CPU Call Stack
 
 The _CPU Call Stack_ window is available when NVIDIA Nsight Compute is connected to a target application. If closed, it can be re-opened using _Debug > CPU Call Stack_ from the main menu. Whenever the target application is suspended, the window shows all enabled CPU call stacks for the currently selected thread.
 
@@ -921,7 +982,7 @@ The _CPU Call Stack_ window is available when NVIDIA Nsight Compute is connected
 
 Use the _Call Stack Type_ dropdown menu to switch between stack types in case multiple stack types were enabled (e.g., _Native_ , _Python_). Note that Python call stack collection requires CPython version 3.9 or later.
 
-### 3.5.9. Resources
+### 4.6.9. Resources
 
 The _Resources_ window is available when NVIDIA Nsight Compute is connected to a target application. It shows information about the currently known resources, such as CUDA devices, CUDA streams or kernels. The window is updated every time the target application is suspended. If closed, it can be re-opened using _Debug > Resources_ from the main menu.
 
@@ -965,76 +1026,82 @@ Static Transform | Diamond | #FB8072
 SRT Transform | Diamond | #FDB462  
 Matrix Motion Transform | Diamond | #80B1D3  
 Error | Paralellogram | #D9D9D9  
-  
-### 3.5.10. CUDA Graph Viewer
 
-The _CUDA Graph Viewer_ tool window provides real-time visualization and inspection of CUDA Graphs. Access it through the _CUDA Graph Viewer_ entry in the _Profile_ menu or via the toolbar button.
+### 4.6.10. CUDA Graph Viewer
 
-The viewer supports two primary workflows:
-
-**Interactive Profiling**
-    
-
-When profiling CUDA Graph workloads in an interactive session, the viewer automatically opens and displays graphs as the target application creates them. Each time execution is suspended, the viewer updates to show the current state of all active CUDA Graphs, including any structural changes or execution progress.
-
-**Profile Report Analysis**
-    
-
-When opening a profile report containing CUDA Graph data, the viewer automatically opens and displays the associated graphs. You can navigate between graphs by clicking on _Kernel_ or _Graph_ results in the [Summary Page](index.html#profiler-report-summary-page) or [Raw Page](index.html#profiler-report-raw-page) tables. The viewer highlights the specific graph node associated with each selected result.
-
-By default, the viewer opens automatically upon graph creation. To disable this behavior, navigate to _Tools > Options > Profile > CUDA Graph Viewer > Auto-Open Graph Viewer_ and set it to _No_.
+The _CUDA Graph Viewer_ tool window provides real-time visualization and inspection of CUDA Graphs. Access it through the _CUDA Graph Viewer_ entry in the _Profile_ menu or via the toolbar button. By default, the viewer opens automatically upon graph creation. To disable this behavior, navigate to _Tools > Options > Profile > CUDA Graph Viewer > Auto-Open Graph Viewer_ and set it to _No_.
 
 ![../_images/tool-window-cuda-graph-viewer.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-cuda-graph-viewer.png)
 
-Use the dropdown menu to select which CUDA Graph to view when multiple graphs are active. The window provides two tabs for examining CUDA Graphs:
+The CUDA Graph Viewer window showing an instantiated graph with node labels and execution state.
 
-  * **Source Graph** : Displays the original graph structure as defined in the application source code before instantiation. This view reflects the logical organization of nodes and dependencies as specified by the developer.
+The window provides two tabs:
+
+  * **Source Graph** : Displays the original graph structure as defined in the application source code before instantiation.
 
   * **Instantiated Graph** : Shows the graph as it exists after instantiation and optimization by the CUDA runtime. This view may differ from the source graph due to runtime optimizations, node merging, or dependency resolution.
 
 
-Note that the graph layouts are optimized for interactive visualization and may differ from those generated by CUDA API functions such as `cudaGraphDebugDotPrint` or exported as [DOT or SVG](index.html#graphviz-dot-and-svg-exports) from the _Resources_ window. The viewer uses hierarchical layout algorithms to improve readability and highlight execution flow.
+Use the dropdown menu to select which graph to view when multiple graphs are active. Toggle node and edge labels with the _Show/Hide Labels_ button, and hover over nodes, edges, or the canvas to view detailed tooltips. The graph layouts use hierarchical layout algorithms optimized for readability and may differ from those generated by `cudaGraphDebugDotPrint` or exported as [DOT or SVG](index.html#graphviz-dot-and-svg-exports) from the _Resources_ window.
 
-You can toggle the visibility of node and edge labels using the _Show/Hide Labels_ button. Hover over nodes, edges, or the graph canvas to view detailed tooltips.
+A legend overlay is available via the legend icon, showing node shapes, edge styles, group borders, and color meanings. Hover over the icon to view it, or click the pin button to keep it open.
 
-**Execution Tracking**
+![../_images/tool-window-cuda-graph-viewer-legend.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-cuda-graph-viewer-legend.png)
 
-The viewer provides dynamic execution tracking during both graph construction and execution:
+The Graph Legend overlay.
 
-  * When a source graph is being built, the _Source Graph_ tab automatically shows the graph in its current state. As nodes are added through CUDA API calls, the viewer updates in real-time to highlight newly created nodes and their connections.
+**Interactive Profiling**
 
-  * When an instantiated graph is launched, the _Instantiated Graph_ tab automatically displays the graph execution state. As you step through the application, the viewer highlights nodes currently being executed and visually distinguishes completed nodes from pending ones. Execution flow through conditional graph and child graph nodes is clearly indicated.
+When profiling CUDA Graph workloads in an interactive session, the viewer automatically opens and displays graphs as the target application creates them. As nodes are added through CUDA API calls, the viewer updates in real-time to highlight newly created nodes. When an instantiated graph is launched, the viewer tracks execution state — highlighting nodes currently being executed and visually distinguishing completed nodes from pending ones. Execution flow through conditional and child graph nodes is clearly indicated.
 
+![../_images/tool-window-cuda-graph-viewer-interactive.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-cuda-graph-viewer-interactive.png)
 
-### 3.5.11. Device Information
+The CUDA Graph Viewer during an interactive profiling session, showing executed and pending graph nodes alongside the API Stream.
 
-The _Device Information_ tool window displays system and GPU information for the selected device connection. Access it through the _Device Information_ button (info icon) in the [Start Activity Dialog](index.html#connection-dialog) or via _Connection > Device Information_ from the main menu.
+**Profile Report Analysis**
 
-[![../_images/connection-menu.png](https://docs.nvidia.com/nsight-compute/_images/connection-menu.png)](../_images/connection-menu.png)
+When opening a profile report containing CUDA Graph data, the viewer automatically displays the associated graphs. Selecting a _Kernel_ or _Graph_ result in the [Summary Page](index.html#profiler-report-summary-page) or [Raw Page](index.html#profiler-report-raw-page) highlights the corresponding graph node.
+
+In the _Instantiated Graph_ tab, you can also click on a kernel node to navigate to its profiled result in the report, or double-click to open the _Details_ page directly. Clickable nodes display a pointing-hand cursor. If the clicked node does not have an associated profiled result (for example, non-kernel nodes or kernels that were skipped during profiling), an info banner is displayed. Nodes in the _Source Graph_ tab are not clickable.
+
+![../_images/tool-window-cuda-graph-viewer-report.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-cuda-graph-viewer-report.png)
+
+The CUDA Graph Viewer alongside a profile report, highlighting the graph node corresponding to the selected result.
+
+### 4.6.11. Device Information
+
+The _Device Information_ tool window displays system, GPU, and CUDA information for the selected device connection. Access it through the _Device Information_ button (info icon) in the [Start Activity Dialog](index.html#connection-dialog) or via _Connection > Device Information_ from the main menu.
+
+[![../_images/connection-menu.png](https://docs.nvidia.com/nsight-compute/_images/connection-menu.png) ](../_images/connection-menu.png)
 
 Access Device Information from the Connection menu.
 
-The window provides two tabs for viewing device details:
+The window provides three tabs for viewing device details:
 
 **System**
-    
+
 
 Displays operating system information including OS name, CPU architecture, hostname, IP addresses, and collection timestamp.
 
 **GPU**
-    
+
 
 Shows GPU-related information including driver version, CUDA version, and detailed properties for each detected GPU.
 
-[![../_images/tool-window-device-information.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-device-information.png)](../_images/tool-window-device-information.png)
+**CUDA**
 
-The Device Information window showing system and GPU information tabs.
+
+Shows CUDA device attributes for each detected GPU, queried from the CUDA driver. The attributes are grouped into sections covering compute capability and SM count, memory, thread and block limits, registers and shared memory, compute feature support, and other device properties.
+
+[![../_images/tool-window-device-information.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-device-information.png) ](../_images/tool-window-device-information.png)
+
+The Device Information window showing the System, GPU, and CUDA information tabs.
 
 Use the connection dropdown at the top to select a different device. Information is automatically collected when you select a device. Use the refresh button to manually update the information for the currently selected device.
 
 The Device Information window supports both local and remote device connections. For remote devices, the system automatically deploys a collector binary via SSH and retrieves the information. Remote Windows targets are not supported.
 
-### 3.5.12. Search
+### 4.6.12. Search
 
 The _Search_ tool window can be opened using the _Search_ entry in the _Tools_ menu, or from the tool bar’s search bar. It can be used to search for terms throughout Nsight Compute.
 
@@ -1061,7 +1128,7 @@ Each result is associated with the original source. While some results are plain
   * Online **Developer Forums** entries
 
 
-### 3.5.13. Metric Selection
+### 4.6.13. Metric Selection
 
 The _Metric Selection_ window can be opened from the main menu using _Profile > Metric Selection_. It tracks all metric sets, sections and rules currently loaded in NVIDIA Nsight Compute, independent from a specific connection or report. The directory to load those files from can be configured in the [Profile](index.html#options-profile) options dialog. It is used to inspect available sets, sections and rules, as well as to configure which should be collected, and which rules should be applied. You can also specify a comma separated list of individual metrics, that should be collected. The window has two views, which can be selected using the dropdown in its header.
 
@@ -1091,11 +1158,19 @@ Section and rule files that are created by the user (and not shipped with NVIDIA
 
 See the [Sections and Rules](../ProfilingGuide/index.html#sections-and-rules) for the list of default sections for NVIDIA Nsight Compute.
 
-## 3.6. Profiler Report
+### 4.6.14. Nsight Copilot
+
+The _Nsight Copilot_ tool window provides an AI-powered chat assistant for questions about NVIDIA Nsight Compute, CUDA, NVIDIA GPUs, and profile results. It can be opened via the _Tools_ menu, the _F9_ keyboard shortcut, or the toolbar. For details, see [Nsight Copilot](index.html#nsight-copilot).
+
+![../_images/tool-window-nsight-copilot.png](https://docs.nvidia.com/nsight-compute/_images/tool-window-nsight-copilot.png)
+
+Nsight Copilot tool window
+
+## 4.7. Profiler Report
 
 The profiler report contains all the information collected during profiling for each kernel launch. In the user interface, it consists of a header with general information, as well as controls to switch between report pages or individual collected launches.
 
-### 3.6.1. Header
+### 4.7.1. Header
 
 ![../_images/profiler-report-header.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-header.png)
 
@@ -1160,7 +1235,7 @@ Each group button to the right of the page tabs opens a context menu that featur
     * **Reset to Default** resets the page to a default state by removing any persisted settings.
 
 
-### 3.6.2. Report Pages
+### 4.7.2. Report Pages
 
 Use the _Page_ dropdown in the header to switch between the report pages.
 
@@ -1206,7 +1281,7 @@ In addition to metrics, you can also configure the table to include any of the f
 > `property__series_id` | ID of the profile series.  
 > `property__series_parameters` | Profile series parameters.  
 > `property__thread_id` | CPU thread ID.  
-  
+
 For [Range Replay](../ProfilingGuide/index.html#range-replay) reports, a smaller set of columns is shown by default, as not all apply to such results.
 
 For the currently selected metric result the _Prioritized Rules_ show the most impactful rule results with respect to the estimated potential speedup. Clicking on any of the rule names on the left allows you to easily navigate to the containing section on the details page. With the downward-facing arrow on the right a table with the relevant _key performance indicators_ can be toggled. This table contains the metrics which should be tracked when optimizing performance according to the rule guidance.
@@ -1257,7 +1332,7 @@ Note that for [Range Replay](../ProfilingGuide/index.html#range-replay) results 
 
 ##### Rooflines
 
-If enabled, the _GPU Speed Of Light Roofline Chart_ section contains a Roofline chart that is particularly helpful for visualizing kernel performance at a glance. (To enable roofline charts in the report, ensure that the section is enabled when profiling.) More information on how to use and read this chart can be found in [Roofline Charts](../ProfilingGuide/index.html#roofline). NVIDIA Nsight Compute ships with several different definitions for roofline charts, including hierarchical rooflines. These additional rooflines are defined in different section files. While not part of the _full_ section set, a new section set called _roofline_ was added to collect and show all rooflines in one report. The idea of hierarchical rooflines is that they define multiple ceilings that represent the limiters of a hardware hierarchy. For example, a hierarchical roofline focusing on the memory hierarchy could have ceilings for the throughputs of the L1 cache, L2 cache and device memory. If the achieved performance of a kernel is limited by one of the ceilings of a hierarchical roofline, it can indicate that the corresponding unit of the hierarchy is a potential bottleneck.
+If enabled, the _GPU Speed Of Light Roofline Chart_ section contains a Roofline chart that is particularly helpful for visualizing kernel performance at a glance. (To enable roofline charts in the report, ensure that the section is enabled when profiling.) More information on how to use and read this chart can be found in [Roofline Charts](../ProfilingGuide/index.html#roofline-charts). NVIDIA Nsight Compute ships with several different definitions for roofline charts, including hierarchical rooflines. These additional rooflines are defined in different section files. While not part of the _full_ section set, a new section set called _roofline_ was added to collect and show all rooflines in one report. The idea of hierarchical rooflines is that they define multiple ceilings that represent the limiters of a hardware hierarchy. For example, a hierarchical roofline focusing on the memory hierarchy could have ceilings for the throughputs of the L1 cache, L2 cache and device memory. If the achieved performance of a kernel is limited by one of the ceilings of a hierarchical roofline, it can indicate that the corresponding unit of the hierarchy is a potential bottleneck.
 
 ![../_images/profiler-report-pages-section-rooflines.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-pages-section-rooflines.png)
 
@@ -1267,7 +1342,7 @@ The roofline chart can be zoomed and panned for more effective data analysis, us
 
 Roofline Chart Zoom and Pan Controls Zoom In | Zoom Out | Zoom Reset | Pan  
 ---|---|---|---  
-  
+
   * Click the Zoom In button in the top right corner of the chart.
   * Click the left mouse button and drag to create a rectangle that bounds the area of interest.
   * Press the plus (+) key.
@@ -1290,8 +1365,8 @@ Roofline Chart Zoom and Pan Controls Zoom In | Zoom Out | Zoom Reset | Pan
   * Use Ctrl (Command on Mac) + LeftMouseButton to grab the chart, then move the mouse.
   * Use the cursor keys.
 
-  
-  
+
+
 ##### Source
 
 Sections such as _Source Counters_ can contain source hot spot tables. These tables indicate the N highest or lowest values of one or more metrics in your kernel source code. Select the location links to navigate directly to this location in the [Source Page](index.html#profiler-report-source-page). Hover the mouse over a value to see which metrics contribute to it.
@@ -1345,7 +1420,7 @@ The _View_ dropdown can be used to select different code (correlation) options: 
 
 In side-by-side views, when selecting a line in the left-hand- or right-hand-side, any correlated lines in the opposite view are highlighted. However, when the [Show Single File For Multi-File Sources](index.html#options-profile) option is set to _Yes_ , the target file or source object must already be selected in the respective view for those correlated lines to be shown.
 
-The locations of correlated lines are displayed on the minimap. Clicking on the minimap will scroll to the corresponding source line. The source correlation navigation controls allow you to move to the previous or next block of correlated lines.
+The locations of correlated lines are displayed on the minimap. Clicking on the minimap will scroll to the corresponding source line. The source correlation navigation controls allow you to move to the previous or next block of correlated lines. The correlation filtering button can be used to filter the low-level view based on correlated lines. When activated, select a high-level line to see its correlated lines in the low-level view. Filtering is only available when Show Single File For Multi-File Sources is set to No and when the view is not collapsed.
 
 ![../_images/profiler-report-pages-correlation-navigation.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-pages-correlation-navigation.png)
 
@@ -1443,11 +1518,11 @@ Use this to identify source locations that cause the most stalls. The stalls are
 
 Instruction Mix (high-level source) or Instruction Category (SASS) show the breakdown of, or the instruction category, respectively, for each line.
 
-  * **Warp Stall Sampling (All Samples)**[1](#fn1)
+  * **Warp Stall Sampling (All Samples)**[[1]](#fn1)
 
 The number of samples from the [Statistical Sampler](../ProfilingGuide/index.html#statistical-sampler) at this program location.
 
-  * **Warp Stall Sampling (Not-issued Samples)**[2](#fn2)
+  * **Warp Stall Sampling (Not-issued Samples)**[[2]](#fn2)
 
 The number of samples from the [Statistical Sampler](../ProfilingGuide/index.html#statistical-sampler) at this program location on cycles the warp scheduler issued no instructions. Note that _(Not Issued)_ samples may be taken on a different profiling pass than _(All)_ samples mentioned above, so their values do not strictly correlate.
 
@@ -1493,7 +1568,7 @@ L2 Theoretical Sectors Global Excessive | derived__memory_l2_theoretical_sectors
 L2 Theoretical Sectors Global | memory_l2_theoretical_sectors_global | Theoretical number of sectors requested in L2 from global memory instructions.  
 L2 Theoretical Sectors Global Ideal | memory_l2_theoretical_sectors_global_ideal | Ideal number of sectors requested in L2 from global memory instructions, assuming each not predicated-off thread performed the operation.  
 L2 Theoretical Sectors Local | memory_l2_theoretical_sectors_local | Theoretical number of sectors requested in L2 from local memory instructions.  
-  
+
 All _L1/L2 Sectors/Wavefronts/Requests_ metrics give the number of achieved (actually required), ideal, and excessive (achieved - ideal) sectors/wavefronts/requests. _Ideal_ metrics indicate the number that would needed, given each not predicated-off thread performed the operation of given width. _Excessive_ metrics indicate the required surplus over the ideal case. Reducing divergence between threads can reduce the excess amount and result in less work for the respective HW units.
 
 
@@ -1507,7 +1582,7 @@ memory_l2_sectors_local | memory_l2_theoretical_sectors_local
 memory_l1_sectors_global | memory_l1_tag_requests_global  
 memory_l1_sectors_shared | memory_l1_wavefronts_shared  
 memory_l1_sectors_shared_ideal | memory_l1_wavefronts_shared_ideal  
-  
+
   * **L2 Explicit Evict Policy Metrics**
 
 Starting with the NVIDIA Ampere architecture the eviction policy of the L2 cache can be tuned to match the kernel’s access pattern. The eviction policy can be either set implicitly for a memory window (for more details see [CUaccessProperty](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaAccessPolicyWindow.html)) or set explicitly per executed memory instruction. If set explicitly, the desired eviction behavior for the cases of an L2 cache hit or miss are passed as input to the instruction. For more details refer to CUDA’s [Cache Eviction Priority Hints](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#cache-eviction-priority-hints).
@@ -1521,6 +1596,7 @@ L2 Explicit Hit Policy Evict Normal | smsp__inst_executed_memdesc_explicit_hitpr
 L2 Explicit Hit Policy Evict Normal Demote | smsp__inst_executed_memdesc_explicit_hitprop_evict_normal_demote | Number of times a memory instruction was executed by any warp which had the `evict_normal_demote` policy set in case the access leads to a cache hit in L2.  
 L2 Explicit Miss Policy Evict First | smsp__inst_executed_memdesc_explicit_missprop_evict_first | Number of times a memory instruction was executed by any warp which had the `evict_first` policy set in case the access leads to a cache miss in L2. Data cached with this policy will be first in the eviction priority order and will likely be evicted cache eviction is required. This policy is suitable for streaming data.  
 L2 Explicit Miss Policy Evict Normal | smsp__inst_executed_memdesc_explicit_missprop_evict_normal | Number of times a memory instruction was executed by any warp which had the `evict_normal` (default) policy set in case the access leads to a cache miss in L2.  
+
   * **Individual Warp Stall Sampling Metrics**
 
 All _stall_*_ metrics show the information combined in _Warp Stall Sampling_ individually. See [Statistical Sampler](../ProfilingGuide/index.html#statistical-sampler) for their descriptions.
@@ -1532,7 +1608,7 @@ All _stall_*_ metrics show the information combined in _Warp Stall Sampling_ ind
 
 Dependencies between registers are displayed in the SASS view. When a register is read, all the potential addresses where it could have been written are found. The links between these lines are drawn in the view. All dependencies for registers, predicates, uniform registers and uniform predicates are shown in their respective columns.
 
-[![../_images/profiler-report-pages-source-register-dependencies.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-pages-source-register-dependencies.png)](../_images/profiler-report-pages-source-register-dependencies.png)
+[![../_images/profiler-report-pages-source-register-dependencies.png](https://docs.nvidia.com/nsight-compute/_images/profiler-report-pages-source-register-dependencies.png) ](../_images/profiler-report-pages-source-register-dependencies.png)
 
 Register Dependencies
 
@@ -1544,13 +1620,11 @@ Dependencies across source files and functions are not tracked.
 
 The Register Dependencies Tracking feature is enabled by default, but can be disabled completely in _Tools > Options > Profile > Report Source Page > Enable Register Dependencies_.
 
-[1](#id6)
-    
+[[1](#id8)]
 
 This metric was previously called Sampling Data (All).
 
-[2](#id7)
-    
+[[2](#id9)]
 
 This metric was previously called Sampling Data (Not Issued).
 
@@ -1686,7 +1760,7 @@ If a metric has multiple instance values, the number of instances is shown after
 
 This _Session_ page contains basic information about the report and the machine, as well as device attributes of all devices for which launches were profiled. When switching between launch instances, the respective device attributes are highlighted.
 
-### 3.6.3. Metrics and Units
+### 4.7.3. Metrics and Units
 
 Numeric metric values are shown in various places in the report, including the header and tables and charts on most pages. NVIDIA Nsight Compute supports various ways to display those metrics and their values.
 
@@ -1696,11 +1770,11 @@ By default, units are scaled automatically so that metric values are shown with 
 
 Metrics which could not be collected are shown as `n/a` and assigned a warning icon. If the metric floating point value is out of the regular range (i.e. `nan` (Not a number) or `inf` (infinite)), they are also assigned a warning icon. The exception are metrics for which these values are expected and which are allow-listed internally.
 
-### 3.6.4. Filtered Profiler Report
+### 4.7.4. Filtered Profiler Report
 
 A filtered profiler report is a subset of the full profiler report. You can save filtered or selected results from the full profiler report to a new file. To save the filtered results, you can use the File > Save Filtered Results As menu option, which will save the [Filtered Results](../NsightCompute/index.html#profiler-report-header-filter-dialog) to a new file. Alternatively, you can select one or more results on the [Summary Page](../NsightCompute/index.html#summary-page) or [Raw Page](../NsightCompute/index.html#raw-page) and save them to a new file using the File > Save Selected Results As menu option or the right-click Save Result(s) menu option.
 
-## 3.7. Baselines
+## 4.8. Baselines
 
 NVIDIA Nsight Compute supports diffing collected results across one or multiple reports using Baselines. Each result in any report can be promoted to a baseline. This causes metric values from all results in all reports to show the difference to the baseline. If multiple baselines are selected simultaneously, metric values are compared to the average across all current baselines. Baselines are not stored with a report and are only available as long as the same NVIDIA Nsight Compute instance is open, unless they are saved to a `ncu-bln` file from the [Baselines tool window](index.html#tool-window-baselines).
 
@@ -1711,10 +1785,10 @@ Profiler report with one baseline
 Select _Add Baseline_ to promote the current result in focus to become a baseline. If a baseline is set, most metrics on the [Details Page](index.html#profiler-report-details-page), [Raw Page](index.html#profiler-report-raw-page) and [Summary Page](index.html#profiler-report-summary-page) show two values: the current value of the result in focus, and the corresponding value of the baseline or the percentage of change from the corresponding baseline value. (Note that an infinite percentage gain, _inf%_ , may be displayed when the baseline value for the metric is zero, while the focus value is not.)
 
 If multiple baselines are selected, each metric will show the following notation:
-    
-    
+
+
     <focus value> (<difference to baselines average [%]>, z=<standard score>@<number of values>)
-    
+
 
 The standard score is the difference between the current value and the average across all baselines, normalized by the standard deviation. If the number of metric values contributing to the standard score equals the number of results (current and all baselines), the @<number of values> notation is omitted.
 
@@ -1734,7 +1808,7 @@ Use the _Clear Baselines_ entry from the dropdown button, the [Profile](index.ht
 
 Baseline changes can also be made in the [Baselines tool window](index.html#tool-window-baselines).
 
-## 3.8. Standalone Source Viewer
+## 4.9. Standalone Source Viewer
 
 NVIDIA Nsight Compute includes a standalone source viewer for _cubin_ files. This view is identical to the [Source Page](index.html#profiler-report-source-page), except that it won’t include any performance metrics.
 
@@ -1750,7 +1824,7 @@ Click Ok button to open [Standalone Source Viewer](index.html#cubin-viewer).
 
 Standalone Source Viewer
 
-## 3.9. Source Comparison
+## 4.10. Source Comparison
 
 Source comparison provides a way to see the source files of two profile results side by side. It enables to quickly identify source differences and understand changes in metric values.
 
@@ -1768,7 +1842,7 @@ Source Comparison Button
 
 Source Comparison
 
-Currently only high-level Source (CUDA-C) view and SASS view are supported for comparison. The source difference heatmap is located on the very left side. Each of its partitions represents a side of the source diff. Clicking on the heatmap will scroll to the respective source line.
+Currently only high-level Source (CUDA-C) view, SASS view, and Tile IR view are supported for comparison. The source difference heatmap is located on the very left side. Each of its partitions represents a side of the source diff. Clicking on the heatmap will scroll to the respective source line.
 
 Navigation to the previous or next difference is supported using the navigation buttons or the keyboard shortcuts _Ctrl + 1_ and _Ctrl + 2_.
 
@@ -1782,7 +1856,7 @@ On the SASS view, the _Diff By_ drop down menu allows you to choose the diff bas
 
 Source Comparison Diff By Menu
 
-## 3.10. Report Merge Tool
+## 4.11. Report Merge Tool
 
 NVIDIA Nsight Compute provides a _Report Merge Tool_ utility that enables users to combine multiple Nsight Compute reports with the `.ncu-rep` extension into a single file. It is particularly useful for multi-GPU systems and scenarios when comparing and analyzing several reports individually becomes impractical. The report created with ReportMergeTool is fully compatible with Nsight Compute, and can be used for visualization and analysis in the UI and on the command line.
 
@@ -1799,7 +1873,7 @@ Call the binary in `$NCU_INSTALL_PATH/extras/ReportUtils/ReportMergeTool`.
 It accepts a directory as an input, and it will merge all the reports under that directory. Other features follow exactly the same logic as the UI.
 
 
-### 3.10.1. File Selection Tab
+### 4.11.1. File Selection Tab
 
 This tab handles the selection of reports and allows to set the output name and/or path for the resulting merged report. There are 2 ways of selecting report files to merge.
 
@@ -1816,7 +1890,7 @@ Selection from System Files
 When some reports are already open in Nsight Compute, MergeTool will suggest to merge them first. To change select from the system files, set _Select from_ combo box item to _System Files_ , or use the _Report Directory_ selector.
 
 
-### 3.10.2. Metric Filters Tab
+### 4.11.2. Metric Filters Tab
 
 This tab guides the selection and merging process of individual metrics. Selecting the _Merge Operation_ defines which metrics are merged and kept across all report results. _Aggregation Operation_ then tells how these metrics are merged, and how the resulting value is calculated from multiple values. For any other filtering operation metric names can be provided in _Results_ text box, or _Metric Sets/Sections_ can be selected.
 
@@ -1856,7 +1930,7 @@ Metric Sets/Sections
 
 Additionally, metric sets and sections can be used, by loading a view similar to [Metric Selection](index.html#metric-selection). Selecting the sets and sections modifies the appearance of the reports by changing the sections that are displayed on the _Details_ page. The metrics of the reports are not affected. To remove unwanted sections, select the _Remove Unselected Sections_ checkbox.
 
-### 3.10.3. Result Filters Tab
+### 4.11.3. Result Filters Tab
 
 This tab guides the selection and merging process of individual results. It allows to select the [Merge Operation](index.html#mergetool-results-merge-op) to define which results are merged and kept.
 
@@ -1901,7 +1975,7 @@ To be able to track how a merged report was created, each merged report contains
 
 Comment with merge details in the merged report
 
-## 3.11. Clustering Window
+## 4.12. Clustering Window
 
 The **Clustering Window** helps you analyze and compare multiple profiling reports by grouping similar reports together. This makes it easier to identify performance patterns and find relationships between different profiling sessions.
 
@@ -1909,7 +1983,7 @@ The **Clustering Window** helps you analyze and compare multiple profiling repor
 
 Clustering Window
 
-### 3.11.1. How to Use Clustering
+### 4.12.1. How to Use Clustering
 
   1. **Open Clustering Window** : From the main menu, select _Tools_ > _Clustering Window_. The window can be docked or undocked like other tool windows.
 
@@ -1924,7 +1998,7 @@ Clustering Window
   4. **Run Analysis** : Click _Cluster Reports_ to analyze the selected reports and generate clusters.
 
 
-### 3.11.2. Clustering Tree
+### 4.12.2. Clustering Tree
 
 ![../_images/clustering-tree.png](https://docs.nvidia.com/nsight-compute/_images/clustering-tree.png)
 
@@ -1948,7 +2022,7 @@ The tree structure helps you understand:
   * How the clustering algorithm has organized your data
 
 
-### 3.11.3. Similarity Matrix
+### 4.12.3. Similarity Matrix
 
 ![../_images/clustering-matrix.png](https://docs.nvidia.com/nsight-compute/_images/clustering-matrix.png)
 
@@ -1986,7 +2060,7 @@ Control Buttons
   * _Merge Clusters_ creates a merged report from the selected clusters. The merged reports can be processed using the [Report Merge Tool](index.html#report-merge-tool.html) for further analysis and customization.
 
 
-## 3.12. Occupancy Calculator
+## 4.13. Occupancy Calculator
 
 NVIDIA Nsight Compute provides an _Occupancy Calculator_ that allows you to compute the multiprocessor occupancy of a GPU for a given CUDA kernel. It replaces the previously provided CUDA Occupancy Calculator spreadsheet.
 
@@ -2012,7 +2086,7 @@ Occupancy section header
 
 The user interface consists of an input section as well as tables and graphs that display information about GPU occupancy. To use the calculator, change the input values in the input section, click the _Apply_ button and examine the tables and graphs.
 
-### 3.12.1. Tables
+### 4.13.1. Tables
 
 The tables show the occupancy, as well as the number of active threads, warps, and thread blocks per multiprocessor, and the maximum number of active blocks on the GPU.
 
@@ -2020,7 +2094,7 @@ The tables show the occupancy, as well as the number of active threads, warps, a
 
 Tables
 
-### 3.12.2. Utilization
+### 4.13.2. Utilization
 
 These stacked bar graphs show the portion of resources that is allocated to the blocks, the unallocated portion due to some other resource being a limiter, and lastly the unused portion that has the size less than the minimum amount required by a block.
 
@@ -2028,7 +2102,7 @@ These stacked bar graphs show the portion of resources that is allocated to the 
 
 Utilization
 
-### 3.12.3. Graphs
+### 4.13.3. Graphs
 
 The graphs show the occupancy for your chosen block size as a blue circle, and for all other possible block sizes as a line graph. The “Show As” option allows you to switch between the occupancy in percent and absolute number of warps on Y-axis. When you hover over the graphs, the nearest data point will be highlighted and its X and Y-axis values will appear in a tooltip.
 
@@ -2036,7 +2110,7 @@ The graphs show the occupancy for your chosen block size as a blue circle, and f
 
 Graphs
 
-### 3.12.4. GPU Data
+### 4.13.4. GPU Data
 
 The _GPU Data_ shows the properties of all supported devices.
 
@@ -2044,7 +2118,7 @@ The _GPU Data_ shows the properties of all supported devices.
 
 GPU Data
 
-## 3.13. Green Contexts support
+## 4.14. Green Contexts support
 
 NVIDIA Nsight Compute provides a number of features to ease the analysis of applications using [CUDA Green Contexts](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GREEN__CONTEXTS.html#group__CUDA__GREEN__CONTEXTS), see the [Profiling Guide](../ProfilingGuide/index.html#special-configurations-green-contexts) for an overview about profiling such applications.
 
@@ -2064,7 +2138,7 @@ When profiling Green Context applications interactively, the [Resources](index.h
 
 ![../_images/green-contexts-resource-tool-window-with-tpc-mask.png](https://docs.nvidia.com/nsight-compute/_images/green-contexts-resource-tool-window-with-tpc-mask.png)
 
-## 3.14. Acceleration Structure Viewer
+## 4.15. Acceleration Structure Viewer
 
 The _Acceleration Structure Viewer_ allows inspection of acceleration structures built using the OptiX API. In modern ray tracing APIs like OptiX, _acceleration structures_ are data structures describing the rendered scene’s geometries that will be intersected when performing ray tracing operations. More information concerning acceleration structures can be found in the [OptiX programming guide](https://raytracing-docs.nvidia.com/optix7/guide/index.html#acceleration_structures#acceleration-structures).
 
@@ -2086,15 +2160,15 @@ Name | An identifier for each row in the hierarchy. Click on the check box next 
 # Prims | The number of primitives that make up this acceleration structure.  
 Surface Area | A calculation of the total surface area for the AABB that bounds the particular entry.  
 Size | The size of the output buffer on the device holding this _acceleration structure_.  
-  
+
 Performance analysis tools are accessible in the bottom left corner on the main view. These tools help identify potential performance problems that are outlined in the [RTX Ray Tracing Best Practices Guide](https://developer.nvidia.com/blog/best-practices-using-nvidia-rtx-ray-tracing). These analysis tools aim to give a broad picture of acceleration structures that may exhibit sub-optimal performance. To find the most optimal solution, profiling and experimentation is recommended but these tools may paint a better picture as to why one structure performs poorly compared to another.
 
 Acceleration Structure Analysis Tools Action | Description  
 ---|---  
 Instance Overlaps | Identifies instance AABBs that overlap with other instances in 3D. Consider merging GASes when instance world-space AABBs overlap significantly to potentially increase performance.  
 Instance Heatmap | This allows you to set the threshold used by the AABB heatmap rendered in the visualizer.  
-  
-### 3.14.1. Navigation
+
+### 4.15.1. Navigation
 
 The _Acceleration Structure Viewer_ supports multiple navigation modes. The navigation mode can be changed using the combo box in the camera controls pane, to the right of the rendering pane. The keyboard and mouse bindings for each mode are as follows:
 
@@ -2110,14 +2184,14 @@ Acceleration Structure Key Bindings Binding | Fly Camera | Dolly Camera | Orbit 
 **MMB + Drag** | Track (Move up, down, left, right) | Track (Move up, down, left, right) | Track (Move up, down, left, right)  
 **Alt** | Temporarily switch to Orbit Camera | Temporarily switch to Orbit Camera | n/a  
 **F/Double Click** | Focus on the selected geometry | Focus on the selected geometry | Focus on the selected geometry  
-  
+
 Based on the coordinate system of the input geometry, you may need to change the **Up Direction** setting to Z-Axis or the **Coordinates** setting to RHS. To reset the camera to its original location, click **Reset Camera**.
 
 There are also a selection of Camera Controls for fast and precise navigation. To save a position, use the bookmarks controls. Each node within the acceleration structure hierarchy can also be double-clicked to quickly navigate to that location.
 
 ![../_images/as-viewer-cam.png](https://docs.nvidia.com/nsight-compute/_images/as-viewer-cam.png)
 
-### 3.14.2. Filtering and Highlighting
+### 4.15.2. Filtering and Highlighting
 
 The acceleration structure view supports acceleration structure filtering as well as highlighting of data matching particular characteristics. The checkboxes next to each geometry allow users to toggle the rendering of each traversable.
 
@@ -2129,17 +2203,17 @@ Beyond filtering, the view also supports highlight-based identification of geome
 
 ![../_images/as-viewer-property-filter.png](https://docs.nvidia.com/nsight-compute/_images/as-viewer-property-filter.png)
 
-### 3.14.3. Rendering Options
+### 4.15.3. Rendering Options
 
 Under the highlight controls, additional rendering options are available. These include methods to control the geometry colors and the ability to toggle the drawing of wireframes for meshes and AABBs.
 
 ![../_images/as-viewer-rendering-options.png](https://docs.nvidia.com/nsight-compute/_images/as-viewer-rendering-options.png)
 
-### 3.14.4. Exporting
+### 4.15.4. Exporting
 
 The data displayed in the acceleration structure viewer document can be saved to file. Exporting an _Acceleration Structure Viewer_ document allows for persisting the data you have collected beyond the immediate analysis session. This capability is particularly valuable for comparing different revisions of your geometry or sharing with others. Bookmarks are persisted as well.
 
-## 3.15. Options
+## 4.16. Options
 
 NVIDIA Nsight Compute options can be accessed via the main menu under _Tools_ > _Options_. All options are persisted on disk and available the next time NVIDIA Nsight Compute is launched. When an option is changed from its default setting, its label will become bold. You can use the _Restore Defaults_ button to restore all options to their default values.
 
@@ -2147,7 +2221,7 @@ NVIDIA Nsight Compute options can be accessed via the main menu under _Tools_ > 
 
 Profile options
 
-### 3.15.1. Profile
+### 4.16.1. Profile
 
 #### Report Sections
 
@@ -2157,7 +2231,7 @@ NVIDIA Nsight Compute Report Section Options Option Name | Description | Values
 ---|---|---  
 Sections Directory | Directory from which to import section files and rules. Relative paths are with respect to the NVIDIA Nsight Compute installation directory. |   
 Include Sub- Directories | Recursively include section files and rules from sub-directories. | Yes (Default)/No  
-  
+
 #### Report Rules
 
 Configure how rules are applied and reloaded during profiling sessions.
@@ -2166,7 +2240,7 @@ NVIDIA Nsight Compute Report Rules Options Option Name | Description | Values
 ---|---|---  
 Apply Applicable Rules Automatically | Automatically apply active and applicable rules. | Yes (Default)/No  
 Reload Rules Before Applying | Force a rule reload before applying the rule to ensure changes in the rule script are recognized. | Yes/No (Default)  
-  
+
 #### Report UI
 
 Customize the user interface behavior for report viewing and navigation.
@@ -2184,7 +2258,7 @@ Default Report Page | The report page to show when a report is generated or open
   * Session
   * Auto
 
-  
+
 Function Name Mode | Determines how function/kernel names are shown. | 
 
   * Auto (Default)
@@ -2192,7 +2266,7 @@ Function Name Mode | Determines how function/kernel names are shown. |
   * Function
   * Mangled
 
-  
+
 NVTX Rename Mode | Determines how NVTX information is used for renaming. Range replay results are always renamed when possible. | 
 
   * None
@@ -2200,12 +2274,12 @@ NVTX Rename Mode | Determines how NVTX information is used for renaming. Range r
   * Resources (Default)
   * All
 
-  
+
 Show Metrics Aggregation | Show aggregate of all results per each counter metric in the table header and aggregated value of randomly selected metrics in the bottom-right label. | Yes (Default)/No  
 Show Y-axis labels | Display Y-axis labels on the timeline to improve the interpretation of minimum and maximum metric value. | Yes (Default)/No  
 Rename Demangled Names | Perform auto-simplification on kernel demangled names or import renamed names from a configuration file. | Yes (Default)/No  
 Rename Kernels Config Path | Use a configuration file to rename multiple demangled names and export demangled names from the report. | ncu-kernel-renames.yaml  
-  
+
 #### Report Baselines
 
 Configure baseline display settings for result comparison.
@@ -2214,7 +2288,7 @@ NVIDIA Nsight Compute Report Baselines Options Option Name | Description | Value
 ---|---|---  
 Maximum Baseline Name Length | The maximum length of baseline names. | 1..N (Default: 40)  
 Number of Full Baselines to Display | Number of baselines to display in the report header with all details in addition to the current result or the baseline added for the current result. | 0..N (Default: 2)  
-  
+
 #### Report Metrics
 
 Configure how metrics are displayed and processed in reports.
@@ -2225,7 +2299,7 @@ Auto-Convert Metric Units | Auto-adjust displayed metric units and values (e.g. 
 Show Instanced Metric Values | Show the individual values of instanced metrics in tables. | Yes/No (Default)  
 Show Metrics As Floating Point | Show all numeric metrics as floating-point numbers. | Yes/No (Default)  
 Show Knowledge Base Information | Show information from the knowledge base in (metric) tooltips to explain terminology. Note: Nsight Compute needs to be restarted for this option to take effect. | Yes (Default)/No  
-  
+
 #### Report Summary Page
 
 Configure settings for the Summary page in reports.
@@ -2233,7 +2307,7 @@ Configure settings for the Summary page in reports.
 NVIDIA Nsight Compute Report Summary Page Options Option Name | Description | Values  
 ---|---|---  
 Metrics/ Properties | List of metrics and properties to show on the summary page. Comma-separated list of metric entries. Each entry has the format {Label:MetricName}. |   
-  
+
 #### Report Details Page
 
 Configure settings for the Details page in reports.
@@ -2241,7 +2315,7 @@ Configure settings for the Details page in reports.
 NVIDIA Nsight Compute Report Summary Page Options Option Name | Description | Values  
 ---|---|---  
 Default Section Body Visibility | Controls the default visibility of section bodies when opening a report. | Default (Default)/All  
-  
+
 #### Report Source Page
 
 Configure settings for the Source page view.
@@ -2257,7 +2331,7 @@ Auto-Resolve Remote Source Files | Automatically try to resolve remote source fi
 Enable Register Dependencies | Track dependencies between SASS registers/predicates and display them in the SASS view. | Yes (Default)/No  
 SASS Analysis Size Threshold (KB) | Enable SASS flow graph analysis for functions below this threshold. SASS analysis is required for Live Register and Register Dependency information. Set to -1 to enable analysis for all functions. | -1..N (Default: 1024)  
 Enable ELF Verification | Enable ELF (cubin) verification to run every time before SASS analysis. This should only be enabled when working with applications compiled before CUDA 11.0 or when encountering source page issues. | Yes/No (Default)  
-  
+
 #### API Stream View
 
 Configure settings for the API Stream View.
@@ -2265,7 +2339,7 @@ Configure settings for the API Stream View.
 NVIDIA Nsight Compute API Stream View Options Option Name | Description | Values  
 ---|---|---  
 API Call History | Number of recent API calls shown in API Stream View. | 1..N (Default: 100)  
-  
+
 #### CUDA Graph Viewer
 
 Configure settings for the CUDA Graph Viewer.
@@ -2273,8 +2347,8 @@ Configure settings for the CUDA Graph Viewer.
 NVIDIA Nsight Compute CUDA Graph Viewer Options Option Name | Description | Values  
 ---|---|---  
 Auto-Open Graph Viewer | Automatically open the CUDA Graph Viewer when CUDA graphs are detected during profiling or when opening reports containing CUDA graph results. | Yes (Default)/No  
-  
-### 3.15.2. Fonts and Colors
+
+### 4.16.2. Fonts and Colors
 
 #### Fonts
 
@@ -2284,7 +2358,7 @@ NVIDIA Nsight Compute Font Options Option Name | Description | Values
 ---|---|---  
 General Font | General font used for all non-code UI elements. | Select an installed font via “Change…” button. (Default: Roboto@9pt)  
 Code Font | Font used for source code and code-like UI elements. | Select an installed font via “Change…” button. (Default: Cascadia Mono@9pt)  
-  
+
 #### Colors
 
 Customize the visual appearance of the application through theme selection and color scale preferences. These settings affect the overall look and feel of the interface and how data is represented visually.
@@ -2296,7 +2370,7 @@ Color Theme | The currently selected application color theme. |
   * Dark (Default)
   * Light
 
-  
+
 Default Color Scale | Default color map used to represent a qualitative scale of values. | 
 
   * Flammenmeer
@@ -2306,9 +2380,9 @@ Default Color Scale | Default color map used to represent a qualitative scale of
   * Plasma
   * Jet (Default)
 
-  
-  
-### 3.15.3. Environment
+
+
+### 4.16.3. Environment
 
 #### Visual Experience
 
@@ -2317,7 +2391,7 @@ Configure how NVIDIA Nsight Compute handles display and windowing behaviors, par
 NVIDIA Nsight Compute Visual Experience Options Option Name | Description | Values  
 ---|---|---  
 Use Enhanced Windowing Experience | Disable Mixed DPI Scaling if unwanted artifacts are detected when using monitors with different DPIs. Requires app restart. | Yes (Default)/No  
-  
+
 #### Windowing
 
 Control window behavior and management settings.
@@ -2325,7 +2399,7 @@ Control window behavior and management settings.
 NVIDIA Nsight Compute Windowing Options Option Name | Description | Values  
 ---|---|---  
 Floating Windows Always on Top | Configure floating tool windows to always stay on top of the main window. Requires app restart. | Yes/No (Default)  
-  
+
 #### Documents Folder
 
 Configure where NVIDIA Nsight Compute stores project files and documentation.
@@ -2333,7 +2407,7 @@ Configure where NVIDIA Nsight Compute stores project files and documentation.
 NVIDIA Nsight Compute Documents Folder Options Option Name | Description | Values  
 ---|---|---  
 Documents Folder | The folder where projects and documents will be saved. |   
-  
+
 #### Startup Behavior
 
 Define how NVIDIA Nsight Compute behaves when launched.
@@ -2347,8 +2421,8 @@ At Startup | What to do when the host is launched. |
   * Load Last Project
   * Show Empty Environment
 
-  
-  
+
+
 #### Updates
 
 Configure version update notification settings.
@@ -2356,8 +2430,8 @@ Configure version update notification settings.
 NVIDIA Nsight Compute Updates Options Option Name | Description | Values  
 ---|---|---  
 Show version update notifications | Show notifications when a new version of this product is available. | Yes (Default)/No  
-  
-### 3.15.4. Connection
+
+### 4.16.4. Connection
 
 Connection properties are grouped into _Target Connection Options_ and _Host Connection Properties_.
 
@@ -2369,7 +2443,7 @@ NVIDIA Nsight Compute Target Connection Properties Option Name | Description | V
 ---|---|---  
 Base Port | Base port used to establish a connection from the host to the target application during an _Interactive Profile_ activity (both local and remote). | 1-65535 (Default: 49152)  
 Maximum Ports | Maximum number of ports to try (starting from _Base Port_) when attempting to connect to the target application. | 2-65534 (Default: 64)  
-  
+
 #### Host Connection Properties
 
 The _Host Connection Properties_ determine how the command line profiler will connect to the host application during a _Profile Activity_. This connection is used to transfer profile information to the host during the profile session.
@@ -2378,7 +2452,7 @@ NVIDIA Nsight Compute Host Connection Options Option Name | Description | Values
 ---|---|---  
 Base Port | Base port used to establish a connection from the command line profiler to the host application during a _Profile_ activity (both local and remote). | 1-65535 (Default: 50152)  
 Maximum Ports | Maximum number of ports to try (starting from _Base Port_) when attempting to connect to the host application. | 1-100 (Default: 10)  
-  
+
 #### SSH ProxyJump Connection Properties
 
 The _SSH ProxyJump Connection Properties_ configure how NVIDIA Nsight Compute handles connections through SSH jump hosts. This is useful when profiling applications on target machines that are not directly accessible and require connecting through intermediate SSH servers. The ProxyJump feature allows for secure, multi-hop SSH connections while maintaining the profiling functionality.
@@ -2386,8 +2460,8 @@ The _SSH ProxyJump Connection Properties_ configure how NVIDIA Nsight Compute ha
 NVIDIA Nsight Compute SSH ProxyJump Connection Options Option Name | Description | Values  
 ---|---|---  
 Process Scan Timeout (seconds) | Maximum time to try searching for attachable process when using SSH ProxyJump connection. | 1-65535 (Default: 10)  
-  
-### 3.15.5. Timeline
+
+### 4.16.5. Timeline
 
 #### Basic Settings
 
@@ -2396,8 +2470,8 @@ The _Timeline Basic Settings_ control the visualization and behavior of the Time
 NVIDIA Nsight Compute Timeline Options Option Name | Description | Values  
 ---|---|---  
 Show correlation arrows | Show arrows on correlated items on the Timeline | Yes (Default)/No  
-  
-### 3.15.6. Source Lookup
+
+### 4.16.6. Source Lookup
 
 The Source Lookup options control how NVIDIA Nsight Compute locates and validates CUDA source files when displaying source code in the Source page. These settings are particularly important for debugging and profiling sessions where source files may have moved from their original compilation locations or when working with different development environments. The options help ensure accurate source code resolution and provide flexibility in handling file location mismatches.
 
@@ -2405,14 +2479,14 @@ NVIDIA Nsight Compute Source Lookup Options Option Name | Description | Values
 ---|---|---  
 Program Source Locations | Set program source search paths. These paths are used to resolve CUDA-C source files on the Source page if the respective file cannot be found in its original location. Files which cannot be found are marked with a _File Not Found_ error. See the _Ignore File Properties_ option for files that are found but don’t match. |   
 Ignore File Properties | Ignore file properties (e.g. timestamp, size) for source resolution. If this is disabled, all file properties like modification timestamp and file size are checked against the information stored by the compiler in the application during compilation. If a file with the same name exists on a source lookup path, but not all properties match, it won’t be used for resolution (and a _File Mismatch_ error will be shown). | Yes/No (Default)  
-  
-### 3.15.7. Send Feedback…
+
+### 4.16.7. Send Feedback…
 
 NVIDIA Nsight Compute Send Feedback Options Option Name | Description | Values  
 ---|---|---  
 Collect Usage and Platform Data | Choose whether or not you wish to allow NVIDIA Nsight Compute to collect usage and platform data. | Yes (Default)/No  
-  
-## 3.16. Projects
+
+## 4.17. Projects
 
 NVIDIA Nsight Compute uses _Project Files_ to group and organize profiling reports. At any given time, only one project can be open in NVIDIA Nsight Compute. Collected reports are automatically assigned to the current project. Reports stored on disk can be assigned to a project at any time. In addition to profiling reports, related files such as notes or source code can be associated with the project for future reference.
 
@@ -2429,13 +2503,13 @@ When no custom project is current, a _default project_ is used to store e.g. the
   * On macOS, the file is located at `<USER>/Library/Application Support/NVIDIA Corporation/NVIDIA Nsight Compute/`
 
 
-### 3.16.1. Project Dialogs
+### 4.17.1. Project Dialogs
 
 **New Project**
 
 Creates a new project. The project must be given a name, which will also be used for the project file. You can select the location where the project file should be saved on disk. Select whether a new directory with the project name should be created in that location.
 
-### 3.16.2. Project Explorer
+### 4.17.2. Project Explorer
 
 The _Project Explorer_ window allows you to inspect and manage the current project. It shows the project name as well as all _Items_ (profile reports and other files) associated with it. Right-click on any entry to see further actions, such as adding, removing or grouping items. Type in the _Search project_ toolbar at the top to filter the currently shown entries.
 
@@ -2443,11 +2517,11 @@ The _Project Explorer_ window allows you to inspect and manage the current proje
 
 Project Explorer
 
-## 3.17. Visual Studio Integration Guide
+## 4.18. Visual Studio Integration Guide
 
 This guide provides information on using NVIDIA Nsight Compute within Microsoft Visual Studio, using the [NVIDIA Nsight Integration](https://developer.nvidia.com/nsight-tools-visual-studio-integration) Visual Studio extension, allowing for a seamless development workflow.
 
-### 3.17.1. Visual Studio Integration Overview
+### 4.18.1. Visual Studio Integration Overview
 
 NVIDIA Nsight Integration is a Visual Studio extension that allows you to access the power of NVIDIA Nsight Compute from within Visual Studio.
 
@@ -2471,5 +2545,3 @@ Information furnished is believed to be accurate and reliable. However, NVIDIA C
 Trademarks
 
 NVIDIA and the NVIDIA logo are trademarks or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.
-
-* * *

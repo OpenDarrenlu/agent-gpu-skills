@@ -1,7 +1,7 @@
 # 6. Getting Started
 
 
-There are several key strategies for parallelizing sequential code. While the details of how to apply these strategies to a particular application is a complex and problem-specific topic, the general themes listed here apply regardless of whether we are parallelizing code to run on for multicore CPUs or for use on CUDA GPUs.
+There are several key strategies for parallelizing sequential code. While the details of how to apply these strategies to a particular application is a complex and problem-specific topic, the general themes listed here apply regardless of whether we are parallelizing code to run on multicore CPUs or for use on CUDA GPUs.
 
 
 ##  6.1. Parallel Libraries 

@@ -25,24 +25,24 @@ Be aware that CPU-to-GPU synchronization points such as those mentioned in this 
 The CUDA event API provides calls that create and destroy events, record events (including a timestamp), and convert timestamp differences into a floating-point value in milliseconds. [How to time code using CUDA events](#how-to-time-code-using-cuda-events-figure) illustrates their use.
 
 How to time code using CUDA events
-    
-    
+
+
     cudaEvent_t start, stop;
     float time;
-    
+
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
-    
+
     cudaEventRecord( start, 0 );
     kernel<<<grid,threads>>> ( d_odata, d_idata, size_x, size_y,
                                NUM_REPS);
     cudaEventRecord( stop, 0 );
     cudaEventSynchronize( stop );
-    
+
     cudaEventElapsedTime( &time, start, stop );
     cudaEventDestroy( start );
     cudaEventDestroy( stop );
-    
+
 
 Here `cudaEventRecord()` is used to place the `start` and `stop` events into the default stream, stream 0. The device will record a timestamp for the event when it reaches that event in the stream. The `cudaEventElapsedTime()` function returns the time elapsed between the recording of the `start` and `stop` events. This value is expressed in milliseconds and has a resolution of approximately half a microsecond. Like the other calls in this listing, their specific operation, parameters, and return values are described in the _CUDA Toolkit Reference Manual_. Note that the timings are measured on the GPU clock, so the timing resolution is operating-system-independent.
 
@@ -65,7 +65,7 @@ Using these data items, the peak theoretical memory bandwidth of the NVIDIA Tesl
 
 \\(\left. \left( 0.877 \times 10^{9} \right. \times (4096/8) \times 2 \right) \div 10^{9} = 898\text{GB/s}\\)
 
-In this calculation, the memory clock rate is converted in to Hz, multiplied by the interface width (divided by 8, to convert bits to bytes) and multiplied by 2 due to the double data rate. Finally, this product is divided by 109 to convert the result to GB/s.
+In this calculation, the memory clock rate is converted into Hz, multiplied by the interface width (divided by 8, to convert bits to bytes) and multiplied by 2 due to the double data rate. Finally, this product is divided by 109 to convert the result to GB/s.
 
 Note
 
@@ -113,6 +113,6 @@ Because the minimum memory transaction size is larger than most word sizes, the 
 It’s important to note that both numbers are useful. The actual memory throughput shows how close the code is to the hardware limit, and a comparison of the effective or requested bandwidth to the actual bandwidth presents a good estimate of how much bandwidth is wasted by suboptimal coalescing of memory accesses (see [Coalesced Access to Global Memory](#coalesced-access-to-global-memory)). For global memory accesses, this comparison of requested memory bandwidth to actual memory bandwidth is reported by the Global Memory Load Efficiency and Global Memory Store Efficiency metrics.
 
 [2](#id24)
-    
+
 
 As an exception, scattered writes to HBM2 see some overhead from ECC but much less than the overhead with similar access patterns on ECC-protected GDDR5 memory.

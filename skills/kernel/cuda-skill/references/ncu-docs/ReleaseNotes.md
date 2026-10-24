@@ -2,124 +2,6 @@
 url: https://docs.nvidia.com/nsight-compute/ReleaseNotes/index.html
 ---
 
-[ ![Logo](https://docs.nvidia.com/nsight-compute/_static/nsight-compute.png) ](../index.html)
-
-Nsight Compute
-
-  * [1\. Release Notes](#)
-    * [1.1. Release Notes](#id1)
-      * [1.1.1. Updates in 2026.2](#updates-in-2026-2)
-      * [1.1.2. Updates in 2026.1.1](#updates-in-2026-1-1)
-      * [1.1.3. Updates in 2026.1](#updates-in-2026-1)
-      * [1.1.4. Updates in 2025.4.1](#updates-in-2025-4-1)
-      * [1.1.5. Updates in 2025.4](#updates-in-2025-4)
-      * [1.1.6. Updates in 2025.3.1](#updates-in-2025-3-1)
-      * [1.1.7. Updates in 2025.3](#updates-in-2025-3)
-      * [1.1.8. Updates in 2025.2.1](#updates-in-2025-2-1)
-      * [1.1.9. Updates in 2021.2.9](#updates-in-2021-2-9)
-      * [1.1.10. Older Versions](#older-versions)
-        * [Updates in 2025.2](#updates-in-2025-2)
-        * [Updates in 2025.1.1](#updates-in-2025-1-1)
-        * [Updates in 2025.1](#updates-in-2025-1)
-        * [Updates in 2024.4](#updates-in-2024-4)
-        * [Updates in 2024.3.2](#updates-in-2024-3-2)
-        * [Updates in 2024.3.1](#updates-in-2024-3-1)
-        * [Updates in 2024.3](#updates-in-2024-3)
-        * [Updates in 2024.2.1](#updates-in-2024-2-1)
-        * [Updates in 2024.2](#updates-in-2024-2)
-        * [Updates in 2024.1.1](#updates-in-2024-1-1)
-        * [Updates in 2024.1](#updates-in-2024-1)
-        * [Updates in 2023.3.1](#updates-in-2023-3-1)
-        * [Updates in 2023.3](#updates-in-2023-3)
-        * [Updates in 2023.2.2](#updates-in-2023-2-2)
-        * [Updates in 2023.2.1](#updates-in-2023-2-1)
-        * [Updates in 2023.2](#updates-in-2023-2)
-        * [Updates in 2023.1.1](#updates-in-2023-1-1)
-        * [Updates in 2023.1](#updates-in-2023-1)
-        * [Updates in 2022.4.1](#updates-in-2022-4-1)
-        * [Updates in 2022.4](#updates-in-2022-4)
-        * [Updates in 2022.3](#updates-in-2022-3)
-        * [Updates in 2022.2.1](#updates-in-2022-2-1)
-        * [Updates in 2022.2](#updates-in-2022-2)
-        * [Updates in 2022.1.1](#updates-in-2022-1-1)
-        * [Updates in 2022.1](#updates-in-2022-1)
-        * [Updates in 2021.3.1](#updates-in-2021-3-1)
-        * [Updates in 2021.3](#updates-in-2021-3)
-        * [Updates in 2021.2.8](#updates-in-2021-2-8)
-        * [Updates in 2021.2.7](#updates-in-2021-2-7)
-        * [Updates in 2021.2.6](#updates-in-2021-2-6)
-        * [Updates in 2021.2.5](#updates-in-2021-2-5)
-        * [Updates in 2021.2.4](#updates-in-2021-2-4)
-        * [Updates in 2021.2.3](#updates-in-2021-2-3)
-        * [Updates in 2021.2.2](#updates-in-2021-2-2)
-        * [Updates in 2021.2.1](#updates-in-2021-2-1)
-        * [Updates in 2021.2](#updates-in-2021-2)
-        * [Updates in 2021.1.1](#updates-in-2021-1-1)
-        * [Updates in 2021.1](#updates-in-2021-1)
-        * [Updates in 2020.3.1](#updates-in-2020-3-1)
-        * [Updates in 2020.3](#updates-in-2020-3)
-        * [Updates in 2020.2.1](#updates-in-2020-2-1)
-        * [Updates in 2020.2](#updates-in-2020-2)
-        * [Updates in 2020.1.2](#updates-in-2020-1-2)
-        * [Updates in 2020.1.1](#updates-in-2020-1-1)
-        * [Updates in 2020.1](#updates-in-2020-1)
-        * [Updates in 2019.5.3](#updates-in-2019-5-3)
-        * [Updates in 2019.5.2](#updates-in-2019-5-2)
-        * [Updates in 2019.5.1](#updates-in-2019-5-1)
-        * [Updates in 2019.5](#updates-in-2019-5)
-        * [Updates in 2019.4](#updates-in-2019-4)
-        * [Updates in 2019.3.1](#updates-in-2019-3-1)
-        * [Updates in 2019.3](#updates-in-2019-3)
-        * [Updates in 2019.2](#updates-in-2019-2)
-        * [Updates in 2019.1](#updates-in-2019-1)
-    * [1.2. Known Issues](#known-issues)
-    * [1.3. Support](#support)
-      * [1.3.1. Platform Support](#platform-support)
-      * [1.3.2. GPU Support](#gpu-support)
-      * [1.3.3. Library Support](#library-support)
-        * [OptiX](#optix)
-        * [CUDA Tile](#cuda-tile)
-      * [1.3.4. System Requirements](#system-requirements)
-        * [CUDA Driver](#cuda-driver)
-        * [Linux and WSL](#linux-and-wsl)
-        * [Windows](#windows)
-  * [2\. Profiling Guide](../ProfilingGuide/index.html)
-  * [3\. Nsight Compute](../NsightCompute/index.html)
-  * [4\. Nsight Compute CLI](../NsightComputeCli/index.html)
-
-
-Developer Interfaces
-
-  * [1\. Customization Guide](../CustomizationGuide/index.html)
-  * [2\. Python Report Interface](../PythonReportInterface/index.html)
-  * [3\. NvRules API](../NvRulesAPI/index.html)
-  * [4\. Occupancy Calculator Python Interface](../OccupancyCalculatorPythonInterface/index.html)
-
-
-Training
-
-  * [Training](../Training/index.html)
-
-
-Release Information
-
-  * [Archives](../Archives/index.html)
-
-
-Copyright and Licenses
-
-  * [Copyright and Licenses](../CopyrightAndLicenses/index.html)
-
-
-__[NsightCompute](../index.html)
-
-  * [](../index.html) »
-  * 1\. Release Notes
-  *   * v2026.2.0 | [Archive](https://developer.nvidia.com/nsight-compute-history)
-
-
-* * *
-
 # 1\. Release Notes
 
 Nsight Compute Release Notes.
@@ -128,7 +10,105 @@ Release notes, including new features and important bug fixes. Supported platfor
 
 ## 1.1. Release Notes
 
-### 1.1.1. Updates in 2026.2
+### 1.1.1. Updates in 2026.3.1
+
+**General**
+
+  * Added limited support for C2C metrics for GB20B and GB20C.
+
+
+**Resolved Issues**
+
+  * Fixed an issue where terminating or cancelling a non-interactive profile activity would close the UI.
+
+
+### 1.1.2. Updates in 2026.3
+
+**General**
+
+  * Added support for CUDA 13.4.
+
+  * Added support for the Rubin GPU architecture.
+
+  * Added the [Compute Triage Guide](../ComputeTriage/index.html). It provides a top-down workflow for understanding compute workload performance bottlenecks and optimizations.
+
+  * Added access to workload-aligned PM sampling timeline data from the [Python Report Interface](../PythonReportInterface/index.html) and the [NvRules API](../NvRulesAPI/index.html).
+
+
+**NVIDIA Nsight Compute**
+
+  * Added a Tile IR view to the [Source page](../NsightCompute/index.html#profiler-report-source-page) for CUDA Tile workloads. This includes source to Tile IR, Tile IR to PTX, Tile IR to SASS correlation, CUDA Tile qualifier highlighting, and source file names for Tile IR entries.
+
+  * Extended [Source Comparison](../NsightCompute/index.html#source-comparison) support to include Tile IR source code comparison.
+
+  * Added an option on the Source page to filter the SASS view to the instructions generated by the selected source line.
+
+  * Improved the [CUDA Graph Viewer](../NsightCompute/index.html#tool-window-cuda-graph-viewer) with a legend, clickable profiled nodes, persisted pan and zoom state, improved long-name handling, and better visualization of nested graph structures.
+
+  * Added recent remote files and folders to the remote file dialog.
+
+  * Improved PM sampling timelines with metrics in group rows, merged timelines from matching section bodies, and more useful interactive tooltips.
+
+  * The Details page now merges matching expansion section bodies into parent sections.
+
+  * Nsight Copilot can now check for updates, download and verify update artifacts, install updated packages, and manage update behavior in the Options dialog.
+
+  * The Nsight Copilot UI improved installation, references, saved chat files, long inputs, and authentication hints.
+
+  * Added a CUDA tab to the [Device Information](../NsightCompute/index.html#tool-window-device-information) tool window showing CUDA device attributes such as compute capability, memory, thread and block limits, registers and shared memory limits, compute feature support, and other device properties.
+
+
+**NVIDIA Nsight Compute CLI**
+
+  * Added Tile IR source output and source to Tile IR, Tile IR to PTX, Tile IR to SASS correlation to the source page [console output](../NsightComputeCli/index.html#command-line-options-console-output).
+
+  * Added `--list-injection-path-32` and `--list-injection-path-64` to print the default injection library directories.
+
+
+**Resolved Issues**
+
+  * Isolated the embedded Python interpreter from the system Python environment, unless `NV_NSIGHT_PYTHON_ISOLATED=0` is set.
+
+  * Fixed an issue where profiling through a shell wrapper could be significantly slower than profiling the wrapped binary directly.
+
+  * Fixed an issue with profiling CUDA Green Contexts after profiling on the primary context.
+
+  * Fixed duplicate source files in the Source page dropdown for CUDA Tile range and graph profiling reports.
+
+  * Fixed an issue where the CUDA Graph Viewer could keep showing previous graph content after profiling a non-graph workload.
+
+  * Fixed that metric tool window instance bars intermittently didn’t match the actual values.
+
+  * Fixed incorrect units for user metric expressions in section files.
+
+  * Fixed an issue where rule results could be missing when merging reports by section set.
+
+  * Fixed the Report Merge Tool file list to prevent editing currently open report names.
+
+
+### 1.1.3. Updates in 2026.2.1
+
+**General**
+
+  * Added support for in-process profiling workflows that dynamically load the CUDA injection library. See the new CUDA injection API header `extras/Api/nvComputeInj.h` for usage details.
+
+  * Added the `--process-id` command line option for `--mode attach` to attach to a specific process.
+
+  * Added the `--list-injection-path-64` and `--list-injection-path-32` command line options to report the paths used to load the CUDA injection library.
+
+
+**Resolved Issues**
+
+  * Fixed an issue on QNX where Nsight Compute could fail to create temporary files or lock files in the default location.
+
+  * Fixed an issue where profiling a green-context kernel could fail after a non-green-context kernel had already been profiled in the same process.
+
+  * Fixed an issue that could cause `ncu --mode attach` to fail when range replay was followed by kernel replay in the same process.
+
+  * Fixed a crash in the CUDA injection library when an application initialized CUDA before the injection library was loaded.
+
+
+### 1.1.4. Updates in 2026.2
 
 **General**
 
@@ -175,7 +155,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed failing SSH connections when the OpenSSH config contained unsupported escape sequences.
 
 
-### 1.1.2. Updates in 2026.1.1
+### 1.1.5. Updates in 2026.1.1
 
 **Resolved Issues**
 
@@ -186,7 +166,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed an issue where the High Pipe Utilization rule might not analyze all pipelines.
 
 
-### 1.1.3. Updates in 2026.1
+### 1.1.6. Updates in 2026.1
 
 **General**
 
@@ -258,7 +238,9 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed issues in node-level profiling of CUDA device launchable graphs.
 
 
-### 1.1.4. Updates in 2025.4.1
+### 1.1.7. Older Versions
+
+#### Updates in 2025.4.1
 
 **General**
 
@@ -288,7 +270,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed a crash when instantiating device-side graphs with memory nodes.
 
 
-### 1.1.5. Updates in 2025.4
+#### Updates in 2025.4
 
 **General**
 
@@ -313,7 +295,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Added support for collecting Warp sampling metrics with PM sampling allowing user to see function-level warp stalls for the selected time range in the timeline. See the [Function Stats tool window](../NsightCompute/index.html#tool-window-function-stats) for details.
 
 
-### 1.1.6. Updates in 2025.3.1
+#### Updates in 2025.3.1
 
 **General**
 
@@ -337,7 +319,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed several rules to not show non-actionable warnings for unsupported, missing metrics when profiling on mobile chips.
 
 
-### 1.1.7. Updates in 2025.3
+#### Updates in 2025.3
 
 **General**
 
@@ -395,7 +377,7 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed an error when profiling a CUDA graph kernel node doing a cluster launch on driver 580 or newer.
 
 
-### 1.1.8. Updates in 2025.2.1
+#### Updates in 2025.2.1
 
 **Resolved Issues**
 
@@ -403,15 +385,6 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Fixed an issue that caused the Device Memory table of the Memory Workload Analysis section to show up empty for chips of type GB100 and GB102
 
-
-### 1.1.9. Updates in 2021.2.9
-
-**NVIDIA Nsight Compute**
-
-  * Clarify when not all metrics for the roofline chart could be collected on the current chip.
-
-
-### 1.1.10. Older Versions
 
 #### Updates in 2025.2
 
@@ -584,7 +557,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Chart tooltips on the Details page now show more relevant information when a specific value is hovered.
 
-  * [Roofline charts](../ProfilingGuide/index.html#roofline) now support showing the formula for ridge point calculation in the [metric details](../NsightCompute/index.html#tool-window-metric-details) tool window.
+  * [Roofline charts](../ProfilingGuide/index.html#roofline-charts) now support showing the formula for ridge point calculation in the [metric details](../NsightCompute/index.html#tool-window-metric-details) tool window.
 
   * The [occupancy calculator](../NsightCompute/index.html#occupancy-calculator) now considers the impact of block barriers for Hopper-architecture and newer GPUs. It also has improved controls to adjust input values.
 
@@ -1287,9 +1260,9 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * The NVIDIA Nsight Compute CLI stores the command line arguments, which can be viewed in the [Session](../NsightCompute/index.html#profiler-report-session-page) report page.
 
-  * Added an API to query the version of the [Python Report](../CustomizationGuide/index.html#python-report-interface) and [NvRules](../NvRulesAPI/index.html#abstract) interfaces.
+  * Added an API to query the version of the [Python Report](../CustomizationGuide/index.html#python-report-interface) and [NvRules](../NvRulesAPI/index.html) interfaces.
 
-  * Added an API to query the PTX in the [Python Report](../CustomizationGuide/index.html#python-report-interface) and [NvRules](../NvRulesAPI/index.html#abstract) interfaces.
+  * Added an API to query the PTX in the [Python Report](../CustomizationGuide/index.html#python-report-interface) and [NvRules](../NvRulesAPI/index.html) interfaces.
 
 
 **NVIDIA Nsight Compute**
@@ -1314,7 +1287,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Added [keyboard shortcuts](../NsightCompute/index.html#quick-start-navigate-report) to navigate between the pages in a report.
 
-  * The behavior for selecting sets and sections is now consistent between the [Sections/Rules Info window](../NsightCompute/index.html#tool-window-sections-info) and the [non-interactive profile activity](../NsightCompute/index.html#quick-start-non-interactive).
+  * The behavior for selecting sets and sections is now consistent between the [Sections/Rules Info window](../NsightCompute/index.html#tool-window-sections-info) and the [non-interactive profile activity](../NsightCompute/index.html#non-interactive-profile-activity).
 
   * Reports can now be opened directly from the welcome dialog.
 
@@ -1387,7 +1360,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Unix Domain Sockets and Windows Named Pipes are used for local connection between the host and target processes on x86_64 Linux and Windows, respectively.
 
-  * The [NvRules API](../NvRulesAPI/index.html#abstract) now supports querying action names using different function name bases (e.g. demangled).
+  * The [NvRules API](../NvRulesAPI/index.html) now supports querying action names using different function name bases (e.g. demangled).
 
 
 **NVIDIA Nsight Compute**
@@ -1396,7 +1369,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Added coverage for ECC (Error Correction Code) operations in the L2 Cache table of the Memory Analysis section.
 
-  * Added a new [L2 Evict Policies](../ProfilingGuide/topics/memory-tables-l2-evict-policy.html) table to the Memory Analysis section.
+  * Added a new [L2 Evict Policies](../ProfilingGuide/index.html#memory-tables-l2-evict-policy) table to the Memory Analysis section.
 
   * The [Occupancy Calculator](../NsightCompute/index.html#occupancy-calculator) now updates automatically when the input changes.
 
@@ -1458,7 +1431,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Added a new rule for detecting high usage of system or peer memory.
 
-  * Added new `IAction::sass_by_pc` function to the [NvRules API](../NvRulesAPI/index.html#abstract).
+  * Added new `IAction::sass_by_pc` function to the [NvRules API](../NvRulesAPI/index.html).
 
   * The [Python-based report interface](../CustomizationGuide/index.html#python-report-interface) is now available for Windows and macOS hosts, too.
 
@@ -1512,6 +1485,13 @@ Release notes, including new features and important bug fixes. Supported platfor
   * Fixed that local profiling did not work if no non-loopback address was configured for the system.
 
   * Fixed termination of remote-launched applications. On QNX, terminating an application profiled via _Remote Launch_ is now supported. Canceling remote-launched _Profile_ activities is now supported.
+
+
+#### Updates in 2021.2.9
+
+**NVIDIA Nsight Compute**
+
+  * Clarify when not all metrics for the roofline chart could be collected on the current chip.
 
 
 #### Updates in 2021.2.8
@@ -1721,7 +1701,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * `GpuArch` enumeration values used for filtering in section files were renamed from architecture names to compute capabilities.
 
-  * NVTX states can now be accessed via the [NvRules API](../NvRulesAPI/index.html#abstract).
+  * NVTX states can now be accessed via the [NvRules API](../NvRulesAPI/index.html).
 
   * Added a rule for the _Occupancy_ section.
 
@@ -2008,7 +1988,7 @@ Release notes, including new features and important bug fixes. Supported platfor
 
   * Added support for report name placeholders %p, %q, %i and %h
 
-  * The [Kernel Profiling Guide](../ProfilingGuide/index.html#abstract) was added to the documentation
+  * The [Kernel Profiling Guide](../ProfilingGuide/index.html) was added to the documentation
 
 
 **NVIDIA Nsight Compute**
@@ -2472,11 +2452,11 @@ Release notes, including new features and important bug fixes. Supported platfor
   * The installer might not show all patch-level version numbers during installation.
 
   * Some command line options listed in the help of a _.run_ installer of NVIDIA Nsight Compute are affecting only the archive extraction, but not the installation stage. To pass command line options to the embedded installer script, specify those options after `--` in the form of `-- -<option>`. The available options for the installer script are:
-        
+
         -help               : Print help message
         -targetpath=<PATH>  : Specify install path
         -noprompt           : No prompts. Implies acceptance of the EULA
-        
+
 
 For example, specifying only option `--quiet` extracts the installer archive without any output to the console, but still prompts for user interaction during the installation. To install NVIDIA Nsight Compute without any console output nor any user interaction, please specify `--quiet -- -noprompt`.
 
@@ -2522,7 +2502,7 @@ For example, specifying only option `--quiet` extracts the installer archive wit
 
   * As of CUDA 11.4 and R470 TRD1 driver release, NVIDIA Nsight Compute is supported in a vGPU environment which requires a vGPU license. If the license is not obtained after 20 minutes, the reported performance metrics data from the GPU will be inaccurate. This is because of a feature in vGPU environment which reduces performance but retains functionality as specified [here](https://docs.nvidia.com/grid/latest/grid-licensing-user-guide/index.html#software-enforcement-grid-licensing).
 
-  * Profiling on [NVIDIA live-migrated virtual machines](https://www.nvidia.com/en-us/data-center/virtualization/virtual-gpu-migration/) is not supported and can result in undefined behavior.
+  * NVIDIA vGPU live migration is not supported while NVIDIA Nsight Compute is in use; migration is blocked for the entire duration the tool is attached to a target application, and profiling on an already live-migrated virtual machine can result in undefined behavior. See [Limitations with CUDA Toolkit Profilers Enabled](https://docs.nvidia.com/vgpu/latest/grid-vgpu-user-guide/index.html#limitations-with-cuda-toolkit-profilers-enabled) for additional details.
 
 
   * Profiling with enabled multi-process service (MPS) is not supported.
@@ -2547,9 +2527,14 @@ For example, specifying only option `--quiet` extracts the installer archive wit
 
   * On drivers older than 595, profiling CUDA graph nodes that are part of a graph launched from the device might cause hangs. Use [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode instead.
 
+  * Profiling CUDA graph kernel nodes that perform device-side graph launches compiled with relocatable device code (`-rdc=true`) might cause exceptions. Use [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode to profile these graphs, or rebuild the application without `-rdc`.
+
   * Profiling in [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode is performed on the context that is specified by the stream handle for the graph launch. Only kernel nodes executing on this context are profiled.
 
   * On drivers older than 580, profiling CUDA graph kernel nodes doing cluster launches is not supported.
+
+
+  * Profiling CUDA graph kernel nodes that were split by NVLINK utilization-centric scheduling on Rubin is not supported. Use [Graph Profiling](../NsightComputeCli/index.html#command-line-options-profile) mode instead.
 
 
   * On CUDA drivers older than 530.x, profiling on Windows Subsystem for Linux (WSL) is not supported if the system has multiple physical NVIDIA GPUs. This is not affected by setting `CUDA_VISIBLE_DEVICES`.
@@ -2563,6 +2548,9 @@ For example, specifying only option `--quiet` extracts the installer archive wit
   * For results which are collected with [Work ID/Cluster Launch Control](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#parallel-synchronization-and-communication-instructions-clusterlaunchcontrol-try-cancel) feature, the count of clusters, blocks, warps and threads launched on the device could be lower than configured. Metrics that depend on such counts would be affected accordingly.
 
   * On Windows, when in MCDM mode, changing access to GPU performance counters is not supported through the NVIDIA Control Panel. See [ERR_NVGPUCTRPERM](https://developer.nvidia.com/ERR_NVGPUCTRPERM) for further details.
+
+
+  * On GB20B/C, C2C peak-utilization metrics using `pct_of_peak_sustained_elapsed` are not available and report `NaN`. Use the C2C user-data byte counters and per-second metrics for traffic and bandwidth values.
 
 
 **Compatibility**
@@ -2628,7 +2616,7 @@ Linux (x86_64) (Drive SDK) | Yes | Windows*, Linux (x86_64), Linux (aarch64), QN
 macOS 13+ (x86_64, arm64) | Yes | Windows*, Linux (x86_64), Linux (aarch64 sbsa)  
 Linux (aarch64 l4t, Drive OS Linux) | Yes | Linux (aarch64 l4t, Drive OS Linux)  
 QNX | No | QNX  
-  
+
 Target platforms marked with * do not support remote launch from the respective host. Remote launch means that the application can be launched on the target system from the host UI. Instead, the application must be launched from the target system.
 
 Profiling of 32-bit processes is not supported.
@@ -2652,7 +2640,8 @@ NVIDIA GB11x | Yes
 NVIDIA GB20x | Yes  
 NVIDIA GB20b | Yes  
 NVIDIA GB20c | Yes  
-  
+NVIDIA GR100 | Yes  
+
 Many metrics used in NVIDIA Nsight Compute are identical to those of the PerfWorks Metrics API and follow the documented [Metrics Structure](../ProfilingGuide/index.html#metrics-structure). Non-PerfWorks metrics are documented in the [Metrics Reference](../ProfilingGuide/index.html#metrics-reference).
 
 ### 1.3.3. Library Support
@@ -2693,10 +2682,12 @@ The following feature set is supported per OptiX API version:
 ---|---|---|---  
 6.x | No | No | No  
 7.0 - 9.0 | Yes | Yes | Yes  
-  
+
 #### CUDA Tile
 
 CUDA Tile profiling is supported with driver versions 580.126.09+ on Linux and 582.16+ on Windows.
+
+CUDA Tile C++ JIT-compiled kernels are supported starting with driver version 610 or later, and profiling for these kernels is therefore available only with driver version 610+.
 
 A new Tile section has been added to provide a detailed summary of tile dimensions and pipeline utilization.
 
@@ -2704,13 +2695,16 @@ Tile section is displayed when tile profiling is enabled and a tile workload is 
 
 Tile section is part of the `full` and `detailed` section sets.
 
-cuTile Python Profile Support Feature | Current Support | Future Support  
+The following support matrix applies to both cuTile Python and CUDA Tile C++ workloads.
+
+CUDA Tile Profile Support Feature | Current Support | Future Support  
 ---|---|---  
 Tile kernel profiling | Yes | Yes  
 Source <-> SASS correlation | Yes | Yes  
 SIMT kernel feature parity | Yes | Yes  
-Source <-> Tile IR <-> SASS correlation | No | Yes  
-  
+Source <-> Tile IR <-> SASS correlation | Yes | Yes  
+Tile IR Source Comparison | Yes | Yes  
+
 ### 1.3.4. System Requirements
 
 #### CUDA Driver
@@ -2726,7 +2720,7 @@ Platform | Version
 x86_64 | 2.28  
 aarch64 sbsa | 2.28  
 aarch64 l4t | 2.28  
-  
+
 The NVIDIA Nsight Compute UI requires packages to be installed to enable Qt and other dependencies. Please refer to the [Qt for X11 Requirements](https://doc.qt.io/qt-6/linux-requirements.html). When executing `ncu-ui` with missing dependencies, an error message with information on the missing packages is shown. Note that only one package will be shown at a time, even though multiple may be missing from your system. For selected operating systems, the following commands install needed packages for NVIDIA Nsight Compute on X11:
 
   * **Ubuntu 20.04**
@@ -2759,6 +2753,14 @@ Only Windows 10 and 11 are supported as host and target.
 
 The Visual Studio 2019 redistributable is not automatically installed by the NVIDIA Nsight Compute installer. The workaround is to install the x64 version of the ‘Microsoft Visual C++ Redistributable for Visual Studio 2019’ manually. The installer is linked on the main download page for Visual Studio at <https://www.visualstudio.com/downloads/> or download directly from <https://go.microsoft.com/fwlink/?LinkId=746572>.
 
+### 1.3.5. Nsight Cloud
+
+NVIDIA Nsight Cloud is a set of utilities designed to simplify the process of launching and controlling NVIDIA developer tools, including NVIDIA Nsight Compute, in cloud environments.
+
+For more information and downloads, see the [Nsight Cloud collection on NGC](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/devtools/collections/nsight-cloud).
+
+Additional documentation is available at the [Nsight Cloud developer page](https://developer.nvidia.com/nsight-cloud).
+
 Notices
 
 Notices
@@ -2770,5 +2772,3 @@ Information furnished is believed to be accurate and reliable. However, NVIDIA C
 Trademarks
 
 NVIDIA and the NVIDIA logo are trademarks or registered trademarks of NVIDIA Corporation in the U.S. and other countries. Other company and product names may be trademarks of the respective companies with which they are associated.
-
-* * *

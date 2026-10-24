@@ -14,7 +14,7 @@ Another important concept is the management of system resources allocated for a 
 
 Thread instructions are executed sequentially in CUDA, and, as a result, executing other warps when one warp is paused or stalled is the only way to hide latencies and keep the hardware busy. Some metric related to the number of active warps on a multiprocessor is therefore important in determining how effectively the hardware is kept busy. This metric is _occupancy_.
 
-Occupancy is the ratio of the number of active warps per multiprocessor to the maximum number of possible active warps. (To determine the latter number, see the `deviceQuery` CUDA Sample or refer to [Compute Capabilities](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capabilities).) Another way to view occupancy is the percentage of the hardware’s ability to process warps that is actively in use.
+Occupancy is the ratio of the number of active warps per multiprocessor to the maximum number of possible active warps. (To determine the latter number, see the `deviceQuery` CUDA Sample or refer to [Compute Capabilities](https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/compute-capabilities.html#compute-capabilities).) Another way to view occupancy is the percentage of the hardware’s ability to process warps that is actively in use.
 
 Higher occupancy does not always equate to higher performance-there is a point above which additional occupancy does not improve performance. However, low occupancy always interferes with the ability to hide memory latency, resulting in performance degradation.
 
@@ -26,7 +26,7 @@ One of several factors that determine occupancy is register availability. Regist
 
 For purposes of calculating occupancy, the number of registers used by each thread is one of the key factors. For example, on devices of [CUDA Compute Capability](#cuda-compute-capability) 7.0 each multiprocessor has 65,536 32-bit registers and can have a maximum of 2048 simultaneous threads resident (64 warps x 32 threads per warp). This means that in one of these devices, for a multiprocessor to have 100% occupancy, each thread can use at most 32 registers. However, this approach of determining how register count affects occupancy does not take into account the register allocation granularity. For example, on a device of compute capability 7.0, a kernel with 128-thread blocks using 37 registers per thread results in an occupancy of 75% with 12 active 128-thread blocks per multi-processor, whereas a kernel with 320-thread blocks using the same 37 registers per thread results in an occupancy of 63% because only four 320-thread blocks can reside on a multiprocessor. Furthermore, register allocations are rounded up to the nearest 256 registers per warp.
 
-The number of registers available, the maximum number of simultaneous threads resident on each multiprocessor, and the register allocation granularity vary over different compute capabilities. Because of these nuances in register allocation and the fact that a multiprocessor’s shared memory is also partitioned between resident thread blocks, the exact relationship between register usage and occupancy can be difficult to determine. The `--ptxas options=v` option of `nvcc` details the number of registers used per thread for each kernel. See Hardware Multithreading of the CUDA C++ Programming Guide for the register allocation formulas for devices of various compute capabilities and Features and Technical Specifications of the CUDA C++ Programming Guide for the total number of registers available on those devices. Alternatively, NVIDIA provides an occupancy calculator as part of Nsight Compute; refer to <https://docs.nvidia.com/nsight-compute/NsightCompute/index.html#occupancy-calculator>.
+The number of registers available, the maximum number of simultaneous threads resident on each multiprocessor, and the register allocation granularity vary over different compute capabilities. Because of these nuances in register allocation and the fact that a multiprocessor’s shared memory is also partitioned between resident thread blocks, the exact relationship between register usage and occupancy can be difficult to determine. The `--ptxas options=v` option of `nvcc` details the number of registers used per thread for each kernel. See Hardware Multithreading of the CUDA Programming Guide for the register allocation formulas for devices of various compute capabilities and Features and Technical Specifications of the CUDA Programming Guide for the total number of registers available on those devices. Alternatively, NVIDIA provides an occupancy calculator as part of Nsight Compute; refer to <https://docs.nvidia.com/nsight-compute/NsightCompute/index.html#occupancy-calculator>.
 
 ![Using the CUDA Occupancy Calculator to project GPU multiprocessor occupancy](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/_images/using-cuda-occupancy-calculator-usage.png)
 
@@ -41,7 +41,7 @@ Note
 
 **Medium Priority:** To hide latency arising from register dependencies, maintain sufficient numbers of active threads per multiprocessor (i.e., sufficient occupancy).
 
-Register dependencies arise when an instruction uses a result stored in a register written by an instruction before it. The latency of most arithmetic instructions is typically 4 cycles on devices of compute capability 7.0. So threads must wait approximatly 4 cycles before using an arithmetic result. However, this latency can be completely hidden by the execution of threads in other warps. See [Registers](index.html#registers) for details.
+Register dependencies arise when an instruction uses a result stored in a register written by an instruction before it. The latency of most arithmetic instructions is typically 4 cycles on devices of compute capability 7.0. So threads must wait approximately 4 cycles before using an arithmetic result. However, this latency can be completely hidden by the execution of threads in other warps. See [Registers](index.html#registers) for details.
 
 
 ##  11.3. Thread and Block Heuristics 
@@ -86,13 +86,13 @@ A useful technique to determine the sensitivity of performance to occupancy is t
 As described in [Asynchronous and Overlapping Transfers with Computation](index.html#asynchronous-transfers-and-overlapping-transfers-with-computation), CUDA streams can be used to overlap kernel execution with data transfers. On devices that are capable of concurrent kernel execution, streams can also be used to execute multiple kernels simultaneously to more fully take advantage of the device’s multiprocessors. Whether a device has this capability is indicated by the `concurrentKernels` field of the `cudaDeviceProp` structure (or listed in the output of the `deviceQuery` CUDA Sample). Non-default streams (streams other than stream 0) are required for concurrent execution because kernel calls that use the default stream begin only after all preceding calls on the device (in any stream) have completed, and no operation on the device (in any stream) commences until they are finished.
 
 The following example illustrates the basic technique. Because `kernel1` and `kernel2` are executed in different, non-default streams, a capable device can execute the kernels at the same time.
-    
-    
+
+
     cudaStreamCreate(&stream1);
     cudaStreamCreate(&stream2);
     kernel1<<<grid, block, 0, stream1>>>(data_1);
     kernel2<<<grid, block, 0, stream2>>>(data_2);
-    
+
 
 
 ##  11.6. Multiple contexts 
@@ -104,21 +104,21 @@ With the CUDA Driver API, a CUDA application process can potentially create more
 While multiple contexts (and their associated resources such as global memory allocations) can be allocated concurrently on a given GPU, only one of these contexts can execute work at any given moment on that GPU; contexts sharing the same GPU are time-sliced. Creating additional contexts incurs memory overhead for per-context data and time overhead for context switching. Furthermore, the need for context switching can reduce utilization when work from several contexts could otherwise execute concurrently (see also [Concurrent Kernel Execution](index.html#concurrent-kernel-execution)).
 
 Therefore, it is best to avoid multiple contexts per GPU within the same CUDA application. To assist with this, the CUDA Driver API provides methods to access and manage a special context on each GPU called the _primary context_. These are the same contexts used implicitly by the CUDA Runtime when there is not already a current context for a thread.
-    
-    
+
+
     // When initializing the program/library
     CUcontext ctx;
     cuDevicePrimaryCtxRetain(&ctx, dev);
-    
+
     // When the program/library launches work
     cuCtxPushCurrent(ctx);
     kernel<<<...>>>(...);
     cuCtxPopCurrent(&ctx);
-    
+
     // When the program/library is finished with the context
     cuDevicePrimaryCtxRelease(dev);
-    
+
 
 Note
 
-NVIDIA-SMI can be used to configure a GPU for [exclusive process mode](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-modes), which limits the number of contexts per GPU to one. This context can be current to as many threads as desired within the creating process, and `cuDevicePrimaryCtxRetain` will fail if a non-primary context that was created with the CUDA driver API already exists on the device.
+NVIDIA-SMI can be used to configure a GPU for [exclusive process mode](https://docs.nvidia.com/cuda/cuda-programming-guide/index.html), which limits the number of contexts per GPU to one. This context can be current to as many threads as desired within the creating process, and `cuDevicePrimaryCtxRetain` will fail if a non-primary context that was created with the CUDA driver API already exists on the device.

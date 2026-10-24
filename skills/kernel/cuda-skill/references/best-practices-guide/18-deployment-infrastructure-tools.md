@@ -3,69 +3,69 @@
 
 ##  18.1. Nvidia-SMI 
 
-The NVIDIA System Management Interface (`nvidia-smi`) is a command line utility that aids in the management and monitoring of NVIDIA GPU devices. This utility allows administrators to query GPU device state and, with the appropriate privileges, permits administrators to modify GPU device state. `nvidia-smi` is targeted at Tesla and certain Quadro GPUs, though limited support is also available on other NVIDIA GPUs. `nvidia-smi` ships with NVIDIA GPU display drivers on Linux, and with 64-bit Windows Server 2008 R2 and Windows 7. `nvidia-smi` can output queried information as XML or as human-readable plain text either to standard output or to a file. See the nvidia-smi documenation for details. Please note that new versions of nvidia-smi are not guaranteed to be backward-compatible with previous versions.
+The NVIDIA System Management Interface (`nvidia-smi`) is a command line utility that aids in the management and monitoring of NVIDIA GPU devices. This utility allows administrators to query GPU device state and, with the appropriate privileges, permits administrators to modify GPU device state. `nvidia-smi` is targeted at Tesla and certain Quadro GPUs, though limited support is also available on other NVIDIA GPUs. `nvidia-smi` ships with NVIDIA GPU display drivers on Linux, and with 64-bit Windows Server 2008 R2 and Windows 7. `nvidia-smi` can output queried information as XML or as human-readable plain text either to standard output or to a file. See the nvidia-smi documentation for details. Please note that new versions of nvidia-smi are not guaranteed to be backward-compatible with previous versions.
 
 ###  18.1.1. Queryable state 
 
 ECC error counts
-    
+
 
 Both correctable single-bit and detectable double-bit errors are reported. Error counts are provided for both the current boot cycle and the lifetime of the GPU.
 
 GPU utilization
-    
+
 
 Current utilization rates are reported for both the compute resources of the GPU and the memory interface.
 
 Active compute process
-    
+
 
 The list of active processes running on the GPU is reported, along with the corresponding process name/ID and allocated GPU memory.
 
 Clocks and performance state
-    
+
 
 Max and current clock rates are reported for several important clock domains, as well as the current GPU performance state (_pstate_).
 
 Temperature and fan speed
-    
+
 
 The current GPU core temperature is reported, along with fan speeds for products with active cooling.
 
 Power management
-    
+
 
 The current board power draw and power limits are reported for products that report these measurements.
 
 Identification
-    
+
 
 Various dynamic and static information is reported, including board serial numbers, PCI device IDs, VBIOS/Inforom version numbers and product names.
 
 ###  18.1.2. Modifiable state 
 
 ECC mode
-    
+
 
 Enable and disable ECC reporting.
 
 ECC reset
-    
+
 
 Clear single-bit and double-bit ECC error counts.
 
 Compute mode
-    
+
 
 Indicate whether compute processes can run on the GPU and whether they run exclusively or concurrently with other compute processes.
 
 Persistence mode
-    
+
 
 Indicate whether the NVIDIA driver stays loaded when no applications are connected to the GPU. It is best to enable this option in most circumstances.
 
 GPU reset
-    
+
 
 Reinitialize the GPU hardware and software state via a secondary bus reset.
 
@@ -90,7 +90,7 @@ Managing your GPU cluster will help achieve maximum GPU utilization and help you
 
 Any PTX device code loaded by an application at runtime is compiled further to binary code by the device driver. This is called _just-in-time compilation_ (_JIT_). Just-in-time compilation increases application load time but allows applications to benefit from latest compiler improvements. It is also the only way for applications to run on devices that did not exist at the time the application was compiled.
 
-When JIT compilation of PTX device code is used, the NVIDIA driver caches the resulting binary code on disk. Some aspects of this behavior such as cache location and maximum cache size can be controlled via the use of environment variables; see Just in Time Compilation of the CUDA C++ Programming Guide.
+When JIT compilation of PTX device code is used, the NVIDIA driver caches the resulting binary code on disk. Some aspects of this behavior such as cache location and maximum cache size can be controlled via the use of environment variables; see Just in Time Compilation of the CUDA Programming Guide.
 
 
 ##  18.5. CUDA_VISIBLE_DEVICES 

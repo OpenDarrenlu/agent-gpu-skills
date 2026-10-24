@@ -136,7 +136,17 @@ Like CPUs, GPUs use virtual memory addressing. On all currently-supported system
 
 There are CUDA APIs to allocate GPU memory, CPU memory, and to copy between allocations on the CPU and GPU, within a GPU, or between GPUs in multi-GPU systems. The locality of data can be explicitly controlled when desired. [Unified Memory](#programming-model-unified-memory), discussed below, allows the placement of memory to be handled automatically by the CUDA runtime or system hardware.
 
-### 1.2.3.2. On-Chip Memory in GPUs
+### 1.2.3.2. Locality Domains:
+
+A _locality domain_ is a subset of a GPU’s memory and streaming multiprocessors (SMs). All GPUs have at least one locality domain. Larger GPUs may have more than one locality domain. On GPUs with more than one locality domain, performance of some kernels can be improved by using _localized_ memory and compute. _Localized memory_ is a memory allocation contained entirely within a single locality domain. Kernels using this memory can be scheduled on SMs within the same locality domain. Applications benefit from localization when memory and compute are divided between locality domains and work can be issued to each locality domain in parallel.
+
+GPU memory which is allocated without specifying a locality domain is said to be _unlocalized_. Unlocalized memory allocations span across locality domains, except in the case of very small allocations.
+
+On GPUs with only one locality domain, all GPU SMs and memory are part of that one locality domain.
+
+[Section 4.7](../04-special-topics/locality-domains.html#locality-domains) shows the mechanisms for localizing GPU memory and compute within a specific locality domain. Locality domains are a performance feature: CUDA code which does not localize memory or compute will still execute correctly.
+
+### 1.2.3.3. On-Chip Memory in GPUs
 
 In addition to the global memory, each GPU has some on-chip memory. Each SM has its own register file and shared memory. These memories are part of the SM and can be accessed extremely quickly from threads executing within the SM.
 
@@ -148,11 +158,11 @@ To schedule a thread block to an SM, the total number of registers needed for ea
 
 Shared memory allocations are done at the thread block level. That is, unlike register allocations which are per thread, allocations of shared memory are common to the entire thread block.
 
-#### 1.2.3.2.1. Caches
+#### 1.2.3.3.1. Caches
 
 In addition to programmable memories, GPUs have both L1 and L2 caches. Each SM has an L1 cache which is part of the unified data cache. A larger L2 cache is shared by all SMs within a GPU. This can be seen in the GPU block diagram in [Figure 2](#gpu-cpu-system-diagram). Each SM also has a separate [constant cache](../02-basics/writing-cuda-kernels.html#writing-cuda-kernels-constant-memory), which is used to cache values in global memory that have been declared to be constant over the life of a kernel. The compiler may place kernel parameters into constant memory as well. This can improve kernel performance by allowing kernel parameters to be cached in the SM separately from the L1 data cache.
 
-### 1.2.3.3. Unified Memory
+### 1.2.3.4. Unified Memory
 
 When an application allocates memory explicitly on the GPU or CPU, that memory is only accessible to code running on that device. That is, CPU memory can only be accessed from CPU code, and GPU memory can only be accessed from kernels running on the GPU[[2]](#fn-mapped-memory-system-access) . CUDA APIs for copying memory between the CPU and GPU are used to explicitly copy data to the correct memory at the right time.
 

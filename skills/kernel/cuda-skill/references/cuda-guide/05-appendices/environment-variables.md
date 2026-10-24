@@ -3,7 +3,7 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/environme
 ---
 
 # 5.2. CUDA Environment Variables  
-  
+
 The following section lists the CUDA environment variables. Those related to the Multi-Process Service (MPS) are documented in the [GPU Deployment and Management Guide](https://docs.nvidia.com/deploy/mps/appendix-tools-and-interface-reference.html#environment-variables).
 
 ## 5.2.1. Device Enumeration and Properties
@@ -33,13 +33,13 @@ GPU identifiers are provided as:
 The device count returned by the `cudaGetDeviceCount()` API includes only the visible devices, so CUDA APIs that use integer device identifiers only support ordinals in the range [0, visible device count - 1]. The enumeration order of the GPU devices determines the ordinal values. For example, with `CUDA_VISIBLE_DEVICES=2,1`, calling `cudaSetDevice(0)` will set device 2 as the current device, as it is enumerated first and assigned an ordinal of 0. Calling `cudaGetDevice(&device_ordinal)` after that will also set `device_ordinal` to 0, which corresponds to device 2.
 
 **Examples** :
-    
-    
+
+
     nvidia-smi -L # Get list of GPU UUIDs
     CUDA_VISIBLE_DEVICES=0,1
     CUDA_VISIBLE_DEVICES=GPU-8932f937-d72c-4106-c12f-20bd9faed9f6
     CUDA_VISIBLE_DEVICES=MIG-GPU-8932f937-d72c-4106-c12f-20bd9faed9f6/1/2
-    
+
 
 * * *
 
@@ -55,12 +55,12 @@ The environment variable controls the order in which CUDA enumerates the availab
 
 
 **Examples** :
-    
-    
+
+
     CUDA_DEVICE_ORDER=FASTEST_FIRST
     CUDA_DEVICE_ORDER=PCI_BUS_ID
     nvidia-smi --query-gpu=name,pci.bus_id # Get list of PCI bus IDs
-    
+
 
 * * *
 
@@ -76,11 +76,11 @@ The environment variable alters how [Unified Memory](../02-basics/understanding-
 
 
 **Examples** :
-    
-    
+
+
     CUDA_MANAGED_FORCE_DEVICE_ALLOC=0
     CUDA_MANAGED_FORCE_DEVICE_ALLOC=1 # force device memory
-    
+
 
 * * *
 
@@ -88,29 +88,29 @@ The environment variable alters how [Unified Memory](../02-basics/understanding-
 
 ### 5.2.2.1. `CUDA_CACHE_DISABLE`
 
-The environment variable controls the behavior of the on-disk [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache. Disabling the JIT cache forces PTX to CUBIN compilation for a CUDA application each time it is executed, unless the CUBIN code for the running architecture is found in the binary.
+The environment variable controls the behavior of the on-disk [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache. Disabling the JIT cache forces PTX to CUBIN compilation for a CUDA application each time it is executed, unless the CUBIN code for the running architecture is found in the binary. The same cache is also used to store [finalized cubins](../01-introduction/cuda-platform.html#cuda-platform-binary-finalization), and setting this environment variable will also force finalization of cubins, where necessary.
 
 Disabling the JIT cache increases an application’s load time during initial execution. However, it can be useful for reducing the application’s disk space and for diagnosing differences across driver versions or build flags.
 
 **Possible Values** :
 
-  * `1`: Disables PTX JIT caching.
+  * `1`: Disables PTX JIT and binary finalization caching.
 
   * `0`: Enables PTX JIT caching (default).
 
 
 **Examples** :
-    
-    
+
+
     CUDA_CACHE_DISABLE=1 # disables caching
     CUDA_CACHE_DISABLE=0 # enables caching
-    
+
 
 * * *
 
 ### 5.2.2.2. `CUDA_CACHE_PATH`
 
-The environment variable specifies the directory path for the [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache.
+The environment variable specifies the directory path for the [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache. The same cache is also used to store [finalized cubins](../01-introduction/cuda-platform.html#cuda-platform-binary-finalization).
 
 **Possible Values** : The absolute path to the cache directory (with appropriate access permissions). The default values are:
 
@@ -120,16 +120,16 @@ The environment variable specifies the directory path for the [Just-In-Time (JIT
 
 
 **Example** :
-    
-    
+
+
     CUDA_CACHE_PATH=~/tmp
-    
+
 
 * * *
 
 ### 5.2.2.3. `CUDA_CACHE_MAXSIZE`
 
-The environment variable specifies the [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache size in bytes. Binaries that exceed this size are not cached. If needed, older binaries are evicted from the cache to make room for newer ones.
+The environment variable specifies the [Just-In-Time (JIT) compilation](../01-introduction/cuda-platform.html#cuda-platform-just-in-time-compilation) cache size in bytes. Binaries that exceed this size are not cached. If needed, older binaries are evicted from the cache to make room for newer ones. The same cache is also used to store [finalized cubins](../01-introduction/cuda-platform.html#cuda-platform-binary-finalization).
 
 **Possible Values** : Number of bytes. The default values are:
 
@@ -141,10 +141,10 @@ The environment variable specifies the [Just-In-Time (JIT) compilation](../01-in
 `4294967296` (4 GiB) is the maximum size.
 
 **Example** :
-    
-    
+
+
     CUDA_CACHE_MAXSIZE=268435456 # 256 MiB
-    
+
 
 * * *
 
@@ -164,10 +164,10 @@ Forcing JIT compilation increases an application’s load time during initial ex
 
 
 **Example** :
-    
-    
+
+
     CUDA_FORCE_PTX_JIT=1
-    
+
 
 * * *
 
@@ -187,10 +187,10 @@ A kernel will fail to load if it does not have embedded binary code, or if the e
 
 
 **Example** :
-    
-    
+
+
     CUDA_DISABLE_PTX_JIT=1
-    
+
 
 * * *
 
@@ -206,10 +206,10 @@ The environment variable affects the preloading of libraries required for [NVVM]
 
 
 **Example** :
-    
-    
+
+
     CUDA_FORCE_PRELOAD_LIBRARIES=1
-    
+
 
 * * *
 
@@ -229,10 +229,10 @@ Disabling asynchronous execution results in slower execution but is useful for d
 
 
 **Example** :
-    
-    
+
+
     CUDA_LAUNCH_BLOCKING=1
-    
+
 
 * * *
 
@@ -245,10 +245,10 @@ Setting this environment variable also modifies the number of copy connections, 
 **Possible Values** : `1` to `32` connections, default is `8` (assumes no MPS)
 
 **Example** :
-    
-    
+
+
     CUDA_DEVICE_MAX_CONNECTIONS=16
-    
+
 
 * * *
 
@@ -261,10 +261,10 @@ The `CUDA_DEVICE_MAX_COPY_CONNECTIONS` overrides the value of copy connections s
 **Possible Values** : `1` to `32` connections, default is `8` (assumes no MPS)
 
 **Example** :
-    
-    
+
+
     CUDA_DEVICE_MAX_COPY_CONNECTIONS=16
-    
+
 
 * * *
 
@@ -278,10 +278,10 @@ The environment variable specifies the scaling factor for the size of the queues
 
 
 **Example** :
-    
-    
+
+
     CUDA_SCALE_LAUNCH_QUEUES=2x
-    
+
 
 * * *
 
@@ -299,10 +299,10 @@ The environment variable controls the CUDA graph’s execution priority relative
 
 
 **Example** :
-    
-    
+
+
     CUDA_GRAPHS_USE_NODE_PRIORITY=1
-    
+
 
 * * *
 
@@ -320,10 +320,10 @@ When enabled, a CUDA application will halt and wait when a device-side exception
 
 
 **Example** :
-    
-    
+
+
     CUDA_DEVICE_WAITS_ON_EXCEPTION=1
-    
+
 
 * * *
 
@@ -336,10 +336,10 @@ It is relevant for GPUs that support persistent L2 cache, specifically devices w
 **Possible Values** : Percentage value between 0 and 100, default is 0.
 
 **Example** :
-    
-    
+
+
     CUDA_DEVICE_DEFAULT_PERSISTING_L2_CACHE_PERCENTAGE_LIMIT=25 # 25%
-    
+
 
 * * *
 
@@ -348,13 +348,34 @@ It is relevant for GPUs that support persistent L2 cache, specifically devices w
 On Linux hosts, setting this environment variable to 1 prevents boosting the device performance state, instead pstate can be selected implicitly based on various heuristics. This option can potentially be used to reduce power consumption, but may result in higher latency in certain scenarios due to dynamic performance state selection.
 
 **Example** :
-    
-    
+
+
     CUDA_DISABLE_PERF_BOOST=1 # perf boost disabled, Linux only.
     CUDA_DISABLE_PERF_BOOST=0 # default behavior
-    
 
-### 5.2.3.9. `CUDA_AUTO_BOOST` [[deprecated]]
+
+* * *
+
+### 5.2.3.9. `CUDA_PREFER_SPINLOCKS_ON_HOST`
+
+This environment variable provides a hint to the CUDA Driver and Runtime to prefer a spin-based locking mode for certain internal host-side synchronization paths. In this mode, internal locks may actively poll for availability rather than blocking and yielding the CPU. This can reduce synchronization latency for short-held locks by avoiding kernel transitions and wakeup overhead, improving fast‑path performance under low to moderate contention (for example, when multiple host threads contend on the same CUDA object or execution context). Spin-based locking does not provide scheduler-assisted fairness or priority inheritance. Under host thread preemption, oversubscription, or mixed workloads, enabling spin-based locking may increase the risk of priority inversion, starvation, or reduced system responsiveness.
+
+**Possible Values** :
+
+  * `0`: Default behavior.
+
+  * `1`: Prefer spinlocks for internal synchronization.
+
+
+**Example** :
+
+
+    CUDA_PREFER_SPINLOCKS_ON_HOST=1
+
+
+* * *
+
+### 5.2.3.10. `CUDA_AUTO_BOOST` [[deprecated]]
 
 The environment variable affects the GPU clock “auto boost” behavior, namely dynamic clock boosting. It overrides the “auto boost” option of the `nvidia-smi` tool, namely `nvidia-smi --auto-boost-default=0`.
 
@@ -384,11 +405,11 @@ The environment variable affects how the CUDA runtime loads modules, specificall
 
 
 **Examples** :
-    
-    
+
+
     CUDA_MODULE_LOADING=EAGER
     CUDA_MODULE_LOADING=LAZY
-    
+
 
 * * *
 
@@ -410,10 +431,10 @@ This is a complementary setting to the kernel-focused setting in `CUDA_MODULE_LO
 
 
 **Example** :
-    
-    
+
+
     CUDA_MODULE_DATA_LOADING=EAGER
-    
+
 
 ### 5.2.4.3. `CUDA_BINARY_LOADER_THREAD_COUNT`
 
@@ -427,10 +448,29 @@ Sets the number of CPU threads to use when loading device binaries. When set to 
 
 
 **Example** :
-    
-    
+
+
     CUDA_BINARY_LOADER_THREAD_COUNT=4
-    
+
+
+* * *
+
+### 5.2.4.4. `CUDA_DEVICE_DEFAULT_STACK_SIZE_MAX`
+
+When this environment variable is set to `1`, the driver pre-allocates the worst-case per-thread stack memory during the corresponding `cuModuleLoad*` call, based on the maximum requirement across all functions in that module. By default, the CUDA driver allocates per-thread stack memory on demand: when a kernel launch requires more stack than is currently available, the driver expands the allocation before execution.
+
+**Possible Values** :
+
+  * `0` or unset: Stack memory is expanded on demand at kernel launch (default).
+
+  * `1`: Pre-allocate maximum stack memory at module load time.
+
+
+**Example** :
+
+
+    CUDA_DEVICE_DEFAULT_STACK_SIZE_MAX=1
+
 
 * * *
 
@@ -446,7 +486,7 @@ If the `CUDA_LOG_FILE` environment variable is set, the user can see the followi
 **Possible Values** : `stdout`, `stderr`, or a valid file path (with appropriate access permissions)
 
 **Examples** :
-    
-    
+
+
     CUDA_LOG_FILE=stdout
     CUDA_LOG_FILE=/tmp/dbg_cuda_log

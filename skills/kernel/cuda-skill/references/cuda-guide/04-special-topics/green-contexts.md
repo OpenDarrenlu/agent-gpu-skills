@@ -3,7 +3,7 @@ url: https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/green
 ---
 
 # 4.6. Green Contexts  
-  
+
 A green context (GC) is a lightweight context associated, from its creation, with a set of specific GPU resources. Users can partition GPU resources, currently streaming multiprocessors (SMs) and work queues (WQs), during green context creation, so that GPU work targeting a green context can only use its provisioned SMs and work queues. Doing so can be beneficial in reducing, or better controlling, interference due to use of common resources. An application can have multiple green contexts.
 
 Using green contexts does not require any GPU code (kernel) changes, just small host-side changes (e.g., green context creation and stream creation for this green context). The green context functionality can be useful in various scenarios. For example, it can help ensure some SMs are always available for a latency-sensitive kernel to start executing, assuming no other constraints, or provide a quick way to test the effect of using fewer SMs without any kernel modifications.
@@ -57,69 +57,69 @@ With MPS, programmatic partitioning of SM resources is also possible for a CUDA 
 ## 4.6.2. Green Contexts: Ease of use
 
 To highlight how easy it is to use green contexts, assume you have the following code snippet that creates two CUDA streams and then calls a function that launches kernels via `<<<>>>` on these CUDA streams. As discussed earlier, other than changing the kernels’ launch geometries, one cannot influence how many SMs these kernels can use.
-    
-    
+
+
     int gpu_device_index = 0; // GPU ordinal
     CUDA_CHECK(cudaSetDevice(gpu_device_index));
-    
+
     cudaStream_t strm1, strm2;
     CUDA_CHECK(cudaStreamCreateWithFlags(&strm1, cudaStreamNonBlocking));
     CUDA_CHECK(cudaStreamCreateWithFlags(&strm2, cudaStreamNonBlocking));
-    
+
     // No control over how many SMs kernel(s) running on each stream can use
     code_that_launches_kernels_on_streams(strm1, strm2); // what is abstracted in this function + the kernels is the vast majority of your code
-    
+
     // cleanup code not shown
-    
+
 
 Starting with CUDA 13.1, one can control the number of SMs a given kernel can have access to, using green contexts. The code snippet below shows how easy it is to do that. With a few extra lines and without any kernel modifications, you can control the SMs resources kernel(s) launched on these different streams can use.
-    
-    
+
+
     int gpu_device_index = 0; // GPU ordinal
     CUDA_CHECK(cudaSetDevice(gpu_device_index));
-    
+
     /* ------------------ Code required to create green contexts --------------------------- */
-    
-    
+
+
     // Get all available GPU SM resources
     cudaDevResource initial_GPU_SM_resources {};
     CUDA_CHECK(cudaDeviceGetDevResource(gpu_device_index, &initial_GPU_SM_resources, cudaDevResourceTypeSm));
-    
+
     // Split SM resources. This example creates one group with 16 SMs and one with 8. Assuming your GPU has >= 24 SMs
     cudaDevSmResource result[2] {{}, {}};
     cudaDevSmResourceGroupParams group_params[2] =  {
             {.smCount=16, .coscheduledSmCount=0, .preferredCoscheduledSmCount=0, .flags=0},
             {.smCount=8,  .coscheduledSmCount=0, .preferredCoscheduledSmCount=0, .flags=0}};
     CUDA_CHECK(cudaDevSmResourceSplit(&result[0], 2, &initial_GPU_SM_resources, nullptr, 0, &group_params[0]));
-    
+
     // Generate resource descriptors for each resource
     cudaDevResourceDesc_t resource_desc1 {};
     cudaDevResourceDesc_t resource_desc2 {};
     CUDA_CHECK(cudaDevResourceGenerateDesc(&resource_desc1, &result[0], 1));
     CUDA_CHECK(cudaDevResourceGenerateDesc(&resource_desc2, &result[1], 1));
-    
+
     // Create green contexts
     cudaExecutionContext_t my_green_ctx1 {};
     cudaExecutionContext_t my_green_ctx2 {};
     CUDA_CHECK(cudaGreenCtxCreate(&my_green_ctx1, resource_desc1, gpu_device_index, 0));
     CUDA_CHECK(cudaGreenCtxCreate(&my_green_ctx2, resource_desc2, gpu_device_index, 0));
-    
+
     /* ------------------ Modified code --------------------------- */
-    
+
     // You just need to use a different CUDA API to create the streams
     cudaStream_t strm1, strm2;
     CUDA_CHECK(cudaExecutionCtxStreamCreate(&strm1, my_green_ctx1, cudaStreamDefault, 0));
     CUDA_CHECK(cudaExecutionCtxStreamCreate(&strm2, my_green_ctx2, cudaStreamDefault, 0));
-    
+
     /* ------------------ Unchanged code --------------------------- */
-    
+
     // No need to modify any code in this function or in your kernel(s).
     // Reminder: what is abstracted in this function + kernels is the vast majority of your code
     // Now kernel(s) running on stream strm1 will use at most 16 SMs and kernel(s) on strm2 at most 8 SMs.
     code_that_launches_kernels_on_streams(strm1, strm2);
-    
+
     // cleanup code not shown
-    
+
 
 Various execution context APIs, some of which were shown in the previous example, take an explicit `cudaExecutionContext_t` handle and thus ignore the context that is current to the calling thread. Until now, CUDA runtime users who did not use the driver API would by default only interact with the primary context that is implicitly set as current to a thread via `cudaSetDevice()`. This shift to explicit context-based programming provides easier to understand semantics and can have additional benefits compared to the previous implicit context-based programming that relied on thread-local state (TLS).
 
@@ -130,8 +130,8 @@ The following sections will explain all the steps shown in the previous code sni
 At the heart of a green context is a device resource (`cudaDevResource`) tied to a specific GPU device. Resources can be combined and encapsulated into a descriptor (`cudaDevResourceDesc_t`). A green context only has access to the resources encapsulated into the descriptor used for its creation.
 
 Currently the `cudaDevResource` data structure is defined as:
-    
-    
+
+
     struct {
          enum cudaDevResourceType type;
          union {
@@ -140,7 +140,7 @@ Currently the `cudaDevResource` data structure is defined as:
              struct cudaDevWorkqueueResource wq;
          };
      };
-    
+
 
 The supported valid resource types are `cudaDevResourceTypeSm`, `cudaDevResourceTypeWorkqueueConfig` and `cudaDevResourceTypeWorkqueue`, while `cudaDevResourceTypeInvalid` identifies an invalid resource type.
 
@@ -169,7 +169,7 @@ The different resource type structs have fields that are set either explicitly b
 
     * `unsigned int smCoscheduledAlignment`: number of SMs in the resource guaranteed to be co-scheduled on the same GPU processing cluster, which is relevant for thread block clusters. `smCount` is a multiple of this value when `flags` is zero.
 
-    * `unsigned int flags`: supported flags are 0 (default) and `cudaDevSmResourceGroupBackfill` (see `cudaDevSmResourceGroup` flags).
+    * `unsigned int flags`: supported flags are 0 (default), `cudaDevSmResourceGroupBackfill`, and `cudaDevSmResourceGroupLocalityDomainId` (see `cudaDevSmResourceGroup` flags).
 
 The above fields will be set via either the appropriate split API (`cudaDevSmResourceSplitByCount` or `cudaDevSmResourceSplit`) used to create this SM-type resource or will be populated by the `cudaDeviceGetDevResource` API which retrieves the SM resources of a given GPU device. These fields should never be set directly by the user. See next section for more details.
 
@@ -217,38 +217,38 @@ The relevant CUDA runtime API function signatures are listed below:
 All valid `cudaDevResourceType` types are permitted for each of these APIs, with the exception of `cudaStreamGetDevResource` which only supports an SM-type resource.
 
 Usually, the starting point will be a GPU device. The code snippet below shows how to get the available SM resources of a given GPU device. After a successful `cudaDeviceGetDevResource` call, the user can review the number of SMs available in this resource.
-    
-    
+
+
     int current_device = 0; // assume device ordinal of 0
     CUDA_CHECK(cudaSetDevice(current_device));
-    
+
     cudaDevResource initial_SM_resources = {};
     CUDA_CHECK(cudaDeviceGetDevResource(current_device /* GPU device */,
                                        &initial_SM_resources /* device resource to populate */,
                                        cudaDevResourceTypeSm /* resource type*/));
-    
+
     std::cout << "Initial SM resources: " << initial_SM_resources.sm.smCount << " SMs" << std::endl; // number of available SMs
-    
+
     // Special fields relevant for partitioning (see Step 3 below)
     std::cout << "Min. SM partition size: " <<  initial_SM_resources.sm.minSmPartitionSize << " SMs" << std::endl;
     std::cout << "SM co-scheduled alignment: " <<  initial_SM_resources.sm.smCoscheduledAlignment << " SMs" << std::endl;
-    
+
 
 One can also get the available workqueue config. resources, as shown in the code snippet below.
-    
-    
+
+
     int current_device = 0; // assume device ordinal of 0
     CUDA_CHECK(cudaSetDevice(current_device));
-    
+
     cudaDevResource initial_WQ_config_resources = {};
     CUDA_CHECK(cudaDeviceGetDevResource(current_device /* GPU device */,
                                        &initial_WQ_config_resources /* device resource to populate */,
                                        cudaDevResourceTypeWorkqueueConfig /* resource type*/));
-    
+
     std::cout << "Initial WQ config. resources: " << std::endl;
     std::cout << "  - WQ concurrency limit: " << initial_WQ_config_resources.wqConfig.wqConcurrencyLimit << std::endl;
     std::cout << "  - WQ sharing scope: " << initial_WQ_config_resources.wqConfig.sharingScope << std::endl;
-    
+
 
 After a successful `cudaDeviceGetDevResource` call, the user can review the `wqConcurrencyLimit` for this resource. When the starting point is a GPU device, the `wqConcurrencyLimit` will match the value of `CUDA_DEVICE_MAX_CONNECTIONS` environment variable or its default value.
 
@@ -277,30 +277,30 @@ Table 14 Split functionality Requested |  |  | Actual (for GH200 with 132 SMs) |
 6 | 11 | 0 | 6 groups of 16 SMs | 36 | multiple of 8 requirement  
 6 | 11 | `CU_DEV_SM_RESOURCE_SPLIT_IGNORE_SM_COSCHEDULING` | 6 groups with 12 SMs each | 60 | lowered to multiple of 2 req.  
 2 | 1 | 0 | 2 groups with 8 SMs each | 116 | min. 8 SMs requirement  
-  
+
 Here is a code snippet requesting to split the available SM resources into five groups of 8 SMs each:
-    
-    
+
+
     cudaDevResource avail_resources = {};
     // Code that has populated avail_resources not shown
-    
+
     unsigned int min_SM_count = 8;
     unsigned int actual_split_groups = 5; // may be updated
-    
+
     cudaDevResource actual_split_result[5] = {{}, {}, {}, {}, {}};
     cudaDevResource remaining_partition = {};
-    
+
     CUDA_CHECK(cudaDevSmResourceSplitByCount(&actual_split_result[0],
                                              &actual_split_groups,
                                              &avail_resources,
                                              &remaining_partition,
                                              0 /*useFlags */,
                                              min_SM_count));
-    
+
     std::cout << "Split " << avail_resources.sm.smCount << " SMs into " << actual_split_groups << " groups " \
               << "with " << actual_split_result[0].sm.smCount << " each " \
               << "and a remaining group with " << remaining_partition.sm.smCount << " SMs" << std::endl;
-    
+
 
 Be aware that:
 
@@ -333,6 +333,10 @@ Figure 47 SM resource split using the cudaDevSmResourceSplit API
 
 When requesting a heterogeneous split, one needs to specify the SM count (`smCount` field of relevant `groupParams` entry) for each resource in `result`. This SM count should always be a multiple of two. For the scenario in the previous image, `groupParams[0].smCount` would be `X`, `groupParams[1].smCount` `Y`, etc. However, just specifying the SM count is not sufficient, if an application uses [Thread Block Clusters](../01-introduction/programming-model.html#programming-model-thread-block-clusters). Since all the thread blocks of a cluster are guaranteed to be co-scheduled, the user also needs to specify the maximum supported cluster size, if any, a given resource group should support. This is possible via the `coscheduledSmCount` field of the relevant `groupParams` entry. For GPUs with compute capability 10.0 and on (CC 10.0+), clusters can also have a preferred dimension, which is a multiple of their default cluster dimension. During a single kernel launch on supported systems, this larger preferred cluster dimension is used as much as possible, if at all, and the smaller default cluster dimension is used otherwise. The user can express this preferred cluster dimension hint via the `preferredCoscheduledSmCount` field of the relevant `groupParams` entry. Finally, there may be cases where the user may want to loosen the SM count requirements and pull in more available SMs in a given group; the user can express this backfill option by setting the `flags` field of the relevant `groupParams` entry to its non-default flag value.
 
+The API permits a group to target a locality domain. Set `cudaDevSmResourceGroupLocalityDomainId` in the `cudaDevSmResourceGroupParams.flags` field and set `cudaDevSmResourceGroupParams.localityDomainId` to a valid locality domain ID for the resource. `cudaDevSmResourceSplit` then selects SMs from that locality domain. If `cudaDevSmResourceGroupBackfill` is also set, CUDA may fill the group with SMs from outside the requested locality domain after using the target domain first.
+
+See [Locality Domains](locality-domains.html#locality-domains) for the overall programming model.
+
 To provide more flexibility, the `cudaDevSmResourceSplit` API also has a **discovery** mode, to be used when the exact SM count, for one or more groups, is not known ahead of time. For example, a user may want to create a device resource that has as many SMs as possible, while meeting some co-scheduling requirements (e.g., allowing clusters of size four). To exercise this discovery mode, the user can set the `smCount` field of the relevant `groupParams` entry (or entries) to zero. After a successful `cudaDevSmResourceSplit` call, the `smCount` field of the `groupParams` will have been populated with a valid non-zero value; we refer to this as the **actual** `smCount` value. If `result` was not null (so this was not a dry run), then the relevant group of `result` will also have its `smCount` set to the same value. The order the `nbGroups` `groupParams` entries are specified matters, as they are evaluated from left (index 0) to right (index nbGroups-1).
 
 [Table 15](#green-contexts-split-api-table) provides a high level view of the supported arguments for the `cudaDevSmResourceSplit` API.
@@ -340,14 +344,14 @@ To provide more flexibility, the `cudaDevSmResourceSplit` API also has a **disco
 Table 15 Overview of cudaDevSmResourceSplit split API | groupParams array; showing entry i with i [0, nbGroups)  
 ---|---  
 result | nbGroups | input | remainder | flags | smCount | coscheduledSmCount | preferredCoscheduledSmCount | flags  
-nullptr for explorative dry run; not null ptr otherwise | number of groups | resource to split into nbGroups groups | nullptr if you do not want a remainder group | 0 | 0 for discovery mode or other valid smCount | 0 (default) or valid coscheduled SM count | 0 (default) or valid preferred coscheduled SM count (hint) | 0 (default) or cudaDevSmResourceGroupBackfill  
-  
+nullptr for explorative dry run; not null ptr otherwise | number of groups | resource to split into nbGroups groups | nullptr if you do not want a remainder group | 0 | 0 for discovery mode or other valid smCount | 0 (default) or valid coscheduled SM count | 0 (default) or valid preferred coscheduled SM count (hint) | 0 (default), cudaDevSmResourceGroupBackfill, or cudaDevSmResourceGroupLocalityDomainId  
+
 Notes:
 
   1. `cudaDevSmResourceSplit` API’s return value depends on `result`:
 
 
->   * `result != nullptr`: the API will return `cudaSuccess` only when the split is successful and `nbGroups` valid `cudaDevResource` groups, meeting the specified requirements were created; otherwise, it will return an error. As different types of errors may return the same error code (e.g., `CUDA_ERROR_INVALID_RESOURCE_CONFIGURATION`), it is recommended to use the `CUDA_LOG_FILE` environment variable to get more informative error descriptions during development.
+>   * `result != nullptr`: the API will return `cudaSuccess` only when the split is successful and `nbGroups` valid `cudaDevResource` groups, meeting the specified requirements were created; otherwise, it will return an error. As different types of errors may return the same error code (e.g., `cudaErrorInvalidResourceConfiguration`), it is recommended to use the `CUDA_LOG_FILE` environment variable to get more informative error descriptions during development.
 > 
 >   * `result == nullptr`: the API may return `cudaSuccess` even if the resulting `smCount` of a group is zero, a case which would have returned an error with a non-nullptr `result`. Think of this mode as a dry-run test you can use while exploring what is supported, especially in discovery mode.
 > 
@@ -361,7 +365,7 @@ Notes:
 > 
 >   * be in the `[2, input.sm.smCount]` range and
 > 
->   * `(flags == 0) ? (multiple of actual group_params[i].coscheduledSmCount) : (>= groups_params[i].coscheduledSmCount)`
+>   * be a multiple of `groupParams[i].coscheduledSmCount` when `cudaDevSmResourceGroupBackfill` is not set, or be greater than or equal to it when backfill is set.
 > 
 > 
 
@@ -386,8 +390,8 @@ Notes:
 
 
 Before providing more detailed information for the various `cudaDevSmResourceGroupParams` fields, [Table 16](#green-contexts-split-api-use-cases-examples) shows what these values could be for some example use cases. Assume an `initial_GPU_SM_resources` device resource has already been populated, as in the previous code snippet, and is the resource that will be split. Every row in the table will have that same starting point. For simplicity the table will only show the `nbGroups` value and the `groupParams` fields per use case that can be used in a code snippet like the one below.
-    
-    
+
+
     int nbGroups = 2; // update as needed
     unsigned int default_split_flags = 0;
     cudaDevResource remainder {}; // update as needed
@@ -395,7 +399,7 @@ Before providing more detailed information for the various `cudaDevSmResourceGro
     cudaDevSmResourceGroupParams group_params_use_case[2] = {{.smCount = X, .coscheduledSmCount=0, .preferredCoscheduledSmCount = 0, .flags = 0},
                                                              {.smCount = Y, .coscheduledSmCount=0, .preferredCoscheduledSmCount = 0, .flags = 0}}
     CUDA_CHECK(cudaDevSmResourceSplit(&result_use_case[0], nbGroups, &initial_GPU_SM_resources, remainder, default_split_flags, &group_params_use_case[0]));
-    
+
 
 Table 16 split API use cases |  |  |  | groupParams[i] fields (i shown in ascending order; see last column) | i  
 ---|---|---|---|---|---  
@@ -410,7 +414,7 @@ Table 16 split API use cases |  |  |  | groupParams[i] fields (i shown in ascend
 4 | One resource with as many SMs as possible, which can run clusters of size 8, and one remainder. | 1 | not nullptr | 0 | 8 | 8 | 0 | 0  
 5 | One resource with as many SMs as possible, which can run clusters of size 4, and one with 8 SMs. (Note: Order matters! Changing order of entries in groupParams array could mean no SMs left for the 8-SM group) | 2 | nullptr | 8 | 2 | 2 | 0 | 0  
 0 | 4 | 4 | 0 | 1  
-  
+
 **Detailed information about the various cudaDevSmResourceGroupParams struct fields**
 
 `smCount`:
@@ -466,17 +470,17 @@ Table 16 split API use cases |  |  |  | groupParams[i] fields (i shown in ascend
 ### 4.6.4.3. Step 2 (continued): Add workqueue resources
 
 If you also want to specify a workqueue resource, then this needs to be done explicitly. The following example shows how to create a workqueue configuration resource for a specific device with balanced sharing scope and a concurrency limit of four.
-    
-    
+
+
     cudaDevResource split_result[2] = {{}, {}};
     // code to populate split_result[0] not shown; used split API with nbGroups=1
-    
+
     // The last resource will be a workqueue resource.
     split_result[1].type = cudaDevResourceTypeWorkqueueConfig;
     split_result[1].wqConfig.device = 0; // assume device ordinal of 0
     split_result[1].wqConfig.sharingScope = cudaDevWorkqueueConfigScopeGreenCtxBalanced;
     split_result[1].wqConfig.wqConcurrencyLimit = 4;
-    
+
 
 A workqueue concurrency limit of four hints to the driver that the user expects maximum four concurrent stream-ordered workloads. The driver will assign work queues trying to respect this hint, if possible.
 
@@ -489,15 +493,15 @@ The relevant CUDA runtime API function signature is:
 `cudaError_t cudaDevResourceGenerateDesc(cudaDevResourceDesc_t *phDesc, cudaDevResource *resources, unsigned int nbResources)`
 
 It is possible to combine multiple `cudaDevResource` resources. For example, the code snippet below shows how to generate a resource descriptor that encapsulates three groups of resources. You just need to ensure that these resources are all allocated continuously in the `resources` array.
-    
-    
+
+
     cudaDevResource actual_split_result[5] = {};
     // code to populate actual_split_result not shown
-    
+
     // Generate resource desc. to encapsulate 3 resources: actual_split_result[2] to [4]
     cudaDevResourceDesc_t resource_desc;
     CUDA_CHECK(cudaDevResourceGenerateDesc(&resource_desc, &actual_split_result[2], 3));
-    
+
 
 Combining different types of resources is also supported. For example, one could generate a descriptor with both SM and workqueue resources.
 
@@ -521,18 +525,18 @@ The relevant CUDA runtime API function signature is:
 The `flags` parameter should be set to 0. It is also recommended to explicitly initialize the device’s primary context before creating a green context via either the `cudaInitDevice` API or the `cudaSetDevice` API, which also sets the primary context as current to the calling thread. Doing so ensures there will be no additional primary context initialization overhead during green context creation.
 
 See code snippet below.
-    
-    
+
+
     int current_device = 0; // assume single GPU
     CUDA_CHECK(cudaSetDevice(current_device)); // Or cudaInitDevice
-    
+
     cudaDevResourceDesc_t resource_desc {};
     // Code to generate resource_desc not shown
-    
+
     // Create a green_ctx on GPU with current_device ID with access to resources from resource_desc
     cudaExecutionContext_t green_ctx {};
     CUDA_CHECK(cudaGreenCtxCreate(&green_ctx, resource_desc, current_device, 0));
-    
+
 
 After a successful green context creation, the user can verify its resources by calling `cudaExecutionCtxGetDevResource` on that execution context for each resource type.
 
@@ -545,8 +549,8 @@ But SM oversubscription is also possible and may be used in some cases. For exam
 ## 4.6.5. Green Contexts - Launching work
 
 To launch a kernel targeting a green context created using the prior steps, you first need to create a stream for that green context with the `cudaExecutionCtxStreamCreate` API. Launching a kernel on that stream using `<<< >>>` or the `cudaLaunchKernel` API, will ensure that kernel can only use the resources (SMs, work queues) available to that stream via its execution context. For example:
-    
-    
+
+
     // Create green_ctx_stream CUDA stream for previously created green_ctx green context
     cudaStream_t green_ctx_stream;
     int priority = 0;
@@ -554,11 +558,11 @@ To launch a kernel targeting a green context created using the prior steps, you 
                                             green_ctx,
                                             cudaStreamDefault,
                                             priority));
-    
+
     // Kernel my_kernel will only use the resources (SMs, work queues, as applicable) available to green_ctx_stream's execution context
     my_kernel<<<grid_dim, block_dim, 0, green_ctx_stream>>>();
     CUDA_CHECK(cudaGetLastError());
-    
+
 
 The default stream creation flag passed to the stream creation API above is equivalent to `cudaStreamNonBlocking` given `green_ctx` is a green context.
 
@@ -577,18 +581,18 @@ To verify programmatically, one could potentially use the CUDA driver API `cuGra
 Kernels with thread block clusters (see [Section 1.2.2.1.1](../01-introduction/programming-model.html#programming-model-thread-block-clusters)) can also be launched on a green context stream, like any other kernel, and thus use that green context’s provisioned resources. [Section 4.6.4.2](#green-contexts-creation-example-step2) showed how to specify the number of SMs that need to be coscheduled when a device resource is split, to facilitate clusters. But as with any kernel using clusters, the user should make use of the relevant occupancy APIs to determine the max potential cluster size for a kernel (via `cudaOccupancyMaxPotentialClusterSize`) and, if needed, the maximum number of active clusters (`cudaOccupancyMaxActiveClusters`). If the user specifies a green context stream as the `stream` field of the relevant `cudaLaunchConfig`, then these occupancy APIs will take into consideration the SM resources provisioned for that green context. This use case is especially relevant for libraries that may get a green context CUDA stream passed to them by the user, as well as in cases where the green context was created from a remaining device resource.
 
 The code snippet below shows how these APIs can be used.
-    
-    
+
+
     // Assume cudaStream_t gc_stream  has already been created and a __global__ void cluster_kernel exists.
-    
+
     // Uncomment to support non portable cluster size, if possible
     // CUDA_CHECK(cudaFuncSetAttribute(cluster_kernel, cudaFuncAttributeNonPortableClusterSizeAllowed, 1))
-    
+
     cudaLaunchConfig_t config = {0};
     config.gridDim          = grid_dim; // has to be a multiple of cluster dim.
     config.blockDim         = block_dim;
     config.dynamicSmemBytes = expected_dynamic_shared_mem;
-    
+
     cudaLaunchAttribute attribute[1];
     attribute[0].id = cudaLaunchAttributeClusterDimension;
     attribute[0].val.clusterDim.x = 1;
@@ -596,21 +600,21 @@ The code snippet below shows how these APIs can be used.
     attribute[0].val.clusterDim.z = 1;
     config.attrs = attribute;
     config.numAttrs = 1;
-    
+
     config.stream=gc_stream; // Need to pass the CUDA stream that will be used for that kernel
-    
+
     int max_potential_cluster_size = 0;
     // the next call will ignore cluster dims in launch config
     CUDA_CHECK(cudaOccupancyMaxPotentialClusterSize(&max_potential_cluster_size, cluster_kernel, &config));
     std::cout << "max potential cluster size is " << max_potential_cluster_size << " for CUDA stream gc_stream" << std::endl;
-    
+
     // Could choose to update launch config's clusterDim with max_potential_cluster_size.
     // Doing so would result in a successful cudaLaunchKernelEx call for the same kernel and launch config.
-    
+
     int num_clusters= 0;
     CUDA_CHECK(cudaOccupancyMaxActiveClusters(&num_clusters, cluster_kernel, &config));
     std::cout << "Potential max. active clusters count is " << num_clusters << std::endl;
-    
+
 
 **Verify Green Contexts Use**
 

@@ -91,16 +91,16 @@ Each version of the CUDA Toolkit (and runtime) requires a minimum version of the
 So, when an application is built with CUDA 11.0, it can only run on a system with an R450 or later driver. If such an application is run on a system with the R418 driver installed, CUDA initialization will return an error as can be seen in the example below.
 
 In this example, the deviceQuery sample is compiled with CUDA 11.1 and is run on a system with R418. In this scenario, CUDA initialization returns an error due to the minimum driver requirement.
-    
-    
+
+
     ubuntu@:~/samples/1_Utilities/deviceQuery
     $ make
     /usr/local/cuda-11.1/bin/nvcc -ccbin g++ -I../../common/inc -m64 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_80,code=sm_80 -gencode arch=compute_86,code=sm_86 -gencode arch=compute_86,code=compute_86 -o deviceQuery.o -c deviceQuery.cpp
-    
+
     /usr/local/cuda-11.1/bin/nvcc -ccbin g++ -m64 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_80,code=sm_80 -gencode arch=compute_86,code=sm_86 -gencode arch=compute_86,code=compute_86 -o deviceQuery deviceQuery.o
-    
+
     $ nvidia-smi
-    
+
     +-----------------------------------------------------------------------------+
     | NVIDIA-SMI 418.165.02   Driver Version: 418.165.02   CUDA Version: 10.1     |
     |-------------------------------+----------------------+----------------------+
@@ -110,24 +110,24 @@ In this example, the deviceQuery sample is compiled with CUDA 11.1 and is run on
     |   0  Tesla T4            On   | 00000000:00:1E.0 Off |                    0 |
     | N/A   42C    P0    28W /  70W |      0MiB / 15079MiB |      0%      Default |
     +-------------------------------+----------------------+----------------------+
-    
+
     +-----------------------------------------------------------------------------+
     | Processes:                                                       GPU Memory |
     |  GPU       PID   Type   Process name                             Usage      |
     |=============================================================================|
     |  No running processes found                                                 |
     +-----------------------------------------------------------------------------+
-    
-    
+
+
     $ samples/bin/x86_64/linux/release/deviceQuery
     samples/bin/x86_64/linux/release/deviceQuery Starting...
-    
+
      CUDA Device Query (Runtime API) version (CUDART static linking)
-    
+
     cudaGetDeviceCount returned 3
     -> initialization error
     Result = FAIL
-    
+
 
 Refer to the [CUDA Toolkit Release Notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) for details for the minimum driver version and the version of the driver shipped with the toolkit.
 
@@ -141,7 +141,7 @@ The cubins are architecture-specific. Binary compatibility for cubins is guarant
 
 To execute code on devices of specific compute capability, an application must load binary or PTX code that is compatible with this compute capability. For portability, that is, to be able to execute code on future GPU architectures with higher compute capability (for which no binary code can be generated yet), an application must load PTX code that will be just-in-time compiled by the NVIDIA driver for these future devices.
 
-More information on cubins, PTX and application compatibility can be found in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#binary-compatibility).
+More information on cubins, PTX and application compatibility can be found in the [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/cuda-platform.html#binary-compatibility).
 
 
 ##  16.4. CUDA Compatibility Across Minor Releases 
@@ -153,10 +153,10 @@ One of the main reasons a new toolchain requires a new minimum driver is to hand
 In this section, we will review the usage patterns that may require new user workflows when taking advantage of the compatibility features of the CUDA platform.
 
 ###  16.4.1. Existing CUDA Applications within Minor Versions of CUDA 
-    
-    
+
+
     $ nvidia-smi
-    
+
     +-----------------------------------------------------------------------------+
     | NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
     |-------------------------------+----------------------+----------------------+
@@ -168,7 +168,7 @@ In this section, we will review the usage patterns that may require new user wor
     | N/A   39C    P8     9W /  70W |      0MiB / 15109MiB |      0%      Default |
     |                               |                      |                  N/A |
     +-------------------------------+----------------------+----------------------+
-    
+
     +-----------------------------------------------------------------------------+
     | Processes:                                                                  |
     |  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
@@ -176,27 +176,27 @@ In this section, we will review the usage patterns that may require new user wor
     |=============================================================================|
     |  No running processes found                                                 |
     +-----------------------------------------------------------------------------+
-    
+
 
 When our CUDA 11.1 application (i.e. cudart 11.1 is statically linked) is run on the system, we see that it runs successfully even when the driver reports a 11.0 version - that is, without requiring the driver or other toolkit components to be updated on the system.
-    
-    
+
+
     $ samples/bin/x86_64/linux/release/deviceQuery
     samples/bin/x86_64/linux/release/deviceQuery Starting...
-    
+
      CUDA Device Query (Runtime API) version (CUDART static linking)
-    
+
     Detected 1 CUDA Capable device(s)
-    
+
     Device 0: "Tesla T4"
       CUDA Driver Version / Runtime Version          11.0 / 11.1
       CUDA Capability Major/Minor version number:    7.5
-    
+
       ...<snip>...
-    
+
     deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 11.0, CUDA Runtime Version = 11.1, NumDevs = 1
     Result = PASS
-    
+
 
 By using new CUDA versions, users can benefit from new CUDA programming model APIs, compiler optimizations and math library features.
 
@@ -207,11 +207,11 @@ The following sections discuss some caveats and considerations.
 A subset of CUDA APIs don’t need a new driver and they can all be used without any driver dependencies. For example, `cuMemMap` APIs or any of APIs introduced prior to CUDA 11.0, such as `cudaDeviceSynchronize`, do not require a driver upgrade. To use other CUDA APIs introduced in a minor release (that require a new driver), one would have to implement fallbacks or fail gracefully. This situation is not different from what is available today where developers use macros to compile out features based on CUDA versions. Users should refer to the CUDA headers and documentation for new CUDA APIs introduced in a release.
 
 When working with a feature exposed in a minor version of the toolkit, the feature might not be available at runtime if the application is running against an older CUDA driver. Users wishing to take advantage of such a feature should query its availability with a dynamic check in the code:
-    
-    
+
+
     static bool hostRegisterFeatureSupported = false;
     static bool hostRegisterIsDeviceAddress = false;
-    
+
     static error_t cuFooFunction(int *ptr)
     {
         int *dptr = null;
@@ -231,7 +231,7 @@ When working with a feature exposed in a minor version of the toolkit, the featu
         gemm<<<1,1>>>(dptr);
         cudaDeviceSynchronize();
     }
-    
+
     int main()
     {
         // rest of code here
@@ -245,11 +245,11 @@ When working with a feature exposed in a minor version of the toolkit, the featu
                0);
         cuFooFunction(/* malloced pointer */);
     }
-    
+
 
 Alternatively the application’s interface might not work at all without a new CUDA driver and then its best to return an error right away:
-    
-    
+
+
     #define MIN_VERSION 11010
     cudaError_t foo()
     {
@@ -260,7 +260,7 @@ Alternatively the application’s interface might not work at all without a new 
         }
         // proceed as normal
     }
-    
+
 
 A new error code is added to indicate that the functionality is missing from the driver you are running against: `cudaErrorCallRequiresNewerDriver`.
 
@@ -271,27 +271,27 @@ PTX defines a virtual machine and ISA for general purpose parallel thread execut
 For codes continuing to make use of PTX, in order to support compiling on an older driver, your code must be first transformed into device code via the static ptxjitcompiler library or NVRTC with the option of generating code for a specific architecture (e.g. sm_80) rather than a virtual architecture (e.g. compute_80). For this workflow, a new nvptxcompiler_static library is shipped with the CUDA Toolkit.
 
 We can see this usage in the following example:
-    
-    
+
+
     char* compilePTXToNVElf()
     {
         nvPTXCompilerHandle compiler = NULL;
         nvPTXCompileResult status;
-    
+
         size_t elfSize, infoSize, errorSize;
         char *elf, *infoLog, *errorLog;
         int minorVer, majorVer;
-    
+
         const char* compile_options[] = { "--gpu-name=sm_80",
                                           "--device-debug"
         };
-    
+
         nvPTXCompilerGetVersion(&majorVer, &minorVer);
         nvPTXCompilerCreate(&compiler, (size_t)strlen(ptxCode), ptxCode);
         status = nvPTXCompilerCompile(compiler, 2, compile_options);
         if (status != NVPTXCOMPILE_SUCCESS) {
             nvPTXCompilerGetErrorLogSize(compiler, (void*)&errorSize);
-    
+
             if (errorSize != 0) {
                 errorLog = (char*)malloc(errorSize+1);
                 nvPTXCompilerGetErrorLog(compiler, (void*)errorLog);
@@ -300,23 +300,23 @@ We can see this usage in the following example:
             }
             exit(1);
         }
-    
+
         nvPTXCompilerGetCompiledProgramSize(compiler, &elfSize));
         elf = (char*)malloc(elfSize);
         nvPTXCompilerGetCompiledProgram(compiler, (void*)elf);
         nvPTXCompilerGetInfoLogSize(compiler, (void*)&infoSize);
-    
+
         if (infoSize != 0) {
             infoLog = (char*)malloc(infoSize+1);
             nvPTXCompilerGetInfoLog(compiler, (void*)infoLog);
             printf("Info log: %s\n", infoLog);
             free(infoLog);
         }
-    
+
         nvPTXCompilerDestroy(&compiler);
         return elf;
     }
-    
+
 
 ####  16.4.1.3. Dynamic Code Generation 
 
@@ -329,19 +329,19 @@ As mentioned in the PTX section, the compilation of PTX to device code lives alo
 NVRTC used to support only virtual architectures through the option -arch, since it was only emitting PTX. It will now support actual architectures as well to emit SASS. The interface is augmented to retrieve either the PTX or cubin if an actual architecture is specified.
 
 The example below shows how an existing example can be adapted to use the new features, guarded by the `USE_CUBIN` macro in this case:
-    
-    
+
+
     #include <nvrtc.h>
     #include <cuda.h>
     #include <iostream>
-    
+
     void NVRTC_SAFE_CALL(nvrtcResult result) {
       if (result != NVRTC_SUCCESS) {
         std::cerr << "\nnvrtc error: " << nvrtcGetErrorString(result) << '\n';
         std::exit(1);
       }
     }
-    
+
     void CUDA_SAFE_CALL(CUresult result) {
       if (result != CUDA_SUCCESS) {
         const char *msg;
@@ -350,12 +350,12 @@ The example below shows how an existing example can be adapted to use the new fe
         std::exit(1);
       }
     }
-    
+
     const char *hello = "                                           \n\
     extern \"C\" __global__ void hello() {                          \n\
       printf(\"hello world\\n\");                                   \n\
     }                                                               \n";
-    
+
     int main()
     {
       nvrtcProgram prog;
@@ -400,7 +400,7 @@ The example below shows how an existing example can be adapted to use the new fe
       CUDA_SAFE_CALL(cuCtxDestroy(context));
       delete[] code;
     }
-    
+
 
 ####  16.4.1.4. Recommendations for building a minor-version compatible library 
 

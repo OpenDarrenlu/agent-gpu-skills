@@ -8,78 +8,114 @@ Release notes and known issues.
 
 ## What’s New
 
-### Deprecation note:
+### Nsight Systems 2026.5.1 Highlights:
 
-The new `--cpu-metrics` option is designed to replace the existing `--cpu-core-events` and `--cpu-core-metrics` options. In upcoming releases, using either of the old options will produce a deprecation notice. Note that `--cpu-metrics` is mutually exclusive with the two legacy options and cannot be combined with them.
+  * NVIDIA Rubin GPU architecture support
 
-**Note:** This deprecation notice does not affect the `--cpu-core-events` option in Nsight Systems Embedded Platforms Edition.
+    * Performance metrics support for GR100: General Metrics and Compute Triage
 
-### Nsight Systems 2026.3 Highlights:
+  * Windows on Arm Support
 
-  * Compute
+    * Trace arm64 native and x64 emulated applications
 
-    * CUDA 13.3 support.
+    * NVIDIA RTX Spark CPU core PMU metrics sampling
 
-    * NVTX 3.5.0 support.
+    * NVIDIA RTX Spark GPU power and temperature metrics
 
-    * Improvement in NVTX range projection onto CUDA Graphs.
+    * NVIDIA Video Codec SDK tracing
 
-    * PyTorch profiling - Forward pass annotations now include the original module.
+  * CUDA improvements
 
-  * Graphics
+    * CUDA 13.4 support
 
-    * Frame latency - Added new row visualizing combined Reflex SDK stages of the frame. This is the `combined-latency` from initial submission of workloads to display on screen.
+    * CUDA work queue information — Added channel count and channel ID details
 
-    * Resource names now appear in the resource allocation event tooltip.
+    * Multi-process capture ranges — Improved CUPTI buffer flushing when profiling ends through cudaProfilerStop()
 
-  * Networking & Storage
+    * CUDA kernel details now show if execution model was Tile IR or SIMT
 
-    * High-frequency metrics sampling added for NVIDIA Ethernet NICs.
+    * NVTX ranges can now be projected onto the “All Streams” row, in addition to individual stream rows.
 
-    * S3 improvements:
+    * Nsight Systems now displays readable names for cuTile kernels.
 
-      * Added S3 trace support for AWS C++ SDK and AWS CRT version 9 SDK.
+    * CUDA workloads submitted through Direct3D 12 CUDA-in-Graphics (CiG) streams are now traced and displayed in the timeline.
 
-      * Improved access sum recipe with object and bucket statistics.
+  * PyTorch profiling
 
-      * Added counters to `storage_util_map` recipe.
+    * The new `--pytorch=functions-trace-shapes` option captures PyTorch function calls and stores tensor shapes efficiently as binary payloads.
 
-  * CPU & Software
+    * Use the existing `--pytorch=functions-trace` option when call ranges are sufficient. It captures calls without shapes, reducing profiling overhead and trace size.
 
-    * CPU performance metrics samples
+  * Graphics profiling improvements
 
-      * Added uncore (chip-level) PMU metrics samples on NVIDIA Grace CPU, integrated into the unified `--cpu-metrics` command line switch.
+    * Added interception and display support for Direct3D 12 CiG streams.
 
-      * LinuxPerf Topdown sampling interval support in the collection script.
+    * Added support for tracing Vulkan Reflex applications that use `VK_NV_low_latency2`.
 
-    * Linux call-stack sampling improvements
+    * Added support for tracing applications that use Direct3D 12 Runtime Bypass.
 
-      * Source file+line information in the event pane for x64 and Arm.
+    * Added support for the `ID3D12Device15`, `ID3D12ApplicationIdentity`, and `ID3D12RuntimeValidationControl` Direct3D 12 interfaces.
 
-      * `--backtrace` default changed to use frame pointers on x64 for improved depth & analysis, matching Arm.
+    * Added support for the `VK_KHR_maintenance10`, `VK_EXT_memory_decompression`, and `VK_NV_compute_occupancy_priority` Vulkan extensions.
 
-    * Added GUI support for remote profiling symbol resolution, including remote symbol locations, server addresses, and symbol cache configuration.
+  * Agentic AI Skill Pack
 
-  * CPU Usage and Thread State Timeline
+    * Preview release focused on graphics performance analysis and frame stutter analysis.
 
-    * CPU usage and thread state computation was unified and refactored across platforms. As a result, some CPU timeline regions can appear different than in earlier releases, especially in edge cases around consecutive scheduling events.
+    * Delivers faster answers with lower token consumption and improved answer accuracy.
 
-    * When CPU scheduling collection is disabled (`--cpuctxsw=none`), thread states are now estimated from OS Runtime (OSRT) events on **all** platforms (which now includes Windows in particular) when OSRT trace data is available.
+    * Agent-agnostic design for use with leading AI agents and models.
 
-    * When scheduling events are collected, Composite and OSRT events are no longer used to compute CPU usage/thread-state ranges by default, reducing duplicated timeline states.
+  * Network profiling improvements
 
-    * If for some reason (for example, if something appears broken) you need to restore the previous behavior, you can use the following environment variables:
+    * Added collection of Spectrum-X high frequency performance counters. Counters are read via DTS (DOCA Telemetry Service) and the switch Cumulus OS. This enables users without root privileges to collect high-frequency NIC metrics on systems where DTS is installed.
 
-      * `NSYS_INTERNAL_USE_OLD_CPU_USAGE_2=1` \- enables the previous CPU usage/thread state implementation path.
+    * Improved NCCL recipes, including a new NCCL straggler recipe to pinpoint slow MPI ranks.
 
-      * `NSYS_INTERNAL_USE_COMPOSITE_OSRT_IN_CPU_USAGE=1` \- enables using Composite and OSRT events in CPU usage/thread-state range computation (previous behavior). Should be used in combination with `NSYS_INTERNAL_USE_OLD_CPU_USAGE_2=1`.
+  * Storage profiling improvements
 
-    * If you need to use these variables, please let us know. They are temporary compatibility switches and are planned to be removed in the subsequent release.
+    * Added an S3 object storage access summary recipe.
+
+    * Added NVIDIA SCADA metrics.
+
+  * CPU profiling improvements
+
+    * Extended CPU uncore profiling on NVIDIA Vera and NVIDIA Thor with support for uncore events, uncore derived metrics, and uncore event filters.
+
+    * Added CPU core single-pass metric sets based on the Arm Topdown methodology, enabling related metrics to be collected concurrently on supported CPUs.
+
+  * Time synchronization
+
+    * Nsight Systems now includes vClock, an unprivileged virtual clock designed to provide accurate time synchronization across multiple cluster nodes. This enables Nsight Systems to align distributed trace files collected across different cluster or cloud nodes.
+
+  * Export
+
+    * NVTX binary payloads can now be exported as columnar fields using a dynamic schema.
+
+  * Plugins
+
+    * DCGM — Added `--power-profile` to see if it is supported, requested, or enforced
+
+  * NVIDIA Nsight Cloud
+
+    * Nsight Streamer updates.
+
+    * Docker updates.
+
+    * Kubernetes updates.
+
+    * Nsight Operator updates.
+
+    * Improvements for analysis, OpenTelemetry, and Dynamo.
+
+    * Learn more through the new docs site.
 
 
 ## Known Issues
 
 ### General Issues
+
+  * When profiling Spectrum-X switches there is an approximate delay of 25s until the first sample is sent from the switches. Hence, profile for more than 25s when collecting Ethernet switch data.
 
   * If you see high branch mis-predicts and instruction TLB refills, we suggest you try [NVIDIA/cpu-code-locality-tool](https://github.com/NVIDIA/cpu-code-locality-tool) to further optimize your code for NVIDIA Grace’s code caches.
 
@@ -98,11 +134,11 @@ The new `--cpu-metrics` option is designed to replace the existing `--cpu-core-e
   * To reduce overhead, Nsight Systems traces a subset of API calls likely to impact performance when tracing APIs rather than all possible calls. There is currently no way to change the subset being traced when using the CLI. See respective library portion of this documentation for a list of calls traced by default. The CLI limitation will be removed in a future version of the product.
 
   * There is an upper bound on the default size used by the tool to record trace events during the collection. If you see the following diagnostic error, then Nsight Systems hit the upper limit.
-        
+
         Reached the size limit on recording trace events for this process.
                Try reducing the profiling duration or reduce the number of features
                traced.
-        
+
 
   * When profiling a framework or application that uses CUPTI, like some versions of TensorFlow(tm), Nsight Systems will not be able to trace CUDA usage due to limitations in CUPTI. These limitations will be corrected in a future version of CUPTI. Consider turning off the application’s use of CUPTI if CUDA tracing is required.
 
@@ -115,20 +151,20 @@ The new `--cpu-metrics` option is designed to replace the existing `--cpu-core-e
   * Using Nsight Systems MPI trace functionality with the Darshan runtime module can lead to segfaults. To resolve the issue, unload the module.
 
 
-    
-    
+
+
     module unload darshan-runtime
-    
+
 
   * Profiling MPI Fortran APIs with MPI_Status as an argument, e.g. MPI_Recv, MPI_Test[all], MPI_Wait[all], can potentially cause memory corruption for MPICH versions 3.0.x. The reason is that the MPI_Status structure in MPICH 3.0.x has a different memory layout than in other MPICH versions (2.1.x and >=3.1.x have been tested) and the version (3.3.2) we used to compile the Nsight Systems MPI interception library.
 
   * Using `nsys export` to export to an SQLite database will fail if the destination filesystem doesn’t support file locking. The error message will mention:
 
 
-    
-    
+
+
     std::exception::what: database is locked
-    
+
 
   * On some Linux systems when VNC is used, some widgets can be rendered incorrectly, or Nsight Systems can crash when opening Analysis Summary or Diagnostics Summary pages. In this case, try forcing a specific software renderer: `GALLIUM_DRIVER=llvmpipe nsys-ui`
 
@@ -169,6 +205,15 @@ No other CLI command sequence suffers from this possible issue. Also, if a syste
 
 ### CUDA Trace Issues
 
+  * When using CUDA graphs that start and end on different GPUs, Nsight Systems may show incorrect end timestamp for the CUDA graph activity, or encounter “Wrong Event Order” error when generating the report, if CUDA graph-level trace is enabled (which is the default mode for CUDA trace) and CUDA driver version < 12.0. To avoid the issue, upgrade CUDA driver to at least 12.0, or use `--cuda-graph-trace=node` to switch to node-level trace mode, or add the following settings in the config.ini file:
+
+        CuptiUseRawGpuTimestamps=false
+
+
+  * When using “cudaGraphNodeSetEnabled()” to enable/disable CUDA graphs in the middle of collection, Nsight Systems may encounter “Wrong Event Order” error when generating the report, if CUDA graph-level trace is enabled (which is the default mode for CUDA trace) and CUDA driver version < 12.0. To avoid the issue, upgrade CUDA driver to at least 12.0, or use `--cuda-graph-trace=node` to switch to node-level trace mode.
+
+  * CUDA hardware trace, also called Hardware Event System (HES) trace, is the default CUDA trace method on supported systems. Hardware trace is not supported for MPS workloads, MIG partitions, vGPU or virtual machine environments, some Confidential Compute configurations, unsupported GPUs, or incompatible driver or CUPTI combinations. In these cases, Nsight Systems may automatically fall back to the legacy software-instrumented CUDA trace and report the trace method in the Diagnostics Summary page. Use `--trace=cuda-sw` to request software CUDA trace explicitly.
+
   * If a system is in the CC-DevTools mode (CC stands for Confidential Compute) and Nsight Systems is used to trace CUDA in an application using libcrypto, Nsight Systems may crash when the application exits. The crash occurs during the application teardown and causes profiler data loss. To avoid losing CUDA tracing data in this situation, a few options exist.
 
 1\. Add a cudaDeviceSynchronize call to the application immediately before the application exits. Nsight Systems flushes all available data on a synchronization and data loss will be avoided.
@@ -194,10 +239,10 @@ No other CLI command sequence suffers from this possible issue. Also, if a syste
   * On Tegra platforms, CUDA trace requires root privileges. Use the **Launch as root** checkbox in project settings to make the profiled application run as root.
 
   * If the target application uses multiple streams from multiple threads, CUDA event buffers may not be released properly. In this case, you will see the following diagnostic error:
-        
+
         Couldn't allocate CUPTI bufer x times. Some CUPTI events may
                be missing.
-        
+
 
 Please contact the Nsight Systems team.
 
@@ -208,16 +253,16 @@ Please contact the Nsight Systems team.
   * For older Linux kernels, prior to 4.4, when profiling very short-lived applications (~1 second) that exit in the middle of the profiling session, it is possible that Nsight Systems will not show the CUDA events on the timeline.
 
   * When more than 64k serialized CUDA kernels and memory copies are executed in the application, you may encounter the following exception during profiling:
-        
+
         InvalidArgumentException: "Wrong event order detected"
-        
+
 
 Please upgrade to the CUDA 9.2 driver at minimum to avoid this problem. If you cannot upgrade, you can get a partial analysis, missing potentially a large fraction of CUDA events, by using the CLI.
 
   * On Vibrante, when running a profiling session with multiple targets that are guest VMs in a CCC configuration behind a NAT, you may encounter an error with the following text during profiling:
-        
+
         Failed to sync time on device.
-        
+
 
 Please edit the group connection settings, select **Targets on the same SoC** checkbox there and try again.
 
@@ -231,7 +276,7 @@ Please edit the group connection settings, select **Targets on the same SoC** ch
 
 ## Deprecated Features
 
-  * Nsight Systems versions, starting with 2026.2 do not provide support for the legacy `json` and `text` export options. `json` has been replaced with the new `jsonlines` option. If you need to use the old exports, we recommend you use an older version, downloadable from <https://developer.nvidia.com/gameworksdownload>.
+  * Nsight Systems versions, starting with 2026.4 do not provide support for the legacy `json` and `text` export options. Use `jsonlines` instead. If you need to use the old exports, we recommend you use an older version, downloadable from <https://developer.nvidia.com/gameworksdownload>.
 
   * Nsight Systems versions, starting with 2026.2 have changed the available options for `nic-metrics` on the command line from `true` and `false` to `lf`, `hf` and `none`. Currently the old options continue to work with the old behavior, but they will be removed in a future version of the product.
 
