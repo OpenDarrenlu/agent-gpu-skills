@@ -9,6 +9,7 @@
 | Skill | 用途 |
 |---|---|
 | `cuda-skill` | CUDA C++、PTX、CUDA API、基础 Nsight/调试 |
+| `gpu-kernel-reverse` | cubin/fatbin/SASS 语义与布局恢复、CUDA/CUTLASS 重建、正确性和性能对齐 |
 | `triton-skill` | Triton/Gluon kernel 与编译器 |
 | `cutlass-skill` | CUTLASS、CuTe、CuTeDSL、GEMM |
 | `deepgemm-skill` | DeepGEMM、grouped/MoE GEMM |

@@ -4,7 +4,7 @@ description: >
   |
   Catch-all entry point for any GPU, NVIDIA CUDA, AMD ROCm/CDNA, AI infrastructure, HPC, or
   performance-related question. Use this skill when the user asks anything about
-  GPU programming, CUDA kernels, PTX, Triton, CUTLASS, CuTe, DeepGEMM, MoE,
+  GPU programming, CUDA kernels, cubin/fatbin/SASS reverse engineering, PTX, Triton, CUTLASS, CuTe, DeepGEMM, MoE,
   LLM serving, SGLang, vLLM, KV cache, attention, verl/HybridFlow RL post-training
   (PPO/GRPO), NCU/NSYS profiling, GPU
   communication, RDMA, NCCL, NVSHMEM, multi-GPU training/inference, B200/H100/A100,
@@ -63,6 +63,7 @@ code review, WeChat data, or a mixed task), use `agent-skill-router` instead.
 | AMD/ROCm/HIP docs, libraries, tools, broad local AMD knowledge | `amd-gpu-docs` |
 | AMD Instinct, CDNA1-CDNA5 ISA, gfx950, AMD GPU assembly | `amd-instinct-isa` |
 | Writing/modifying CUDA, PTX, Triton, CUTLASS, CuTe, DeepGEMM kernels | `gpu-kernel-authoring-router` |
+| cubin/fatbin/SASS 逆向、重建 CUDA/CUTLASS、复现二进制 kernel 性能 | `gpu-kernel-reverse` |
 | TileLang kernel authoring, debugging, optimization, or profiling | `gpu-kernel-authoring-router` or `gpu-performance-router` |
 | A kernel is slow, performance bottleneck, NCU/NSYS, profiling | `gpu-performance-router` |
 | Framework/runtime behavior, RL post-training frameworks, end-to-end profiling, PyTorch profiler, launch/scheduling overhead | `gpu-framework-router` |

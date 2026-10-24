@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPU Kernel Reverse Engineering"
+  short_description: "从 cubin 重建 CUDA/CUTLASS，并验证正确性与性能"
+  default_prompt: "使用 $gpu-kernel-reverse 分析提供的 cubin，恢复 kernel 契约与并行布局，重建 CUDA/CUTLASS 实现并验证性能差距。"

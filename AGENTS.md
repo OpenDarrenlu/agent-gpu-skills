@@ -40,6 +40,7 @@ producing detailed advice or code.
 ### Kernel
 
 - CUDA C++ / PTX / NVIDIA API: `cuda-skill`
+- cubin/fatbin/SASS reverse engineering, CUDA/CUTLASS reconstruction and binary performance reproduction: `gpu-kernel-reverse`
 - Triton / Gluon / Python GPU kernels: `triton-skill`
 - CUTLASS / CuTe / CuTeDSL / template GEMM: `cutlass-skill`
 - DeepGEMM / grouped GEMM / MoE GEMM: `deepgemm-skill`

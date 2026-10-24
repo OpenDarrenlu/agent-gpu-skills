@@ -1,7 +1,7 @@
 ---
 name: gpu-kernel-authoring-router
 description: >
-  Router for writing or modifying NVIDIA GPU kernels. Use for CUDA C++, PTX, Triton, Gluon, CUTLASS,
+  Router for writing, reconstructing from cubin/SASS, or modifying NVIDIA GPU kernels. Use for CUDA C++, PTX, Triton, Gluon, CUTLASS,
   CuTe, CuTeDSL, DeepGEMM, grouped GEMM, MoE GEMM, GEMM, attention kernels, reductions, fused ops,
   Tensor Core, WGMMA, TMA, persistent kernels, FP8/FP4, Blackwell/Hopper kernels, or choosing CUDA vs
   Triton vs CUTLASS. Casual entry point: anything about writing GPU kernels, implement operator, how to
@@ -34,6 +34,7 @@ Use this router when the user wants implementation guidance or code for GPU kern
 
 ## Route
 
+- **cubin/fatbin/SASS reverse engineering, binary-to-CUDA/CUTLASS reconstruction, GPU kernel 逆向**: use `gpu-kernel-reverse`.
 - **CUDA C++ / PTX / low-level architecture/API questions**: use `cuda-skill`.
 - **Python DSL kernels, Triton, Gluon, tl.* APIs, autotune**: use `triton-skill`.
 - **DeepGEMM, grouped/MoE GEMM, contiguous/masked expert layouts**: use `deepgemm-skill`.

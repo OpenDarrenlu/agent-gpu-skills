@@ -108,6 +108,7 @@ fi
 # 使用平行数组替代关联数组（兼容 Bash 3.2）
 SKILL_NAMES=(
     cuda-skill
+    gpu-kernel-reverse
     triton-skill
     cutlass-skill
     deepgemm-skill
@@ -157,6 +158,7 @@ SKILL_NAMES=(
 )
 SKILL_DIRS=(
     skills/kernel/cuda-skill
+    skills/kernel/gpu-kernel-reverse
     skills/kernel/triton-skill
     skills/kernel/cutlass-skill
     skills/kernel/deepgemm-skill

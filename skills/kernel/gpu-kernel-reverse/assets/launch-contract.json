@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "purpose": "Investigation template; null means unknown, not a runnable launch configuration",
+  "artifact": {"path": null, "sha256": null, "container_image": null, "entry_mangled": null, "target_sm": null},
+  "toolchain": {"nvcc": null, "ptxas": null, "nvdisasm": null, "driver": null, "library_commit": null, "flags": []},
+  "parameters": [{"index": null, "offset_bytes": null, "size_bytes": null, "alignment_bytes": null, "type": null, "meaning": null, "evidence": null}],
+  "buffers": [{"parameter_index": null, "dtype": null, "shape": null, "strides_elements": null, "size_bytes": null, "alignment_bytes": null, "access": null, "alias_group": null, "initialization": null, "evidence": null}],
+  "launch": {"grid": null, "block": null, "dynamic_shared_bytes": null, "cluster": null, "cooperative": null, "stream_semantics": null, "function_attributes": null},
+  "state": {"globals_constants": null, "workspace": null, "tensor_maps": null, "textures_surfaces": null, "rng": null, "device_link_dependencies": null, "reset_protocol": null},
+  "valid_input_domain": null,
+  "numerics": {"comparison": null, "atol": null, "rtol": null, "ulp": null, "special_values": null, "stochastic_contract": null},
+  "performance": {"gpu": null, "timing_scope": null, "cache_policy": null, "graph_mode": null, "expected_cases": [], "allowed_slowdown_fraction": 0.05},
+  "unknowns": [],
+  "evidence": []
+}

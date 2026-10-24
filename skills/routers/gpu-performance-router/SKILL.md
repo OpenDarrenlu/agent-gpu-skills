@@ -34,6 +34,7 @@ Use this router to pick the most specific GPU performance skill before answering
 
 ## Route
 
+- **Reconstruct CUDA/CUTLASS from cubin/SASS and reproduce binary kernel performance**: use `gpu-kernel-reverse`.
 - **NCU / Nsight Compute / .ncu-rep / single-kernel bottleneck**: use `ncu-report-skill`.
 - **Whole-application timeline, launch causality, CPU/GPU overlap, or NVTX**:
   use `nsys-profile-analysis` or `perf-nsight-systems`.
