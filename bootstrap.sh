@@ -126,6 +126,16 @@ elif [ "$FETCH" = true ]; then
     echo ""
 fi
 
+# npm 运行时的稳定入口是 $HOME/.local/bin 中的 managed launcher。只在本进程内前置，让后续的安装验证与
+# REA MCP 注册优先使用它；不修改用户的全局 PATH 或 shell 配置。--dest 与 --no-integrations 不会走到这里。
+if [ "$FETCH" = true ]; then
+    case ":$PATH:" in
+        *":$HOME/.local/bin:"*) ;;
+        *) echo "提示: $HOME/.local/bin 不在 PATH 中。npm 运行时（wx、rea）的稳定入口位于该目录，请自行把它加入 shell 配置（安装器不修改）。" ;;
+    esac
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
 echo "================================"
 echo "安装 skills"
 echo "================================"

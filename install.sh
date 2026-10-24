@@ -324,7 +324,7 @@ place_catalog_skill() {
         return 1
     fi
     if is_protected_name "$name"; then
-        echo "  跳过: $name 为受保护的用户级名称，catalog 不得占用（$catalog）"
+        echo "  跳过: ${name} 为受保护的用户级名称，catalog 不得占用（${catalog}）"
         return 1
     fi
     can_replace_target "$name" "$target" || return 1
@@ -354,6 +354,22 @@ place_catalog_skill() {
     fi
     claim_skill "$name" "$catalog"
     return 0
+}
+
+# 运行时命令是否可用：PATH 中的命令（需 --version 成功），或真实安装时由 install-external.sh 生成的
+# managed launcher（$HOME/.local/bin/<bin>，带标记）。--dest 隔离安装不读取真实 HOME，只看 PATH。
+MANAGED_LAUNCHER_MARKER="agent-gpu-skills-managed"
+runtime_usable() {
+    local bin="$1" launcher="$HOME/.local/bin/$1"
+    if command -v "$bin" >/dev/null 2>&1 && "$bin" --version >/dev/null 2>&1 </dev/null; then
+        return 0
+    fi
+    if [ "$DEST_MODE" = false ] && [ -f "$launcher" ] && [ ! -L "$launcher" ] \
+        && grep -q "$MANAGED_LAUNCHER_MARKER" "$launcher" 2>/dev/null \
+        && "$launcher" --version >/dev/null 2>&1 </dev/null; then
+        return 0
+    fi
+    return 1
 }
 
 # 外部来源的 skill 名：取 SKILL.md frontmatter 的 name，缺省时取目录的真实名称。
@@ -394,6 +410,7 @@ install_conf_catalogs() {
                 echo "  跳过: $root 不存在（运行 bash install-external.sh 获取）"
                 continue
             fi
+            # -H：源根若是 symlink（如 repos/rea/runtime-skills 指向 npm 全局包）也要进入；不跟随子目录中的 symlink。
             while IFS= read -r skill_md; do
                 skill_dir="$(dirname "$skill_md")"
                 skill_name="$(frontmatter_skill_name "$skill_dir")"
@@ -402,7 +419,10 @@ install_conf_catalogs() {
                 else
                     skipped=$((skipped + 1))
                 fi
-            done < <(find "$root" -name SKILL.md -not -path '*/node_modules/*' | sort)
+            done < <(find -H "$root" -name SKILL.md -not -path '*/node_modules/*' | sort)
+            if [ -z "$(find -H "$root" -name SKILL.md 2>/dev/null | head -1)" ]; then
+                echo "  跳过: $root 中没有 SKILL.md（源为空或链接失效）"
+            fi
         done
 
         echo "  已安装 $installed 个 skill（跳过同名/保留 $skipped 个）"
@@ -744,7 +764,7 @@ echo ""
 # 依赖调用方 verify_agent 的 PASS/FAIL 局部变量（bash 动态作用域）。
 verify_conf_sources() {
     local conf="$SCRIPT_DIR/sources/external-sources.conf"
-    local name url ref mode skills_dir runtime provenance root skill_md skill_name sd bin
+    local name url ref mode skills_dir runtime provenance root skill_md skill_name sd bin found_here
     local ok=0 missing=0 rt_ok=0 rt_missing=0
     [ -f "$conf" ] || return 0
 
@@ -763,7 +783,9 @@ verify_conf_sources() {
                     echo "  缺失: $root 不存在（运行 bash install-external.sh）"
                     continue
                 fi
+                found_here=0
                 while IFS= read -r skill_md; do
+                    found_here=$((found_here + 1))
                     skill_name="$(frontmatter_skill_name "$(dirname "$skill_md")")"
                     if [ -e "$SKILL_DIR/$skill_name/SKILL.md" ]; then
                         ok=$((ok + 1))
@@ -771,13 +793,18 @@ verify_conf_sources() {
                         missing=$((missing + 1))
                         echo "  缺失: $SKILL_DIR/$skill_name/SKILL.md"
                     fi
-                done < <(find "$root" -name SKILL.md -not -path '*/node_modules/*' | sort)
+                done < <(find -H "$root" -name SKILL.md -not -path '*/node_modules/*' | sort)
+                # 源目录存在但没有任何 SKILL.md 不是成功：这意味着请求的 skill 没有被获取到。
+                if [ $found_here -eq 0 ]; then
+                    missing=$((missing + 1))
+                    echo "  缺失: $root 中没有 SKILL.md（源为空或链接失效）"
+                fi
             done
         fi
-        # 运行时命令：可执行名必须在 PATH 中且 --version 成功（只检查，不安装）。
+        # 运行时命令：PATH 中可用，或真实安装时的 managed launcher 可用（只检查，不安装）。
         if [ "$runtime" != none ]; then
             bin="${runtime##*:}"
-            if command -v "$bin" >/dev/null 2>&1 && "$bin" --version >/dev/null 2>&1 </dev/null; then
+            if runtime_usable "$bin"; then
                 rt_ok=$((rt_ok + 1))
             else
                 rt_missing=$((rt_missing + 1))

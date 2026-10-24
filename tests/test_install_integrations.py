@@ -103,6 +103,46 @@ def node_stub(directory, version):
                'if [ "$1" = "-v" ]; then echo %s; exit 0; fi\nexit 0\n' % version)
 
 
+def shq(path):
+    """POSIX 单引号转义，允许路径中含空格与撇号。"""
+    return "'" + path.replace("'", "'\"'\"'") + "'"
+
+
+# 模拟已安装的 npm 全局 bin：参数逐个回显，并报告 PATH 中解析到的 node（用于验证启动器前置了 node 目录）。
+BIN_BODY_OK = ("#!/bin/bash\n"
+               "if [ \"$1\" = --version ]; then echo fixture-bin 1.0.0; exit 0; fi\n"
+               "for a in \"$@\"; do echo \"ARG:[$a]\"; done\n"
+               "echo \"NODE:$(command -v node)\"\n")
+BIN_BODY_FAIL = "#!/bin/bash\nexit 3\n"
+
+
+def write_npm_stub(stub_dir, log, prefix, bin_body, create_bin=True, create_skills=True):
+    """npm 桩（不访问网络）：prefix -g 返回 prefix；install -g pkg@ver 生成 lib/node_modules/pkg/skills 与 bin/fixture-bin。"""
+    write(os.path.join(stub_dir, "fixture-bin.tpl"), bin_body)
+    nm = os.path.join(prefix, "lib", "node_modules")
+    make_skills = ""
+    if create_skills:
+        make_skills = ("  mkdir -p %s/\"$name\"/skills/fixture-skill\n"
+                       "  printf -- '---\\nname: fixture-skill\\n---\\n' > %s/\"$name\"/skills/fixture-skill/SKILL.md\n"
+                       % (shq(nm), shq(nm)))
+    make_bin = ""
+    if create_bin:
+        make_bin = ("  mkdir -p %s\n  cp %s %s\n  chmod 755 %s\n"
+                    % (shq(os.path.join(prefix, "bin")), shq(os.path.join(stub_dir, "fixture-bin.tpl")),
+                       shq(os.path.join(prefix, "bin", "fixture-bin")),
+                       shq(os.path.join(prefix, "bin", "fixture-bin"))))
+    script = ("#!/bin/bash\n"
+              "echo \"$@\" >> %s\n"
+              "if [ \"$1\" = prefix ]; then echo %s; exit 0; fi\n"
+              "if [ \"$1\" = root ]; then echo %s; exit 0; fi\n"
+              "if [ \"$1\" = install ]; then\n"
+              "  name=\"${3%%@*}\"\n"
+              "  mkdir -p %s/\"$name\"\n"
+              % (shq(log), shq(prefix), shq(nm), shq(nm)))
+    script += make_skills + make_bin + "  exit 0\nfi\nexit 1\n"
+    write(os.path.join(stub_dir, "npm"), script, executable=True)
+
+
 def conf_text(rows):
     return "# fixture\n" + "".join(row + "\n" for row in rows)
 
@@ -324,7 +364,8 @@ class RuntimeInstallTest(unittest.TestCase):
         self.fresh = tempdir(self, "fresh-")
         copy_helpers(self.fresh, ["install-external.sh"])
         self.stub = tempdir(self, "stub-bin-")
-        self.global_root = tempdir(self, "npm-global-")
+        node_stub(self.stub, "v24.22.1")
+        self.global_root = tempdir(self, "npm-prefix-")
         self.log = os.path.join(self.stub, "npm.log")
         self.home = tempdir(self, "home-")
 
@@ -334,28 +375,9 @@ class RuntimeInstallTest(unittest.TestCase):
         ]))
 
     def _npm_stub(self, bin_version_ok=True, create_bin=True, create_skills=True):
-        """npm 桩：记录调用；install -g pkg@ver 会在全局目录里生成 pkg/skills/fixture-skill/SKILL.md。
-        可执行文件 fixture-bin 直接放进桩目录（代表 npm 全局 bin 已在 PATH 中）。"""
-        pkg_root = os.path.join(self.global_root, "node_modules")
-        make_skills = ""
-        if create_skills:
-            make_skills = ("  mkdir -p '" + pkg_root + "'/\"$name\"/skills/fixture-skill\n"
-                           "  printf -- '---\\nname: fixture-skill\\n---\\n' > '" + pkg_root
-                           + "'/\"$name\"/skills/fixture-skill/SKILL.md\n")
-        script = ("#!/bin/bash\n"
-                  "echo \"$@\" >> '" + self.log + "'\n"
-                  "if [ \"$1\" = root ]; then echo '" + pkg_root + "'; exit 0; fi\n"
-                  "if [ \"$1\" = install ]; then\n"
-                  "  name=\"${3%@*}\"\n"
-                  "  mkdir -p '" + pkg_root + "'/\"$name\"\n"
-                  + make_skills +
-                  "  exit 0\n"
-                  "fi\n"
-                  "exit 1\n")
-        write(os.path.join(self.stub, "npm"), script, executable=True)
-        if create_bin:
-            body = "#!/bin/bash\necho fixture-bin 1.0.0\n" if bin_version_ok else "#!/bin/bash\nexit 3\n"
-            write(os.path.join(self.stub, "fixture-bin"), body, executable=True)
+        write_npm_stub(self.stub, self.log, self.global_root,
+                       BIN_BODY_OK if bin_version_ok else BIN_BODY_FAIL,
+                       create_bin=create_bin, create_skills=create_skills)
 
     def _env(self):
         return dict(os.environ, HOME=self.home, PATH=self.stub + os.pathsep + os.environ["PATH"])
@@ -388,7 +410,7 @@ class RuntimeInstallTest(unittest.TestCase):
         self._npm_stub(create_bin=False)
         rc, out = self._run()
         self.assertNotEqual(rc, 0)
-        self.assertIn("PATH 中找不到 'fixture-bin'", out)
+        self.assertIn("npm 全局 bin 中找不到 'fixture-bin'", out)
 
     def test_bin_whose_version_check_fails_is_failure(self):
         self._conf("npm:fake-pkg@1.0.0:fixture-bin", skills_dir="runtime-skills")
@@ -422,6 +444,166 @@ class RuntimeInstallTest(unittest.TestCase):
         with open(self.log, encoding="utf-8") as f:
             self.assertIn("tool install --force", f.read())
         self.assertIn("runtime OK: fixture-cli-bin", out)
+
+
+class LauncherTest(unittest.TestCase):
+    """npm 运行时的 managed launcher：参数逐个转发、路径含空格与撇号、幂等不递归、保留无关文件。"""
+
+    def setUp(self):
+        self.remote, self.sha = make_remote(self, "fixture-cli", {
+            "skills/fixture-skill/SKILL.md": skill_md("fixture-skill", "fixture"),
+        })
+        self.fresh = tempdir(self, "fresh-")
+        copy_helpers(self.fresh, ["install-external.sh"])
+        base = tempdir(self, "weird-")
+        self.stub = os.path.join(base, "node dir's bin")
+        os.makedirs(self.stub)
+        node_stub(self.stub, "v24.22.1")
+        self.log = os.path.join(self.stub, "npm.log")
+        self.prefix = os.path.join(base, "npm prefix's")
+        self.home = tempdir(self, "home-")
+        self.launcher = os.path.join(self.home, ".local", "bin", "fixture-bin")
+        write(os.path.join(self.fresh, CONF_REL), conf_text([
+            "fixture-cli|%s|%s|none|-|npm:fake-pkg@1.0.0:fixture-bin|fixture" % (self.remote, self.sha),
+        ]))
+        write_npm_stub(self.stub, self.log, self.prefix, BIN_BODY_OK)
+        self.env = dict(os.environ, HOME=self.home, PATH=self.stub + os.pathsep + os.environ["PATH"])
+
+    def _install(self, *extra):
+        return run(["bash", "install-external.sh"] + list(extra), cwd=self.fresh, env=self.env)
+
+    def test_launcher_forwards_arguments_and_runs_under_selected_node_without_npm_prefix_on_path(self):
+        rc, out = self._install()
+        self.assertEqual(rc, 0, out)
+        with open(self.launcher, encoding="utf-8") as f:
+            self.assertIn("agent-gpu-skills-managed", f.read())
+        # PATH 只有 ~/.local/bin 与普通工具：不含 npm 前缀，也不含 node 所在目录。
+        env = dict(os.environ, HOME=self.home, PATH="%s:/usr/bin:/bin" % os.path.dirname(self.launcher))
+        proc = subprocess.run([self.launcher, "a b", "it's", "--flag"], env=env, cwd=self.fresh,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+        text = proc.stdout.decode("utf-8", errors="replace")
+        self.assertEqual(proc.returncode, 0, text)
+        self.assertIn("ARG:[a b]", text)
+        self.assertIn("ARG:[it's]", text)
+        self.assertIn("ARG:[--flag]", text)
+        self.assertIn("NODE:" + os.path.join(self.stub, "node"), text)
+
+    def test_repeat_install_is_idempotent_and_never_recurses(self):
+        self._install()
+        with open(self.launcher, "rb") as f:
+            first = f.read()
+        rc, out = self._install()
+        self.assertEqual(rc, 0, out)
+        with open(self.launcher, "rb") as f:
+            self.assertEqual(f.read(), first)
+        proc = subprocess.run([self.launcher, "again"], env=self.env, cwd=self.fresh,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn(b"ARG:[again]", proc.stdout)
+
+    def test_foreign_launcher_is_preserved_and_reported_as_blocked(self):
+        os.makedirs(os.path.dirname(self.launcher))
+        write(self.launcher, "#!/bin/bash\necho UNRELATED\n", executable=True)
+        rc, out = self._install()
+        self.assertNotEqual(rc, 0)
+        with open(self.launcher, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "#!/bin/bash\necho UNRELATED\n")
+        self.assertIn("未替换", out)
+
+    def test_npm_prefix_bin_that_is_the_launcher_dir_is_used_directly_without_self_reference(self):
+        prefix = os.path.join(self.home, ".local")
+        write_npm_stub(self.stub, self.log, prefix, BIN_BODY_OK)
+        rc, out = self._install()
+        self.assertEqual(rc, 0, out)
+        with open(self.launcher, encoding="utf-8") as f:
+            self.assertNotIn("agent-gpu-skills-managed", f.read())
+        self.assertIn("无需生成", out)
+
+    def test_no_runtime_flag_writes_no_launcher(self):
+        rc, out = self._install("--no-runtime")
+        self.assertEqual(rc, 0, out)
+        self.assertFalse(os.path.exists(self.launcher))
+
+
+class RootSymlinkSourceTest(unittest.TestCase):
+    """runtime-skills 这类 symlink 源根必须被枚举；存在但没有 SKILL.md 的源不是成功。（临时 fixture，不访问网络）"""
+
+    def setUp(self):
+        self.fixture = tempdir(self, "fixture-")
+        self.global_root = tempdir(self, "npm-global-")
+        shutil.copy(os.path.join(REPO, "install.sh"), os.path.join(self.fixture, "install.sh"))
+        write(os.path.join(self.fixture, "skills", "kernel", "cuda-skill", "SKILL.md"), skill_md("cuda-skill", "x"))
+        self.skills = os.path.join(self.global_root, "lib", "node_modules", "rea-agents", "skills")
+        write(os.path.join(self.skills, "reverse-engineer-anything", "SKILL.md"),
+              skill_md("reverse-engineer-anything", "REA runtime skill"))
+        self.link = os.path.join(self.fixture, "repos", "rea-like", "runtime-skills")
+        os.makedirs(os.path.dirname(self.link))
+        os.symlink(self.skills, self.link)
+        write(os.path.join(self.fixture, CONF_REL), conf_text([
+            "rea-like|https://example.invalid/rea|UNPINNED|skills|runtime-skills|none|fixture",
+        ]))
+        self.dest = os.path.join(tempdir(self, "dest-"), "skills")
+        self.home = tempdir(self, "home-")
+
+    def _dest_install(self):
+        return run(["bash", os.path.join(self.fixture, "install.sh"), "--agent", "codex", "--dest", self.dest,
+                    "--no-veloq", "--no-tilelang-skills"] + GATE_FLAGS, cwd=self.fixture,
+                   env=dict(os.environ, HOME=self.home))
+
+    def _real_install(self):
+        return run(["bash", os.path.join(self.fixture, "install.sh"), "--agent", "codex", "--no-veloq",
+                    "--no-tilelang-skills"] + GATE_FLAGS, cwd=self.fixture, env=dict(os.environ, HOME=self.home))
+
+    def test_symlink_source_root_is_enumerated_and_installed(self):
+        rc, out = self._dest_install()
+        self.assertTrue(os.path.isfile(os.path.join(self.dest, "reverse-engineer-anything", "SKILL.md")), out[-1500:])
+        self.assertIn("已安装 1 个 skill", out)
+
+    def test_existing_but_empty_source_root_is_reported_missing_not_success(self):
+        os.remove(self.link)
+        empty = tempdir(self, "empty-src-")
+        os.symlink(empty, self.link)
+        rc, out = self._real_install()
+        self.assertNotEqual(rc, 0)
+        self.assertIn("中没有 SKILL.md", out)
+        self.assertFalse(os.path.exists(os.path.join(self.home, ".codex", "skills", "reverse-engineer-anything")))
+
+    def test_dangling_source_root_is_reported_missing(self):
+        os.remove(self.link)
+        os.symlink(os.path.join(self.global_root, "gone"), self.link)
+        rc, out = self._real_install()
+        self.assertNotEqual(rc, 0)
+        self.assertIn("runtime-skills 不存在", out)
+
+
+class InventoryParityTest(unittest.TestCase):
+    """真实 checkout 的门禁：--dest 安装得到的名称必须与路由清单中已安装（installed）的名称一致，而不只看退出码。"""
+
+    def test_dest_install_matches_inventory_installed_names_for_present_catalogs(self):
+        inventory = os.path.join(REPO, "skills", "routers", "agent-skill-router", "references", "inventory.tsv")
+        catalogs = {"local", "kernel-design-agents", "sepia", "wx-cli", "mattpocock-skills"}
+        if os.path.isdir(os.path.join(REPO, "repos", "rea", "runtime-skills")):
+            catalogs.add("rea")
+        expected = set()
+        with open(inventory, encoding="utf-8") as f:
+            columns = None
+            for line in f:
+                if line.startswith("#") or not line.strip():
+                    continue
+                fields = line.rstrip("\n").split("\t")
+                if columns is None:
+                    columns = fields
+                    continue
+                row = dict(zip(columns, fields))
+                if row["kind"] == "skill" and row["status"] == "installed" and row["catalog"] in catalogs:
+                    expected.add(row["name"])
+        self.assertTrue(expected)
+        dest = os.path.join(tempdir(self, "dest-"), "skills")
+        run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq", "--no-nvidia-skills",
+             "--no-amd-skills", "--no-cursor-skills", "--no-ccfa-skills"], cwd=REPO,
+            env=dict(os.environ, HOME=tempdir(self, "home-")))
+        missing = sorted(n for n in expected if not os.path.isfile(os.path.join(dest, n, "SKILL.md")))
+        self.assertEqual(missing, [])
 
 
 class FreshCheckoutTest(unittest.TestCase):
@@ -495,6 +677,15 @@ class FreshCheckoutTest(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(self.fresh, "repos", "fake-sub")))
         self.assertIn("跳过 submodule 获取（--dest 不联网）", out)
 
+    def test_dest_and_no_integrations_never_write_a_launcher(self):
+        self._write_conf([self._row()])
+        dest = os.path.join(tempdir(self, "dest-"), "skills")
+        run(["bash", "bootstrap.sh", "--agent", "codex", "--dest", dest, "--no-veloq"] + GATE_FLAGS,
+            cwd=self.fresh, env=self.env)
+        self.assertFalse(os.path.exists(os.path.join(self.home, ".local")))
+        self._bootstrap("--no-update", "--no-integrations")
+        self.assertFalse(os.path.exists(os.path.join(self.home, ".local")))
+
     def test_pending_source_is_blocked_and_fails(self):
         self._write_conf([self._row(), "unreviewed|%s|UNPINNED|pending|-|pending|fixture" % self.remote])
         rc, out = run(["bash", "install-external.sh", "--no-runtime"], cwd=self.fresh, env=self.env)
@@ -519,7 +710,7 @@ class FreshCheckoutTest(unittest.TestCase):
         rc, out = run(["bash", "bootstrap.sh", "--agent", "codex", "--no-update", "--no-veloq"] + GATE_FLAGS,
                       cwd=self.fresh, env=env)
         self.assertNotEqual(rc, 0)
-        self.assertIn("找不到 'absent-bin'", out)
+        self.assertIn("'absent-bin' 不可用", out)
         self.assertIn("Bootstrap 未完成", out)
 
     def test_update_repos_external_skip_flag_skips_without_network(self):

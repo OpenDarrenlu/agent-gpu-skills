@@ -93,6 +93,21 @@ bash bootstrap.sh --agent codex --no-update
 
 REA MCP 注册：`install-rea-mcp.sh` 只在清单声明了 `rea-agents` 运行时时执行，且只针对 `--agent codex`，执行 `rea setup --client codex --skill=false --yes --json`。备份、保留其他 MCP 设置与用户级 symlink 由 REA 自身完成；安装器不解析也不编辑 `~/.codex` 的配置。不使用 `--all-detected`、`--install-hopper`。其他 agent 只获得 CLI 与 skill，不会被报告为已注册 MCP。`--no-rea-mcp` 或 `--no-integrations` 跳过注册；`--dest` 下也不执行。
 
+### npm 运行时的稳定入口（managed launcher）
+
+- npm 全局 bin 位于 npm 前缀下（`npm prefix -g` 的 `bin/`，nvm 环境中例如 `…/v24.22.1/bin`），它不一定在日常 shell 的 PATH 中，所以 `which wx`、`which rea` 可能找不到。
+- 安装器为 npm 运行时在 `$HOME/.local/bin/<bin>` 生成 managed launcher。启动器把安装时选中的 node 所在目录前置到 PATH，然后 `exec` 真实的全局 bin，参数逐个保留（包括含空格与撇号的路径）。它不修改 node/npm 本身、全局 PATH、shell 配置或 npm 前缀。
+- launcher 带有标记 `agent-gpu-skills-managed`，重复安装会幂等地更新它。已存在的无关文件或 symlink（例如你自己放的 `~/.local/bin/wx`）不会被替换；安装会报告 BLOCKED，请移走或重命名后重试。
+- bootstrap 只在自身进程内把 `~/.local/bin` 前置到 PATH，用于安装验证与 REA 注册；不修改你的全局 PATH。如果 `~/.local/bin` 不在你的 PATH 中，bootstrap 会打印提示，请自行把它加入 shell 配置。
+- `--dest` 与 `--no-integrations` 不写入任何 launcher。
+
+### 修复状态（需要重新安装）
+
+- 2026-10-24 的一次真实 bootstrap（Node v24.22.1）退出码为 0，安装验证为 101 项通过、0 失败。这个结果**不完整**，不能当作功能完整的安装：
+  1. `repos/rea/runtime-skills` 是指向 npm 全局包 `skills/` 的 symlink，但安装器的 `find` 没有跟随根目录的 symlink，因此 `reverse-engineer-anything` 没有被安装，验证也没有发现这一点。代码修复已完成：枚举改用 `find -H`，“存在但没有任何 SKILL.md”的源目录会被判为缺失，不再算作成功。
+  2. wx、rea 的 npm 全局 bin 不在默认 PATH 中。代码修复已完成：生成上述 managed launcher，并在 bootstrap 进程内前置 `~/.local/bin`。
+- 上述修复已经通过自动化测试，但实时重新安装、在默认 PATH 下验证 `wx --version` 与 `rea --version`，以及确认 `~/.codex/skills/reverse-engineer-anything/SKILL.md` 存在，仍需在提交并推送后由 Codex 执行。在那之前，不应把这次安装描述为功能完整。
+
 ### 首次机器的前提
 
 - 必需：Git、Bash（系统 Bash 3.2 可用）、Python 3（路由清单与测试）。

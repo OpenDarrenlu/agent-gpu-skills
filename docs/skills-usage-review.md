@@ -134,7 +134,7 @@ python3 skills/routers/agent-skill-router/scripts/route_skill.py '用 tdd skill 
 
 | 序号 | 严重度 | 内容 | 处理 |
 |---|---|---|---|
-| R1 | 高 | 实时安装与 REA MCP 注册尚未执行 | 由 Codex 验收后执行（§8） |
+| R1 | 高 | 2026-10-24 的真实 bootstrap 退出码 0、101 项通过，但不完整：REA 的 runtime-skills 未被安装（根 symlink 未被跟随），wx/rea 不在默认 PATH 中。代码修复已测试；实时重装与默认 PATH 验证待 Codex 执行（见 INSTALL.md「修复状态」） | Codex 提交并推送后重新安装，并核对安装名与清单一致 |
 | R2 | 中 | 宿主自动选择行为未测量；路由器只报告脚本输出 | 不作为结论 |
 | R3 | 中 | wx-cli 的 skill 文本来自 fork，二进制来自上游 npm 包 | 在清单与 requires 中写明 |
 | R4 | 中 | REA skill 来自 npm 包，没有 tarball 完整性校验 | 版本一致性已检查；完整性未检查 |
@@ -147,7 +147,7 @@ python3 skills/routers/agent-skill-router/scripts/route_skill.py '用 tdd skill 
 
 本次运行（最终代码）：
 - `bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh install-rea-mcp.sh scripts/node-preflight.sh`：通过
-- `python3 -m unittest discover -s tests -p 'test_*.py' -v`：120 项，全部通过（安装器集成 55 项，路由器 65 项，其中回归矩阵 21 项）
+- `python3 -m unittest discover -s tests -p 'test_*.py' -v`：130 项，全部通过（安装器集成 65 项，路由器 65 项，其中回归矩阵 21 项）。本轮新增：npm launcher 的参数转发、路径含空格与撇号、幂等与不递归、无关文件保留、`--dest` 与 `--no-integrations` 不写 launcher；symlink 源根（REA 形态）的安装、空源与悬空源判为缺失；安装名与清单中已安装名称的一致性门禁（真实 checkout，`--dest`）。
 - `python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check`：通过，576 行
 - `git diff --check`：通过
 
