@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 1 章　算法速复习：一个 PPO/GRPO step 需要哪些量，verl 在哪里算它们</title>
+<!--
+  verl 原理精读课程 · 第 1 章。
+  基于 tech-doc-style-chinese 单文件报告模板：自包含、离线可读；图用内联 SVG；
+  证据等级用 .ev-* 标签；本文推导用 .badge-supplement / aside.supplement 标记。
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f7f8fa;
+    --sheet: #ffffff;
+    --ink: #1d2430;
+    --muted: #5b6576;
+    --rule: #d9dee6;
+    --link: #2f5bd3;
+    --measured: #0b7a55;
+    --estimate: #9a5b00;
+    --source: #3949ab;
+    --compiled: #6b4aa5;
+    --cited: #5b6576;
+    --supplement: #c0266d;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif;
+    --serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0; color: var(--ink); font-family: var(--sans);
+    font-size: 16px; line-height: 1.8; -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 50rem; margin: 2.5rem auto 4rem; padding: 2.5rem 2.75rem 3rem;
+    background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  }
+  h1 { font-family: var(--serif); font-size: 1.9rem; line-height: 1.4; font-weight: 700; margin: 0 0 1.25rem; }
+  h2 { font-size: 1.35rem; line-height: 1.45; margin: 2.75rem 0 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--rule); }
+  h3 { font-size: 1.08rem; margin: 1.75rem 0 0.5rem; }
+  p, li { margin: 0.6rem 0; }
+  a { color: var(--link); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  code, pre, .formula { font-family: var(--mono); font-size: 0.88em; }
+  code { background: #eef1f5; padding: 0.1em 0.35em; border-radius: 3px; }
+  pre { background: #f2f4f7; border: 1px solid var(--rule); border-radius: 4px; padding: 0.9rem 1rem; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; padding: 0; }
+
+  .meta { display: grid; grid-template-columns: 6.5em 1fr; gap: 0.2rem 1rem; margin: 0 0 1.5rem; font-size: 0.92rem; color: var(--muted); }
+  .meta dt { font-weight: 600; color: var(--ink); }
+  .meta dd { margin: 0; }
+
+  .summary { border-left: 4px solid var(--ink); background: #f3f5f8; padding: 0.9rem 1.2rem; margin: 1.5rem 0; }
+  .summary h2 { border: 0; margin: 0 0 0.4rem; padding: 0; font-size: 1.1rem; }
+
+  .ev { display: inline-block; font-size: 0.75rem; line-height: 1.5; padding: 0 0.45em; margin: 0 0.15em; border: 1px solid currentColor; border-radius: 3px; vertical-align: 0.1em; white-space: nowrap; }
+  .ev-measured { color: var(--measured); }
+  .ev-estimate { color: var(--estimate); }
+  .ev-source { color: var(--source); }
+  .ev-compiled { color: var(--compiled); }
+  .ev-cited { color: var(--cited); }
+  .ev-concept { color: var(--muted); border-style: dashed; }
+  .ev-design { color: var(--link); border-style: dashed; }
+  .legend { font-size: 0.85rem; color: var(--muted); margin: -0.5rem 0 1.5rem; }
+
+  .badge-supplement { display: inline-block; font-size: 0.75rem; line-height: 1.5; padding: 0 0.45em; margin-right: 0.3em; color: #fff; background: var(--supplement); border-radius: 3px; vertical-align: 0.1em; }
+  aside.supplement { border: 1px dashed var(--supplement); border-left-width: 4px; border-radius: 4px; padding: 0.6rem 1rem; margin: 1rem 0; background: #fdf4f8; }
+
+  .todo { color: var(--estimate); background: #fff6e5; padding: 0 0.2em; border-radius: 2px; }
+
+  figure { margin: 1.75rem 0; }
+  figure svg { width: 100%; height: auto; display: block; font-family: var(--sans); }
+  figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; }
+  figcaption strong { color: var(--ink); }
+  figcaption .takeaway { display: block; color: var(--ink); margin-top: 0.2rem; }
+
+  .table-wrap { overflow-x: auto; margin: 1.25rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td { border-bottom: 1px solid var(--rule); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  th { font-weight: 600; border-bottom: 2px solid var(--ink); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  caption { caption-side: bottom; text-align: left; font-size: 0.85rem; color: var(--muted); padding-top: 0.5rem; }
+  tr.current td { background: #f1f4fd; font-weight: 600; }
+
+  .formula { display: block; padding: 0.6rem 1rem; background: #f7f8fa; border-radius: 4px; overflow-x: auto; white-space: pre; line-height: 1.7; margin: 0.8rem 0; }
+  .src { font-family: var(--mono); font-size: 0.8em; color: var(--source); white-space: nowrap; }
+  nav.toc ol { padding-left: 1.4rem; margin: 0.4rem 0; }
+  details { border: 1px solid var(--rule); border-radius: 4px; padding: 0.5rem 0.9rem; margin: 1rem 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  details.qa summary { font-weight: 500; }
+  details.qa[open] summary { margin-bottom: 0.4rem; }
+  .qa .ans { border-top: 1px dashed var(--rule); padding-top: 0.4rem; }
+  .keypoint { border-left: 3px solid var(--link); padding: 0.2rem 0 0.2rem 0.9rem; margin: 1rem 0; }
+
+  @media (max-width: 640px) {
+    main { margin: 0; padding: 1.25rem 1.1rem 2rem; border: 0; border-radius: 0; }
+    h1 { font-size: 1.55rem; }
+    .meta { grid-template-columns: 1fr; }
+  }
+  @media print {
+    html, body { background: #fff; }
+    main { border: 0; margin: 0; max-width: none; padding: 0; }
+    a { color: inherit; }
+    details { border: 0; padding: 0; }
+    details > * { display: block !important; }
+    h2, h3, figure, table { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>第 1 章　算法速复习：一个 PPO/GRPO step 需要哪些量，verl 在哪里算它们</h1>
+    <dl class="meta">
+      <dt>课程</dt><dd>verl 原理精读 · 第 1 章 / 共 10 章</dd>
+      <dt>源码</dt><dd>verl <code>0.10.0.dev</code> @ <code>263653e</code>（上游 2026-10-19 快照）；文中行号均指该 commit，版本变化后先用 <code>rg</code> 重新定位</dd>
+      <dt>范围</dt><dd>优势估计（GAE、GRPO、RLOO、REINFORCE++）、policy loss（PPO clip、dual-clip，GSPO 与 CISPO 概览）、KL 的两条路径与 k1/k2/k3、loss 聚合模式；默认 V1 <code>sync</code> trainer 一个 step 中各字段的生产者。不含：rollout correction 细节（第 8 章）、engine 内部的打包与并行（第 4 章）、异步模式（第 6 章）</dd>
+      <dt>证据日期</dt><dd>2026-10-22</dd>
+    </dl>
+    <p class="legend">证据等级：<span class="ev ev-concept">示意</span><span class="ev ev-cited">引用</span><span class="ev ev-source">源码</span><span class="ev ev-estimate">估算</span>；<span class="badge-supplement">补充</span>表示源码与官方文档之外、本文自行给出的推导或解释。本章没有实测数据。</p>
+  </header>
+
+  <section class="summary" id="summary">
+    <h2>结论摘要</h2>
+    <p>verl 把一个 RL step 拆成「生成 → 打分 → 三次无梯度前向（old、ref、value）→ driver 上算优势 → 带梯度更新 → 权重同步」，每一段只向 TransferQueue 写入若干字段；弄清每个字段由谁、在哪个参数版本下算出，是读懂后续所有章节的前提。<span class="ev ev-source">源码</span> 所有优势估计器只消费 <code>token_level_rewards</code>、<code>response_mask</code> 和分组键 <code>uid</code>（GAE 额外消费 <code>values</code>），在 driver 进程上用无梯度张量计算；整个 step 中唯一带梯度的量是 actor 训练前向产生的 <code>log_prob</code>，它同时进入 policy loss、entropy loss 和 KL loss。<span class="ev ev-source">源码</span> KL 有两条路径：<code>algorithm.use_kl_in_reward</code> 在 driver 上用 <code>old_log_probs</code> 扣减奖励，<code>actor.use_kl_loss</code> 在 worker 上用带梯度的 <code>log_prob</code> 进入 loss（默认 <code>low_var_kl</code>，即 k3）。loss 以整个 mini-batch 在 DP 组内 all-reduce 后的全局 token 数（或序列数）归一化，因此梯度与 micro-batch 切分无关，但 <code>loss_agg_mode</code> 的选择会改变长短回复的相对权重。主要局限：本章只覆盖默认 V1 <code>sync</code> 路径和最常用的估计器；异步模式下 <code>old_log_probs</code> 的含义会变化，留到第 6、8 章。</p>
+  </section>
+
+  <nav class="toc" aria-label="目录">
+    <ol start="0">
+      <li><a href="#roadmap">课程路线：10 章分别回答什么问题</a></li>
+      <li><a href="#notation">LLM 生成如何写成 RL 记号</a></li>
+      <li><a href="#ppo">PPO clip 与 dual-clip 在代码里长什么样</a></li>
+      <li><a href="#adv">四种优势估计器：基线从哪里来</a></li>
+      <li><a href="#kl">KL 为什么有两条路径、三种估计</a></li>
+      <li><a href="#agg">loss 聚合：分母决定谁的权重更大</a></li>
+      <li><a href="#step">一个 V1 step 中每个字段由谁计算</a></li>
+      <li><a href="#logprob">预告：同一个 token 的三个 log-prob</a></li>
+      <li><a href="#quiz">思考题</a></li>
+      <li><a href="#next">源码自测清单与下一章</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ -->
+  <section id="roadmap">
+    <h2>0. 课程路线：10 章分别回答什么问题</h2>
+    <p>课程按「先知道算什么，再知道谁来算、在哪算、怎么算得快且一致」的顺序展开。四条重点主线分别标为：<strong>①</strong> 训推一致与 log-prob 链路，<strong>②</strong> 数据流与异步 trainer，<strong>③</strong> 资源放置与权重同步，<strong>④</strong> Agentic RL 与 reward。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>章</th><th>核心问题</th><th>主线</th><th>主要源码</th></tr></thead>
+        <tbody>
+          <tr class="current"><td>1</td><td>一个 PPO/GRPO step 需要哪些量，verl 在哪里算它们</td><td>① ②</td><td><code>core_algos.py</code>、<code>losses.py</code>、<code>v1/trainer_base.py</code></td></tr>
+          <tr><td>2</td><td>HybridFlow 编程模型：driver 的一次方法调用如何扇出到 N 个 GPU 进程</td><td>③</td><td><code>single_controller/</code>、<code>protocol.py</code></td></tr>
+          <tr><td>3</td><td>从 <code>main_ppo</code> 到 <code>fit()</code>：启动、资源池与 batch 尺寸语义</td><td>② ③</td><td><code>main_ppo.py</code>、<code>trainer_base.py::_setup</code>、<code>utils/config.py</code></td></tr>
+          <tr><td>4</td><td>Model Engine：FSDP/Megatron 如何做无 padding 前向、序列均衡与 loss</td><td>① ③</td><td><code>workers/engine/</code>、<code>engine_workers.py</code>、<code>seqlen_balancing.py</code></td></tr>
+          <tr><td>5</td><td>Rollout 服务化：推理 server、HybridEngine 的 sleep/wake 与权重同步</td><td>① ③</td><td><code>workers/rollout/</code>、<code>checkpoint_engine/</code></td></tr>
+          <tr><td>6</td><td>TransferQueue 与 ReplayBuffer：<code>sync</code>、<code>colocate_async</code>、<code>separate_async</code> 有何不同</td><td>② ③</td><td><code>v1/replay_buffer.py</code>、<code>trainer_*_async.py</code></td></tr>
+          <tr><td>7</td><td>Agent loop 与 reward loop：多轮工具调用的轨迹如何拼成训练样本</td><td>④ ①</td><td><code>experimental/agent_loop/</code>、<code>experimental/reward_loop/</code></td></tr>
+          <tr><td>8</td><td>训推一致全链路：偏差在哪里产生、如何观测、如何修正或消除</td><td>①</td><td><code>rollout_corr_helper.py</code>、<code>debug/metrics.py</code>、determinism、router replay</td></tr>
+          <tr><td>9</td><td>性能与显存：时间花在哪一段，怎么用 profiler 证明</td><td>② ③</td><td><code>docs/perf/</code>、<code>utils/profiler/</code></td></tr>
+          <tr><td>10</td><td>综合练习：沿一个真实配置走完整条调用链，并实现一个扩展点</td><td>全部</td><td>按练习选择</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="notation">
+    <h2>1. LLM 生成如何写成 RL 记号</h2>
+    <p>把一次生成看作 token 级的马尔可夫决策过程：状态 <code>s_t = (x, y_&lt;t)</code> 是 prompt 加上已生成的前缀，动作 <code>a_t = y_t</code> 是下一个 token，策略是带温度的 softmax：</p>
+    <span class="formula">π_θ(y_t | x, y_&lt;t) = softmax(logits_t / T)[y_t]　　T = actor_rollout_ref.rollout.temperature</span>
+    <p>一条轨迹就是一条回复。数学推理、代码等 RLVR（可验证奖励）任务只在回复结束后给一个标量奖励 <code>R</code>（outcome reward）。verl 把这个标量放在回复的最后一个 token 上，其他位置为 0，得到形状与回复相同的 <code>rm_scores</code>，进入优势计算时改名为 <code>token_level_scores</code>。<span class="ev ev-source">源码</span> <span class="src">experimental/agent_loop/agent_loop.py L143–148</span></p>
+    <p>多轮工具调用时，回复中夹着工具返回的 observation token。这些 token 由环境产生，不是策略的动作，因此 <code>response_mask</code> 在这些位置为 0。后文所有估计器和 loss 都只在 <code>response_mask = 1</code> 的位置计入；GAE 与 REINFORCE++ 递推时还会「跳过」mask 为 0 的位置，把下一步的值原样带过去。<span class="ev ev-source">源码</span> <span class="src">core_algos.py L254–256、L722–726</span></p>
+
+    <figure>
+      <svg viewBox="0 0 680 250" role="img" aria-labelledby="fig1-title">
+        <title id="fig1-title">一条多轮轨迹的 token、response_mask、rm_scores 与 GRPO 优势</title>
+        <g font-size="12" fill="#1d2430">
+          <text x="8" y="64">token</text>
+          <text x="8" y="114">response_mask</text>
+          <text x="8" y="154">rm_scores</text>
+          <text x="8" y="194">Â（GRPO）</text>
+        </g>
+        <!-- braces -->
+        <g stroke="#5b6576" fill="none">
+          <path d="M100 34 L100 28 L228 28 L228 34"/>
+          <path d="M232 34 L232 28 L580 28 L580 34"/>
+        </g>
+        <g font-size="12" fill="#5b6576" text-anchor="middle">
+          <text x="164" y="22">prompt x</text>
+          <text x="406" y="22">response（字段 responses，长度 T_r）</text>
+        </g>
+        <!-- token boxes -->
+        <g stroke="#5b6576" fill="#eef1f5">
+          <rect x="100" y="42" width="40" height="30" rx="3"/>
+          <rect x="144" y="42" width="40" height="30" rx="3"/>
+          <rect x="188" y="42" width="40" height="30" rx="3"/>
+        </g>
+        <g stroke="#2f5bd3" fill="#e8eefc">
+          <rect x="232" y="42" width="40" height="30" rx="3"/>
+          <rect x="276" y="42" width="40" height="30" rx="3"/>
+          <rect x="320" y="42" width="40" height="30" rx="3"/>
+          <rect x="452" y="42" width="40" height="30" rx="3"/>
+          <rect x="496" y="42" width="40" height="30" rx="3"/>
+          <rect x="540" y="42" width="40" height="30" rx="3"/>
+        </g>
+        <g stroke="#9a5b00" fill="#fff3dd" stroke-dasharray="4 2">
+          <rect x="364" y="42" width="40" height="30" rx="3"/>
+          <rect x="408" y="42" width="40" height="30" rx="3"/>
+        </g>
+        <g font-size="13" fill="#1d2430" text-anchor="middle">
+          <text x="120" y="62">p<tspan font-size="9" dy="3">1</tspan></text><text x="164" y="62">p<tspan font-size="9" dy="3">2</tspan></text><text x="208" y="62">p<tspan font-size="9" dy="3">3</tspan></text>
+          <text x="252" y="62">y<tspan font-size="9" dy="3">1</tspan></text><text x="296" y="62">y<tspan font-size="9" dy="3">2</tspan></text><text x="340" y="62">y<tspan font-size="9" dy="3">3</tspan></text>
+          <text x="384" y="62">o<tspan font-size="9" dy="3">1</tspan></text><text x="428" y="62">o<tspan font-size="9" dy="3">2</tspan></text>
+          <text x="472" y="62">y<tspan font-size="9" dy="3">4</tspan></text><text x="516" y="62">y<tspan font-size="9" dy="3">5</tspan></text><text x="560" y="62">y<tspan font-size="9" dy="3">6</tspan></text>
+        </g>
+        <!-- mask row -->
+        <g font-size="13" fill="#1d2430" text-anchor="middle" font-family="Menlo, Consolas, monospace">
+          <text x="252" y="114">1</text><text x="296" y="114">1</text><text x="340" y="114">1</text>
+          <text x="384" y="114" fill="#9a5b00">0</text><text x="428" y="114" fill="#9a5b00">0</text>
+          <text x="472" y="114">1</text><text x="516" y="114">1</text><text x="560" y="114">1</text>
+          <!-- rm_scores row -->
+          <text x="252" y="154" fill="#5b6576">0</text><text x="296" y="154" fill="#5b6576">0</text><text x="340" y="154" fill="#5b6576">0</text>
+          <text x="384" y="154" fill="#5b6576">0</text><text x="428" y="154" fill="#5b6576">0</text>
+          <text x="472" y="154" fill="#5b6576">0</text><text x="516" y="154" fill="#5b6576">0</text>
+          <text x="560" y="154" fill="#c0266d" font-weight="700">R</text>
+          <!-- adv row -->
+          <text x="252" y="194">Â</text><text x="296" y="194">Â</text><text x="340" y="194">Â</text>
+          <text x="384" y="194" fill="#9a5b00">0</text><text x="428" y="194" fill="#9a5b00">0</text>
+          <text x="472" y="194">Â</text><text x="516" y="194">Â</text><text x="560" y="194">Â</text>
+        </g>
+        <path d="M560 166 L560 180" stroke="#c0266d" stroke-width="1.2" marker-end="url(#a1)"/>
+        <defs><marker id="a1" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#c0266d"/></marker></defs>
+        <g font-size="11" fill="#5b6576">
+          <text x="100" y="226">蓝框：策略生成的 token（动作）；虚线框：工具返回的 observation token，由环境产生，mask 为 0。</text>
+          <text x="100" y="242">GRPO 先把 rm_scores 沿 token 求和得到标量 R，组内标准化后再乘 response_mask 广播回每个 token。</text>
+        </g>
+      </svg>
+      <figcaption>
+        <strong>图 1｜一条多轮轨迹上的四个逐 token 字段</strong> <span class="ev ev-concept">示意</span>11 个 token，省略 padding
+        <span class="takeaway">奖励只落在最后一个 token；observation token 不产生 loss，也不参与 GAE 的递推。</span>
+      </figcaption>
+    </figure>
+
+    <p>进入 driver 计算优势时，这些字段被 <code>to_padded_tensor()</code> 转成形状 <code>[N, T_r]</code> 的稠密张量：<code>N</code> 是本次参与计算的轨迹条数（单轮时等于 prompt 数 × <code>rollout.n</code>），<code>T_r</code> 是本批最长回复的长度。TransferQueue 里存的是不带 padding 的 nested tensor。<span class="ev ev-source">源码</span> <span class="src">v1/trainer_base.py L1744–1751</span></p>
+    <p>分组键 <code>uid</code> 在 driver 从 dataloader 取 prompt 时用 <code>uuid4</code> 生成，同一个 prompt 的 <code>n</code> 条采样共享同一个 <code>uid</code>。GRPO、RLOO 的「组」就是按 <code>uid</code> 划分的。<span class="ev ev-source">源码</span> <span class="src">v1/trainer_base.py::_fetch_one_gen_batch L1477</span></p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="ppo">
+    <h2>2. PPO clip 与 dual-clip 在代码里长什么样</h2>
+    <h3>2.1 从 REINFORCE 到 clipped surrogate</h3>
+    <p>策略梯度的基本形式是 REINFORCE：用当前策略采样，再按优势加权对数概率的梯度。</p>
+    <span class="formula">∇J(θ) = E_{a~π_θ} [ Σ_t ∇ log π_θ(a_t|s_t) · Â_t ]</span>
+    <p>一次 rollout 的样本要被多个 mini-batch、多个 epoch 复用，从第二次梯度更新起，样本就不再来自当前策略。PPO 用重要性比率 <code>r_t</code> 修正分布差异，并把比率裁剪在 <code>[1−ε_low, 1+ε_high]</code> 内，限制单次更新的步幅：</p>
+    <span class="formula">r_t(θ) = π_θ(a_t|s_t) / π_old(a_t|s_t)
+L_clip(θ) = −E_t [ min( r_t·Â_t ,  clip(r_t, 1−ε_low, 1+ε_high)·Â_t ) ]</span>
+    <p>Â &lt; 0 时，标准 clip 对 <code>r_t</code> 增大没有上限：某个 token 的概率被意外推高后，loss 会随 <code>r_t</code> 线性增长。dual-clip 再加一层上限 <code>−c·Â_t</code>（<code>c = clip_ratio_c</code>，默认 3.0）：</p>
+    <span class="formula">Â_t &lt; 0 时：L_t = min( max(−r_t·Â_t, −clip(r_t)·Â_t),  −c·Â_t )</span>
+
+    <h3>2.2 公式与 <code>compute_policy_loss_vanilla</code> 的对照</h3>
+    <p>verl 把「最大化 min(·)」写成「最小化 max(−·)」，每一项都能在代码里找到对应变量。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::compute_policy_loss_vanilla L1286–1376</span></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>公式项</th><th>代码</th><th>行号</th></tr></thead>
+        <tbody>
+          <tr><td><code>log r_t</code></td><td><code>negative_approx_kl = clamp(log_prob − old_log_prob, −20, 20)</code></td><td class="num">1336–1338</td></tr>
+          <tr><td><code>r_t</code></td><td><code>ratio = exp(negative_approx_kl)</code></td><td class="num">1339</td></tr>
+          <tr><td><code>−r_t·Â</code>、<code>−clip(r_t)·Â</code></td><td><code>pg_losses1</code>、<code>pg_losses2</code></td><td class="num">1342–1349</td></tr>
+          <tr><td>标准 clip</td><td><code>clip_pg_losses1 = maximum(pg_losses1, pg_losses2)</code></td><td class="num">1350</td></tr>
+          <tr><td>dual-clip（仅 Â &lt; 0）</td><td><code>pg_losses3 = −Â·clip_ratio_c</code>；<code>where(Â &lt; 0, min(pg_losses3, clip_pg_losses1), clip_pg_losses1)</code></td><td class="num">1355–1361</td></tr>
+          <tr><td>rollout 修正权重</td><td><code>pg_losses *= rollout_is_weights</code>（第 8 章）</td><td class="num">1364–1365</td></tr>
+          <tr><td>聚合成标量</td><td><code>agg_loss(..., loss_agg_mode, **config.global_batch_info)</code>（第 5 节）</td><td class="num">1367–1369</td></tr>
+          <tr><td>监控指标</td><td><code>actor/pg_clipfrac</code>、<code>actor/ppo_kl = mean(old − new)</code>、<code>actor/pg_clipfrac_lower</code></td><td class="num">1371–1375</td></tr>
+        </tbody>
+        <caption><span class="ev ev-source">源码</span> <code>verl/trainer/ppo/core_algos.py</code> @ <code>263653e</code>。默认值来自 <code>_generated_ppo_trainer.yaml</code>：<code>clip_ratio = clip_ratio_low = clip_ratio_high = 0.2</code>，<code>clip_ratio_c = 3.0</code>。</caption>
+      </table>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 680 280" role="img" aria-labelledby="fig2-title">
+        <title id="fig2-title">PPO 单 token loss 随比率 r 的变化，Â 大于 0 与小于 0 两种情况</title>
+        <defs>
+          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#c0266d" stroke-width="1" opacity="0.25"/>
+          </pattern>
+        </defs>
+        <!-- Panel A -->
+        <text x="180" y="28" font-size="13" text-anchor="middle" fill="#1d2430" font-weight="600">Â &gt; 0（取 Â = 1）</text>
+        <rect x="128" y="40" width="182" height="170" fill="url(#hatch)"/>
+        <rect x="50" y="40" width="260" height="170" fill="none" stroke="#d9dee6"/>
+        <g stroke="#d9dee6" stroke-dasharray="3 3">
+          <line x1="102" y1="40" x2="102" y2="210"/>
+          <line x1="115" y1="40" x2="115" y2="210"/>
+          <line x1="50" y1="58.9" x2="310" y2="58.9"/>
+        </g>
+        <line x1="128" y1="40" x2="128" y2="210" stroke="#5b6576" stroke-dasharray="4 3"/>
+        <polyline points="128,172.2 154,210" fill="none" stroke="#5b6576" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <polyline points="50,58.9 128,172.2 310,172.2" fill="none" stroke="#2f5bd3" stroke-width="2.5"/>
+        <g font-size="11" fill="#5b6576">
+          <text x="44" y="62" text-anchor="end">0</text>
+          <text x="44" y="176" text-anchor="end">−1.2</text>
+          <text x="50" y="226" text-anchor="middle">0</text><text x="115" y="226" text-anchor="middle">1</text>
+          <text x="180" y="226" text-anchor="middle">2</text><text x="245" y="226" text-anchor="middle">3</text><text x="310" y="226" text-anchor="middle">4</text>
+          <text x="131" y="52">1+ε = 1.2</text>
+          <text x="218" y="140" text-anchor="middle" fill="#c0266d">clip 生效：梯度为 0</text>
+          <text x="160" y="200">未 clip 的 −r·Â</text>
+        </g>
+        <!-- Panel B -->
+        <text x="510" y="28" font-size="13" text-anchor="middle" fill="#1d2430" font-weight="600">Â &lt; 0（取 Â = −1）</text>
+        <rect x="380" y="40" width="52" height="170" fill="url(#hatch)"/>
+        <rect x="575" y="40" width="65" height="170" fill="url(#hatch)"/>
+        <rect x="380" y="40" width="260" height="170" fill="none" stroke="#d9dee6"/>
+        <g stroke="#d9dee6" stroke-dasharray="3 3">
+          <line x1="445" y1="40" x2="445" y2="210"/>
+          <line x1="458" y1="40" x2="458" y2="210"/>
+          <line x1="380" y1="201.1" x2="640" y2="201.1"/>
+        </g>
+        <line x1="432" y1="40" x2="432" y2="210" stroke="#5b6576" stroke-dasharray="4 3"/>
+        <line x1="575" y1="40" x2="575" y2="210" stroke="#5b6576" stroke-dasharray="4 3"/>
+        <polyline points="575,66.8 614,40" fill="none" stroke="#5b6576" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <polyline points="380,165.3 432,165.3 575,66.8 640,66.8" fill="none" stroke="#2f5bd3" stroke-width="2.5"/>
+        <g font-size="11" fill="#5b6576">
+          <text x="374" y="205" text-anchor="end">0</text>
+          <text x="374" y="169" text-anchor="end">0.8</text>
+          <text x="374" y="71" text-anchor="end">3</text>
+          <text x="380" y="226" text-anchor="middle">0</text><text x="445" y="226" text-anchor="middle">1</text>
+          <text x="510" y="226" text-anchor="middle">2</text><text x="575" y="226" text-anchor="middle">3</text><text x="640" y="226" text-anchor="middle">4</text>
+          <text x="406" y="150" text-anchor="middle" fill="#c0266d">梯度为 0</text>
+          <text x="436" y="186">1−ε = 0.8</text>
+          <text x="608" y="96" text-anchor="middle" fill="#c0266d">dual-clip</text>
+          <text x="608" y="110" text-anchor="middle" fill="#c0266d">梯度为 0</text>
+          <text x="570" y="52" text-anchor="end">无 dual-clip 时继续增长</text>
+          <text x="580" y="80">c = 3</text>
+        </g>
+        <g font-size="12" fill="#1d2430" text-anchor="middle">
+          <text x="180" y="248">比率 r = π_θ / π_old</text>
+          <text x="510" y="248">比率 r = π_θ / π_old</text>
+        </g>
+        <text x="14" y="125" font-size="12" fill="#1d2430" transform="rotate(-90 14 125)" text-anchor="middle">单 token loss</text>
+        <text x="50" y="270" font-size="11" fill="#5b6576">实线：verl 的 vanilla loss（ε_low = ε_high = 0.2，c = 3）；虚线：去掉对应裁剪后的曲线。阴影区内 loss 与 θ 无关。</text>
+      </svg>
+      <figcaption>
+        <strong>图 2｜vanilla policy loss 随比率 r 的形状</strong> <span class="ev ev-concept">示意</span>按 <code>compute_policy_loss_vanilla</code> 的分段公式绘制，Â 取 ±1
+        <span class="takeaway">clip 只在「继续朝有利方向走」时截断梯度：Â &gt; 0 截断 r &gt; 1+ε，Â &lt; 0 截断 r &lt; 1−ε；dual-clip 额外截断 Â &lt; 0 且 r &gt; c 的失控区。</span>
+      </figcaption>
+    </figure>
+
+    <h3>2.3 其他 policy loss 的差异点</h3>
+    <p>所有 policy loss 通过 <code>@register_policy_loss(name)</code> 注册，由 <code>actor_rollout_ref.actor.policy_loss.loss_mode</code> 选择，签名统一为 <code>(old_log_prob, log_prob, advantages, response_mask, loss_agg_mode, config, rollout_is_weights)</code>。<span class="ev ev-source">源码</span> <span class="src">core_algos.py L53、L70；losses.py L113–126</span> 两个常用变体的差异如下：</p>
+    <ul>
+      <li><strong>GSPO</strong>：把比率换成序列级几何平均 <code>s_i = exp(mean_t log r_{i,t})</code>，再用 <code>log_prob − log_prob.detach() + sg(log s_i)</code> 让梯度仍按 token 回传。裁剪对象从单个 token 变为整条序列。<span class="ev ev-source">源码</span> <span class="src">L1578–1597</span></li>
+      <li><strong>CISPO</strong>：loss 写成 <code>−sg(clip(r))·Â·log π_θ</code>。裁剪只限制权重大小，不切断梯度；PPO 中被 clip 的 token 完全不贡献梯度，CISPO 中仍然贡献。<span class="ev ev-source">源码</span> <span class="src">L2079–2084</span></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="adv">
+    <h2>3. 四种优势估计器：基线从哪里来</h2>
+    <p>优势 <code>Â_t</code> 回答「这个动作比平均水平好多少」。不同估计器的区别集中在一点：<strong>平均水平（基线）从哪里来、在什么范围内归一化</strong>。verl 的所有估计器共享同一个接口：输入 <code>token_level_rewards</code>、<code>response_mask</code>，按需输入 <code>index</code>（即 <code>uid</code>）、<code>values</code>、<code>config</code>，输出形状均为 <code>[N, T_r]</code> 的 <code>(advantages, returns)</code>，全程在 <code>torch.no_grad()</code> 下计算。</p>
+    <p>分派逻辑在 <code>ray_trainer.py::compute_advantage</code>：GAE 与 GRPO 走显式分支，其他估计器从 <code>@register_adv_est</code> 注册表取函数，并且只有当 batch 中存在 <code>uid</code> 时才传 <code>index</code>。<span class="ev ev-source">源码</span> <span class="src">ray_trainer.py L187–282；core_algos.py L116</span> V1 trainer 在外面再包一层 <code>compute_advantage_for_multi_trajectories</code>，第 7 章讲 agent loop 时回到这一层。<span class="src">v1/utils.py L148</span></p>
+
+    <h3>3.1 GAE：用 critic 学出逐状态的基线</h3>
+    <span class="formula">δ_t = r_t + γ·V(s_{t+1}) − V(s_t)
+Â_t = δ_t + γλ·Â_{t+1}　　（从最后一个 token 逆序递推；回复结束后 V 与 Â 取 0）
+returns_t = Â_t + V(s_t)　（白化之前，作为 critic 的回归目标）
+Â ← masked_whiten(Â, response_mask)　（在整个 batch 的有效 token 上减均值、除标准差）</span>
+    <p>代码与公式逐行对应：<code>delta</code>、<code>lastgaelam_</code> 是递推，<code>nextvalues</code>、<code>lastgaelam</code> 在 mask 为 0 的位置保持不变，实现了对 observation token 的跳过。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::compute_gae_advantage_return L244–263</span> 默认 <code>algorithm.gamma = 1.0</code>、<code>algorithm.lam = 1.0</code>。只有 GAE 需要 critic：<code>critic.enable</code> 未显式设置时，<code>need_critic</code> 仅在 <code>adv_estimator == gae</code> 时返回 True。<span class="src">trainer/ppo/utils.py L96–107</span></p>
+    <aside class="supplement">
+      <span class="badge-supplement">补充</span>默认 γ = λ = 1 且只有最后一个 token 有奖励时，δ 求和逐项抵消：<code>Â_t = Σ_{k≥t} δ_k = R − V(s_t)</code>。也就是说，默认配置下的 GAE 等价于「蒙特卡洛回报减去 critic 预测」，λ &lt; 1 才会引入 critic 自举带来的偏差—方差折中。这也解释了为什么 LLM RL 中去掉 critic、改用组内经验均值（GRPO、RLOO）在实践上可行：两者都在估计 <code>R − b</code>，只是 <code>b</code> 的来源不同。
+    </aside>
+
+    <h3>3.2 GRPO：同一 prompt 的 n 条回复互为基线</h3>
+    <span class="formula">R_i = Σ_t token_level_rewards[i, t]
+Â_i = (R_i − mean_{j∈g(i)} R_j) / (std_{j∈g(i)} R_j + ε)　　g(i)：与 i 共享 uid 的轨迹集合，ε = 1e-6
+Â[i, t] = Â_i · response_mask[i, t]　　（同一条回复的所有有效 token 共享一个优势）</span>
+    <p>实现细节有三处值得记住。第一，<code>std</code> 用的是 <code>torch.std</code>，即无偏估计（除以 n−1）。第二，组内只有 1 条时均值取 0、标准差取 1，优势等于原始奖励。第三，<code>algorithm.norm_adv_by_std_in_grpo=False</code> 时不除标准差，即 Dr.GRPO 的做法。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::compute_grpo_outcome_advantage L304–331</span> 该实现是逐样本的 Python 循环，大 batch 时可以换成 <code>grpo_vectorized</code>。</p>
+
+    <h3>3.3 RLOO：留一法均值</h3>
+    <span class="formula">Â_i = R_i − (1/(n−1))·Σ_{j∈g(i), j≠i} R_j = n/(n−1) · (R_i − mean_{j∈g(i)} R_j)</span>
+    <p>代码直接用等号右侧的形式：<code>scores[i] * n/(n−1) − mean * n/(n−1)</code>。基线不含样本自身，因此是无偏的；不做标准差归一化。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::compute_rloo_outcome_advantage L612–636</span></p>
+
+    <h3>3.4 REINFORCE++：全 batch 白化的折扣回报</h3>
+    <span class="formula">G_t = r_t + γ·G_{t+1}　　（mask 为 0 的位置把 G 原样带过）
+Â = masked_whiten(G, response_mask) · response_mask</span>
+    <p>REINFORCE++ 不分组，基线来自整个 batch 的白化：减去全 batch 有效 token 上的均值，再除以标准差。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::compute_reinforce_plus_plus_outcome_advantage L714–731</span> 需要组内基线时，使用 <code>reinforce_plus_plus_baseline</code>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>估计器</th><th>基线</th><th>归一化范围</th><th>需要 critic</th><th>需要 uid</th><th><code>returns</code> 的含义</th></tr></thead>
+        <tbody>
+          <tr><td><code>gae</code></td><td>critic 预测的 <code>V(s_t)</code>，逐 token 不同</td><td>全 batch 白化</td><td>是</td><td>否</td><td><code>Â + V</code>，critic 的回归目标</td></tr>
+          <tr><td><code>grpo</code></td><td>同组均值</td><td>组内除标准差（可关闭）</td><td>否</td><td>是</td><td>与 <code>advantages</code> 相同</td></tr>
+          <tr><td><code>rloo</code></td><td>同组留一均值</td><td>无</td><td>否</td><td>是</td><td>与 <code>advantages</code> 相同</td></tr>
+          <tr><td><code>reinforce_plus_plus</code></td><td>全 batch 均值</td><td>全 batch 白化</td><td>否</td><td>否</td><td>折扣回报 <code>G_t</code></td></tr>
+        </tbody>
+        <caption><span class="ev ev-source">源码</span> <code>core_algos.py</code> @ <code>263653e</code>。注册表中还有 <code>remax</code>、<code>opo</code>、<code>gpg</code>、<code>gdpo</code>、<code>grpo_passk</code>、<code>optimal_token_baseline</code> 等，接口相同。</caption>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="kl">
+    <h2>4. KL 为什么有两条路径、三种估计</h2>
+    <h3>4.1 三种逐 token 估计</h3>
+    <p>记采样 token 上的对数比 <code>Δ_t = log π_θ(a_t|s_t) − log π_ref(a_t|s_t)</code>。只有采样到的那个 token 的 log-prob 可用，因此 KL 只能用单样本估计量近似。verl 支持的估计量如下，括号内是配置别名。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::kl_penalty_forward L2216–2251</span></p>
+    <span class="formula">k1（kl）        = Δ
+k2（mse）       = ½·Δ²
+k3（low_var_kl）= e^{−Δ} + Δ − 1　　代码：kl = ref − logp；clamp(kl, ±20)；ratio = exp(kl)；clamp(ratio − kl − 1, −10, 10)
+abs             = |Δ|
+full            → NotImplementedError</span>
+    <p>在配置值后加 <code>+</code>（如 <code>k3+</code>）启用 straight-through：前向数值仍是原估计量，反向梯度换成 k2 的梯度，即 <code>k2 − sg(k2) + sg(k_x)</code>。源码注释给出的理由是：k1、k3 的期望等于 KL，但它们梯度的期望不等于 KL 的梯度；k2 的梯度才是正确的梯度估计。<span class="ev ev-source">源码</span> <span class="src">core_algos.py::kl_penalty L2200–2213</span></p>
+    <aside class="supplement">
+      <span class="badge-supplement">补充</span>下面用单步、on-policy（<code>a ~ π_θ</code>）、只看当前 token 的设定验证这条注释。记 <code>ρ = π_ref(a)/π_θ(a)</code>，并利用 <code>E_{π_θ}[∇log π_θ] = 0</code>：
+      <span class="formula">∇k1 = ∇log π_θ                 → E[∇k1] = 0
+∇k2 = Δ·∇log π_θ               → E[∇k2] = Σ_a ∇π_θ(a)·(log π_θ − log π_ref) = ∇ KL(π_θ ‖ π_ref)
+∇k3 = (1 − ρ)·∇log π_θ         → E[∇k3] = −Σ_a π_ref(a)·∇log π_θ(a)     = ∇ KL(π_ref ‖ π_θ)</span>
+      结论：把 k1 当 loss，期望梯度为 0，只剩噪声；k3 当 loss，得到的是 forward KL 的梯度，而不是 reverse KL；只有 k2 给出 reverse KL 的梯度。这一推导有两个前提需要记住：verl 的样本来自 <code>π_old</code> 或 <code>π_rollout</code> 而非 <code>π_θ</code>，只在第一个 mini-batch 上近似成立；逐 token 估计忽略了 θ 对后续状态分布的影响。
+    </aside>
+
+    <h3>4.2 两条路径：进奖励，或进 loss</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>路径 A：KL 进奖励</th><th>路径 B：KL 进 loss</th></tr></thead>
+        <tbody>
+          <tr><td>开关</td><td><code>algorithm.use_kl_in_reward</code></td><td><code>actor_rollout_ref.actor.use_kl_loss</code></td></tr>
+          <tr><td>估计量配置</td><td><code>algorithm.kl_penalty</code>，默认 <code>kl</code>（k1）</td><td><code>actor.kl_loss_type</code>，默认 <code>low_var_kl</code>（k3）</td></tr>
+          <tr><td>系数</td><td><code>algorithm.kl_ctrl</code>：<code>fixed</code>（默认 <code>kl_coef = 0.001</code>）或 <code>adaptive</code></td><td><code>actor.kl_loss_coef</code>，默认 0.001</td></tr>
+          <tr><td>在哪里算</td><td>driver：<code>_compute_advantage</code> → <code>apply_kl_penalty</code></td><td>actor worker：<code>ppo_loss</code></td></tr>
+          <tr><td>用哪两个 log-prob</td><td><code>old_log_probs</code> 与 <code>ref_log_prob</code>，均无梯度</td><td>带梯度的 <code>log_prob</code> 与 <code>ref_log_prob</code></td></tr>
+          <tr><td>作用方式</td><td><code>token_level_rewards = scores − β·kl·mask</code>，再经优势估计影响梯度</td><td><code>policy_loss += coef · agg_loss(kl)</code>，直接产生梯度</td></tr>
+          <tr><td>源码</td><td><span class="src">ray_trainer.py L78–117；trainer_base.py L1755–1761</span></td><td><span class="src">losses.py L171–181</span></td></tr>
+        </tbody>
+        <caption><span class="ev ev-source">源码</span> 默认值取自 <code>_generated_ppo_trainer.yaml</code> @ <code>263653e</code>。任一开关为 True 时 <code>need_reference_policy</code> 返回 True，trainer 才会创建 ref 并执行 <code>ref</code> 阶段（<span class="src">trainer/ppo/utils.py L75–79</span>）。</caption>
+      </table>
+    </div>
+    <p>两条路径的本质区别在于 KL 的梯度经由哪条通道到达参数。路径 A 中，KL 是奖励的一部分，梯度来自策略梯度的 score function 项；路径 B 中，KL 是 loss 的一部分，梯度来自对 <code>log_prob</code> 的直接求导，因此估计量的选择（k1、k2、k3 及 <code>+</code>）在路径 B 中直接决定梯度的偏差。verl 的 GRPO 文档要求走路径 B（<code>use_kl_loss=True</code>）；PPO 文档同时列出两条路径，两个开关默认都是 False，即默认不启用 KL、也不创建 ref。<span class="ev ev-cited">引用</span> <span class="src">docs/algo/grpo.md、docs/algo/ppo.md</span></p>
+    <aside class="supplement">
+      <span class="badge-supplement">补充</span>路径 A 配合 k1 时，把 <code>−β·Σ_t k1</code> 当作序列奖励，用 score function 求梯度，得到的正好是序列级 reverse KL <code>KL(π_θ ‖ π_ref)</code> 的无偏梯度——这是经典 RLHF 把 KL 放进奖励的理由。但在 GRPO 中，<code>compute_grpo_outcome_advantage</code> 先把 <code>token_level_rewards</code> 沿 token 求和，再做组内标准化，KL 项会被组内标准差缩放，逐 token 的结构也随之消失。
+    </aside>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="agg">
+    <h2>5. loss 聚合：分母决定谁的权重更大</h2>
+    <p>policy loss、entropy loss 和 KL loss 都先得到形状为 <code>[N_mb, T_r]</code> 的逐 token loss 矩阵 <code>L</code>，再由 <code>agg_loss</code> 按 <code>actor.loss_agg_mode</code>（默认 <code>token-mean</code>）聚合成标量。记 <code>M</code> 为 <code>response_mask</code>，<code>N_tok</code>、<code>N_seq</code> 为<strong>整个 mini-batch、全部 DP rank</strong> 上的有效 token 数与序列数，<code>D</code> 为 DP 大小：</p>
+    <span class="formula">token-mean              = Σ_{i,t} M·L / N_tok · D
+token-sum               = Σ_{i,t} M·L · D
+seq-mean-token-sum      = Σ_i (Σ_t M·L) / N_seq · D
+seq-mean-token-sum-norm = seq-mean-token-sum / C　　C = loss_scale_factor，未设置时取当前 micro-batch 的 T_r
+seq-mean-token-mean     = Σ_i (Σ_t M·L / Σ_t M) / N_seq · D</span>
+    <p><span class="ev ev-source">源码</span> <span class="src">core_algos.py::agg_loss L1140–1206；losses.py L77–80、L164–181</span></p>
+
+    <h3>5.1 为什么结果与 micro-batch 切分无关</h3>
+    <p>一次 optimizer step 对应一个 mini-batch。FSDP engine 在 <code>forward_backward_batch</code> 开头先对该 mini-batch 的 <code>loss_mask</code> 求和，并在 DP 组内 all-reduce，得到全局 <code>batch_num_tokens</code>；随后把 mini-batch 切成若干 micro-batch，逐个前向、反向并累加梯度。<span class="ev ev-source">源码</span> <span class="src">workers/engine/fsdp/transformer_impl.py L728–743；workers/engine/base.py::train_batch L113–131</span> 每个 micro-batch 的 loss 是「本地 token 求和 ÷ 全局 token 数 × D」，梯度累加相当于对所有 micro-batch 求和，DP 梯度同步再除以 D，两者合起来正好是全局 mini-batch 上的 token 平均。seq 系列模式的 <code>N_seq</code> 来自 <code>global_batch_size</code>，由 <code>_update_actor</code> 设为 <code>ppo_mini_batch_size × rollout.n</code>。<span class="src">v1/trainer_base.py L1830–1831、L1856</span></p>
+    <p class="keypoint">因此，动态 batch（<code>use_dynamic_bsz</code>）按 token 预算重新打包 micro-batch，不会改变梯度的数学期望。会改变数值的是浮点求和顺序——这一点在第 4、8 章讨论 bitwise 一致时很重要。</p>
+
+    <h3>5.2 不同模式下每个 token 的权重</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th><code>loss_agg_mode</code></th><th>单个有效 token 的权重</th><th>长回复与短回复</th><th>文档中的对应做法</th></tr></thead>
+        <tbody>
+          <tr><td><code>token-mean</code>（默认）</td><td><code>1 / N_tok</code></td><td>长回复 token 多，总权重更大</td><td>verl 所有 GRPO 示例脚本的默认值</td></tr>
+          <tr><td><code>seq-mean-token-mean</code></td><td><code>1 / (N_seq · |y_i|)</code></td><td>每条回复总权重相同，长回复中每个 token 被稀释</td><td>GRPO 原论文；文档指出在长 CoT 中可能不稳定</td></tr>
+          <tr><td><code>seq-mean-token-sum-norm</code></td><td><code>1 / (N_seq · C)</code></td><td>每个 token 权重相同，且不随 batch 组成变化（C 为常数时）</td><td>Dr.GRPO，配合 <code>norm_adv_by_std_in_grpo=False</code></td></tr>
+          <tr><td><code>seq-mean-token-sum</code></td><td><code>1 / N_seq</code></td><td>token 越多，序列总权重越大</td><td>—</td></tr>
+          <tr><td><code>token-sum</code></td><td><code>1</code></td><td>不归一化，loss 量级随 batch 增长</td><td>—</td></tr>
+        </tbody>
+        <caption><span class="ev ev-cited">引用</span> <code>docs/algo/grpo.md</code>（DrGRPO 一节）、<code>docs/algo/dapo.md</code>；权重一列由 <code>agg_loss</code> 公式推出。</caption>
+      </table>
+    </div>
+    <aside class="supplement">
+      <span class="badge-supplement">补充</span>Dr.GRPO 所说的「长度偏差」可以直接从权重列读出：在 <code>seq-mean-token-mean</code> 下，Â &lt; 0 的错误回复越长，每个 token 受到的惩罚越小，策略因此倾向于把错误答案写长。<code>token-mean</code> 与 <code>seq-mean-token-sum-norm</code> 都让每个 token 的权重与回复长度无关，区别在于前者的分母 <code>N_tok</code> 随 batch 组成波动，后者在 <code>C</code> 固定时是常数。
+    </aside>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="step">
+    <h2>6. 一个 V1 step 中每个字段由谁计算</h2>
+    <p>前 5 节的每个公式都需要特定的输入字段。默认 V1 <code>sync</code> trainer 的 <code>_step_once</code> 按固定顺序调用各角色，每一段把结果写回 TransferQueue（简称 TQ），driver 只持有 key 与 tag 等元数据（<code>KVBatchMeta</code>）。<span class="ev ev-source">源码</span> <span class="src">v1/trainer_base.py::_step_once L563–613；v1/trainer_sync.py L35–42</span></p>
+
+    <figure>
+      <svg viewBox="0 0 920 715" role="img" aria-labelledby="fig3-title">
+        <title id="fig3-title">V1 sync trainer 一个 step 的执行者与写入 TransferQueue 的字段</title>
+        <!-- row stripes -->
+        <g fill="#fafbfc">
+          <rect x="0" y="96" width="920" height="44"/>
+          <rect x="0" y="184" width="920" height="44"/>
+          <rect x="0" y="272" width="920" height="44"/>
+          <rect x="0" y="360" width="920" height="44"/>
+          <rect x="0" y="448" width="920" height="44"/>
+          <rect x="0" y="536" width="920" height="44"/>
+          <rect x="0" y="624" width="920" height="44"/>
+        </g>
+        <!-- headers -->
+        <g font-size="12.5" fill="#1d2430" font-weight="600">
+          <text x="4" y="28">timing_s/*</text>
+          <text x="160" y="28" text-anchor="middle">Driver</text>
+          <text x="305" y="28" text-anchor="middle">Rollout</text>
+          <text x="440" y="28" text-anchor="middle">Reward</text>
+          <text x="590" y="28" text-anchor="middle">训练 workers</text>
+          <text x="685" y="28">TransferQueue 字段</text>
+        </g>
+        <g font-size="10" fill="#5b6576">
+          <text x="4" y="43">日志中的分段计时</text>
+          <text x="160" y="43" text-anchor="middle">PPOTrainer（Ray actor）</text>
+          <text x="305" y="43" text-anchor="middle">AgentLoop + 推理 server</text>
+          <text x="440" y="43" text-anchor="middle">reward loop</text>
+          <text x="590" y="43" text-anchor="middle">actor / ref / critic</text>
+          <text x="685" y="43">写入（或读取）的字段</text>
+        </g>
+        <g stroke="#d9dee6">
+          <line x1="0" y1="52" x2="920" y2="52"/>
+          <line x1="90" y1="52" x2="90" y2="670"/>
+          <line x1="232" y1="52" x2="232" y2="670"/>
+          <line x1="378" y1="52" x2="378" y2="670"/>
+          <line x1="502" y1="52" x2="502" y2="670"/>
+          <line x1="678" y1="52" x2="678" y2="670"/>
+        </g>
+        <!-- timing labels -->
+        <g font-size="9.5" fill="#5b6576" font-family="Menlo, Consolas, monospace">
+          <text x="6" y="78">—</text>
+          <text x="6" y="122">（后台）</text>
+          <text x="6" y="166">（后台）</text>
+          <text x="6" y="210">gen</text>
+          <text x="6" y="254">gen</text>
+          <text x="6" y="298">reward</text>
+          <text x="6" y="342">—</text>
+          <text x="6" y="386">old_log_prob</text>
+          <text x="6" y="430">ref</text>
+          <text x="6" y="474">values</text>
+          <text x="6" y="518">adv</text>
+          <text x="6" y="562">update_critic</text>
+          <text x="6" y="606">update_actor</text>
+          <text x="6" y="650">update_weights</text>
+        </g>
+        <!-- boxes: driver -->
+        <g fill="#eef1f5" stroke="#5b6576">
+          <rect x="95" y="57" width="130" height="34" rx="4"/>
+          <rect x="95" y="189" width="130" height="34" rx="4"/>
+          <rect x="95" y="321" width="130" height="34" rx="4"/>
+          <rect x="95" y="497" width="130" height="34" rx="4"/>
+        </g>
+        <!-- boxes: rollout -->
+        <g fill="#e8eefc" stroke="#2f5bd3">
+          <rect x="240" y="101" width="130" height="34" rx="4"/>
+          <rect x="240" y="233" width="130" height="34" rx="4"/>
+          <rect x="240" y="629" width="130" height="34" rx="4"/>
+        </g>
+        <!-- boxes: reward -->
+        <g fill="#fff3dd" stroke="#9a5b00">
+          <rect x="385" y="145" width="110" height="34" rx="4"/>
+          <rect x="385" y="277" width="110" height="34" rx="4" stroke-dasharray="4 2"/>
+        </g>
+        <!-- boxes: train no grad -->
+        <g fill="#e3f3ec" stroke="#0b7a55">
+          <rect x="510" y="365" width="160" height="34" rx="4"/>
+          <rect x="510" y="409" width="160" height="34" rx="4"/>
+          <rect x="510" y="453" width="160" height="34" rx="4"/>
+        </g>
+        <!-- boxes: train grad -->
+        <g fill="#c4e6d4" stroke="#0b7a55" stroke-width="2">
+          <rect x="510" y="541" width="160" height="34" rx="4"/>
+          <rect x="510" y="585" width="160" height="34" rx="4"/>
+        </g>
+        <!-- box text line 1 -->
+        <g font-size="11.5" fill="#1d2430" text-anchor="middle">
+          <text x="160" y="72">取 prompt、生成 uid</text>
+          <text x="305" y="116">生成 n 条回复</text>
+          <text x="440" y="160">规则 reward</text>
+          <text x="160" y="204">replay_buffer.sample</text>
+          <text x="305" y="248">sleep_replicas</text>
+          <text x="440" y="292">共置 RM 打分</text>
+          <text x="160" y="336">_balance_batch</text>
+          <text x="590" y="380">compute_log_prob</text>
+          <text x="590" y="424">compute_ref_log_prob</text>
+          <text x="590" y="468">infer_batch</text>
+          <text x="160" y="512">_compute_advantage</text>
+          <text x="590" y="556">train_mini_batch</text>
+          <text x="590" y="600">update_actor</text>
+          <text x="305" y="644">update_weights</text>
+        </g>
+        <!-- box text line 2 -->
+        <g font-size="10" fill="#5b6576" text-anchor="middle">
+          <text x="160" y="86">_fetch_one_gen_batch</text>
+          <text x="305" y="130">generate_sequences</text>
+          <text x="440" y="174">随轨迹完成流式打分</text>
+          <text x="160" y="218">等够一个 batch</text>
+          <text x="305" y="262">on_sample_end</text>
+          <text x="440" y="306">仅共置 RM 时执行</text>
+          <text x="160" y="350">按序列长度均衡 DP</text>
+          <text x="590" y="394">actor · 无梯度</text>
+          <text x="590" y="438">ref · 无梯度</text>
+          <text x="590" y="482">critic · 无梯度</text>
+          <text x="160" y="526">KL 进奖励 + 优势</text>
+          <text x="590" y="570">critic · 有梯度</text>
+          <text x="590" y="614">actor · 有梯度</text>
+          <text x="305" y="658">on_step_end · wake</text>
+        </g>
+        <!-- TQ fields -->
+        <g font-size="10" fill="#6b4aa5" font-family="Menlo, Consolas, monospace">
+          <text x="685" y="78">uid（同 prompt 的 n 条共享）</text>
+          <text x="685" y="115">prompts · responses</text>
+          <text x="685" y="130">response_mask · rollout_log_probs</text>
+          <text x="685" y="166">rm_scores（仅末 token 非零）</text>
+          <text x="685" y="210" fill="#5b6576">—（按 key 与 tag 取样）</text>
+          <text x="685" y="254" fill="#5b6576">—（释放权重与 KV cache）</text>
+          <text x="685" y="298">rm_scores</text>
+          <text x="685" y="342" fill="#5b6576">—（只重排 key）</text>
+          <text x="685" y="386">old_log_probs · entropy</text>
+          <text x="685" y="430">ref_log_prob</text>
+          <text x="685" y="474">values</text>
+          <text x="685" y="511">token_level_rewards · advantages</text>
+          <text x="685" y="526">returns · rollout_is_weights</text>
+          <text x="685" y="562" fill="#5b6576">—（更新 critic 参数 φ）</text>
+          <text x="685" y="606" fill="#5b6576">—（更新 actor 参数 θ）</text>
+          <text x="685" y="650" fill="#5b6576">—（rollout 换成新的 θ）</text>
+        </g>
+        <g font-size="10.5" fill="#5b6576"><text x="4" y="690">粗边框：唯一带梯度的两段。虚线框：只有 reward model 与训练共用资源池时才在这里执行，否则 reward 在生成阶段流式完成。</text><text x="4" y="706">timing_s/gen 记录的是 replay_buffer.sample 的等待时间，sync 模式下覆盖了整个生成。</text></g>
+      </svg>
+      <figcaption>
+        <strong>图 3｜V1 <code>sync</code> trainer 一个 step 的执行者与字段</strong> <span class="ev ev-source">源码</span><code>v1/trainer_base.py::_step_once</code>、<code>v1/trainer_sync.py</code> @ <code>263653e</code>；纵向为执行顺序，不按时间比例
+        <span class="takeaway">三次无梯度前向都在训练 GPU 上执行，优势在 driver 上计算；整个 step 只有最后两段产生梯度。</span>
+      </figcaption>
+    </figure>
+
+    <h3>6.1 字段清单：形状、生产者与参数版本</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>字段</th><th>形状</th><th>生产者与函数</th><th>参数版本</th><th>梯度</th></tr></thead>
+        <tbody>
+          <tr><td><code>uid</code></td><td><code>[N]</code>，字符串</td><td>driver · <code>_fetch_one_gen_batch</code></td><td>—</td><td>—</td></tr>
+          <tr><td><code>responses</code>、<code>response_mask</code></td><td><code>[N, T_r]</code></td><td>AgentLoopWorker + 推理 server</td><td><code>θ_rollout</code>：上一次 <code>update_weights</code> 同步的权重</td><td>无</td></tr>
+          <tr><td><code>rollout_log_probs</code></td><td><code>[N, T_r]</code></td><td>推理引擎采样时一并返回（<span class="src">agent_loop.py L125–127</span>）</td><td><code>θ_rollout</code>，推理 kernel 与精度</td><td>无</td></tr>
+          <tr><td><code>rm_scores</code> → <code>token_level_scores</code></td><td><code>[N, T_r]</code>，仅末 token 非零</td><td>reward loop（<span class="src">reward_loop.py L313–322</span> 决定是否流式）</td><td>—</td><td>无</td></tr>
+          <tr><td><code>old_log_probs</code>、<code>entropy</code></td><td><code>[N, T_r]</code></td><td>actor · <code>compute_log_prob</code>（<span class="src">_compute_old_log_prob L1635</span>）</td><td><code>θ_old</code>：本 step 更新前的训练参数</td><td>无</td></tr>
+          <tr><td><code>ref_log_prob</code></td><td><code>[N, T_r]</code></td><td>ref worker，或关闭 LoRA adapter 的 actor（<span class="src">L1696–1720</span>）</td><td><code>θ_ref</code>，冻结</td><td>无</td></tr>
+          <tr><td><code>values</code></td><td><code>[N, T_r]</code></td><td>critic · <code>infer_batch</code>（<span class="src">L1722</span>）</td><td><code>φ_old</code></td><td>无</td></tr>
+          <tr><td><code>token_level_rewards</code>、<code>advantages</code>、<code>returns</code>、<code>rollout_is_weights</code></td><td><code>[N, T_r]</code></td><td>driver · <code>_compute_advantage</code>（<span class="src">L1744–1803</span>）</td><td>—</td><td>无</td></tr>
+          <tr><td><code>log_prob</code>（训练前向）</td><td><code>[N_mb, T_r]</code></td><td>actor · <code>train_batch</code> → engine → <code>ppo_loss</code></td><td><code>θ</code>：随 mini-batch 逐次更新</td><td><strong>有</strong></td></tr>
+        </tbody>
+        <caption><span class="ev ev-source">源码</span> 行号均指 <code>verl/trainer/ppo/v1/trainer_base.py</code> @ <code>263653e</code>，另注明者除外。<code>N</code> 为参与本 step 的轨迹条数，<code>N_mb</code> 为一个 mini-batch 的轨迹条数。</caption>
+      </table>
+    </div>
+    <p class="keypoint">在 <code>sync</code> 模式下，rollout 的权重来自上一个 step 末尾的同步，<code>old_log_probs</code> 用的是本 step 更新前的训练参数，两者是<strong>同一组参数</strong>。因此 <code>rollout_log_probs</code> 与 <code>old_log_probs</code> 的差异只来自数值实现：推理与训练的 kernel、权重传输与计算精度、batch 组成。这正是 <code>training/rollout_probs_diff_*</code> 在 <code>sync</code> 模式下度量的东西。<span class="ev ev-source">源码</span></p>
+
+    <h3>6.2 一个 step 有几次 optimizer step</h3>
+    <span class="formula">每 step 的轨迹数        = data.train_batch_size × rollout.n
+每个 mini-batch 的轨迹数 = actor.ppo_mini_batch_size × rollout.n
+每 step 的 optimizer step = (train_batch_size / ppo_mini_batch_size) × actor.ppo_epochs</span>
+    <p><code>_update_actor</code> 把 <code>ppo_mini_batch_size</code> 乘以 <code>rollout.n</code> 后下发；worker 的 <code>train_mini_batch</code> 再除以 DP 大小得到每卡的 mini-batch 条数，按 <code>epochs</code> 迭代，每个 mini-batch 调用一次 <code>train_batch</code>（<code>zero_grad → forward_backward → optimizer_step</code>）。<span class="ev ev-source">源码</span> <span class="src">v1/trainer_base.py L1830–1865；engine_workers.py::train_mini_batch L274–370</span> 以 <code>examples/grpo_trainer/run_qwen3_8b_fsdp.sh</code> 的默认值（1024、256、<code>n=5</code>、<code>ppo_epochs=1</code>）为例，每 step 有 5120 条轨迹、4 次 optimizer step。只有第一个 mini-batch 满足 <code>θ = θ_old</code>，之后 3 个 mini-batch 都是轻度 off-policy，clip 从这里开始起作用。<span class="ev ev-estimate">估算</span></p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="logprob">
+    <h2>7. 预告：同一个 token 的三个 log-prob</h2>
+    <p>到这里，一个响应 token 上已经出现了三个 log-prob，它们是第 8 章「训推一致」的主角：</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>记号</th><th>字段</th><th>谁算</th><th>用在哪里</th></tr></thead>
+        <tbody>
+          <tr><td><code>π_rollout</code></td><td><code>rollout_log_probs</code></td><td>推理引擎，采样时</td><td>rollout correction 的分母；<code>bypass_mode</code> 下直接充当 <code>old_log_probs</code></td></tr>
+          <tr><td><code>π_old</code></td><td><code>old_log_probs</code></td><td>训练引擎，无梯度前向</td><td>PPO 比率的分母；KL 进奖励</td></tr>
+          <tr><td><code>π_θ</code></td><td><code>log_prob</code></td><td>训练引擎，带梯度前向</td><td>PPO 比率的分子；KL loss；entropy</td></tr>
+        </tbody>
+        <caption><span class="ev ev-source">源码</span> <span class="src">v1/trainer_base.py L1637–1649</span>（bypass 与 decoupled 两种模式的注释与分支）。</caption>
+      </table>
+    </div>
+    <p>三个细节先记下来，第 8 章展开。第一，训练前向会把 logits 除以 <code>rollout.temperature</code>，让训练端的 log-prob 与采样分布一致；<code>temperature</code> 通过 <code>batch.extra_info</code> 下发到每一次前向。<span class="ev ev-source">源码</span> <span class="src">workers/engine/fsdp/transformer_impl.py::_scale_logits_by_temperature L98；v1/trainer_base.py L1652–1658</span> 第二，<code>rollout_probs_diff_*</code> 是在概率空间（对 log-prob 取 <code>exp</code> 之后）计算的，不是 log 空间。<span class="src">utils/debug/metrics.py L98–114</span> 第三，decoupled 模式下 rollout correction 的权重在 driver 上按 <code>π_old / π_rollout</code> 计算一次，不随 mini-batch 变化。<span class="src">v1/trainer_base.py L1763–1773</span></p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="quiz">
+    <h2>8. 思考题</h2>
+    <p>先独立作答，再展开参考答案。答案中的源码位置可以用第 9 节的命令复核。</p>
+
+    <details class="qa">
+      <summary>Q1. <code>sync</code> 模式、<code>ppo_epochs=1</code>、第一个 mini-batch 上，PPO 比率 <code>r_t</code> 是否严格等于 1？如果不是，差异来自哪里？</summary>
+      <div class="ans">
+        <p>参数相同，但通常不严格等于 1。<code>old_log_probs</code> 来自 <code>compute_log_prob</code>（无梯度，按 <code>log_prob_micro_batch_size_per_gpu</code> 或 <code>log_prob_max_token_len_per_gpu</code> 打包），<code>log_prob</code> 来自 <code>train_batch</code>（按 <code>ppo_micro_batch_size_per_gpu</code> 或 <code>ppo_max_token_len_per_gpu</code> 打包，可能开启 gradient checkpointing 或 fused kernel）；两套打包参数在 <span class="src">engine_workers.py L654–666</span> 分别写入 engine 的 <code>infer_*</code> 与训练字段。只要 attention、GEMM、归约等 kernel 的累加顺序随 batch 组成变化，两次前向就不是 bitwise 一致的，<code>r_t</code> 是 1 附近的数值噪声。这是训练引擎内部的一致性问题，与推理引擎无关；第 4 章讲打包、第 8 章讲 batch invariance 时回到这里。</p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Q2. GRPO 中一组 n 条回复全部答对（或全部答错）时，优势是多少？这些样本对梯度还有什么影响？</summary>
+      <div class="ans">
+        <p>组内 <code>R_i − mean = 0</code>，标准差为 0，<code>0 / (0 + 1e-6) = 0</code>，优势为 0，policy loss 的梯度贡献为 0。但这些 token 仍计入 <code>token-mean</code> 的分母 <code>N_tok</code>，会稀释其他样本的梯度；KL loss 与 entropy loss 也仍然作用于它们。DAPO 的 dynamic sampling（<code>algorithm.filter_groups</code>）用于过滤这类组，V1 中的入口是 <code>PPOTrainer._resolve_filter_groups_metric</code>，第 6 章讲 ReplayBuffer 时展开。</p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Q3. <code>token-mean</code> 为什么要乘 DP 大小 <code>D</code>？如果 8 个 DP rank 上的 token 数差别很大，结果还是全局平均吗？</summary>
+      <div class="ans">
+        <p>FSDP/DDP 同步梯度时取各 rank 的平均，相当于除以 <code>D</code>。每个 rank 的 loss 是「本地 token 求和 ÷ 全局 token 数 × D」，平均之后为「所有 rank 的 token 求和 ÷ 全局 token 数」，正好是全局 token 平均，与各 rank 分到多少 token 无关。<code>trainer.balance_batch</code> 解决的是各 rank 计算量不均导致的等待，而不是 loss 口径。</p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Q4. 同样是 KL 惩罚，<code>use_kl_in_reward</code> 与 <code>use_kl_loss</code> 对 log-prob 的依赖有何不同？在 GRPO 中启用 KL 进奖励会发生什么？</summary>
+      <div class="ans">
+        <p>前者在 driver 上用无梯度的 <code>old_log_probs</code> 与 <code>ref_log_prob</code>，KL 以 token 级奖励的形式进入优势估计；后者在 worker 上用带梯度的 <code>log_prob</code>，直接进 loss。GRPO 先把 <code>token_level_rewards</code> 沿 token 求和成标量，再做组内标准化，KL 变成序列奖励的一部分并被组内标准差缩放，逐 token 的 KL 结构消失。这是 GRPO 文档要求用 KL loss 的原因之一。</p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Q5. 8 卡、FSDP、不开 Ulysses SP（DP = 8），<code>train_batch_size=1024</code>、<code>rollout.n=5</code>、<code>ppo_mini_batch_size=256</code>、<code>ppo_epochs=2</code>。每 step 有多少条轨迹、多少次 optimizer step？每次 optimizer step 每卡处理多少条轨迹？</summary>
+      <div class="ans">
+        <p>轨迹 <code>1024 × 5 = 5120</code> 条；optimizer step <code>(1024 / 256) × 2 = 8</code> 次；每个 mini-batch <code>256 × 5 = 1280</code> 条，每卡 <code>1280 / 8 = 160</code> 条，再按 micro-batch 大小或 token 预算切分做梯度累加。开启 Ulysses SP 后 DP 变为 <code>8 / sp_size</code>，每卡条数随之增大。<span class="ev ev-estimate">估算</span></p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Q6. 默认 <code>γ = λ = 1</code> 的 GAE 与 GRPO 都在估计 <code>R − b</code>。两者的基线 <code>b</code> 有什么本质区别？各自的代价是什么？</summary>
+      <div class="ans">
+        <p>GAE 的 <code>b = V(s_t)</code> 由 critic 学出，随 token 位置变化，能区分同一条回复中不同前缀的好坏，代价是多训练一个与 actor 同规模的模型（显存、计算、<code>values</code> 与 <code>update_critic</code> 两个阶段）。GRPO 的 <code>b</code> 是同一 prompt 下 n 条回复的经验均值，对整条回复是常数，不需要 critic，代价是每个 prompt 必须采样多条，并且同一回复内所有 token 的优势相同，无法做 token 级的信用分配。</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="next">
+    <h2>9. 源码自测清单与下一章</h2>
+    <p>以下命令在本仓库根目录执行，能在 1 分钟内复核本章引用的全部入口。</p>
+    <pre><code class="language-bash">VERL_REPO=skills/framework/verl-skill/repos/verl
+
+# 优势估计器与 policy loss 注册表
+rg -n "@register_adv_est|@register_policy_loss" $VERL_REPO/verl/trainer/ppo/core_algos.py
+
+# PPO clip / dual-clip、KL 估计量、loss 聚合
+rg -n "def compute_policy_loss_vanilla|def kl_penalty|def agg_loss" $VERL_REPO/verl/trainer/ppo/core_algos.py
+
+# engine 侧 loss 入口：policy + entropy + KL loss
+rg -n "def ppo_loss|use_kl_loss|entropy_coeff" $VERL_REPO/verl/workers/utils/losses.py
+
+# V1 单步流水线与各阶段
+rg -n "def _step_once|def _compute_(old_log_prob|ref_log_prob|values|advantage)|def _update_(actor|critic)" \
+  $VERL_REPO/verl/trainer/ppo/v1/trainer_base.py
+
+# 全局 token 数归一化
+rg -n "batch_num_tokens" $VERL_REPO/verl/workers/engine/fsdp/transformer_impl.py
+
+# 默认值
+rg -n "clip_ratio|loss_agg_mode|kl_loss_type|kl_penalty|gamma|lam:" \
+  $VERL_REPO/verl/trainer/config/_generated_ppo_trainer.yaml</code></pre>
+    <p><strong>下一章：HybridFlow 编程模型。</strong>图 3 中 driver 的一行 <code>self.actor_rollout_wg.compute_log_prob(batch)</code> 实际上驱动了训练资源池中的全部 GPU 进程。第 2 章回答：Ray 上的 single-controller 如何通过 <code>RayWorkerGroup</code>、<code>@register(dispatch_mode=...)</code> 与 <code>DataProto</code>／<code>KVBatchMeta</code> 把一次方法调用拆分、分发、收集，以及为什么 HybridFlow 选择「控制流单控制器、计算流多控制器」的混合设计。</p>
+  </section>
+</main>
+</body>
+</html>
