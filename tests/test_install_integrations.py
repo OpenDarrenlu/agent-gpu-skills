@@ -223,7 +223,8 @@ class IsolatedInstallTest(unittest.TestCase):
     def setUp(self):
         self.home = tempdir(self, "home-")
         self.outside = tempdir(self, "outside-")
-        self.env = dict(os.environ, HOME=self.home)
+        # 只保留系统工具：本机 PATH 中可能已有 wx/rea 的 launcher，会改变“运行时缺失”的前提。
+        self.env = dict(os.environ, HOME=self.home, PATH="/usr/bin:/bin")
 
     def test_dest_install_skips_veloq_and_never_writes_home(self):
         dest = os.path.join(tempdir(self, "dest-"), "skills")
