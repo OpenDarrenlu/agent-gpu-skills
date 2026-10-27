@@ -13,6 +13,9 @@ This repository is an Agent Skill bundle, not an application. Read
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers, plus `agent-skill-router`
   (broad router, generated inventory, and `scripts/route_skill.py`).
+- `skills/research/`: the Research group. Its README compares the CCFA and
+  Supervisor-Skills workflows; `ccfa-skills/` and `supervisor-skills/` are
+  tracked navigation links into `repos/`, not copies.
 - `repos/`: external skill catalogs as git submodules, plus git-ignored
   checkouts of the external sources listed in `sources/external-sources.conf`.
 - `sources/external-sources.conf`: tracked manifest of non-submodule external
@@ -69,7 +72,9 @@ python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
 
 ## Maintenance Rules
 
-- Keep local skills in one of the four `skills/` categories.
+- Keep local skills in one of the five `skills/` categories (`kernel`,
+  `framework`, `other`, `routers`, `research`). `skills/research/` holds only
+  its README and the two navigation links; never copy catalog content into it.
 - Add or change a router whenever a new domain skill is introduced.
 - Keep the parallel `SKILL_NAMES` and `SKILL_DIRS` arrays in `install.sh`
   aligned; the script must remain compatible with Bash 3.2.

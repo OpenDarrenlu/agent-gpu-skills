@@ -247,6 +247,17 @@ bash install.sh --agent codex
 
 如不需要论文 idea、文献、实验、科研绘图、写作、评审、投稿和 rebuttal 工作流，可传入 `--no-ccfa-skills`。
 
+## Supervisor-Skills 论文研究 Skills
+
+`sources/external-sources.conf` 中的 `supervisor-skills` 固定到 commit `a20d76ef3979b804d7dbf599d577826957e0a8a9`（版本 2.1.0），由默认的外部来源安装步骤安装 `skills/` 下的 12 个 skill。它没有单独的 `--no-` 开关；`--no-integrations` 会一并跳过它。两种安装模式都会保留 `drawio-reconstruction` 的 `scripts/`、`examples/`、`requirements.txt` 与 `LICENSE`。
+
+```bash
+bash install-external.sh --no-runtime   # checkout 缺失时拉取并固定到 ref
+bash install.sh --agent codex           # 混合模式；加 --copy 复制真实文件
+```
+
+许可：根 `LICENSE` 为 CC BY-NC-SA 4.0（Yuyu Luo 等），逐 skill frontmatter 的许可不同，`drawio-reconstruction` 另有 MIT 的 `LICENSE`。运行条件：安装器不装命令行运行时；`crop_assist.py` 需要 Pillow（需用户批准后安装 `requirements.txt`），`export_drawio.py` 需要本机 draw.io 桌面应用。两个来源的对照见 [`skills/research/README.md`](skills/research/README.md)。
+
 ## TileLang/CUDA Skills
 
 本仓库通过 `repos/tilelang-cuda-skills/` 接入

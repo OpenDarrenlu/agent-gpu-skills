@@ -33,6 +33,7 @@
 | nvidia-skills | 406 | 含 BioNeMo、DOCA、DeepStream、Earth2Studio、cuOpt 等家族；`nvidia-skill-finder` 另有一份被 `shadowed` |
 | cursor-skills | 39 | 含 `perf-nsight-systems`、`llm-serving-auto-benchmark`、`pdf`、`docx`、`pptx`、`review` 等 |
 | ccfa-skills | 17 | 另有 `ccf-latex-templates` 支撑目录 |
+| supervisor-skills | 12 | Research 分组，固定 `a20d76e`；`drawio-reconstruction` 另有 MIT 的 LICENSE |
 | amd-skills | 11 | |
 | sepia | 6 | |
 | wx-cli | 1 | |

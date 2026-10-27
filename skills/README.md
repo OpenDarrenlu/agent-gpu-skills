@@ -75,6 +75,15 @@
 | `claude-delegate` | 把任务委托给 Claude Code CLI；原样复制自 amElnagdy/delegate-skills（MIT） |
 | `codex-background` | `claude-delegate` 在 Codex 中所需的后台 MCP server，只为 Codex 安装；安装后需运行 `scripts/bootstrap.mjs` 注册并重启 Codex，见[根目录 README](../README.md#claude-委托) |
 
+## Research
+
+论文研究两个来源放在一起，详细对照（阶段、来源、许可）见 [`research/README.md`](research/README.md)：
+
+- `research/ccfa-skills/` → `repos/ccfa-skills`：17 个 `ccf-*` runtime skill 与 `ccf-latex-templates` 支撑目录（MIT）
+- `research/supervisor-skills/` → `repos/supervisor-skills`：12 个 skill，固定到 `a20d76e`（根许可 CC BY-NC-SA 4.0，逐 skill 许可不同）
+
+这两个目录只是导航链接，安装时 skill 仍按各自的名称安装，不复制到本仓库。
+
 ## Routers
 
 跨领域入口单独放在 `skills/routers/`：
@@ -102,7 +111,7 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py
 `runtime-cli`（需要宿主安装命令，部分需要本机授权）、`user-level`（用户级 symlink，
 不由本仓库管理）。
 
-外部来源（NVIDIA、AMD、Cursor、CCFA、TileLang、Ponytail、mattpocock、sepia、wx-cli、rea）
+外部来源（NVIDIA、AMD、Cursor、CCFA、Supervisor-Skills、TileLang、Ponytail、mattpocock、sepia、wx-cli、rea）
 的清单与获取方式见 [`sources/external-sources.conf`](../sources/external-sources.conf) 和
 [`INSTALL.md`](../INSTALL.md#外部来源)；审查与覆盖情况见
 [`docs/skills-usage-review.md`](../docs/skills-usage-review.md)。

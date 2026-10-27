@@ -1,9 +1,9 @@
 # Agent Guidance
 
 This repository is an Agent Skill bundle. Local skills are organized under
-`skills/kernel`, `skills/framework`, `skills/other`, and `skills/routers`;
-external catalogs remain under `repos/` and are installed without being copied
-into this repository.
+`skills/kernel`, `skills/framework`, `skills/other`, `skills/routers`, and
+`skills/research`; external catalogs remain under `repos/` and are installed
+without being copied into this repository.
 
 ## Routing
 
@@ -83,7 +83,10 @@ producing detailed advice or code.
 - NCCL/NVSHMEM/RDMA/collectives: `gpu-communication-libraries` or `nccl-skill`
 - Local technical article retrieval: `zhihu-knowledge-base` or
   `giantpandallm-knowledge`
-- Research-paper workflow: the matching `ccf-*` skill in `repos/ccfa-skills`
+- Research-paper workflow: the matching `ccf-*` skill in `repos/ccfa-skills` by
+  default; Supervisor-Skills (`repos/supervisor-skills`) for its named skills
+  (`idea-evaluator`, `deep-research`, `intro-drafter`, `pre-submission-reviewer`,
+  and others). The group is compared in `skills/research/README.md`.
 - Salary/offer negotiation: `salary-negotiation-skill`
 - Chinese technical writing (kernel/inference/training 原理报告, design docs,
   performance reports, source walkthroughs, screenshot-to-article, API docs,

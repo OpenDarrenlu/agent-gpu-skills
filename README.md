@@ -272,7 +272,7 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 | 框架与运行时 | `gpu-framework-router` | `sglang-skill`、`verl-skill`、`train-inference-consistency` | 本地 |
 | LLM serving | `llm-serving-router` | `llm-serving-auto-benchmark`、`llm-serving-capacity-planner` | 本地路由；两个 benchmark 与容量 skill 来自 `repos/cursor-skills` |
 | 通信与 AMD | `gpu-development-catchall` → 对应路由 | `nccl-skill`、`gpu-communication-libraries`、`amd-gpu-docs`、`amd-instinct-isa` | 本地 |
-| 论文与文献 | `agent-skill-router` | `ccf-literature-searcher`、`ccf-paper-reviewer`、`ccf-rebuttal-writer`、`ccf-submission-checker`、`zotero-cli` | `ccf-*` 来自 `repos/ccfa-skills`；`zotero-cli` 为本地 |
+| 论文与文献 | `agent-skill-router` | `ccf-literature-searcher`、`ccf-paper-reviewer`、`ccf-rebuttal-writer`、`ccf-submission-checker`、`zotero-cli`；Supervisor 具名 skill（如 `idea-evaluator`、`deep-research`、`pre-submission-reviewer`） | `ccf-*` 来自 `repos/ccfa-skills`；Supervisor 来自 `repos/supervisor-skills`；`zotero-cli` 为本地。完整对照见 [`skills/research/README.md`](skills/research/README.md) |
 | PDF 文件处理 | `agent-skill-router` | `pdf` | `repos/cursor-skills`（通用 PDF 处理，不是论文专用） |
 | 中文技术写作 | `agent-skill-router` | `tech-doc-style-chinese`（结构与排版）+ 领域 skill（事实） | 本地定制版 |
 | 去 AI 味写作 | `agent-skill-router` | `sepia`、`sepia-write`、`sepia-review`、`sepia-refactor`、`sepia-recreate`、`sepia-hemingway` | `repos/sepia`（MIT）；操作入口需同级安装 |
@@ -432,6 +432,7 @@ Agent Reach 不在本仓库的清单中，本 bundle 也没有提供通用网页
 | 来源 | 固定版本 | 说明 |
 |---|---|---|
 | NVIDIA / AMD / Cursor / CCFA / TileLang / Ponytail | submodule（见 `.gitmodules`） | 通过 `update-repos.sh` 更新 |
+| Supervisor-Skills | `a20d76e`（CC BY-NC-SA 4.0；`drawio-reconstruction` 另为 MIT） | 论文研究 skill；`repos/supervisor-skills`，由 `sources/external-sources.conf` 固定，见 [`INSTALL.md`](INSTALL.md#supervisor-skills-论文研究-skills) |
 | sepia | `fb06be76…`（MIT） | 去 AI 味写作；需要同级安装 |
 | wx-cli | `08af8945…`（Apache-2.0，Steady775 fork） | skill 文本来自 fork；`wx` 二进制来自 npm 包 `@jackwener/wx-cli@0.3.0` |
 | rea | `3ce31175…`（MIT，源码 6.7.0） | skill 来自 npm 包 `rea-agents@6.7.0`，不是源码构建 |
