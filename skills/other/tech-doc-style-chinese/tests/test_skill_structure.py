@@ -21,6 +21,23 @@ class SkillStructureTest(unittest.TestCase):
             with self.subTest(target=target):
                 self.assertTrue((ROOT / target).is_file())
 
+    def test_relative_links_resolve(self):
+        # Covers asset links from SKILL.md and cross-links between references,
+        # resolved relative to the file that contains them.
+        sources = [ROOT / "SKILL.md", *sorted((ROOT / "references").glob("*.md"))]
+        checked = 0
+        for source in sources:
+            text = source.read_text(encoding="utf-8")
+            prose = re.sub(r"^```.*?^```[ \t]*$", "", text, flags=re.MULTILINE | re.DOTALL)
+            for target in re.findall(r"\[[^]]+]\(([^)\s]+)\)", prose):
+                if re.match(r"[a-z][a-z0-9+.-]*:", target) or target.startswith("#"):
+                    continue
+                path = target.split("#", 1)[0]
+                with self.subTest(source=source.name, target=target):
+                    self.assertTrue((source.parent / path).is_file())
+                checked += 1
+        self.assertGreater(checked, 0)
+
     def test_controlled_writing_has_four_groups_and_twelve_examples(self):
         reference = (
             ROOT / "references" / "controlled-technical-chinese.md"

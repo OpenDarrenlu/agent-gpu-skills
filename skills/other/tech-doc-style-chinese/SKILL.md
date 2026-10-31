@@ -1,6 +1,6 @@
 ---
 name: tech-doc-style-chinese
-description: 在撰写、改写、校对、审阅或整理中文技术文档时使用，尤其是 GPU 与 AI Infra 技术原理报告：算子与 kernel 设计/原理报告（CUDA、Triton、CUTLASS/CuTe、TileLang、attention、GEMM、MoE）、性能分析与优化报告（ncu/nsys、roofline、瓶颈诊断）、推理框架机制解析（SGLang/vLLM、KV cache、调度、attention backend）、训练框架与 RL 后训练原理（verl、FSDP/Megatron、并行策略、显存账本）、训推一致与数值一致性分析、技术选型对比、论文/PR/源码解读，以及把截图、笔记、profile 输出整理成文。也覆盖 API 文档、操作手册、故障排查、运维和界面文案。采用克制、准确、可扫读的中文技术写作风格；保留事实、证据等级、测量条件和机器可读内容；按场景选择 Markdown 或单文件 HTML。中文触发词：写技术报告、技术原理报告、原理解析、设计文档、技术方案、性能分析报告、优化报告、源码解析、源码走读、论文解读、PR 解读、写文章、整理成文、截图转文章、润色、改写、校对、审阅文档、中文排版、术语统一。
+description: 在撰写、改写、校对、审阅或整理中文技术文档时使用，尤其是 GPU 与 AI Infra 技术原理报告：算子与 kernel 设计/原理报告（CUDA、Triton、CUTLASS/CuTe、TileLang、attention、GEMM、MoE）、性能分析与优化报告（ncu/nsys、roofline、瓶颈诊断）、推理框架机制解析（SGLang/vLLM、KV cache、调度、attention backend）、训练框架与 RL 后训练原理（verl、FSDP/Megatron、并行策略、显存账本）、训推一致与数值一致性分析、技术选型对比、论文/PR/源码解读，实验报告（A/B、消融、参数 sweep、端到端压测、调优确认、sanity check），以及把截图、笔记、profile 输出整理成文。也覆盖 API 文档、操作手册、故障排查、运维和界面文案。采用克制、准确、可扫读的中文技术写作风格；保留事实、证据等级、测量条件和机器可读内容；按场景选择 Markdown 或单文件 HTML。中文触发词：写技术报告、技术原理报告、实验报告、实验总结、A/B 报告、消融实验、压测报告、原理解析、设计文档、技术方案、性能分析报告、优化报告、源码解析、源码走读、论文解读、PR 解读、写文章、整理成文、截图转文章、润色、改写、校对、审阅文档、中文排版、术语统一。
 ---
 
 # 中文技术文档与技术原理报告规范（GPU / AI Infra 定制版）
@@ -19,6 +19,7 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 - 训练框架与 RL 后训练原理（verl、FSDP、Megatron、并行策略、显存与通信账本）
 - 训推一致、确定性和数值一致性分析
 - 技术选型与方案对比、论文/上游 PR/源码解读
+- 实验报告：A/B、消融、参数 sweep、端到端压测、调优确认、回归确认和 sanity check
 - 把截图、笔记、聊天记录、profile 输出整理成文章
 
 通用文档类（上游原有）：文档首页、产品介绍、更新日志、API 文档、错误码、常见问题、操作手册、故障排查、运维 Runbook、安全说明和界面文案。
@@ -151,6 +152,14 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 | 技术选型与方案对比 | 在什么前提下选哪个方案、什么条件下应改选 | 估算、实测、引用 |
 | 论文/上游 PR/源码解读 | 原文主张什么、机制是什么、哪些已被我们验证 | 引用、源码、实测 |
 
+### 实验报告
+
+A/B、消融、sweep、压测和调优确认的报告，回答「实际测了什么、是否回答了原问题、证据能推到多远」。先读 [实验报告结构](references/experiment-report-structures.md)，再按篇幅选模板：比较、证据和决策能用一张小表说清的 A/B、sanity check 或回归确认用 [短报告](assets/experiment-report-short.md)；比较、证据链或决策需要更多篇幅时用 [完整报告](assets/experiment-report-full.md)。以机制解释为主、实验只作佐证时，仍用上表中的技术原理报告类型。
+
+- 执行状态（按协议与覆盖判断：完成、部分完成、失败）与结论判定（支持、否定、无法判定）分开写；正确性、实现状态和目标达成也分开写。负结果也可以是完成的实验。
+- 判定规则和验收标准来自预设来源；没有时写「无预设验收标准」，不自行设定通过线。
+- 每个主要结果绑定实际运行身份和原始产物。计划中的配置不是运行证据，缺失的字段写「未记录」或「未验证」。
+
 ### API 文档
 
 - 请求方法、路径、字段和值使用代码环境保护；参数写清类型、单位、默认值、限制和是否必填。
@@ -171,10 +180,11 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 - Markdown：内部设计文档、PR 说明、进 git 的报告（如 `profile/<run>/REPORT.md`）、知乎或飞书草稿、篇幅短或以文字为主的报告。
 - 单文件 HTML：从截图或资料整理的文章、对外分享的长文、需要 3 幅以上精确示意图（数据流、流水线时序、内存布局）的报告、需要交互（切换 shape、折叠证据）的报告。起点模板为 [assets/report-template.html](assets/report-template.html)。
 - 无法判断时使用 Markdown，并说明可以转为 HTML。
+- 实验报告默认使用 Markdown，从 `assets/` 中的两个实验报告模板起步；需要 HTML 时再按上面的规则转换。
 
 ## 与其他 skill 的分工
 
-本 Skill 只负责表达和结构，不替代技术验证。报告中的技术事实和证据先从对应 skill 获取：kernel 实现找 `gpu-kernel-authoring-router`，性能证据找 `ncu-report-skill` 或 `gpu-performance-router`，建模估算找 `nv-gpu-kernel-performance-modeling`，推理框架找 `sglang-skill` 或 `llm-serving-router`，RL 后训练找 `verl-skill`，bitwise 训推一致找 `train-inference-consistency`，通信找 `gpu-communication-libraries` 或 `nccl-skill`，TileLang 设计文档同时参考 `writing-tilelang-design-docs`。性能报告覆盖 `ncu-report-skill` 报告模板的全部章节，可以作为其 `REPORT.md` 的中文写法。
+本 Skill 只负责表达和结构，不替代技术验证。报告中的技术事实和证据先从对应 skill 获取：kernel 实现找 `gpu-kernel-authoring-router`，性能证据找 `ncu-report-skill` 或 `gpu-performance-router`，建模估算找 `nv-gpu-kernel-performance-modeling`，推理框架找 `sglang-skill` 或 `llm-serving-router`，RL 后训练找 `verl-skill`，通信找 `gpu-communication-libraries` 或 `nccl-skill`，TileLang 设计文档同时参考 `writing-tilelang-design-docs`。性能报告覆盖 `ncu-report-skill` 报告模板的全部章节，可以作为其 `REPORT.md` 的中文写法。
 
 ## 项目覆盖规则
 
@@ -204,6 +214,7 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 - 代码、路径、字段、命令、metric 名和引用是否保持原样
 - 段落是否残留硬换行，拼接边界的中西文留白是否正确
 - 项目覆盖规则是否来自目标项目，而不是示例文件
+- 实验报告：比较问题和基线身份是否写明；缺测、排除的运行和负结果是否保留；完整清单见 [实验报告结构](references/experiment-report-structures.md#实验报告最终检查)
 
 ## 自动检查
 
@@ -220,6 +231,7 @@ python3 scripts/unwrap_md_paragraphs.py --check report.md
 ## 参考资料路由
 
 - 报告类型、章节骨架和必答问题：读取 [报告结构模板](references/gpu-report-structures.md)
+- 实验报告的篇幅选择、状态与判定、比较问题、运行身份、计时与公平对照、各方向补充字段和最终检查：读取 [实验报告结构](references/experiment-report-structures.md)
 - 证据等级、性能数字、测量条件、加速比和 GPU 回归样例：读取 [证据与数字规范](references/evidence-and-numbers.md)
 - GPU、推理、训练领域术语，大小写和易混淆概念：读取 [GPU 术语表](references/gpu-terminology.md)
 - 图、图注、公式、shape 记法、代码与源码引用：读取 [图表、公式与代码](references/figures-formulas-code.md)
