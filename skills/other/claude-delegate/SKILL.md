@@ -73,12 +73,15 @@ by the adapter but is ignored by this relay mode. For shell use:
 node "<skill-dir>/scripts/relay.mjs" --preflight-only --cd /path/to/repo
 ```
 
-The relay starts a fresh Claude process with the normal permission and sandbox settings, allows only
-Bash, requests one `pwd` call, and stops at its tool result. It caps the probe at two turns, $0.50,
-and 90 seconds. **Check `result.json` for `preflight.passed === true`**, not just a zero Claude exit
-or `PRECHECK_OK` in its final text. If the probe fails, times out, or lacks a Bash result, stop this
-delegation round and report the error. Do not dispatch the implementation, retry unsandboxed, or
-spend the task timeout investigating the sandbox. A shell command run by Codex is not this preflight.
+The relay starts a fresh Claude process with the same effective permission and shell-boundary
+settings the task will get, allows only Bash, requests one `pwd` call, and stops at its tool result.
+It passes only when that `pwd` resolves to the `--cd` directory; a shell that starts elsewhere fails.
+It caps the probe at two turns, $0.50, and 90 seconds. **Check `result.json` for
+`preflight.passed === true`**, not just a zero Claude exit or `PRECHECK_OK` in its final text. If the
+probe fails, times out, or lacks a Bash result, stop this delegation round and report the error. Do
+not dispatch the implementation, retry unsandboxed, or spend the task timeout investigating the
+sandbox. Disabling the inner sandbox (`--no-shell-sandbox` or a host policy) needs the human's
+explicit authorization. A shell command run by Codex is not this preflight.
 
 The probe uses a separate Claude session. Keep its session ID out of the task run; resume only the
 task's session when review finds concrete fixes.
@@ -119,7 +122,7 @@ status or log polling. Use `delegate_wait` only to reattach after an interrupted
 The relay blocks until Claude exits. Use the orchestrator's background-command facility, or run it in
 the foreground and wait. Completion means the process exited and `result.json` exists.
 
-- A pre-run usage error exits 2 and writes no `result.json`.
+- A pre-run usage error or a refused host policy exits 2 and writes no `result.json`.
 - A missing `claude` exits 127 and writes `status: "claude_unavailable"`.
 - Timeout and caught relay signals terminate the whole implementer process tree and preserve an
   outcome artifact.
@@ -167,6 +170,12 @@ The normal profile is deliberately explicit:
   retaining bwrap filesystem isolation and network proxying. Sandboxed commands can see container
   process information and connect to Unix sockets visible inside the container. The settings live
   only in the relay's per-run `profile.json`; ordinary Claude sessions are unaffected.
+- A user-owned `<CODEX_HOME or ~/.codex>/claude-delegate/host-policy.json` can explicitly select
+  **outer-container isolation** on a Linux container host where Claude's sandbox cannot start. The
+  inner sandbox is then off and Bash has the container's full permissions. The relay refuses a
+  policy that is malformed, unknown, or on a host that is not a verified container. With no policy,
+  nothing changes. `result.json`'s `shellBoundary` records which case applied. See
+  [references/dispatch-and-poll.md](references/dispatch-and-poll.md#outer-container-host-policy).
 - Configured MCP discovery and Claude.ai connectors are disabled, all MCP tools are denied, and
   skills, commands, and Claude's Agent tool are unavailable to the child. Project `CLAUDE.md`, hooks,
   normal authentication, session persistence, and other local settings still load.
@@ -189,9 +198,12 @@ ignored paths and perfect restores are outside it, local hooks can write, and co
 be attributed to Claude.
 
 `--dangerously-skip-permissions` is an explicit opt-in to Claude's `bypassPermissions` mode. The
-restricted tool surface, direct commit/push deny rules, and supported-platform shell sandbox remain,
-but direct file tools can cross normal permission boundaries. Use it only with the human's explicit
-acceptance.
+restricted tool surface, direct commit/push deny rules, and the effective shell boundary remain
+(exception: under an applied Linux outer-container host policy the generated deny list is empty;
+the brief's task scope still applies), but direct file tools can cross normal permission boundaries. Use it only with the human's explicit
+acceptance, and pass it to `--preflight-only` as well so the probe runs the same profile. Claude
+refuses this mode as root. Under a verified outer-container host policy, the relay marks only that
+child with `IS_SANDBOX=1`, Claude's deliberate-sandbox marker; without a policy, the refusal stands.
 
 ## Complementary to native Claude features
 

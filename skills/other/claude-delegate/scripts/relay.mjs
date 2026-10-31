@@ -30,6 +30,19 @@
  * Claude Code. Native Windows has no Claude shell sandbox, so the relay
  * pre-approves PowerShell there and documents that it is not OS-isolated.
  *
+ * Host policy: <CODEX_HOME or ~/.codex>/claude-delegate/host-policy.json is
+ * optional. Absent, nothing changes. A valid claude-delegate.host-policy.v1
+ * file with shellSandbox "outer-container" disables Claude's inner shell
+ * sandbox and pre-approves Bash, but only on Linux inside a container verified
+ * by a runtime marker file or bind mount; Bash then has the outer container's
+ * permissions. A malformed, unknown, insecurely writable, or mismatched policy
+ * (non-container Linux, macOS, Windows) stops the relay with exit 2. One
+ * resolution per invocation drives profile.json, argv, the preflight, and
+ * result.json's shellSandbox/shellBoundary. The relay never retries a failed
+ * sandbox without it. Under such a policy, a root --dangerously-skip-permissions
+ * child also gets IS_SANDBOX=1, Claude's own marker for a deliberate sandbox,
+ * without which Claude refuses bypass as root; no inner sandbox is implied.
+ *
  * `--read-only` uses plan mode and exposes only Read, Glob, and Grep: no edit,
  * write, shell, MCP, skill, command, or Agent tool. The relay also compares git
  * porcelain before and after, and also fingerprints working-tree and index state for paths
@@ -55,6 +68,7 @@
  * Options:
  *   --brief <file>                    Brief path. Omit to read the brief from stdin.
  *   --cd <dir>                        Child cwd (default: current directory).
+ *   --add-dir <dir>                   Explicit additional authorized directory; repeatable.
  *   --lane <name>           Fleet lane from delegate-setup config (dials apply; explicit flags win).
  *   --out-dir <dir>                   Artifact directory (default: system temp).
  *   --timeout <dur>                   Relay watchdog; off by default. Use h/m/s,
@@ -69,8 +83,12 @@
  *   --session <id>                    Map to Claude's --resume <id>.
  *                                     Mutually exclusive with --resume-last.
  *   --read-only                       Plan mode with Read, Glob, and Grep only.
- *   --preflight-only                  Probe Claude's actual Bash sandbox with `pwd`.
- *                                     Never send the task brief or resume a session.
+ *   --preflight-only                  Probe the effective Bash boundary with `pwd`; the
+ *                                     result must be the --cd directory. Never sends the
+ *                                     task brief or resumes a session. Combine with
+ *                                     --dangerously-skip-permissions to probe that mode.
+ *   --no-shell-sandbox                Explicit task opt-in: disable Claude's shell sandbox
+ *                                     and rely on the outer environment for isolation.
  *   --dangerously-skip-permissions    Opt into Claude's bypassPermissions mode.
  *                                     Mutually exclusive with --read-only.
  *   -h, --help                        Show this help.
@@ -119,11 +137,18 @@ import {
   closeSync,
   realpathSync,
 } from "node:fs";
-import {basename, delimiter, join, relative, resolve, dirname } from "node:path";
+import { basename, delimiter, join, relative, resolve, dirname, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { constants as osConstants, tmpdir } from "node:os";
 import { StringDecoder } from "node:string_decoder";
 import { TextDecoder } from "node:util";
+import {
+  HostPolicyError,
+  detectContainer,
+  hostPolicyPath,
+  loadHostPolicy,
+  resolveShellBoundary,
+} from "./host-policy.mjs";
 
 const MAX_BUFFERED_CHARS = 1_048_576;
 
@@ -133,7 +158,7 @@ const MAX_TIMER_MS = 2_147_483_647;
 const EFFORT_LEVELS = new Set(["low", "medium", "high", "xhigh", "max", "ultracode"]);
 const SAFE_MODEL = /^[A-Za-z0-9][A-Za-z0-9._:@\/\[\]-]*$/;
 const SAFE_SESSION = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/;
-const PREFLIGHT_BRIEF = "Preflight only. Invoke Bash exactly once with command `pwd`. Do not edit files or perform task work. Stop after the tool result; do not retry or bypass the sandbox.";
+const PREFLIGHT_BRIEF = "Preflight only. Invoke Bash exactly once with command `pwd`. Do not edit files or perform task work. Stop after the tool result; do not retry or work around a failure.";
 const PREFLIGHT_TIMEOUT_MS = 90_000;
 
 const IMPLEMENTER_KEY = "claude";
@@ -280,6 +305,8 @@ function parseArgs(argv) {
     session: null,
     readOnly: false,
     preflightOnly: false,
+    noShellSandbox: false,
+    additionalDirectories: [],
     dangerouslySkipPermissions: false,
   };
 
@@ -300,6 +327,7 @@ function parseArgs(argv) {
         break;
       case "--brief": opts.brief = next(); break;
       case "--cd": opts.cd = resolve(next()); break;
+      case "--add-dir": opts.additionalDirectories.push(resolve(next())); break;
       case "--lane": opts.lane = next(); break;
       case "--out-dir": opts.outDir = resolve(next()); break;
       case "--timeout": opts.timeout = next(); flagged.add("timeout"); break;
@@ -312,6 +340,7 @@ function parseArgs(argv) {
       case "--session": opts.session = next(); break;
       case "--read-only": opts.readOnly = true; flagged.add("readOnly"); break;
       case "--preflight-only": opts.preflightOnly = true; break;
+      case "--no-shell-sandbox": opts.noShellSandbox = true; break;
       case "--dangerously-skip-permissions":
         opts.dangerouslySkipPermissions = true;
         flagged.add("dangerouslySkipPermissions");
@@ -325,14 +354,14 @@ function parseArgs(argv) {
   if (opts.resumeLast && opts.session) {
     fail("--resume-last and --session are mutually exclusive; pass only one");
   }
+  if (opts.readOnly && opts.noShellSandbox) {
+    fail("--no-shell-sandbox requires a write-capable task; omit --read-only");
+  }
   if (opts.readOnly && opts.dangerouslySkipPermissions) {
     fail("--read-only and --dangerously-skip-permissions are mutually exclusive");
   }
   if (opts.preflightOnly && (opts.readOnly || opts.resumeLast || opts.session)) {
     fail("--preflight-only requires a fresh write-capable session; omit --read-only and resume flags");
-  }
-  if (opts.preflightOnly && opts.dangerouslySkipPermissions) {
-    fail("--preflight-only requires the normal permission profile; omit --dangerously-skip-permissions");
   }
   if (opts.preflightOnly && process.platform === "win32") {
     fail("--preflight-only requires Claude's Bash sandbox; native Windows does not provide it");
@@ -382,7 +411,31 @@ function parseArgs(argv) {
       fail(`cannot inspect --out-dir: ${opts.outDir}`);
     }
   }
+  opts.shellBoundary = effectiveShellBoundary(opts);
   return opts;
+}
+
+// Resolved exactly once per invocation. profile.json, argv, the preflight, and
+// result.json all read this object, so a preflight proves the same boundary the
+// task will get. A present-but-unusable policy is a configuration error.
+function effectiveShellBoundary(opts) {
+  const policyPath = hostPolicyPath();
+  try {
+    const policy = loadHostPolicy(policyPath);
+    return resolveShellBoundary({
+      readOnly: opts.readOnly,
+      noShellSandbox: opts.noShellSandbox,
+      platform: process.platform,
+      policyPath,
+      policy,
+      container: detectContainer(),
+      dangerouslySkipPermissions: opts.dangerouslySkipPermissions,
+      uid: typeof process.getuid === "function" ? process.getuid() : null,
+    });
+  } catch (error) {
+    if (error instanceof HostPolicyError) fail(error.message);
+    throw error;
+  }
 }
 
 function headerComment() {
@@ -411,8 +464,8 @@ function readBrief(opts) {
   }
 }
 
-function childEnvironment() {
-  const env = { ...process.env };
+function childEnvironment(opts) {
+  const env = { ...process.env, ...opts.shellBoundary.childEnv };
   if (process.platform === "win32") {
     for (const key of Object.keys(env)) {
       if (key.toUpperCase() === "CLAUDECODE") delete env[key];
@@ -530,37 +583,36 @@ function toolSurface(opts) {
   return `Read,Glob,Grep,Edit,Write,${shellTool()}`;
 }
 
-function usesContainerCompatibleSandbox() {
-  if (process.platform === "win32") return false;
-  if (
-    process.env.KUBERNETES_SERVICE_HOST ||
-    process.env.CONTAINER ||
-    existsSync("/.dockerenv") ||
-    existsSync("/run/.containerenv")
-  ) return true;
-  try {
-    const mountInfo = readFileSync("/proc/1/mountinfo", "utf8");
-    return (
-      mountInfo.includes("/var/lib/containerd/") ||
-      mountInfo.includes("/var/lib/kubelet/pods/") ||
-      mountInfo.includes("/containers/")
-    );
-  } catch {
-    return false;
-  }
+function usesOuterIsolation(boundary) {
+  return boundary.source === "task-opt-in" || boundary.source === "host-policy";
+}
+
+// An explicit --dangerously-skip-permissions run inside a validated Linux
+// outer-container host policy is the user's deliberate "no local permission
+// restrictions" choice, so it gets no shell deny rules. Task scope such as
+// "do not commit" stays in the brief. Every other mode keeps the deny list.
+function authorizedUnrestrictedBypass(opts) {
+  const boundary = opts.shellBoundary;
+  return Boolean(
+    opts.dangerouslySkipPermissions && !opts.readOnly && process.platform === "linux" &&
+    boundary.source === "host-policy" && boundary.effective === "outer-container" &&
+    boundary.innerSandbox === false && boundary.hostPolicy && boundary.hostPolicy.status === "applied",
+  );
 }
 
 function profileSettings(opts) {
   const shell = shellTool();
-  const shellSandboxEnabled = !opts.readOnly && process.platform !== "win32";
-  const containerCompatibleSandbox = shellSandboxEnabled && usesContainerCompatibleSandbox();
+  const boundary = opts.shellBoundary;
+  const shellSandboxEnabled = boundary.innerSandbox;
+  const containerCompatibleSandbox = shellSandboxEnabled && boundary.weakerNestedSandbox;
   return {
     disableClaudeAiConnectors: true,
     ...(process.platform === "win32"
       ? { env: { CLAUDE_CODE_USE_POWERSHELL_TOOL: "1" } }
       : {}),
     permissions: {
-      deny: opts.readOnly
+      additionalDirectories: opts.additionalDirectories,
+      deny: opts.readOnly || authorizedUnrestrictedBypass(opts)
         ? []
         : [
             // Two-wildcard git forms require text after the subcommand, so the
@@ -605,7 +657,7 @@ function profileSettings(opts) {
             },
           },
         }
-      : {}),
+      : usesOuterIsolation(boundary) ? { sandbox: { enabled: false } } : {}),
   };
 }
 
@@ -648,6 +700,9 @@ function buildArgv(opts, run) {
     "--settings", run.settingsPath,
   ];
 
+  if (opts.additionalDirectories.length) {
+    argv.push("--add-dir", ...opts.additionalDirectories);
+  }
   if (opts.readOnly) {
     argv.push("--permission-mode", "plan");
   } else if (opts.dangerouslySkipPermissions) {
@@ -658,6 +713,9 @@ function buildArgv(opts, run) {
     // Claude's sandbox. Native Windows has no shell sandbox, so approving its
     // selected shell is the explicit tradeoff that keeps print mode headless.
     if (process.platform === "win32") argv.push("--allowedTools", "PowerShell");
+    // Outer isolation (task opt-in or host policy) disables Claude's sandbox,
+    // so sandbox auto-approval no longer applies; approve the shell explicitly.
+    else if (usesOuterIsolation(opts.shellBoundary)) argv.push("--allowedTools", shellTool());
   }
 
   // The selected permission profile is passed on every invocation, including
@@ -723,6 +781,13 @@ function preflightToolFailed(item, event) {
   return exitCode !== null && Number(exitCode[1]) !== 0;
 }
 
+// Both sides go through realpath so a symlinked --cd or a logical `pwd` still
+// matches; a relative, missing, or different directory never does.
+function canonicalDirectory(path) {
+  if (typeof path !== "string" || !isAbsolute(path)) return null;
+  try { return realpathSync(path); } catch { return null; }
+}
+
 function observePreflight(event, preflight) {
   if (preflight.observed) return;
   for (const item of event.message?.content || []) {
@@ -738,9 +803,17 @@ function observePreflight(event, preflight) {
       const output = preflightContent(item.content);
       preflight.observed = true;
       preflight.output = output.slice(0, 4000);
-      const lastLine = output.trim().split(/\r?\n/).at(-1);
-      preflight.passed = !preflightToolFailed(item, event) && lastLine === preflight.cwd;
-      if (!preflight.passed) preflight.error = output || "Bash did not return the expected working directory";
+      const lastLine = output.trim().split(/\r?\n/).at(-1)?.trim() || null;
+      preflight.observedCwd = lastLine;
+      if (preflightToolFailed(item, event)) {
+        preflight.error = output || "Bash returned an error result";
+      } else if (canonicalDirectory(lastLine) !== preflight.cwd) {
+        // A shell that starts elsewhere (for example a login profile that cds)
+        // would run task gates in the wrong tree; that is a failed probe.
+        preflight.error = `Bash pwd reported ${JSON.stringify(lastLine)}, expected ${preflight.cwd}; the shell did not start in the requested working directory`;
+      } else {
+        preflight.passed = true;
+      }
     }
   }
 }
@@ -1050,13 +1123,14 @@ function makeResultWriter(opts, version, run, state, beforeTree, beforeFingerpri
       resumeLast: opts.resumeLast,
       permissionMode: state.permissionMode || selectedPermissionMode(opts),
       toolSurface: toolSurface(opts).split(","),
-      shellSandbox: opts.readOnly
-        ? "not-applicable"
-        : process.platform === "win32"
-          ? "unsupported-on-native-windows"
-          : usesContainerCompatibleSandbox()
-            ? "container-compatible"
-            : "strict",
+      shellSandbox: opts.shellBoundary.shellSandbox,
+      shellBoundary: {
+        effective: opts.shellBoundary.effective,
+        source: opts.shellBoundary.source,
+        innerSandbox: opts.shellBoundary.innerSandbox,
+        hostPolicy: opts.shellBoundary.hostPolicy,
+        childEnv: opts.shellBoundary.childEnv,
+      },
       dangerouslySkipPermissions: opts.dangerouslySkipPermissions,
       claudeVersion: version,
       sessionId: state.sessionId,
@@ -1339,6 +1413,14 @@ function printSummary(result, resultPath) {
     `relay: ${result.status} (exit ${result.exitCode}${result.signal ? `, killed by ${result.signal}` : ""})  ·  claude ${result.claudeVersion ?? "?"}`,
   );
   lines.push(`permission mode: ${result.permissionMode}  ·  shell sandbox: ${result.shellSandbox}`);
+  if (result.shellBoundary.source === "host-policy") {
+    lines.push(`note: host policy ${result.shellBoundary.hostPolicy.path} disabled Claude's inner shell sandbox; Bash has the outer container's full permissions.`);
+  }
+  if (result.shellBoundary.childEnv?.IS_SANDBOX) {
+    lines.push("note: the authorized host policy set IS_SANDBOX=1 for this root bypass child; that is Claude's deliberate-sandbox acknowledgement, not an inner sandbox.");
+  } else if (result.shellBoundary.source === "task-opt-in") {
+    lines.push("note: --no-shell-sandbox disabled Claude's inner shell sandbox for this task; Bash has the outer environment's permissions.");
+  }
   if (result.preflight) {
     lines.push(`Bash preflight: ${result.preflight.passed ? "passed" : "failed"}`);
     if (result.preflight.error) lines.push(`preflight error: ${result.preflight.error}`);
@@ -1396,7 +1478,7 @@ function main() {
     fail(`brief is ${Math.ceil(briefBytes / 1_000_000)}MB; Claude Code caps piped stdin at 10MB. Put large context in the workspace and reference it from a smaller brief.`);
   }
 
-  const env = childEnvironment();
+  const env = childEnvironment(opts);
   const launcher = resolveClaudeLauncher(env, opts.cd);
   let run;
   try {
@@ -1426,6 +1508,7 @@ function main() {
       passed: false,
       observed: false,
       cwd: realpathSync(opts.cd),
+      observedCwd: null,
       toolUseId: null,
       command: null,
       output: null,

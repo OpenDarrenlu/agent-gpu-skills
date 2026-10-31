@@ -13,9 +13,10 @@ claude auth status
 
 The relay performs its own `claude --version` check and records the answer as `claudeVersion`.
 That check does not exercise Claude's Bash sandbox. Before the task, run the same relay with
-`--preflight-only` in the target workspace. It uses the normal permission/sandbox settings,
-restricts the tool surface to Bash, invokes `pwd`, and terminates at the Bash result. Inspect
-`result.json`'s `preflight.passed`; stop the delegation round unless it is `true`.
+`--preflight-only` in the target workspace. It resolves the same effective shell boundary the task
+will get (default sandbox, task opt-in, or host policy), restricts the tool surface to Bash, invokes
+`pwd`, and terminates at the Bash result. Inspect `result.json`'s `preflight.passed`; stop the
+delegation round unless it is `true`.
 When an orchestrator is itself Claude Code, the relay removes only inherited `CLAUDECODE` from the
 child environment so a separate CLI process can start. It preserves credentials,
 `CLAUDE_CODE_CHILD_SESSION`, and every other environment entry. Version preflight uses that same
@@ -33,6 +34,7 @@ node "<skill-dir>/scripts/relay.mjs" --brief brief.txt --cd /path/to/repo
 | --- | --- |
 | `--brief <file>` | Brief path. Omit it to read stdin. The exact text is then sent to Claude on stdin, never argv. |
 | `--cd <dir>` | Child process cwd and target working root (default: current directory). |
+| `--add-dir <dir>` | Additional authorized directory, repeatable. Passed to Claude's `--add-dir` and recorded in `profile.json`'s `permissions.additionalDirectories`. |
 | `--lane <name>` | Fleet lane from `delegate-setup` config. Applies that lane's dials; fails if the lane's `implementer` is not this relay. Explicit dial flags win. |
 | `--out-dir <dir>` | Artifact directory (default: a fresh directory under the system temp directory). |
 | `--timeout <dur>` | Relay watchdog, such as `30m`, `90s`, or `2h` (default: off). |
@@ -44,7 +46,8 @@ node "<skill-dir>/scripts/relay.mjs" --brief brief.txt --cd /path/to/repo
 | `--resume-last` | Resume the latest session for this cwd with Claude's `--continue`; send a delta brief. |
 | `--session <id>` | Resume a specific session with Claude's `--resume <id>`; mutually exclusive with `--resume-last`. |
 | `--read-only` | Plan mode with only Read, Glob, and Grep, plus a Git-visible change tripwire. |
-| `--preflight-only` | Fresh Bash sandbox probe on macOS, Linux, or WSL2; ignores the task brief, caps at two turns, $0.50 and 90 seconds, and writes `preflight.passed` to `result.json`. Cannot combine with read-only, permission bypass, or resume flags; rejects native Windows. |
+| `--preflight-only` | Fresh probe of the effective Bash boundary on macOS, Linux, or WSL2; ignores the task brief, caps at two turns, $0.50 and 90 seconds, and writes `preflight.passed` to `result.json`. Passes only when `pwd` resolves (through symlinks) to the `--cd` directory. Add `--dangerously-skip-permissions` when the task will use it, so the probe runs the task's exact profile. Cannot combine with read-only or resume flags; rejects native Windows. |
+| `--no-shell-sandbox` | Explicit per-task opt-in: disables Claude's shell sandbox and pre-approves Bash, relying on the outer environment for isolation. Requires the human's authorization; rejected with `--read-only`. Pass it to the preflight too, so the probe tests the same boundary. |
 | `--dangerously-skip-permissions` | Opt into Claude's `bypassPermissions`; mutually exclusive with `--read-only`. |
 | `-h`, `--help` | Print the relay header and option reference. |
 
@@ -119,6 +122,66 @@ precedence over sandbox auto-approval, so they can still stop a headless gate. I
 `profile.json` and the effective local Claude configuration when the precise boundary matters. Use a
 container or VM when only a host-level boundary is acceptable.
 
+### Outer-container host policy
+
+Some Linux containers cannot run Claude's shell sandbox at all. For example, bubblewrap fails with
+`loopback: Failed RTM_NEWADDR: Operation not permitted`, or it cannot map user namespaces, when the
+outer runtime and the host's AppArmor `restrict_unprivileged_userns` setting deny them. The relay
+never fixes that by changing the host. Instead, a user who has decided the **container itself** is
+the boundary can say so once, in a user-owned file resolved like Codex's own home:
+
+```text
+$CODEX_HOME/claude-delegate/host-policy.json   (when CODEX_HOME is set)
+~/.codex/claude-delegate/host-policy.json       (otherwise)
+```
+
+```json
+{
+  "schema": "claude-delegate.host-policy.v1",
+  "shellSandbox": "outer-container",
+  "platform": "linux",
+  "requireContainer": true,
+  "approval": { "approvedBy": "<who>", "approvedAt": "<date>", "reason": "<why>" }
+}
+```
+
+`approval` is optional (string values only) and is copied into `result.json`. Every other field is
+required, and unknown fields are rejected. Resolution happens once per invocation, and preflight and
+dispatch use the result identically:
+
+- **No file:** nothing changes. This holds on ordinary Linux, macOS, WSL2, and Windows.
+- **Valid file in a verified Linux container:** `profile.json` gets `sandbox.enabled: false`, Bash is
+  pre-approved with `--allowedTools`, and `shellSandbox` is `"outer-container-policy"`. Bash then
+  runs with **all of the container's permissions**: its network, its files outside the workspace,
+  and its processes. Edit/Write stay under `acceptEdits`. The deny rules, MCP/skill restrictions, and
+  tool surface are unchanged. `bypassPermissions` is not enabled.
+- **Verification** requires filesystem evidence: `/.dockerenv`, `/run/.containerenv`, or a mount in
+  `/proc/1/mountinfo` whose root is a runtime path (`/var/lib/kubelet/pods/`,
+  `/var/lib/docker/containers/`, `/var/lib/containerd/`, `/var/lib/containers/`) bound onto an
+  ordinary mount point. Environment variables such as `KUBERNETES_SERVICE_HOST` alone do not verify.
+  Kubernetes nodes and Docker hosts, whose PID 1 merely lists runtime mount points, do not verify.
+- **Refused (exit 2, no `result.json`, Claude not launched):** invalid JSON, an unknown schema,
+  field, or `shellSandbox` value, a file that is not regular, not owned by the invoking user, or
+  group/world-writable, a non-Linux host, or Linux without verified container evidence. The policy
+  is validated even for `--read-only` and `--no-shell-sandbox` runs, so a misplaced file is reported
+  rather than ignored.
+- **Root with `--dangerously-skip-permissions`:** Claude Code itself exits with
+  `--dangerously-skip-permissions cannot be used with root/sudo privileges for security reasons`
+  unless the process is marked as a deliberate sandbox. In Claude 2.1.316 that check is
+  `isRootOutsideDeliberateSandbox()`: non-Windows, uid 0, `IS_SANDBOX` not `"1"`, and no
+  `CLAUDE_CODE_BUBBLEWRAP`. With a valid, verified policy, the relay adds `IS_SANDBOX=1` to that
+  child's environment only (preflight and task alike) and records it as `shellBoundary.childEnv`.
+  The marker acknowledges the outer container; it does not create an inner sandbox. It is not added
+  without a policy, for non-root users, or for non-bypass runs, so Claude's own refusal still
+  applies everywhere else. The relay never sets `CLAUDE_CODE_BUBBLEWRAP`, because bubblewrap is not
+  running.
+- **`--read-only`** stays shell-free (`hostPolicy.status: "unused-read-only"`).
+  **`--no-shell-sandbox`** still records `"disabled-explicit-task-opt-in"`
+  (`hostPolicy.status: "unused-task-opt-in"`).
+
+The relay never creates this file and never retries a failed sandbox without the sandbox. To return
+to the inner sandbox, delete the file.
+
 ### Read-only profile
 
 `--read-only` removes Edit, Write, Bash/PowerShell, Agent, MCP, skills, and commands from the child and
@@ -139,7 +202,10 @@ snapshot remain outside coverage. Inspect the diff whenever read-only integrity 
 
 `--dangerously-skip-permissions` passes Claude's flag and records
 `permissionMode: "bypassPermissions"` unless the init event reports another value. The explicit tool
-surface, commit/push deny rules, MCP/skill restrictions, and supported-platform shell sandbox remain.
+surface, commit/push deny rules, MCP/skill restrictions, and the effective shell boundary remain.
+Exception: when the boundary is an applied Linux outer-container host policy, the generated
+`permissions.deny` is empty, because that combination is the human's explicit no-local-restriction
+choice; MCP/connector restrictions, the tool surface, and the brief's no-commit scope still apply.
 However, direct file tools can cross ordinary Claude permission boundaries. This mode requires the
 human's explicit acceptance.
 
@@ -178,12 +244,22 @@ Core fields:
   while `[]` means git reported a clean tree. This is the whole final tree, not attribution.
 - `readOnlyViolation` — present only on `--read-only`, with the three-state meaning above.
 - `preflight` — present only on `--preflight-only`. `passed` is true only when the Bash tool
-  returned the target working directory; `error` records the failure. A successful Claude exit
-  or final text alone is not evidence that Bash worked.
+  succeeded and its `pwd` (`observedCwd`) resolves to the canonical `--cd` directory (`cwd`);
+  `error` records the failure, including a shell that started in another directory. A successful
+  Claude exit or final text alone is not evidence that Bash worked.
+- `shellSandbox` — `strict`, `container-compatible`, `outer-container-policy`,
+  `disabled-explicit-task-opt-in`, `not-applicable` (read-only), or `unsupported-on-native-windows`.
+- `shellBoundary` — `effective` (`claude-shell-sandbox`, `outer-container`, `outer-environment`,
+  `no-shell`, or `none`), `source` (`default`, `host-policy`, `task-opt-in`, `read-only`, or
+  `native-windows`), `innerSandbox` (whether Claude's sandbox was requested), and `hostPolicy`
+  (`path`, `status` of `absent`/`applied`/`unused-read-only`/`unused-task-opt-in`, plus `approval`
+  and `containerEvidence` when a policy exists), and `childEnv` (environment the relay added for
+  Claude, `{}` or `{ "IS_SANDBOX": "1" }` for an authorized root bypass). Use `source` to tell an
+  explicit outer-container authorization apart from a working inner sandbox.
 
 Run metadata includes `workdir`, `model`, `effort`, `maxTurns`, `maxBudgetUsd`, optional
 `autocompact`, `timeout`, `readOnly`,
-`resumed`, `resumeLast`, `toolSurface`, `shellSandbox`, `dangerouslySkipPermissions`, timestamps, and
+`resumed`, `resumeLast`, `toolSurface`, `dangerouslySkipPermissions`, timestamps, and
 all artifact paths. Failed, timed-out, and aborted runs include `stderrTail` when available;
 launch/watchdog/signal failures include `error`.
 
@@ -210,7 +286,11 @@ different: it exits 127 **with** `status: "claude_unavailable"`.
   same PATH the orchestrator uses.
 - **`failed`:** inspect `resultSubtype`, `error`, `stderrTail`, `stderr.txt`, and the tail of
   `events.jsonl`. Common causes are authentication, a model/effort mismatch, managed policy, a missing
-  sandbox dependency, or a gate that needs access outside the strict shell boundary.
+  sandbox dependency, or a gate that needs access outside the strict shell boundary. A preflight
+  `error` naming a different directory means the shell starts outside `--cd` (for example a login
+  profile that changes directory); fix that environment rather than dispatching.
+- **Exit 2 naming `host policy`:** the policy file is malformed, insecurely writable, or does not
+  match this host. Fix it or delete it; the relay does not fall back silently.
 - **`timeout`:** the relay sent termination to the whole process group/tree and escalated. The working
   tree may contain partial edits; inspect it before resuming or re-dispatching.
 - **`aborted`:** the relay caught SIGTERM, SIGINT, or SIGHUP, terminated the implementer tree, wrote an
