@@ -140,7 +140,7 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 
 ### 技术原理报告
 
-先判断报告类型，再读取 [报告结构模板](references/gpu-report-structures.md) 中对应的骨架和必答问题：
+先判断报告类型，再读取 [报告结构模板](references/gpu-report-structures.md) 中的通用主线、对应骨架和必答问题。篇幅不长、还不需要专门骨架的机制说明，从 [通用技术原理模板](assets/technical-principle.md) 起步。7 类报告如下：
 
 | 类型 | 读者要带走的核心问题 | 证据通常来自 |
 | --- | --- | --- |
@@ -154,10 +154,10 @@ description: 在撰写、改写、校对、审阅或整理中文技术文档时�
 
 ### 实验报告
 
-A/B、消融、sweep、压测和调优确认的报告，回答「实际测了什么、是否回答了原问题、证据能推到多远」。先读 [实验报告结构](references/experiment-report-structures.md)，再按篇幅选模板：比较、证据和决策能用一张小表说清的 A/B、sanity check 或回归确认用 [短报告](assets/experiment-report-short.md)；比较、证据链或决策需要更多篇幅时用 [完整报告](assets/experiment-report-full.md)。以机制解释为主、实验只作佐证时，仍用上表中的技术原理报告类型。
+A/B、消融、sweep、压测、调优确认和描述性测量的报告，回答「实际测了什么、是否回答了原问题、证据能推到多远」。先读 [实验报告结构](references/experiment-report-structures.md)，再选起点：只报告观测值和参考比较、没有待判定问题的测量（例如最大吞吐摸底）用 [测量记录](assets/measurement-note.md)；比较、证据和决策能用一张小表说清的 A/B、sanity check 或回归确认用 [短报告](assets/experiment-report-short.md)；比较、证据链或决策需要更多篇幅时用 [完整报告](assets/experiment-report-full.md)。以机制解释为主、实验只作佐证时，仍用上表中的技术原理报告类型。
 
-- 执行状态（按协议与覆盖判断：完成、部分完成、失败）与结论判定（支持、否定、无法判定）分开写；正确性、实现状态和目标达成也分开写。负结果也可以是完成的实验。
-- 判定规则和验收标准来自预设来源；没有时写「无预设验收标准」，不自行设定通过线。
+- 有假设或验收问题时，执行状态（按协议与覆盖判断：完成、部分完成、失败）与结论判定（支持、否定、无法判定）分开写；正确性、实现状态和目标达成也分开写。负结果也可以是完成的实验。纯观测不写结论判定。
+- 判定规则和验收标准来自预设来源；没有时写「无预设验收标准」，只报告观测值和比较结果，不自行设定通过线，也不写成「无法判定」。
 - 每个主要结果绑定实际运行身份和原始产物。计划中的配置不是运行证据，缺失的字段写「未记录」或「未验证」。
 
 ### API 文档
@@ -180,7 +180,7 @@ A/B、消融、sweep、压测和调优确认的报告，回答「实际测了什
 - Markdown：内部设计文档、PR 说明、进 git 的报告（如 `profile/<run>/REPORT.md`）、知乎或飞书草稿、篇幅短或以文字为主的报告。
 - 单文件 HTML：从截图或资料整理的文章、对外分享的长文、需要 3 幅以上精确示意图（数据流、流水线时序、内存布局）的报告、需要交互（切换 shape、折叠证据）的报告。起点模板为 [assets/report-template.html](assets/report-template.html)。
 - 无法判断时使用 Markdown，并说明可以转为 HTML。
-- 实验报告默认使用 Markdown，从 `assets/` 中的两个实验报告模板起步；需要 HTML 时再按上面的规则转换。
+- Markdown 起点模板见 `assets/` 中的技术原理、测量记录、短实验和完整实验模板；实验报告默认使用 Markdown，需要 HTML 时再按上面的规则转换。
 
 ## 与其他 skill 的分工
 
@@ -214,7 +214,7 @@ A/B、消融、sweep、压测和调优确认的报告，回答「实际测了什
 - 代码、路径、字段、命令、metric 名和引用是否保持原样
 - 段落是否残留硬换行，拼接边界的中西文留白是否正确
 - 项目覆盖规则是否来自目标项目，而不是示例文件
-- 实验报告：比较问题和基线身份是否写明；缺测、排除的运行和负结果是否保留；完整清单见 [实验报告结构](references/experiment-report-structures.md#实验报告最终检查)
+- 实验报告：比较问题和基线身份是否写明；缺测、排除的运行和负结果是否保留；无预设标准时是否没有补造判定；完整清单见 [实验报告结构](references/experiment-report-structures.md#实验报告最终检查)
 
 ## 自动检查
 
@@ -230,8 +230,9 @@ python3 scripts/unwrap_md_paragraphs.py --check report.md
 
 ## 参考资料路由
 
-- 报告类型、章节骨架和必答问题：读取 [报告结构模板](references/gpu-report-structures.md)
-- 实验报告的篇幅选择、状态与判定、比较问题、运行身份、计时与公平对照、各方向补充字段和最终检查：读取 [实验报告结构](references/experiment-report-structures.md)
+- 报告类型、通用主线、章节骨架和必答问题：读取 [报告结构模板](references/gpu-report-structures.md)
+- 实验报告与测量记录的选择、状态与判定、比较问题、运行身份、计时与公平对照、各方向补充字段和最终检查：读取 [实验报告结构](references/experiment-report-structures.md)
+- 精选 LMSYS 博客的技术原理与实验叙事方法、摘要与附录取舍、不照搬的写法：读取 [LMSYS 博客写作模式](references/lmsys-writing-patterns.md)
 - 证据等级、性能数字、测量条件、加速比和 GPU 回归样例：读取 [证据与数字规范](references/evidence-and-numbers.md)
 - GPU、推理、训练领域术语，大小写和易混淆概念：读取 [GPU 术语表](references/gpu-terminology.md)
 - 图、图注、公式、shape 记法、代码与源码引用：读取 [图表、公式与代码](references/figures-formulas-code.md)

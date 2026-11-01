@@ -1,6 +1,6 @@
 # tech-doc-style-chinese（GPU / AI Infra 定制版）
 
-本目录是 [Fenng/Tech-Doc-Style-Chinese](https://github.com/Fenng/Tech-Doc-Style-Chinese) 的同名本地覆盖版。上游提供中文技术文档与产品文案的通用写作规范；本版本保留上游全部通用规则，并面向算子、推理框架和训练框架方向的技术原理报告增加结构模板、术语表、证据与数字规范、图表规范、HTML 模板和 GPU 检查规则；另外增加实验报告的写法规则和两个 Markdown 模板。
+本目录是 [Fenng/Tech-Doc-Style-Chinese](https://github.com/Fenng/Tech-Doc-Style-Chinese) 的同名本地覆盖版。上游提供中文技术文档与产品文案的通用写作规范；本版本保留上游全部通用规则，并面向算子、推理框架和训练框架方向的技术原理报告增加结构模板、术语表、证据与数字规范、图表规范、HTML 模板和 GPU 检查规则；另外增加实验报告的写法规则、从精选 LMSYS 博客归纳的写作模式，以及技术原理、测量记录、短实验和完整实验四个 Markdown 模板。
 
 按仓库约定，本地 skill 优先于外部同名 skill。安装器只安装本目录，上游 clone 只用于比对和同步。
 
@@ -20,13 +20,16 @@
 | `references/api-status-copy.md` | 原样 | 上游 API 状态与错误文案 |
 | `references/controlled-technical-chinese.md` | 原样 | 上游受控中文技术写作 |
 | `references/project-overrides-example.md` | 原样 | 上游项目覆盖模板 |
-| `references/gpu-report-structures.md` | 新增 | 7 类技术原理报告的骨架、必答问题和常见问题；指向实验报告结构 |
-| `references/experiment-report-structures.md` | 新增 | 实验报告的篇幅选择、执行状态与结论判定、比较问题与基线身份、运行身份、计时层级与公平对照、kernel/serving/训推一致方向的补充字段、sweep、最终检查和设计参考 |
+| `references/gpu-report-structures.md` | 新增 | 技术原理报告的通用主线，7 类报告的骨架、必答问题和常见问题；指向通用技术原理模板和实验报告结构 |
+| `references/experiment-report-structures.md` | 新增 | 实验报告与测量记录的选择、执行状态与结论判定的适用范围、比较问题与基线身份（含累计优化链和来源报告值）、运行身份、计时层级与公平对照、kernel/serving/训推一致方向的补充字段、sweep、最终检查和设计参考 |
+| `references/lmsys-writing-patterns.md` | 新增 | 从精选 LMSYS 博客归纳的技术原理与实验叙事方法、摘要与附录取舍、不照搬的写法和来源章节；原创中文总结 |
 | `references/evidence-and-numbers.md` | 新增 | 证据等级、确定程度用词、性能数字上下文、加速比与峰值口径、12 个 GPU 回归样例 |
 | `references/gpu-terminology.md` | 新增 | GPU、推理、训练领域的术语约定、易混淆概念、官方写法和领域错词 |
 | `references/figures-formulas-code.md` | 新增 | 选图、图注、Mermaid 模式、估算公式、shape 记法和源码引用 |
 | `references/output-formats.md` | 新增 | Markdown 与单文件 HTML 的选择规则、HTML 约定、截图整理流程 |
 | `assets/report-template.html` | 新增 | 离线可读的单文件 HTML 报告模板 |
+| `assets/technical-principle.md` | 新增 | 还不需要专门骨架的机制说明用的通用技术原理模板 |
+| `assets/measurement-note.md` | 新增 | 最大吞吐摸底、与历史或外部参考数值比较等描述性测量用的测量记录模板 |
 | `assets/experiment-report-full.md` | 新增 | 完整实验报告的 Markdown 模板，从结论摘要开始，含填写说明 |
 | `assets/experiment-report-short.md` | 新增 | 比较和证据能用一张小表说清的 A/B、sanity check 或回归确认用的短报告模板 |
 | `scripts/lint_copy_rules.py` | 修改 | 新增 `--profile gpu`；默认 `base` 与上游行为一致 |
@@ -36,11 +39,20 @@
 | `tests/test_gpu_profile_rules.py` | 新增 | GPU 规则测试 |
 | `agents/openai.yaml` | 修改 | 展示名称和默认提示 |
 
-## 实验报告
+## 技术原理与实验报告模板
 
-写 A/B、消融、sweep、压测或调优确认的报告时，先读 `references/experiment-report-structures.md` 选择篇幅，再复制 `assets/experiment-report-short.md` 或 `assets/experiment-report-full.md`。模板中的 `<…>` 和 HTML 注释是填写说明，交付前全部替换或删除；模板本身不包含任何实测数据。
+`assets/` 中有四个 Markdown 起点：
 
-这部分规则是原创的中文指南。结构设计参考了若干公开的实验报告与 benchmark skill，链接列在 `references/experiment-report-structures.md` 的「设计参考」一节；没有复制其模板文本或脚本，也没有引入新的依赖。
+| 模板 | 用于 | 先读 |
+| --- | --- | --- |
+| `assets/technical-principle.md` | 还不需要专门骨架的机制说明、设计说明或原理解读 | `references/gpu-report-structures.md` |
+| `assets/measurement-note.md` | 最大吞吐摸底、与历史实测或外部来源报告值的比较等描述性测量，不需要判定 | `references/experiment-report-structures.md` |
+| `assets/experiment-report-short.md` | 一张小表能说清的 A/B、sanity check 或回归确认 | `references/experiment-report-structures.md` |
+| `assets/experiment-report-full.md` | 多阶段、多基线、需要消融或逐条对照判定规则的实验 | `references/experiment-report-structures.md` |
+
+需要 kernel、性能分析、推理框架、训练框架、训推一致、选型或论文/PR 解读的专门章节时，使用 `references/gpu-report-structures.md` 中的对应骨架。模板中的 `<…>` 和 HTML 注释是填写说明，交付前全部替换或删除；模板本身不包含任何实测数据。
+
+这部分规则和模板是原创的中文指南，不属于上游。实验报告的结构设计参考了若干公开的实验报告与 benchmark skill，链接列在 `references/experiment-report-structures.md` 的「设计参考」一节。`references/lmsys-writing-patterns.md` 是对精选 LMSYS 公开博客结构的原创总结，只归纳写法，不复制原文，也不收录博客中的性能数字；来源文章和章节列在该文件中。以上内容都没有复制外部模板文本或脚本，也没有引入新的依赖。
 
 ## 检查工具
 
