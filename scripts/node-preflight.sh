@@ -6,7 +6,7 @@
 #   返回 0: 满足该包的 engines；2: 不满足或找不到 node（已打印 BLOCKED 与修复指引）。
 #
 # 已知规则以“实际安装的已发布 npm 包”的 engines 为准（安装器从 npm 安装运行时，不从源码构建）:
-#   rea-agents@6.7.0 : ^22.19.0 || ^24.11.0 || >=26.0.0   （已安装包 lib/node_modules/rea-agents/package.json）
+#   rea-agents@6.8.0 : ^22.23.4 || ^24.22.1 || >=26.12.1   （已发布包 rea-agents@6.8.0 的 engines）
 #   @jackwener/wx-cli@0.3.0 / wx-cli : >=14
 # 注意：源码 checkout（repos/rea/package.json）中同一版本号的 engines 更新（^22.23.4 || ^24.22.1 || >=26.12.1）
 # 不适用于 npm 安装的运行时，因此这里不使用源码的 engines。
@@ -35,13 +35,14 @@ node_preflight() {
 
     case "$pkg" in
         rea-agents)
-            # 已发布包的 engines: ^22.19.0 || ^24.11.0 || >=26.0.0
-            if [ "$major" -eq 22 ] && [ "$n" -ge 22019000 ]; then ok=true
-            elif [ "$major" -eq 24 ] && [ "$n" -ge 24011000 ]; then ok=true
-            elif [ "$major" -ge 26 ]; then ok=true
+            # 已发布包 rea-agents@6.8.0 的 engines: ^22.23.4 || ^24.22.1 || >=26.12.1
+            if [ "$major" -eq 22 ] && [ "$n" -ge 22023004 ]; then ok=true
+            elif [ "$major" -eq 24 ] && [ "$n" -ge 24022001 ]; then ok=true
+            elif [ "$major" -ge 27 ]; then ok=true
+            elif [ "$major" -eq 26 ] && [ "$n" -ge 26012001 ]; then ok=true
             fi
             if [ "$ok" = false ]; then
-                echo "  BLOCKED: 当前 node ${v} 不满足已安装 rea-agents 包的 engines（^22.19.0 || ^24.11.0 || >=26.0.0）"
+                echo "  BLOCKED: 当前 node ${v} 不满足已安装 rea-agents 包的 engines（^22.23.4 || ^24.22.1 || >=26.12.1）"
                 echo "           请把兼容版本放在 PATH 前面，例如: PATH=\$HOME/.nvm/versions/node/v24.22.1/bin:\$PATH"
                 echo "           不会自动修改全局 Node。"
                 return 2

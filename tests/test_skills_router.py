@@ -171,7 +171,7 @@ class RouteBehaviorTest(unittest.TestCase):
         result = route_skill.route("帮我逆向分析这个 Electron 应用的 asar 包", rules=self.rules,
                                    inventory=self.inventory_without("reverse-engineer-anything"))
         self.assertPrimary(result, "reverse-engineer-anything", status="absent")
-        self.assertIn("rea-agents@6.7.0", result["primary"]["requires"])
+        self.assertIn("rea-agents@6.8.0", result["primary"]["requires"])
         self.assertEqual(result["primary"]["availability"]["runtime_bin"], "rea")
 
     def test_reverse_engineering_is_installable_once_runtime_skills_exist(self):

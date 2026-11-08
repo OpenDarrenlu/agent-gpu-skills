@@ -4,8 +4,8 @@
 
 | 来源 | 本目录链接 | 实际检出位置 | 固定版本 | 安装的 skill |
 |---|---|---|---|---|
-| CCFA-Skills（mikubaka88） | [`ccfa-skills/`](ccfa-skills/) | `repos/ccfa-skills`（submodule，MIT） | `e33ccfa` | 17 个 `ccf-*` runtime skill，外加 `ccf-latex-templates` 支撑目录 |
-| Supervisor-Skills（HKUSTDial） | [`supervisor-skills/`](supervisor-skills/) | `repos/supervisor-skills`（git-ignored，见 `sources/external-sources.conf`） | `a20d76e`（2.1.0） | 12 个 skill |
+| CCFA-Skills（mikubaka88） | [`ccfa-skills/`](ccfa-skills/) | `repos/ccfa-skills`（submodule，MIT） | `91ca9e2` | 18 个 `ccf-*` runtime skill，外加 `ccf-latex-templates` 支撑目录 |
+| Supervisor-Skills（HKUSTDial） | [`supervisor-skills/`](supervisor-skills/) | `repos/supervisor-skills`（git-ignored，见 `sources/external-sources.conf`） | `4bd3fef`（2.1.0） | 12 个 skill |
 
 两个来源都保持稳定的 checkout 路径。安装后的 skill 名与来源目录名一致，不带目录前缀。
 
@@ -18,7 +18,7 @@
 
 ## 按阶段对照
 
-下表列出全部 29 个 runtime skill：CCFA 的 17 个与 Supervisor 的 12 个。另有一个支撑目录 `ccf-latex-templates`，不计入 skill 数，列在“工作流与支撑”中。每个阶段的第一项是该阶段默认的 CCFA 入口。
+下表列出全部 30 个 runtime skill：CCFA 的 18 个与 Supervisor 的 12 个。另有一个支撑目录 `ccf-latex-templates`，不计入 skill 数，列在“工作流与支撑”中。每个阶段的第一项是该阶段默认的 CCFA 入口。
 
 ### 1. Idea（选题与评估）
 
@@ -77,14 +77,15 @@
 | `ccf-pipeline-orchestrator` | CCFA | 规划与协调研究阶段、门禁与 `ccfa.yaml` 状态 |
 | `ccf-project-scaffolder` | CCFA | 初始化项目目录、LaTeX 模板与 `ccfa.yaml` |
 | `vibe-research-workflow` | Supervisor | AI 辅助科研的三个子流程（Vibe Coding、Vibe Figure、Vibe Writing）与行为规则 |
+| `ccf-research-engineer` | CCFA | 研究代码与实验实现：代码库接入、训练与验证（2026-11 新增） |
 | `ccf-skill-forger` | CCFA | 维护与审计 CCFA/Codex skill（面向维护者，普通论文任务不需要） |
 | `ccf-latex-templates/` | CCFA（支撑目录） | 会议 LaTeX 模板（如 `AAAI/aaai2026_template.tex`）。模板模式读取安装根目录下的同级目录，安装器把它与 `ccf-*` 一起放在同一层 |
 
 ## 安装与依赖
 
 ```bash
-# 获取两个来源（checkout 缺失时才拉取；Supervisor 固定到 a20d76e）
-bash update-repos.sh ccfa-skills
+# 获取两个来源（checkout 缺失时才拉取；CCFA 固定到 91ca9e2，Supervisor 固定到 4bd3fef）
+bash update-repos.sh ccfa-skills    # submodule
 bash install-external.sh --no-runtime
 
 # 安装（默认混合模式：skill 目录内文件 symlink 到 checkout；--copy 则复制真实文件）
@@ -92,15 +93,15 @@ bash install.sh --agent codex
 bash install.sh --agent codex --copy
 ```
 
-- 两种模式都会安装 29 个 runtime skill（CCFA 17 个 + Supervisor 12 个），并安装 1 个支撑目录 `ccf-latex-templates`；`drawio-reconstruction` 的 `scripts/`、`examples/`、`requirements.txt` 与 `LICENSE` 也随之安装。
+- 两种模式都会安装 30 个 runtime skill（CCFA 18 个 + Supervisor 12 个），并安装 1 个支撑目录 `ccf-latex-templates`；`drawio-reconstruction` 的 `scripts/`、`examples/`、`requirements.txt` 与 `LICENSE` 也随之安装。
 - 两个集合之间的引用都是相对路径：CCFA 用 `../ccf-common/...` 等同级路径，Supervisor 用各自目录内的 `references/`、`scripts/`。`--copy` 不依赖源码 symlink。
-- `--no-ccfa-skills` 跳过全部 CCFA 内容（17 个 runtime skill 与 `ccf-latex-templates`）。`--no-integrations` 跳过包括 Supervisor 在内的全部外部来源安装步骤。没有单独的 Supervisor 开关，也不需要为了跳过它而修改 `sources/external-sources.conf` 中的 `mode`。
+- `--no-ccfa-skills` 跳过全部 CCFA 内容（18 个 runtime skill 与 `ccf-latex-templates`）。`--no-integrations` 跳过包括 Supervisor 在内的全部外部来源安装步骤。没有单独的 Supervisor 开关，也不需要为了跳过它而修改 `sources/external-sources.conf` 中的 `mode`。
 - 安装器不安装任何命令行运行时。`drawio-reconstruction` 的检查与批处理脚本只用标准库；`crop_assist.py` 需要 Pillow，SKILL.md 要求先经用户批准再用 `requirements.txt` 安装；`export_drawio.py` 需要本机的 draw.io 桌面应用，安装器不提供，也不检测其版本。使用前应先确认这些依赖存在。
 - Supervisor-Skills 仓库的 `handbook/`（根目录教材）不随任何 skill 安装。`idea-evaluator` 与 `vibe-research-workflow` 只把它作为可选的深入阅读，缺失时不影响 skill 执行。
 
 ## 来源、版本与许可
 
-- **Supervisor-Skills**：固定到 commit `a20d76ef3979b804d7dbf599d577826957e0a8a9`，原始 origin 为 `https://github.com/HKUSTDial/Supervisor-Skills.git`。
+- **Supervisor-Skills**：固定到 commit `4bd3fef393e5ffc891c74309a5ef6c5ad3ad12c8`，原始 origin 为 `https://github.com/HKUSTDial/Supervisor-Skills.git`。
   - 根许可文件：[`LICENSE`](../../repos/supervisor-skills/LICENSE)。该文件声明 **CC BY-NC-SA 4.0**，版权行为 `Copyright (c) 2026 Yuyu Luo (methodology) and contributors`。
   - 逐 skill 的 SKILL.md frontmatter 含 `license` 字段，取值如下（与根许可文件并列记录，不作取舍）：`CC-BY-4.0`（figure-designer、idea-evaluator、vibe-research-workflow、tech-paper-template、benchmark-paper-template、pre-submission-reviewer）；`CC-BY-NC-SA-4.0`（deep-research、paper-writer、intro-drafter、paper-polish）。
   - `rebuttal-guidance` 的 frontmatter 没有 `license` 字段。

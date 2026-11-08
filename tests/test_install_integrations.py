@@ -29,7 +29,7 @@ SCRIPTS = ["bootstrap.sh", "install.sh", "install-external.sh", "install-rea-mcp
 REQUESTED = {
     "sepia": ("skills", "skills", "none"),
     "wx-cli": ("skills", ".", "npm:@jackwener/wx-cli@0.3.0:wx"),
-    "rea": ("skills", "runtime-skills", "npm:rea-agents@6.7.0:rea"),
+    "rea": ("skills", "runtime-skills", "npm:rea-agents@6.8.0:rea"),
     "mattpocock-skills": ("skills", "skills/engineering,skills/productivity,skills/misc", "none"),
 }
 GATE_FLAGS = ["--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills", "--no-ccfa-skills"]
@@ -933,9 +933,9 @@ class ReaMcpTest(unittest.TestCase):
         self.assertFalse(os.path.exists(self.log))
 
     def test_node_preflight_follows_published_rea_engines_boundaries(self):
-        # 已发布 rea-agents@6.7.0 的 engines: ^22.19.0 || ^24.11.0 || >=26.0.0
-        accepted = ("v22.19.0", "v24.11.0", "v24.21.0", "v26.0.0", "v27.0.0")
-        rejected = ("v21.9.0", "v22.18.0", "v23.5.0", "v24.10.0", "v25.1.0")
+        # 已发布 rea-agents@6.8.0 的 engines: ^22.23.4 || ^24.22.1 || >=26.12.1
+        accepted = ("v22.23.4", "v24.22.1", "v24.30.0", "v26.12.1", "v27.0.0")
+        rejected = ("v21.9.0", "v22.23.3", "v23.5.0", "v24.22.0", "v25.1.0", "v26.12.0", "v26.0.0")
         for version in accepted:
             node_stub(self.bin, version)
             rc, out = self._run("--agent", "codex")

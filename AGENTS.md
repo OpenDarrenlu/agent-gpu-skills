@@ -107,6 +107,14 @@ producing detailed advice or code.
   runbooks): `tech-doc-style-chinese` (local GPU-customized override of
   Fenng/Tech-Doc-Style-Chinese; upstream clone in `repos/tech-doc-style-chinese`)
 
+## Skill Sources
+
+Every skill installed by `install.sh` is registered in `SOURCES.md` with its
+upstream repository, pinned commit and local modifications.
+`sources/update-log.md` records upstream review conclusions. Before changing
+any pinned source, read the matching entry there; after updating, regenerate
+`SOURCES.md` and the router inventory.
+
 ## Operating Rules
 
 - Infer the skill from domain words, symptoms, tools, and file types; do not

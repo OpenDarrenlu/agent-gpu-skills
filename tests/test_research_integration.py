@@ -26,9 +26,9 @@ CONF = os.path.join(REPO, "sources", "external-sources.conf")
 INVENTORY = os.path.join(REPO, "skills", "routers", "agent-skill-router", "references", "inventory.tsv")
 BUILD_INVENTORY = os.path.join(REPO, "skills", "routers", "agent-skill-router", "scripts", "build_inventory.py")
 
-SUPERVISOR_PIN = "a20d76ef3979b804d7dbf599d577826957e0a8a9"
+SUPERVISOR_PIN = "4bd3fef393e5ffc891c74309a5ef6c5ad3ad12c8"
 SUPERVISOR_EXPECTED = 12
-CCFA_EXPECTED = 17
+CCFA_EXPECTED = 18
 CCFA_SUPPORT = "ccf-latex-templates"
 ISOLATED_FLAGS = ["--no-veloq", "--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills",
                   "--no-tilelang-skills"]

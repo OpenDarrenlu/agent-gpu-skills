@@ -182,6 +182,7 @@ Node 版本、launcher 边界与 REA MCP 注册的细节见 [`INSTALL.md`](INSTA
 ## 更新
 
 ```bash
+python3 scripts/build_sources.py --check   # 校验 SOURCES.md 与 checkout 一致
 bash update-repos.sh
 bash update-repos.sh triton
 bash update-repos.sh cutlass
@@ -214,6 +215,10 @@ bash update-repos.sh docs
 python3 skills/routers/agent-skill-router/scripts/build_inventory.py
 python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 ```
+
+全部 skill 的来源（上游仓库、引用、固定版本、本地修改情况）记录在 [SOURCES.md](SOURCES.md)，
+逐来源的检查结论记录在 `sources/update-log.md`；两者分别由
+`python3 scripts/build_sources.py` 与手工维护。
 
 ## 验证
 
