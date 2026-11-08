@@ -247,6 +247,9 @@ sglang_dirs=(
     "benchmark"
     "docs"
     "test"
+    # SGLang 仓库内置 agent skills（.claude/skills 是 .agents/skills 的 symlink）。
+    # skills/framework/sglang-repo-skills/ 的 vendored 副本从这里同步。
+    ".agents/skills"
 )
 
 # verl (HybridFlow) sparse checkout 目录
@@ -324,6 +327,10 @@ case "$TARGET" in
         ;;
     sglang)
         clone_or_update "sglang" "skills/framework/sglang-skill" "https://github.com/sgl-project/sglang.git" "main" "${sglang_dirs[@]}"
+        ;;
+    tilelang)
+        clone_sparse_at_ref "tilelang" "$SCRIPT_DIR/repos/tilelang" "https://github.com/tile-ai/tilelang.git" "main" ".agents/skills" || echo "  warn: tilelang 上游拉取失败（不影响其他步骤）"
+        echo "  tilelang 上游已更新；按 skills/kernel/tilelang-repo-skills/README.md 的「同步上游」步骤合并 .agents/skills/。"
         ;;
     verl)
         clone_or_update "verl" "skills/framework/verl-skill" "https://github.com/verl-project/verl.git" "main" "${verl_dirs[@]}"
@@ -407,6 +414,7 @@ case "$TARGET" in
         clone_full_repo "zero-mismatch-rl" "$SCRIPT_DIR/repos/zero-mismatch-rl" "https://github.com/Inferact/zero-mismatch-rl.git" "main" || echo "  warn: zero-mismatch-rl 上游拉取失败（不影响其他步骤）"
         echo "  zero-mismatch-rl 上游已更新；按 skills/framework/zero-mismatch-rl/README.md 的「同步上游」步骤合并 skill/ 与 cases/。"
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
+        clone_sparse_at_ref "tilelang" "$SCRIPT_DIR/repos/tilelang" "https://github.com/tile-ai/tilelang.git" "main" ".agents/skills"
         clone_full_repo "iket-profiling-skill" "$SCRIPT_DIR/repos/iket-profiling-skill" "https://github.com/humanfia/iket-profiling-skill.git" "" || echo "  warn: iket-profiling-skill 上游拉取失败（不影响其他步骤）"
         clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
         if [ "$SKIP_INTEGRATIONS" = true ]; then
@@ -417,7 +425,7 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|zero-mismatch-rl|vllm|iket-profiling|salary-negotiation|ponytail|external|docs|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|zero-mismatch-rl|tilelang|vllm|iket-profiling|salary-negotiation|ponytail|external|docs|all]"
         exit 1
         ;;
 esac

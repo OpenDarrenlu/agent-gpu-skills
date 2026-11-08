@@ -29,17 +29,25 @@ runtime rather than a standalone kernel.
    `.agents/skills` snapshot with the pinned vLLM source map, use
    `train-inference-consistency`. Keep verl-specific metrics and config in
    `verl-skill`.
-3. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
+3. **SGLang serving-side failures, profiling or contributions** (KL
+   prefill/decode consistency, CUDA crash, distributed hang, production
+   incident triage, `--mamba-full-memory-ratio`, profile capture, adding
+   JIT/AOT kernels, writing SGLang tests): use the vendored
+   sglang-repo-skills skills — `kl-consistency-test`, `debug-cuda-crash`,
+   `debug-distributed-hang`, `sglang-prod-incident-triage`,
+   `compute-mamba-ratio`, `generate-profile`, `add-jit-kernel`,
+   `add-sgl-kernel`, `kernel-organization`, `write-sglang-test`.
+4. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
    capacity, TTFT/TBT, or deployment strategy**: use `llm-serving-router`.
-4. **Framework-level workload profiling or benchmark design**: use
+5. **Framework-level workload profiling or benchmark design**: use
    `llm-serving-auto-benchmark` or `perf-workload-profiling` when installed.
    For a PyTorch baseline that will become a TileLang kernel, use
    `torch-profiling-tilelang-programs`.
-5. **Whole-application CPU/GPU timeline, launch causality, overlap, or NVTX
+6. **Whole-application CPU/GPU timeline, launch causality, overlap, or NVTX
    analysis**: use `perf-nsight-systems` or `nsys-profile-analysis`.
-6. **A framework dispatches a slow individual CUDA/Triton/CUTLASS kernel**:
+7. **A framework dispatches a slow individual CUDA/Triton/CUTLASS kernel**:
    hand off to `gpu-performance-router`, then use the most specific kernel skill.
-7. **PyTorch profiler, compiler, or host-side runtime behavior**: use
+8. **PyTorch profiler, compiler, or host-side runtime behavior**: use
    `llm-torch-profiler-analysis`, `torch-profiling-tilelang-programs`,
    `perf-host-analysis`, or `perf-host-optimization` when installed.
 

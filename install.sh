@@ -113,6 +113,16 @@ SKILL_NAMES=(
     cutlass-skill
     deepgemm-skill
     sglang-skill
+    kl-consistency-test
+    debug-cuda-crash
+    debug-distributed-hang
+    sglang-prod-incident-triage
+    compute-mamba-ratio
+    generate-profile
+    add-jit-kernel
+    add-sgl-kernel
+    kernel-organization
+    write-sglang-test
     verl-skill
     train-inference-consistency
     zero-mismatch-rl
@@ -143,6 +153,10 @@ SKILL_NAMES=(
     torch-profiling-tilelang-programs
     writing-tilelang-design-docs
     writing-tilelang-kernels
+    tilelang-layout
+    tilelang-semantic
+    tilelang-backend
+    tilelang-ascend
     giantpandallm-knowledge
     zhihu-knowledge-base
     salary-negotiation-skill
@@ -164,6 +178,16 @@ SKILL_DIRS=(
     skills/kernel/cutlass-skill
     skills/kernel/deepgemm-skill
     skills/framework/sglang-skill
+    skills/framework/sglang-repo-skills/kl-consistency-test
+    skills/framework/sglang-repo-skills/debug-cuda-crash
+    skills/framework/sglang-repo-skills/debug-distributed-hang
+    skills/framework/sglang-repo-skills/sglang-prod-incident-triage
+    skills/framework/sglang-repo-skills/compute-mamba-ratio
+    skills/framework/sglang-repo-skills/generate-profile
+    skills/framework/sglang-repo-skills/add-jit-kernel
+    skills/framework/sglang-repo-skills/add-sgl-kernel
+    skills/framework/sglang-repo-skills/kernel-organization
+    skills/framework/sglang-repo-skills/write-sglang-test
     skills/framework/verl-skill
     skills/framework/train-inference-consistency
     skills/framework/zero-mismatch-rl
@@ -194,6 +218,10 @@ SKILL_DIRS=(
     repos/tilelang-cuda-skills/skills/tilelang/torch-profiling-tilelang-programs
     repos/tilelang-cuda-skills/skills/tilelang/writing-tilelang-design-docs
     repos/tilelang-cuda-skills/skills/tilelang/writing-tilelang-kernels
+    skills/kernel/tilelang-repo-skills/tilelang-layout
+    skills/kernel/tilelang-repo-skills/tilelang-semantic
+    skills/kernel/tilelang-repo-skills/tilelang-backend
+    skills/kernel/tilelang-repo-skills/tilelang-ascend
     skills/other/giantpandallm-knowledge
     skills/other/zhihu-knowledge-base
     skills/other/salary-negotiation-skill
@@ -900,6 +928,15 @@ verify_agent() {
     check "$ZMR_SKILL/skill/README.md" "zero-mismatch-rl: C0-C10 workflow"
     check "$ZMR_SKILL/skill/validation.md" "zero-mismatch-rl: 验收细则"
     check "$ZMR_SKILL/cases/nemotron/README.md" "zero-mismatch-rl: 模型案例（Nemotron）"
+
+    local SGL_REPOS="$SKILL_DIR"
+    check "$SGL_REPOS/kl-consistency-test/SKILL.md" "SGLang skills: kl-consistency-test"
+    check "$SGL_REPOS/write-sglang-test/SKILL.md" "SGLang skills: write-sglang-test"
+    check "$SGL_REPOS/sglang-prod-incident-triage/SKILL.md" "SGLang skills: prod-incident-triage"
+
+    local TL_REPO_SKILLS="$SKILL_DIR"
+    check "$TL_REPO_SKILLS/tilelang-layout/SKILL.md" "TileLang repo skills: tilelang-layout"
+    check "$TL_REPO_SKILLS/tilelang-semantic/SKILL.md" "TileLang repo skills: tilelang-semantic"
 
     local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
     check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"

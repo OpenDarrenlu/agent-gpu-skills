@@ -6,11 +6,14 @@ This repository is an Agent Skill bundle, not an application. Read
 ## Layout
 
 - `skills/kernel/`: CUDA, PTX, Triton, CUTLASS, DeepGEMM, kernel profiling,
-  persistent-kernel tuning, performance modeling, and kernel references.
+  persistent-kernel tuning, performance modeling, the TileLang in-repo skills
+  vendored from `tile-ai/tilelang` under `tilelang-repo-skills/`, and kernel
+  references.
 - `skills/framework/`: SGLang, verl (RL post-training), train-inference
   consistency (from vLLM), zero-mismatch-rl (vendored from
-  Inferact/zero-mismatch-rl: `skill/` workflow plus `cases/`), and
-  framework/runtime-facing skills.
+  Inferact/zero-mismatch-rl: `skill/` workflow plus `cases/`), the SGLang
+  in-repo skills vendored from `sgl-project/sglang` under
+  `sglang-repo-skills/`, and framework/runtime-facing skills.
 - `skills/other/`: communication, AMD/ROCm, local knowledge bases, and
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers, plus `agent-skill-router`
@@ -91,6 +94,12 @@ python3 skills/other/amd-gpu-docs/scripts/sync_amd_docs.py --profile core
   `.agents/skills/train-inference-consistency`; its sparse vLLM checkout lives
   in the skill's git-ignored `repos/vllm`. Its `README.md` lists the local
   modifications and the sync procedure.
+- `skills/framework/sglang-repo-skills` and `skills/kernel/tilelang-repo-skills`
+  are verbatim vendorings of `sgl-project/sglang` and `tile-ai/tilelang`
+  `.agents/skills` (a curated subset of each). The upstream sparse checkouts
+  (`skills/framework/sglang-skill/repos/sglang` and `repos/tilelang`) feed the
+  sync procedure in each directory's `README.md`; a re-vendor copies files
+  verbatim and updates `install.sh` arrays plus the inventory together.
 - The TileLang suite's upstream `cuda_skill` is intentionally not installed;
   use the local `cuda-skill` as the canonical CUDA entry.
 - When an upstream repository moves a referenced path, update

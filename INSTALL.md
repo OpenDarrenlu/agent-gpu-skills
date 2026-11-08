@@ -242,6 +242,8 @@ bash install.sh --agent codex --dest /absolute/path/to/test-skills --no-veloq
 
 ```bash
 bash update-repos.sh ccfa-skills
+bash update-repos.sh zero-mismatch-rl   # 上游完整 clone（同步 skill/ 与 cases/）
+bash update-repos.sh tilelang           # tile-ai/tilelang 稀疏 clone（同步 .agents/skills）
 bash install.sh --agent codex
 ```
 

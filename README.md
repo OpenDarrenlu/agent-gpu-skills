@@ -197,6 +197,8 @@ bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
 bash update-repos.sh ccfa-skills
 bash update-repos.sh tech-doc-style-chinese
+bash update-repos.sh zero-mismatch-rl
+bash update-repos.sh tilelang
 bash update-repos.sh iket-profiling
 bash update-repos.sh salary-negotiation
 bash update-repos.sh ponytail
@@ -267,9 +269,9 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 
 | 领域 | @README 入口 | 代表 skill | 来源 |
 |---|---|---|---|
-| GPU kernel 编写 | `gpu-kernel-authoring-router` | `triton-skill`、`cuda-skill`、`cutlass-skill`、`deepgemm-skill`、`writing-tilelang-kernels` | 本地（TileLang 来自 `repos/tilelang-cuda-skills`） |
+| GPU kernel 编写 | `gpu-kernel-authoring-router` | `triton-skill`、`cuda-skill`、`cutlass-skill`、`deepgemm-skill`、`writing-tilelang-kernels`、`tilelang-layout`、`tilelang-semantic` | 本地（TileLang 来自 `repos/tilelang-cuda-skills`，编译器内部来自 `skills/kernel/tilelang-repo-skills`） |
 | GPU 性能与 profiling | `gpu-performance-router` | `ncu-report-skill`（`.ncu-rep`）、`perf-nsight-systems`（`.nsys-rep`）、`persistent-kernel-scheduling`、`nv-gpu-kernel-performance-modeling` | 本地；`perf-nsight-systems` 来自 `repos/cursor-skills` |
-| 框架与运行时 | `gpu-framework-router` | `sglang-skill`、`verl-skill`、`train-inference-consistency` | 本地 |
+| 框架与运行时 | `gpu-framework-router` | `sglang-skill`、`verl-skill`、`zero-mismatch-rl`、`train-inference-consistency`、sglang-repo-skills 精选 | 本地 |
 | LLM serving | `llm-serving-router` | `llm-serving-auto-benchmark`、`llm-serving-capacity-planner` | 本地路由；两个 benchmark 与容量 skill 来自 `repos/cursor-skills` |
 | 通信与 AMD | `gpu-development-catchall` → 对应路由 | `nccl-skill`、`gpu-communication-libraries`、`amd-gpu-docs`、`amd-instinct-isa` | 本地 |
 | 论文与文献 | `agent-skill-router` | `ccf-literature-searcher`、`ccf-paper-reviewer`、`ccf-rebuttal-writer`、`ccf-submission-checker`、`zotero-cli`；Supervisor 具名 skill（如 `idea-evaluator`、`deep-research`、`pre-submission-reviewer`） | `ccf-*` 来自 `repos/ccfa-skills`；Supervisor 来自 `repos/supervisor-skills`；`zotero-cli` 为本地。完整对照见 [`skills/research/README.md`](skills/research/README.md) |

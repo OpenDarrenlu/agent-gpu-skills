@@ -52,6 +52,10 @@ producing detailed advice or code.
 - IKET CuTe DSL timelines: `iket-profiling`
 - Analytical kernel modeling: `nv-gpu-kernel-performance-modeling`
 - TileLang kernel authoring: `writing-tilelang-kernels`
+- TileLang compiler/backend internals (vendored `tile-ai/tilelang`
+  `.agents/skills` in `skills/kernel/tilelang-repo-skills/`): `tilelang-layout`
+  (Layout/Fragment, CuTe layout algebra), `tilelang-semantic` (semantic rules and
+  validation), `tilelang-backend`, `tilelang-ascend`
 - TileLang debugging/lowering: `debugging-tilelang-programs`
 - TileLang optimization loop: `tilelang-optimization-loop`
 - TileLang kernel profiling: `profiling-tilelang-programs`
@@ -63,6 +67,12 @@ producing detailed advice or code.
 ### Framework
 
 - SGLang runtime and backend integration: `sglang-skill`
+- SGLang serving-side debugging and contribution (vendored
+  `sgl-project/sglang` `.agents/skills` in `skills/framework/sglang-repo-skills/`):
+  `kl-consistency-test` (prefill/decode logprob KL), `debug-cuda-crash`,
+  `debug-distributed-hang`, `sglang-prod-incident-triage`, `compute-mamba-ratio`,
+  `generate-profile`, `add-jit-kernel`, `add-sgl-kernel`, `kernel-organization`,
+  `write-sglang-test`
 - verl/HybridFlow RL post-training (PPO/GRPO, rollout, reward, agent loop,
   train-inference mismatch): `verl-skill`
 - Bitwise train-inference consistency / true on-policy RL (vLLM batch
