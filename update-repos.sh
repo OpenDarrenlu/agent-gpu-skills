@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / vllm / iket-profiling / salary-negotiation / ponytail / docs)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / zero-mismatch-rl / vllm / iket-profiling / salary-negotiation / ponytail / docs)
 # docs 不在 all 中：重新抓取 CUDA/PTX/Nsight 文档、Colfax 文章库和 AMD 文档缓存，耗时较长。
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
@@ -21,6 +21,8 @@
 #   repos/tilelang-cuda-skills/ (sablin39/tilelang-cuda-skills submodule)
 #   repos/tech-doc-style-chinese/ (Fenng/Tech-Doc-Style-Chinese 上游 clone，git-ignored；
 #                                  本地定制版在 skills/other/tech-doc-style-chinese/，见其 README.md)
+#   repos/zero-mismatch-rl/      (Inferact/zero-mismatch-rl 上游完整 clone，git-ignored；
+#                                  本地 vendored 副本在 skills/framework/zero-mismatch-rl/，见其 README.md)
 #   repos/<name>/       sources/external-sources.conf 中的外部来源（git-ignored；由 install-external.sh 获取与安装 runtime）
 #
 # external: 只更新 sources/external-sources.conf 中的外部来源并安装其 runtime CLI（等同 install-external.sh --update）。
@@ -379,6 +381,10 @@ case "$TARGET" in
     vllm|vllm-skills)
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
         ;;
+    zero-mismatch-rl)
+        clone_full_repo "zero-mismatch-rl" "$SCRIPT_DIR/repos/zero-mismatch-rl" "https://github.com/Inferact/zero-mismatch-rl.git" "main" || echo "  warn: zero-mismatch-rl 上游拉取失败（不影响其他步骤）"
+        echo "  上游已更新；按 skills/framework/zero-mismatch-rl/README.md 的「同步上游」步骤合并 skill/ 与 cases/。"
+        ;;
     all)
         clone_or_update "triton" "skills/kernel/triton-skill" "https://github.com/triton-lang/triton.git" "main" "${triton_dirs[@]}"
         clone_or_update "cutlass" "skills/kernel/cutlass-skill" "https://github.com/NVIDIA/cutlass.git" "main" "${cutlass_dirs[@]}"
@@ -398,6 +404,8 @@ case "$TARGET" in
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
         clone_full_repo "tech-doc-style-chinese" "$SCRIPT_DIR/repos/tech-doc-style-chinese" "https://github.com/Fenng/Tech-Doc-Style-Chinese.git" "main"
+        clone_full_repo "zero-mismatch-rl" "$SCRIPT_DIR/repos/zero-mismatch-rl" "https://github.com/Inferact/zero-mismatch-rl.git" "main" || echo "  warn: zero-mismatch-rl 上游拉取失败（不影响其他步骤）"
+        echo "  zero-mismatch-rl 上游已更新；按 skills/framework/zero-mismatch-rl/README.md 的「同步上游」步骤合并 skill/ 与 cases/。"
         clone_sparse_at_ref "vllm" "$SCRIPT_DIR/skills/framework/train-inference-consistency/repos/vllm" "https://github.com/vllm-project/vllm.git" "$VLLM_SKILLS_REF" "${vllm_skills_dirs[@]}"
         clone_full_repo "iket-profiling-skill" "$SCRIPT_DIR/repos/iket-profiling-skill" "https://github.com/humanfia/iket-profiling-skill.git" "" || echo "  warn: iket-profiling-skill 上游拉取失败（不影响其他步骤）"
         clone_full_repo "salary-negotiation-skill" "$SCRIPT_DIR/repos/salary-negotiation-skill" "https://github.com/Ssupercoder/Salary-Negotiation-Skill.git" "" || echo "  warn: salary-negotiation-skill 上游拉取失败（不影响其他步骤）"
@@ -409,7 +417,7 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|vllm|iket-profiling|salary-negotiation|ponytail|external|docs|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|zero-mismatch-rl|vllm|iket-profiling|salary-negotiation|ponytail|external|docs|all]"
         exit 1
         ;;
 esac

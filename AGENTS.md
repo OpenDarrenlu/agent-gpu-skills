@@ -66,8 +66,12 @@ producing detailed advice or code.
 - verl/HybridFlow RL post-training (PPO/GRPO, rollout, reward, agent loop,
   train-inference mismatch): `verl-skill`
 - Bitwise train-inference consistency / true on-policy RL (vLLM batch
-  invariance, logprob 0 diff, BI kernels, backward/STE, C0–C10 gates):
-  `train-inference-consistency` (from vllm-project/vllm `.agents/skills`)
+  invariance, logprob 0 diff, BI kernels, backward/STE, C0–C10 gates, model
+  cases, weight update/online sync, delivery): `zero-mismatch-rl`
+  (vendored Inferact/zero-mismatch-rl `skill/` + `cases/`)
+- The same workflow as vLLM's own `.agents/skills` snapshot with the pinned vLLM
+  sparse checkout (batch invariance implementation/tests, vLLM source map):
+  `train-inference-consistency` (vllm-project/vllm)
 - Serving design and capacity planning: `llm-serving-router`
 - Whole-application timeline: `nsys-profile-analysis` or `perf-nsight-systems`
 - Serving workload benchmark: `llm-serving-auto-benchmark`

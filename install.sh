@@ -115,6 +115,7 @@ SKILL_NAMES=(
     sglang-skill
     verl-skill
     train-inference-consistency
+    zero-mismatch-rl
     nv-gpu-kernel-performance-modeling
     colfax-research-skill
     nccl-skill
@@ -165,6 +166,7 @@ SKILL_DIRS=(
     skills/framework/sglang-skill
     skills/framework/verl-skill
     skills/framework/train-inference-consistency
+    skills/framework/zero-mismatch-rl
     skills/kernel/nv-gpu-kernel-performance-modeling
     skills/kernel/colfax-research-skill
     skills/other/nccl-skill
@@ -893,6 +895,11 @@ verify_agent() {
     check "$VLLM_REPO/docs/features/batch_invariance.md" "vLLM batch invariance 文档"
     check "$VLLM_REPO/vllm/model_executor/determinism/batch_invariant.py" "vLLM batch invariant 实现"
     check "$VLLM_REPO/tests/v1/determinism" "vLLM batch invariance 测试"
+
+    local ZMR_SKILL="$SKILL_DIR/zero-mismatch-rl"
+    check "$ZMR_SKILL/skill/README.md" "zero-mismatch-rl: C0-C10 workflow"
+    check "$ZMR_SKILL/skill/validation.md" "zero-mismatch-rl: 验收细则"
+    check "$ZMR_SKILL/cases/nemotron/README.md" "zero-mismatch-rl: 模型案例（Nemotron）"
 
     local NCCL_REPO="$SKILL_DIR/nccl-skill/repos/nccl"
     check "$NCCL_REPO/src/nccl.h.in" "NCCL public API header"

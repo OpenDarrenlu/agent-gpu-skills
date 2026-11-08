@@ -14,7 +14,7 @@
 
 | 文件 | 状态 | 说明 |
 | --- | --- | --- |
-| `SKILL.md` | 修改 | description 末尾增加中文触发词；batch invariance 文档链接从 vLLM 仓库内相对路径改为本目录的稀疏 clone（`repos/vllm/docs/features/batch_invariance.md`），并附上游固定链接；增加来源注释和指向本文件的说明 |
+| `SKILL.md` | 修改 | description 末尾增加中文触发词；batch invariance 文档链接从 vLLM 仓库内相对路径改为本目录的稀疏 clone（`repos/vllm/docs/features/batch_invariance.md`），并附上游固定链接；增加来源注释和指向本文件的说明；增加指向 `zero-mismatch-rl`（扩展工作流）的交叉引用 |
 | `LICENSE` | 新增 | vLLM 的 Apache-2.0 许可原文 |
 | `README.md` | 新增 | 本文件 |
 | 其余全部文件 | 原样 | `agents/`、`guides/`、`practices/`、`workflow/` 与上游逐字节一致 |

@@ -22,7 +22,12 @@ runtime rather than a standalone kernel.
    logprobs bitwise identical (true on-policy RL: C0–C10 gates, batch-invariant
    kernels, training forward reusing inference kernels, backward/STE and
    quantization contracts, delivery and paired acceptance), use
-   `train-inference-consistency`; keep verl-specific metrics and config in
+   `zero-mismatch-rl` — the vendored Inferact/zero-mismatch-rl skill: full
+   workflow, per-model recipes and failure records (DeepSeek-V4-Flash,
+   DeepSeek-V4.1-Flash, Nemotron, Kimi-K3.1), weight update / online sync,
+   checkpoint/resume and delivery. For the same workflow as vLLM's own
+   `.agents/skills` snapshot with the pinned vLLM source map, use
+   `train-inference-consistency`. Keep verl-specific metrics and config in
    `verl-skill`.
 3. **LLM serving design, vLLM/SGLang/LMDeploy/TensorRT-LLM comparison, batching,
    capacity, TTFT/TBT, or deployment strategy**: use `llm-serving-router`.

@@ -32,6 +32,7 @@
 
     {"skill": "sglang-skill", "domain": "gpu-framework", "kind": "instruction", "phrases": ["sglang"]},
     {"skill": "verl-skill", "domain": "gpu-framework", "kind": "instruction", "phrases": ["verl", "hybridflow", "ppo", "grpo", "rollout"]},
+    {"skill": "zero-mismatch-rl", "domain": "gpu-framework", "kind": "instruction", "phrases": ["zero mismatch", "zero-mismatch", "true on-policy", "true on policy", "reinforce zero", "mlite", "c0-c10", "c0–c10", "logprob 0 diff", "bitwise 训推", "权重同步", "在线同步"]},
     {"skill": "train-inference-consistency", "domain": "gpu-framework", "kind": "instruction", "phrases": ["batch invariance", "batch-invariant", "训推一致", "logprob", "bitwise"]},
     {"skill": "llm-serving-router", "domain": "gpu-framework", "kind": "instruction", "weight": 6, "phrases": ["kv cache", "ttft", "tbt", "吞吐", "容量规划", "推理服务", "serving", "decode", "prefill"]},
     {"skill": "gpu-framework-router", "domain": "gpu-framework", "kind": "instruction", "weight": 6, "requires_any": ["sglang", "vllm", "verl", "pytorch", "torch", "gpu", "serving", "推理", "rollout", "kv cache", "llm"], "phrases": ["端到端", "end-to-end", "launch overhead", "框架"]},

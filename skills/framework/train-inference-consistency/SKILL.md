@@ -13,6 +13,8 @@ How to enable batch-invariant inference in vLLM is in [batch invariance](repos/v
 
 Local notes for this repository (vLLM source map, related skills, sync procedure): [README.md](README.md).
 
+This is the vLLM `.agents/skills` snapshot of the workflow. The expanded version with per-model recipes and failure records, weight update / online sync, checkpoint/resume and delivery is `zero-mismatch-rl` (vendored from Inferact/zero-mismatch-rl; see its [SKILL.md](../zero-mismatch-rl/SKILL.md)).
+
 Start here: **[train-inference consistency workflow (C0–C10)](workflow/README.md)**. It answers "what to do next, and what counts as passing"; acceptance details are in [validation.md](workflow/validation.md), and the report template is [report-template.md](workflow/report-template.md).
 
 Find a guide by problem:

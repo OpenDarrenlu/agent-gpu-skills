@@ -8,7 +8,9 @@ This repository is an Agent Skill bundle, not an application. Read
 - `skills/kernel/`: CUDA, PTX, Triton, CUTLASS, DeepGEMM, kernel profiling,
   persistent-kernel tuning, performance modeling, and kernel references.
 - `skills/framework/`: SGLang, verl (RL post-training), train-inference
-  consistency (from vLLM), and framework/runtime-facing skills.
+  consistency (from vLLM), zero-mismatch-rl (vendored from
+  Inferact/zero-mismatch-rl: `skill/` workflow plus `cases/`), and
+  framework/runtime-facing skills.
 - `skills/other/`: communication, AMD/ROCm, local knowledge bases, and
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers, plus `agent-skill-router`
