@@ -106,6 +106,10 @@ producing detailed advice or code.
   performance reports, source walkthroughs, screenshot-to-article, API docs,
   runbooks): `tech-doc-style-chinese` (local GPU-customized override of
   Fenng/Tech-Doc-Style-Chinese; upstream clone in `repos/tech-doc-style-chinese`)
+- macOS desktop GUI operation (accessibility tree, click, read UI state):
+  `agent-desktop`, installed standalone by `install-agent-desktop.sh` and not in
+  the unified inventory. Check its copy with `route_skill.py --skills-root`; see
+  `docs/agent-desktop/INSTALL.md`.
 
 ## Skill Sources
 

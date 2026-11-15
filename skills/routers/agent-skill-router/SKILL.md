@@ -46,7 +46,10 @@ bundle before answering. It does not answer the domain question itself.
 The output reports three separate facts. Do not merge them:
 
 - `source`: `installable` means the inventory lists the skill from a checked-out source;
-  `absent` means it is not in the inventory; `user-level` means a machine-global skill.
+  `absent` means it is not in the inventory; `user-level` means a machine-global skill;
+  `standalone` means a skill installed by its own script outside the unified inventory (for example
+  agent-desktop). A standalone skill is never `installable`: its status is standalone-installed,
+  standalone-unchecked or standalone-absent, set by the `skill_copy` check below.
 - `skill_copy`: `found` or `not-found` in the skill directories passed with `--skills-root`;
   `not-checked` when none were passed. An installable source is not proof of a copy in the host.
 - `runtime`: `on-path` or `missing` for the declared command (`runtime_bin`); `n/a` if none.

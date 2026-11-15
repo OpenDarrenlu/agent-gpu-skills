@@ -8,6 +8,7 @@
 # 已知规则以“实际安装的已发布 npm 包”的 engines 为准（安装器从 npm 安装运行时，不从源码构建）:
 #   rea-agents@6.8.0 : ^22.23.4 || ^24.22.1 || >=26.12.1   （已发布包 rea-agents@6.8.0 的 engines）
 #   @jackwener/wx-cli@0.3.0 / wx-cli : >=14
+#   agent-desktop@1.3.1 : >=18（已发布包 npm/package.json 的 engines，见 install-agent-desktop.sh）
 # 注意：源码 checkout（repos/rea/package.json）中同一版本号的 engines 更新（^22.23.4 || ^24.22.1 || >=26.12.1）
 # 不适用于 npm 安装的运行时，因此这里不使用源码的 engines。
 
@@ -52,6 +53,13 @@ node_preflight() {
             if [ "$major" -ge 14 ]; then ok=true; fi
             if [ "$ok" = false ]; then
                 echo "  BLOCKED: 当前 node ${v} 低于 wx-cli 要求的 >=14"
+                return 2
+            fi
+            ;;
+        agent-desktop)
+            if [ "$major" -ge 18 ]; then ok=true; fi
+            if [ "$ok" = false ]; then
+                echo "  BLOCKED: 当前 node ${v} 低于 agent-desktop 要求的 >=18"
                 return 2
             fi
             ;;

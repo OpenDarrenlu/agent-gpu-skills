@@ -218,7 +218,10 @@ def _find_skill_copy(name, roots):
 
 def _availability(rule, info, skill_roots):
     copy_state, copy_path = _find_skill_copy(rule["skill"], skill_roots)
-    if rule.get("kind") == "user-level" or (info is not None and info["status"] == "protected"):
+    if rule.get("standalone"):
+        # 独立安装的 skill 不在统一清单中：它不是 installable 来源，也不能因为清单缺失而断言未安装。
+        source = "standalone"
+    elif rule.get("kind") == "user-level" or (info is not None and info["status"] == "protected"):
         source = "user-level"
     elif info is None:
         source = "absent"
@@ -233,7 +236,17 @@ def _availability(rule, info, skill_roots):
             "runtime_bin": runtime_bin or ""}
 
 
+STANDALONE_STATUS = {"found": "standalone-installed", "not-checked": "standalone-unchecked",
+                     "not-found": "standalone-absent"}
+
+
 def _candidate(rule, score, reasons, pos, info, skill_roots):
+    availability = _availability(rule, info, skill_roots)
+    if rule.get("standalone"):
+        # 只有检查过的目录里确认没有副本时才不可用；未检查（not-checked）仍可作为候选，但不断言它缺失。
+        available = availability["skill_copy"] != "not-found"
+    else:
+        available = info is not None and info["status"] in ("installed", "shadowed")
     return {
         "skill": rule["skill"],
         "domain": rule.get("domain", info["catalog"] if info else ""),
@@ -242,13 +255,31 @@ def _candidate(rule, score, reasons, pos, info, skill_roots):
         "reasons": reasons,
         "explicit": pos is not None,
         "explicit_pos": pos,
-        "available": info is not None and info["status"] in ("installed", "shadowed"),
+        "standalone": bool(rule.get("standalone")),
+        "available": available,
         "info": info,
-        "availability": _availability(rule, info, skill_roots),
+        "availability": availability,
         "requires": rule.get("requires", ""),
         "gate": rule.get("gate", ""),
         "needs_evidence": bool(rule.get("needs_evidence")),
     }
+
+
+def _standalone_notes(cand):
+    """独立 skill 的说明：未检查只说明“未检查”，绝不写成“未安装”。"""
+    if not cand["standalone"]:
+        return []
+    avail = cand["availability"]
+    notes = []
+    if avail["skill_copy"] == "not-checked":
+        notes.append("%s 是独立安装的 skill，副本未检查：加 --skills-root 指向其 skill 目录后再判断（未检查不等于未安装）"
+                     % cand["skill"])
+    elif avail["skill_copy"] == "not-found":
+        notes.append("%s 在检查过的 --skills-root 中没有副本；安装见 requires（独立脚本，不属于统一安装）" % cand["skill"])
+    if avail["runtime"] == "missing":
+        notes.append("运行时 %s 不在 PATH 中；安装器只把 launcher 放在 ~/.local/bin，需要自行确保该目录在 PATH 中"
+                     % avail["runtime_bin"])
+    return notes
 
 
 def route(query, artifacts=(), rules=None, inventory=None, skill_roots=None):
@@ -308,9 +339,10 @@ def route(query, artifacts=(), rules=None, inventory=None, skill_roots=None):
         # 用户先提到的 skill 优先。
         primary = min(explicit_candidates, key=lambda c: (c["explicit_pos"], -c["score"]))
         result["primary"] = _public(primary)
-        if not primary["available"]:
+        if not primary["available"] and not primary["standalone"]:
             result["notes"].append("用户点名的 %s 不在清单中或未安装；不会替换为其他 skill（见 requires）"
                                    % primary["skill"])
+        result["notes"].extend(_standalone_notes(primary))
         if primary["gate"]:
             result["notes"].append("授权边界: " + primary["gate"])
         return result
@@ -319,7 +351,10 @@ def route(query, artifacts=(), rules=None, inventory=None, skill_roots=None):
     if not available:
         primary = candidates[0]
         result["primary"] = _public(primary)
-        result["notes"].append("最可能的 skill %s 未安装；按 requires 处理，不替换为其他 skill" % primary["skill"])
+        if not primary["standalone"]:
+            # 独立 skill 的缺失只按检查过的目录说明（见 _standalone_notes），不做全局“未安装”断言。
+            result["notes"].append("最可能的 skill %s 未安装；按 requires 处理，不替换为其他 skill" % primary["skill"])
+        result["notes"].extend(_standalone_notes(primary))
         if primary["gate"]:
             result["notes"].append("授权边界: " + primary["gate"])
         return result
@@ -327,6 +362,7 @@ def route(query, artifacts=(), rules=None, inventory=None, skill_roots=None):
     primary = available[0]
     result["unavailable"] = [_public(c) for c in candidates if not c["available"]][:MAX_COMPANIONS + 1]
     result["primary"] = _public(primary)
+    result["notes"].extend(_standalone_notes(primary))
     if primary["needs_evidence"]:
         result["notes"].append("性能问题缺少 profiling 制品：先采集 ncu/nsys 报告，再给结论")
     if primary["gate"]:
@@ -355,10 +391,14 @@ def route(query, artifacts=(), rules=None, inventory=None, skill_roots=None):
 
 def _public(c):
     info = c["info"] or {}
+    if c["standalone"]:
+        status = STANDALONE_STATUS[c["availability"]["skill_copy"]]
+    else:
+        status = "installable" if c["available"] else (
+            "user-level" if c["availability"]["source"] == "user-level" else "absent")
     return {
         "skill": c["skill"],
-        "status": "installable" if c["available"] else (
-            "user-level" if c["availability"]["source"] == "user-level" else "absent"),
+        "status": status,
         "kind": c["kind"],
         "domain": c["domain"],
         "score": c["score"],

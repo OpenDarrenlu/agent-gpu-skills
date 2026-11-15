@@ -156,6 +156,16 @@ bash install.sh --no-ccfa-skills
 bash install.sh --no-tilelang-skills
 ```
 
+## 独立安装：agent-desktop
+
+`install-agent-desktop.sh` 单独安装上游 vercel-labs/agent-desktop 的 `agent-desktop` skill 与 npm 运行时 `agent-desktop@1.3.1`（skill 取自 release 提交 `b0b7277`，Apache-2.0）。它不属于统一安装流程，`bootstrap.sh` 与 `install.sh` 不调用它。
+
+```bash
+bash install-agent-desktop.sh --agent codex
+```
+
+固定版本、写入路径、冲突规则、macOS 辅助功能与限制见 [`docs/agent-desktop/INSTALL.md`](docs/agent-desktop/INSTALL.md)。
+
 ## AMD 文档本地知识库
 
 安装脚本会安装本仓库的 `amd-gpu-docs` skill；它与 `repos/amd-skills/` 中的 AMD 官方 workflow skills 分工不同：前者负责广泛的官方公开文档检索，后者负责具体工作流。文档缓存只在本机生成，并由 Git 忽略。

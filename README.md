@@ -172,6 +172,14 @@ bash install.sh --agent codex --dest "$TMPDIR/agent-gpu-skills-test" --no-veloq 
 `$HOME/.local/bin` 生成 managed launcher，使 `wx`、`rea` 不依赖 nvm 前缀在 PATH 中。
 Node 版本、launcher 边界与 REA MCP 注册的细节见 [`INSTALL.md`](INSTALL.md#外部来源)。
 
+独立安装 agent-desktop（不属于 `bootstrap.sh`，需要单独运行）：
+
+```bash
+bash install-agent-desktop.sh --agent codex
+```
+
+固定版本、写入路径与 macOS 辅助功能说明见 [`docs/agent-desktop/INSTALL.md`](docs/agent-desktop/INSTALL.md)。
+
 ### 首次机器的前提
 
 - 必需：Git、Bash（系统 Bash 3.2 可用）、Python 3（路由清单与测试）。

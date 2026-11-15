@@ -14,6 +14,7 @@
 
 import importlib.util
 import io
+import json
 import os
 import re
 import shutil
@@ -22,6 +23,7 @@ import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
+from unittest import mock
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 ROUTER_DIR = os.path.join(REPO, "skills", "routers", "agent-skill-router")
@@ -375,6 +377,103 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
         # 点名的名称不在清单中：不得把它替换为其他 skill。
         result = self.route("用 $no-such-skill-here 帮我做事")
         self.assertIsNone(result["primary"])
+
+
+class StandaloneAgentDesktopTest(unittest.TestCase):
+    """独立安装的 agent-desktop：不在统一清单中；副本与运行时分别检查；未检查时绝不断言缺失。"""
+
+    rules = route_skill.load_rules()
+    inventory = route_skill.load_inventory()
+
+    def route(self, query, skill_roots=None):
+        return route_skill.route(query, (), rules=self.rules, inventory=self.inventory, skill_roots=skill_roots)
+
+    def make_roots(self, with_copy):
+        root = tempfile.mkdtemp(prefix="agent-desktop-roots-")
+        self.addCleanup(shutil.rmtree, root, True)
+        if with_copy:
+            os.makedirs(os.path.join(root, "agent-desktop"))
+            with open(os.path.join(root, "agent-desktop", "SKILL.md"), "w", encoding="utf-8") as f:
+                f.write("---\nname: agent-desktop\n---\n")
+        return [root]
+
+    def test_agent_desktop_is_not_in_unified_inventory(self):
+        self.assertNotIn("agent-desktop", self.inventory)
+
+    def test_existing_copy_and_executable_are_reported_as_standalone_installed(self):
+        with mock.patch.object(route_skill.shutil, "which", return_value="/Users/x/.local/bin/agent-desktop"):
+            result = self.route("用 agent-desktop skill 操作桌面应用", self.make_roots(True))
+        primary = result["primary"]
+        self.assertEqual(primary["skill"], "agent-desktop")
+        self.assertEqual(primary["status"], "standalone-installed")
+        self.assertNotEqual(primary["status"], "installable")
+        avail = primary["availability"]
+        self.assertEqual((avail["source"], avail["skill_copy"], avail["runtime"]), ("standalone", "found", "on-path"))
+        self.assertNotIn("没有副本", " ".join(result["notes"]))
+
+    def test_absent_copy_and_runtime_are_reported_as_checked_absent(self):
+        with mock.patch.object(route_skill.shutil, "which", return_value=None):
+            result = self.route("agent-desktop skill 操作桌面应用", self.make_roots(False))
+        primary = result["primary"]
+        self.assertEqual(primary["status"], "standalone-absent")
+        avail = primary["availability"]
+        self.assertEqual((avail["skill_copy"], avail["runtime"]), ("not-found", "missing"))
+        text = " ".join(result["notes"])
+        self.assertIn("没有副本", text)
+        self.assertIn("不在 PATH 中", text)
+
+    def test_unchecked_copy_is_never_reported_as_absent(self):
+        with mock.patch.object(route_skill.shutil, "which", return_value=None):
+            result = self.route("用 agent-desktop skill 操作桌面应用")
+        primary = result["primary"]
+        self.assertEqual(primary["status"], "standalone-unchecked")
+        self.assertEqual(primary["availability"]["skill_copy"], "not-checked")
+        text = " ".join(result["notes"])
+        self.assertIn("副本未检查", text)
+        self.assertIn("未检查不等于未安装", text)
+        self.assertNotIn("没有副本", text)
+
+    def test_natural_desktop_requests_route_to_agent_desktop_without_explicit_syntax(self):
+        queries = [
+            "帮我用辅助功能树点一下 Notes 里的按钮",
+            "use the accessibility tree to click a button in a macOS app",
+            "帮我操作桌面应用里的菜单并读取界面状态",
+            "desktop automation for a native Mac app: fill the form and read the window",
+        ]
+        for query in queries:
+            result = self.route(query)
+            self.assertIsNotNone(result["primary"], query)
+            self.assertEqual(result["primary"]["skill"], "agent-desktop", query)
+
+    def test_non_explicit_desktop_request_with_empty_checked_root_makes_no_global_absence_claim(self):
+        with mock.patch.object(route_skill.shutil, "which", return_value=None):
+            result = self.route("帮我用辅助功能树点一下 Notes 里的按钮", self.make_roots(False))
+        self.assertEqual(result["primary"]["skill"], "agent-desktop")
+        self.assertEqual(result["primary"]["status"], "standalone-absent")
+        text = " ".join(result["notes"])
+        self.assertIn("没有副本", text)
+        self.assertNotIn("未安装", text)
+
+    def test_browser_web_and_gpu_requests_do_not_route_to_agent_desktop(self):
+        queries = [
+            "用 playwright 在浏览器里点击按钮提交表单",
+            "在网页上 click button 测试登录",
+            "CUDA kernel 的桌面端 profiling 为什么慢",
+            "写一个 tilelang layout 的设计文档",
+        ]
+        for query in queries:
+            result = self.route(query)
+            primary = result["primary"]
+            self.assertTrue(primary is None or primary["skill"] != "agent-desktop", query)
+
+    def test_cli_reports_standalone_copy_from_skills_root(self):
+        proc = subprocess.run([sys.executable, os.path.join(SCRIPTS, "route_skill.py"),
+                               "agent-desktop skill 用于操作桌面应用", "--skills-root", self.make_roots(True)[0],
+                               "--json"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.assertEqual(proc.returncode, 0, proc.stdout.decode())
+        data = json.loads(proc.stdout.decode("utf-8"))
+        self.assertEqual(data["primary"]["skill"], "agent-desktop")
+        self.assertEqual(data["primary"]["availability"]["skill_copy"], "found")
 
 
 class RuleAndInventoryIntegrityTest(unittest.TestCase):
