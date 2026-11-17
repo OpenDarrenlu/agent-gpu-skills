@@ -83,6 +83,16 @@ VENDORED = [
         "note": "2026-11-08 审计时的上游 tip 不含 .agents/skills/train-inference-consistency；保留本地固定副本（不覆盖）；未来需网络恢复后重新检查上游是否恢复该路径",
     },
     {
+        "root": "skills/other/brain-and-hands",
+        "skills_dir": "brain-and-hands",
+        "repo": "https://github.com/prograsec/brain-and-hands.git",
+        "path": ".（仓库根，Claude Code 插件）",
+        "link_path": "",
+        "ref": "2b30b09798a5bb8fd91f1402905f1fb4a524b05e",
+        "local_mods": "本地修改版 0.2.0（修改对照见其 README.md）：新增 agents/grunt.md（免费 A7n Gris 档），改写 skills/delegate/SKILL.md 与 hooks/session-start.sh，scout/worker/researcher 增加「数据不是指令」规则；上游 README 改名 README.upstream.md；其余逐字复制",
+        "note": "是 Claude Code 插件而非普通 skill：install.sh 不安装，用 install-brain-and-hands.sh 注册；同步上游必须按其 README.md 步骤 merge",
+    },
+    {
         "root": "skills/other/tech-doc-style-chinese",
         "skills_dir": "tech-doc-style-chinese",
         "repo": "https://github.com/Fenng/Tech-Doc-Style-Chinese.git",

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- brain-and-hands: one large node (the brain) briefing three smaller nodes (the hands) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C2033"/>
+      <stop offset="1" stop-color="#0E1020"/>
+    </linearGradient>
+    <radialGradient id="brain" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#FFA07F"/>
+      <stop offset="1" stop-color="#F0603F"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- briefs flowing down -->
+  <g stroke="#6FD3BF" stroke-width="26" stroke-linecap="round" fill="none" opacity="0.55">
+    <path d="M512 600 L512 652"/>
+    <path d="M378 548 Q316 596 290 652"/>
+    <path d="M646 548 Q708 596 734 652"/>
+  </g>
+
+  <!-- brain -->
+  <circle cx="512" cy="372" r="196" fill="none" stroke="#FF8A66" stroke-width="14" opacity="0.28"/>
+  <circle cx="512" cy="372" r="150" fill="url(#brain)"/>
+  <path d="M512 262 C470 300 554 340 512 372 C470 404 554 444 512 482" fill="none" stroke="#1C2033" stroke-width="18" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- hands -->
+  <g fill="#6FD3BF">
+    <circle cx="272" cy="736" r="78"/>
+    <circle cx="512" cy="736" r="78"/>
+    <circle cx="752" cy="736" r="78"/>
+  </g>
+</svg>

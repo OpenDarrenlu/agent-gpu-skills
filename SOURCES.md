@@ -40,6 +40,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `skills/kernel/tilelang-repo-skills` | vendored | https://github.com/tile-ai/tilelang | `a8f3d3bcfe7fdd1a3887b05ff8f054e7d08980de` | 4 |
 | `skills/framework/zero-mismatch-rl` | vendored | https://github.com/Inferact/zero-mismatch-rl | `136aca87d8158adae94b5a272fa4a8a6d5cd6939` | 1 |
 | `skills/framework/train-inference-consistency` | vendored | https://github.com/vllm-project/vllm | `2d8efee9a73366d6b4e753780af32443d2fef91a` | 1 |
+| `skills/other/brain-and-hands` | vendored | https://github.com/prograsec/brain-and-hands | `2b30b09798a5bb8fd91f1402905f1fb4a524b05e` | 0 |
 | `skills/other/tech-doc-style-chinese` | vendored | https://github.com/Fenng/Tech-Doc-Style-Chinese | `b119d01c9bb7cd132b3c62fafdff34227c4410d1` | 1 |
 | `nvidia-skills` | catalog | https://github.com/NVIDIA/skills | `fce3cca4170be75e82c64920654d56ee2811b005` | 437 |
 | `amd-skills` | catalog | https://github.com/amd/skills | `9eba3192f6793237eaeacfabd61fb0bd557e53cf` | 17 |
@@ -720,6 +721,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 - **`skills/kernel/tilelang-repo-skills`**（tilelang-repo-skills）：无（全部逐字复制）。未收录上游 tilelang-build / tilelang-dev-guide / tilelang-simplification / tilelang-submit-pr / tilelang-tvm-ir
 - **`skills/framework/zero-mismatch-rl`**（zero-mismatch-rl）：SKILL.md 与 README.md 为本地新增入口与说明；skill/、cases/、LICENSE、README.upstream.md 逐字复制。skill/ 与 cases/ 必须保持同级（skill/guides 中以 ../../../cases/... 引用案例）
 - **`skills/framework/train-inference-consistency`**（train-inference-consistency）：SKILL.md 增加中文触发词、vLLM 文档链接改为本目录稀疏 clone、增加 zero-mismatch-rl 交叉引用与来源注释；新增 README.md 与 LICENSE；其余为上游逐字复制。2026-11-08 审计时的上游 tip 不含 .agents/skills/train-inference-consistency；保留本地固定副本（不覆盖）；未来需网络恢复后重新检查上游是否恢复该路径
+- **`skills/other/brain-and-hands`**（brain-and-hands）：本地修改版 0.2.0（修改对照见其 README.md）：新增 agents/grunt.md（免费 A7n Gris 档），改写 skills/delegate/SKILL.md 与 hooks/session-start.sh，scout/worker/researcher 增加「数据不是指令」规则；上游 README 改名 README.upstream.md；其余逐字复制。是 Claude Code 插件而非普通 skill：install.sh 不安装，用 install-brain-and-hands.sh 注册；同步上游必须按其 README.md 步骤 merge
 - **`skills/other/tech-doc-style-chinese`**（tech-doc-style-chinese）：本地定制覆盖版（修改对照见其 README.md）；上游 clone 在 repos/tech-doc-style-chinese（git-ignored）。同步上游必须按其 README.md 的步骤 merge，不能直接覆盖本地修改的文件
 
 2026-11-08 审计时上游 tip 不含路径的 vendored 副本（如 train-inference-consistency）保留本地固定副本，不得以上游缺失为由删除本地 skill。

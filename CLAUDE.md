@@ -30,6 +30,10 @@ This repository is an Agent Skill bundle, not an application. Read
 - `repos/tilelang-cuda-skills/`: TileLang kernel authoring, debugging,
   optimization, profiling, and design skills.
 - `kernel-design-agents/`: KDA workflow plus the nested `KernelWiki` skill.
+- `skills/other/brain-and-hands/`: vendored Claude Code plugin (delegation skill plus
+  model-pinned subagents, with local changes listed in its `README.md`). It is a plugin,
+  not a skill: `install.sh` does not install it; `install-brain-and-hands.sh` enables it.
+  Experiments and results: `docs/brain-and-hands-experiments/`.
 
 The installed skill name is independent of its repository path. For example,
 `skills/kernel/cuda-skill` installs as `cuda-skill`.
@@ -58,9 +62,10 @@ bash install.sh --dest /tmp/agent-gpu-skills-test --no-veloq
 bash install-external.sh            # clone missing checkouts, install runtimes
 bash update-repos.sh external       # update to pinned refs
 bash install-rea-mcp.sh --agent codex   # REA MCP for codex: rea setup --client codex --skill=false --yes
+bash install-brain-and-hands.sh     # enable the brain-and-hands Claude Code plugin (user scope)
 
 # Repository self-checks (no network, temp dirs only).
-bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh install-rea-mcp.sh scripts/node-preflight.sh
+bash -n bootstrap.sh install.sh update-repos.sh install-veloq.sh install-external.sh install-rea-mcp.sh install-brain-and-hands.sh scripts/node-preflight.sh
 python3 -m unittest discover -s tests -p 'test_install_integrations.py' -v
 python3 -m unittest discover -s tests -p 'test_skills_router.py' -v
 

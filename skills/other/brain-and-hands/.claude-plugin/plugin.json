@@ -1,0 +1,23 @@
+{
+  "name": "brain-and-hands",
+  "description": "Opus as the brain, cheaper models as the hands: delegation doctrine plus model-pinned subagents (grunt on the free A7n Gris, scout on Haiku, worker/researcher/operator on Sonnet) so a strong main session briefs the cheapest capable hand and verifies its work.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Prograsec"
+  },
+  "homepage": "https://github.com/prograsec/brain-and-hands",
+  "repository": "https://github.com/prograsec/brain-and-hands",
+  "license": "MIT",
+  "keywords": [
+    "subagents",
+    "delegation",
+    "cost",
+    "tokens",
+    "opus",
+    "sonnet",
+    "haiku",
+    "computer-use",
+    "gris",
+    "free-tier"
+  ]
+}
