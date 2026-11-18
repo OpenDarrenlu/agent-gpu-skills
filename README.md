@@ -293,6 +293,7 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 | 去 AI 味写作 | `agent-skill-router` | `sepia`、`sepia-write`、`sepia-review`、`sepia-refactor`、`sepia-recreate`、`sepia-hemingway` | `repos/sepia`（MIT）；操作入口需同级安装 |
 | 通用工程与审查 | `agent-skill-router` | `tdd`、`code-review`、`diagnosing-bugs`、`to-tickets`、`triage`、`grill-me`（mattpocock） | `repos/mattpocock-skills`；`tdd`、`handoff` 等与 cursor 同名的由 cursor 版本占用 |
 | 最小实现与审计 | `agent-skill-router` | `ponytail-review`、`ponytail-audit` | `repos/ponytail` |
+| 模型分工、独立测试与 debug | `agent-skill-router` | `brain-and-hands`：Astra/Opus 分析 bug，Sol/Sonnet 跑普通测试，独立 Claude/Noir 跑简单测试 | 共用技能与可选 Claude 插件；[单独安装说明](skills/other/brain-and-hands/README.md) |
 | 逆向分析 | `agent-skill-router` | `reverse-engineer-anything` | `rea-agents@6.7.0` npm 包（`runtime-skills`），需要 `rea` 命令 |
 | 微信数据 | `agent-skill-router` | `wx-cli` | `Steady775/wx-cli` 的 skill 文本 + npm 包 `@jackwener/wx-cli@0.3.0`，需要 `wx` 命令与用户授权 |
 | NVIDIA 垂直 SDK | `agent-skill-router` | `deepstream-generate-pipeline`、`deepstream-dev`、`doca-dma`、`bionemo-evo2-nim`、`earth2studio-deterministic-forecast`、`cuopt-numerical-optimization-api` | `repos/nvidia-skills` |

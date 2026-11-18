@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brain and Hands"
+  short_description: "Codex/Claude model roles, independent tests and debugging"
+  default_prompt: "Use $brain-and-hands to run tests with the appropriate hand and analyze failures with Astra or Opus."

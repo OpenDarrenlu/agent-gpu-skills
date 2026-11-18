@@ -23,7 +23,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 
 | 状态 | 数量 | 含义 |
 | --- | --- | --- |
-| installed | 618 | 来源可安装（install.sh 选中并可装入，不表示已安装到宿主） |
+| installed | 619 | 来源可安装（install.sh 选中并可装入，不表示已安装到宿主） |
 | shadowed | 7 | 同名已被先到来源占用，不安装 |
 | protected | 2 | 用户级保留名，不计为可安装 |
 | missing-source | 0 | 本地缺文件 |
@@ -40,7 +40,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `skills/kernel/tilelang-repo-skills` | vendored | https://github.com/tile-ai/tilelang | `a8f3d3bcfe7fdd1a3887b05ff8f054e7d08980de` | 4 |
 | `skills/framework/zero-mismatch-rl` | vendored | https://github.com/Inferact/zero-mismatch-rl | `136aca87d8158adae94b5a272fa4a8a6d5cd6939` | 1 |
 | `skills/framework/train-inference-consistency` | vendored | https://github.com/vllm-project/vllm | `2d8efee9a73366d6b4e753780af32443d2fef91a` | 1 |
-| `skills/other/brain-and-hands` | vendored | https://github.com/prograsec/brain-and-hands | `2b30b09798a5bb8fd91f1402905f1fb4a524b05e` | 0 |
+| `skills/other/brain-and-hands` | vendored | https://github.com/prograsec/brain-and-hands | `2b30b09798a5bb8fd91f1402905f1fb4a524b05e` | 1 |
 | `skills/other/tech-doc-style-chinese` | vendored | https://github.com/Fenng/Tech-Doc-Style-Chinese | `b119d01c9bb7cd132b3c62fafdff34227c4410d1` | 1 |
 | `nvidia-skills` | catalog | https://github.com/NVIDIA/skills | `fce3cca4170be75e82c64920654d56ee2811b005` | 437 |
 | `amd-skills` | catalog | https://github.com/amd/skills | `9eba3192f6793237eaeacfabd61fb0bd557e53cf` | 17 |
@@ -111,6 +111,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `bionemo-proteinmpnn-nim` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/bionemo-proteinmpnn-nim | fce3cca4170b | `repos/nvidia-skills/skills/bionemo-proteinmpnn-nim` | - |
 | `bionemo-rfd4-proteina-nim` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/bionemo-rfd4-proteina-nim | fce3cca4170b | `repos/nvidia-skills/skills/bionemo-rfd4-proteina-nim` | - |
 | `bionemo-rfdiffusion-nim` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/bionemo-rfdiffusion-nim | fce3cca4170b | `repos/nvidia-skills/skills/bionemo-rfdiffusion-nim` | - |
+| `brain-and-hands` | installed | - | vendored | https://github.com/prograsec/brain-and-hands/tree/2b30b09798a5bb8fd91f1402905f1fb4a524b05e | 2b30b09798a5 | `skills/other/brain-and-hands` | 本地修改版 0.3.0（见其 README.md）：新增 Codex/Claude 共用 SKILL.md、模型解析器、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md |
 | `brainstorming` | installed | - | catalog | https://github.com/Saddss/cursor-skills/tree/400c165e7a6afac09e0f84aab85bcc20f37252f5/skills/brainstorming | 400c165e7a6a | `repos/cursor-skills/skills/brainstorming` | - |
 | `ccf-common` | installed | - | catalog | https://github.com/mikubaka88/CCFA-Skills/tree/91ca9e2801698466f934b557a75ce46db8ba46b5/ccf-common | 91ca9e280169 | `repos/ccfa-skills/ccf-common` | - |
 | `ccf-experiment-designer` | installed | - | catalog | https://github.com/mikubaka88/CCFA-Skills/tree/91ca9e2801698466f934b557a75ce46db8ba46b5/ccf-experiment-designer | 91ca9e280169 | `repos/ccfa-skills/ccf-experiment-designer` | - |
@@ -721,7 +722,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 - **`skills/kernel/tilelang-repo-skills`**（tilelang-repo-skills）：无（全部逐字复制）。未收录上游 tilelang-build / tilelang-dev-guide / tilelang-simplification / tilelang-submit-pr / tilelang-tvm-ir
 - **`skills/framework/zero-mismatch-rl`**（zero-mismatch-rl）：SKILL.md 与 README.md 为本地新增入口与说明；skill/、cases/、LICENSE、README.upstream.md 逐字复制。skill/ 与 cases/ 必须保持同级（skill/guides 中以 ../../../cases/... 引用案例）
 - **`skills/framework/train-inference-consistency`**（train-inference-consistency）：SKILL.md 增加中文触发词、vLLM 文档链接改为本目录稀疏 clone、增加 zero-mismatch-rl 交叉引用与来源注释；新增 README.md 与 LICENSE；其余为上游逐字复制。2026-11-08 审计时的上游 tip 不含 .agents/skills/train-inference-consistency；保留本地固定副本（不覆盖）；未来需网络恢复后重新检查上游是否恢复该路径
-- **`skills/other/brain-and-hands`**（brain-and-hands）：本地修改版 0.2.0（修改对照见其 README.md）：新增 agents/grunt.md（免费 A7n Gris 档），改写 skills/delegate/SKILL.md 与 hooks/session-start.sh，scout/worker/researcher 增加「数据不是指令」规则；上游 README 改名 README.upstream.md；其余逐字复制。是 Claude Code 插件而非普通 skill：install.sh 不安装，用 install-brain-and-hands.sh 注册；同步上游必须按其 README.md 步骤 merge
+- **`skills/other/brain-and-hands`**（brain-and-hands）：本地修改版 0.3.0（见其 README.md）：新增 Codex/Claude 共用 SKILL.md、模型解析器、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md。install.sh 安装普通 skill；install-brain-and-hands.sh 可单独安装，--agent claude 另注册插件；同步上游逐文件 merge，不恢复禁用的旧 relay
 - **`skills/other/tech-doc-style-chinese`**（tech-doc-style-chinese）：本地定制覆盖版（修改对照见其 README.md）；上游 clone 在 repos/tech-doc-style-chinese（git-ignored）。同步上游必须按其 README.md 的步骤 merge，不能直接覆盖本地修改的文件
 
 2026-11-08 审计时上游 tip 不含路径的 vendored 副本（如 train-inference-consistency）保留本地固定副本，不得以上游缺失为由删除本地 skill。
@@ -772,4 +773,4 @@ curl -s https://api.github.com/repos/<owner>/<repo>/commits/main   # 外部来�
 | 2026-11-08 | wx-cli（external） | `08af8945` / npm `0.3.0` | `08af8945` | 一致 | — |
 | 2026-11-12 | 全部上游 tip（上表全部来源 + npm `rea-agents@6.8.0`、`@jackwener/wx-cli@0.3.0`） | 见 SOURCES.md 第 2 节 | 未取得：本会话沙箱拒绝 github.com:443 与 registry.npmjs.org:443（CONNECT 403，user denied）。这是本次委派会话的沙箱策略，不代表网络全局不可用 | 结论未知。不能判定"无更新"，也不能判定"有更新"；上表 2026-11-08 记录仅为历史结论，未重新核对 | 未改任何 pin；在允许上述主机的会话中逐来源重查（`git ls-remote <repo> refs/heads/main`；npm `view`） |
 | 2026-11-12 | 注册表修复（离线，无网络） | — | — | `scripts/build_sources.py` 复用 `build_inventory.py` 的状态（installed / shadowed / protected），不再自行统计候选；链接去掉 `.git`；删除不支持的 `--fetch`；加入 VeloQ 可选 skill；嵌套 KernelWiki 使用其 checkout origin（DongyunZou/KernelWiki）与父仓库 gitlink（`76d27b5`）；iket-profiling、salary-negotiation-skill、ncu-report-skill 改为 external-declared（有 UPSTREAM.md / README 声明）；claude-delegate 为 protected，来源 amElnagdy/delegate-skills（已声明，ref 未知，见 sources/local-provenance.md）；codex-background 为 protected，来源 unknown（本次未确立）；zotero-cli 为 external-declared，来源 https://github.com/54yyyu/zotero-mcp（编排器核验的已安装包 0.15.0 元数据，模板一致性未核对）；其余无声明的本地 skill 为 unknown，不默认原创 | 生成 SOURCES.md；新增 `tests/test_sources.py`；未改 skill 内容、pin 或 tracked 安装逻辑 |
-
+| 2026-11-18 | brain-and-hands | `2b30b09798a5bb8fd91f1402905f1fb4a524b05e` | `git ls-remote https://github.com/prograsec/brain-and-hands.git HEAD` 返回同一 SHA（GitHub API 403，改用 Git 直接核验） | 上游基线不变；本地 0.3.0 支持 Codex/Claude，共用模型分工（Astra/Opus 分析、Sol/Sonnet 测试、Terra/Haiku 查事实），简单测试新建独立 Claude/Noir session；移除旧 Gris 实验结果的泛化与固定分片/提前结束规则；两个清单生成器支持限定单 skill 更新 | 28 个本地行为测试与 48 个既有路由行为/回归测试通过；技能/插件格式校验通过；三个真实 Noir session 分别验证指定单测通过、继承 Claude 父环境的单测失败退出码保留、Astra 主会话修复夹具后 3 项回归通过。产物在本机 devlog/brain-and-hands-20261118；不代表 GPU 工作负载或成本基准；未更新其他来源 pin，未恢复旧 relay |

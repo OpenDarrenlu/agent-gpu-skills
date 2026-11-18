@@ -1,5 +1,10 @@
 # 安装指南
 
+单独安装模型分工技能：`bash install-brain-and-hands.sh --agent codex`；Claude 用户用
+`--agent claude` 安装共用技能和本地插件。`--dest /absolute/path` 只安装这一技能，跳过
+插件注册。Astra/Opus 分析 bug，Sol/Sonnet 跑普通测试，独立 Claude/Noir 处理简单测试。
+细节见 [brain-and-hands](skills/other/brain-and-hands/README.md)。
+
 ## 首次安装
 
 推荐 clone 时直接拉取 submodules：

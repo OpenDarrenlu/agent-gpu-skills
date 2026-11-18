@@ -2,6 +2,7 @@
   "version": 1,
   "description": "agent-skill-router 的路由证据表。score = 显式点名(100) + 制品后缀(50/项) + 短语命中(weight/项，最多3项) - 排除词(20)。weight 默认 12；路由器(router) 使用 6，使具体工具胜过通用路由器。kind: instruction = 只需读 SKILL.md；runtime-cli = 需要宿主机安装 CLI 并可能需要账号认证；user-level = 用户机器上的全局 skill，不由本仓库安装。",
   "rules": [
+    {"skill": "brain-and-hands", "domain": "software-workflow", "kind": "instruction", "requires_any": ["brain-and-hands", "brain and hands", "noir", "模型分工", "model delegation", "独立测试会话"], "phrases": ["brain-and-hands", "brain and hands", "noir", "模型分工", "model delegation", "独立测试会话"], "requires": "普通技能支持 Codex/Claude；非常简单测试需已配置的 Claude CLI 与 Noir model ID（新独立 session）。不需要旧 relay/MCP。"},
     {"skill": "ncu-report-skill", "domain": "gpu-performance", "kind": "instruction", "artifacts": [".ncu-rep"], "phrases": ["ncu", "nsight compute", "warp stall", "sass", "source counters"]},
     {"skill": "ncu-persistent-kernel-diagnosis", "domain": "gpu-performance", "kind": "instruction", "phrases": ["persistent", "ncu"]},
     {"skill": "perf-nsight-systems", "domain": "gpu-performance", "kind": "instruction", "artifacts": [".nsys-rep"], "phrases": ["nsys", "nsight systems", "nvtx", "launch 间隔", "cpu/gpu 重叠", "timeline"]},

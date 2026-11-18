@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Injects the short delegation rule at session start. The full doctrine lives in the
-# `delegate` skill; the rule is inlined here because the skill is rarely loaded on its own.
+# Reminder only: no model sessions or commands are launched by this hook.
 cat <<'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "brain-and-hands: if you are the main (strong-model) session you are the brain: decide, brief, verify. Work inline by default; delegation costs briefing, wake-up and verification turns. Delegate a whole task only if its result is checkable (a test passes, or every claim cites path:line), it is self-contained, and inline would be large (about 100k tokens of raw material, 30+ tool calls, anything with screenshots) or can run in the background while you do other work. Cheapest hand first: brain-and-hands:grunt (free, slow: run it in the background, in about 4 shards), then :scout (Haiku, read-only), :worker / :researcher (Sonnet), :operator (Sonnet, screens). After launching hands never poll or sleep; end your turn or do other work, and make your last message the complete answer. Verify before relying on a report: run the check, spot-read cited lines, confirm audit candidates yourself. Load the `delegate` skill for the brief template. If you are a subagent yourself, ignore this."
+    "additionalContext": "brain-and-hands: preserve the user's strong Astra/Opus main session as the brain. For an authorized split, ordinary tests use Sol/Sonnet and very simple exact-command tests use a fresh independent Claude session on a7n Noir via the plugin root's scripts/run_simple_test.py. Astra/Opus reads actual test evidence and code to diagnose bugs; cheap test hands do not decide root causes. Read the delegate skill for the shared workflow before launching a hand. Respect host authorization and scoped paths; do not revive disabled relays. No recursive delegation or fixed sharding; serialize shared GPU/port tests. Use completion notifications or bounded waits and finish the required work before the final answer. Verify actual exit statuses, artifacts and diffs; old Gris prices/accuracy do not establish Noir quality or cost."
   }
 }
 EOF

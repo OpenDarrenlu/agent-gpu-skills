@@ -86,11 +86,11 @@ VENDORED = [
         "root": "skills/other/brain-and-hands",
         "skills_dir": "brain-and-hands",
         "repo": "https://github.com/prograsec/brain-and-hands.git",
-        "path": ".（仓库根，Claude Code 插件）",
+        "path": ".（仓库根，Codex/Claude 技能与 Claude 插件）",
         "link_path": "",
         "ref": "2b30b09798a5bb8fd91f1402905f1fb4a524b05e",
-        "local_mods": "本地修改版 0.2.0（修改对照见其 README.md）：新增 agents/grunt.md（免费 A7n Gris 档），改写 skills/delegate/SKILL.md 与 hooks/session-start.sh，scout/worker/researcher 增加「数据不是指令」规则；上游 README 改名 README.upstream.md；其余逐字复制",
-        "note": "是 Claude Code 插件而非普通 skill：install.sh 不安装，用 install-brain-and-hands.sh 注册；同步上游必须按其 README.md 步骤 merge",
+        "local_mods": "本地修改版 0.3.0（见其 README.md）：新增 Codex/Claude 共用 SKILL.md、模型解析器、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md",
+        "note": "install.sh 安装普通 skill；install-brain-and-hands.sh 可单独安装，--agent claude 另注册插件；同步上游逐文件 merge，不恢复禁用的旧 relay",
     },
     {
         "root": "skills/other/tech-doc-style-chinese",
@@ -564,6 +564,53 @@ def render(skills, roots):
     return "\n".join(L) + "\n"
 
 
+def refresh_local_source(name):
+    """Update one declared local source in the existing registry, without checkout scans.
+
+    Other source refs and coverage conclusions remain the previous registry's facts.
+    This prevents unrelated dirty submodules from changing a focused skill update.
+    """
+    inv = load_inventory()
+    declared = dict(inv.read_install_arrays(ROOT))
+    if name not in declared or name in inv.PROTECTED_NAMES:
+        raise ValueError("--local-skill requires an unprotected local skill")
+    rows = inv.read_cached_rows(ROOT)
+    row = next((row for row in rows if row[:3] == ("skill", "local", name)), None)
+    if row is None or row[3] != "installed":
+        raise ValueError("refresh this local skill in inventory.tsv first")
+    origin = origin_of(row[5], name, row[3], {})
+    current = read(OUT)
+    line = "| `%s` | %s | %s | %s | %s | %s | `%s` | %s |" % (
+        name, row[3], row[4], origin["class"], cell(origin["url"]),
+        cell(origin["ref"][:12]), row[5], cell(origin["note"]))
+    # Preserve all other skill rows verbatim; only insert/replace this target.
+    start = current.index("## 3.")
+    end = current.index("## 4.", start)
+    section = current[start:end].splitlines()
+    pattern = re.compile(r"^\| `([^`]+)` \|")
+    entries = [entry for entry in section if pattern.match(entry) and pattern.match(entry)[1] != name]
+    entries.append(line)
+    entries.sort(key=lambda entry: pattern.match(entry)[1])
+    header = section[:next(i for i, entry in enumerate(section) if pattern.match(entry))]
+    current = current[:start] + "\n".join(header + entries) + "\n\n" + current[end:]
+    for status in ("installed", "shadowed", "protected", "missing-source"):
+        count = sum(1 for item in rows if item[0] == "skill" and item[3] == status)
+        current = re.sub(r"(?m)^(\| " + status + r" \| )\d+( \|)",
+                         lambda match: match[1] + str(count) + match[2], current)
+    vend = next((item for item in VENDORED if item["root"] == declared[name]), None)
+    if vend:
+        ref = ref_of_vendored(vend["root"]) or vend["ref"]
+        count = sum(1 for item in rows if item[0] == "skill" and item[3] == "installed" and
+                    (item[5] == vend["root"] or item[5].startswith(vend["root"] + "/")))
+        source_line = "| `%s` | vendored | %s | `%s` | %d |" % (vend["root"], web(vend["repo"]), ref, count)
+        current = re.sub(r"(?m)^\| `" + re.escape(vend["root"]) + r"` \| vendored \|.*$", lambda _: source_line, current)
+        mods = "- **`%s`**（%s）：%s。%s" % (vend["root"], vend["skills_dir"], vend["local_mods"], vend["note"])
+        current = re.sub(r"(?m)^- \*\*`" + re.escape(vend["root"]) + r"`\*\*.*$", lambda _: mods, current)
+    if "<!-- update-log -->" in current:
+        current = current.split("<!-- update-log -->")[0] + "<!-- update-log -->\n" + read(LOG).rstrip("\n") + "\n"
+    return current
+
+
 def build_text():
     inv = load_inventory()
     roots = checkout_roots()
@@ -574,9 +621,10 @@ def build_text():
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--local-skill", help="只更新指定本地技能来源和缓存计数，保留其他来源记录；不枚举源码")
     args = ap.parse_args(argv)
 
-    text = build_text()
+    text = refresh_local_source(args.local_skill) if args.local_skill else build_text()
     if args.check:
         try:
             current = read(OUT)
@@ -585,7 +633,7 @@ def main(argv=None):
         if current != text:
             print("SOURCES.md 已过期，运行 python3 scripts/build_sources.py 重新生成")
             return 1
-        print("SOURCES.md 与当前 checkout 一致")
+        print("SOURCES.md 与%s一致" % ("指定技能及缓存登记" if args.local_skill else "当前 checkout"))
         return 0
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(text)

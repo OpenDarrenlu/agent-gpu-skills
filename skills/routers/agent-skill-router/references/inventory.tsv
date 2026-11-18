@@ -67,6 +67,7 @@ skill	local	ponytail-gain	installed	-	repos/ponytail/skills/ponytail-gain	Show p
 skill	local	ponytail-help	installed	-	repos/ponytail/skills/ponytail-help	Quick reference for ponytail levels, skills and commands. One-shot display. Use for /ponytail-help, "ponytail help", "how do I use ponytail"
 skill	local	claude-delegate	protected	-	skills/other/claude-delegate	Delegate a coding task to a separate Claude Code CLI process or another Claude session as an implementer, then review its diff and land it y
 skill	local	codex-background	protected	-	skills/other/codex-background	Keep a Codex orchestrator's delegation to an installed delegate skill pending until its registered relay completes, without model-driven pro
+skill	local	brain-and-hands	installed	-	skills/other/brain-and-hands	Split an authorized coding workflow between a strong Codex or Claude main session and cheaper hands. Use for model selection, independent te
 catalog	kernel-design-agents	-	present	-	kernel-design-agents/skills/KernelWiki	-
 skill	kernel-design-agents	KernelWiki	installed	-	kernel-design-agents/skills/KernelWiki	Use when the user asks about optimizing NVIDIA Blackwell (SM100, B200) or Hopper (SM90, H100) GPU kernels — tcgen05/TMEM/CLC/NVFP4/2-SM coop
 catalog	nvidia-skills	-	present	-	repos/nvidia-skills	-

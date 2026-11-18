@@ -162,6 +162,7 @@ SKILL_NAMES=(
     salary-negotiation-skill
     tech-doc-style-chinese
     zotero-cli
+    brain-and-hands
     ponytail
     ponytail-review
     ponytail-audit
@@ -227,6 +228,7 @@ SKILL_DIRS=(
     skills/other/salary-negotiation-skill
     skills/other/tech-doc-style-chinese
     skills/other/zotero-cli
+    skills/other/brain-and-hands
     repos/ponytail/skills/ponytail
     repos/ponytail/skills/ponytail-review
     repos/ponytail/skills/ponytail-audit
@@ -548,6 +550,12 @@ install_to_agent() {
 
         if [ ! -d "$src_path" ]; then
             echo "  跳过: $src_dir/ 不存在"
+            continue
+        fi
+        # 使用已验证的单技能安装器，保持来源标记并避免重复按 skills-dir 加载插件。
+        if [ "$skill_name" = brain-and-hands ] && { [ "$agent" = codex ] || [ "$agent" = claude ]; }; then
+            bash "$SCRIPT_DIR/install-brain-and-hands.sh" --agent "$agent" --dest "$SKILL_DIR"
+            claim_skill "$skill_name" "local"
             continue
         fi
         claim_skill "$skill_name" "local"

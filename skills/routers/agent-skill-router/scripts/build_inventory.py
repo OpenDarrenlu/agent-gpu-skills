@@ -18,6 +18,7 @@
 """
 
 import argparse
+import csv
 import glob
 import os
 import re
@@ -237,14 +238,49 @@ def inventory_path(root):
     return os.path.join(root, "skills", "routers", "agent-skill-router", "references", "inventory.tsv")
 
 
+def read_cached_rows(root):
+    """Read a generated manifest, without enumerating source directories."""
+    with open(inventory_path(root), encoding="utf-8") as file:
+        reader = csv.DictReader((line for line in file if not line.startswith("#")), delimiter="\t", quoting=csv.QUOTE_NONE)
+        if tuple(reader.fieldnames or ()) != COLUMNS:
+            raise ValueError("invalid cached inventory columns")
+        return [tuple(row[column] for column in COLUMNS) for row in reader]
+
+
+def refresh_local_skill(root, name):
+    """Refresh one explicitly declared local skill; preserve other cached rows."""
+    declared = dict(read_install_arrays(root))
+    if name not in declared or name in PROTECTED_NAMES:
+        raise ValueError("--local-skill must name an unprotected install.sh local skill")
+    source = declared[name]
+    path = os.path.join(root, source, "SKILL.md")
+    actual_name, description = read_frontmatter(path)
+    if actual_name != name:
+        raise ValueError("local skill frontmatter/name missing or inconsistent: " + name)
+    rows = read_cached_rows(root)
+    row = ("skill", "local", name, "installed", "-", source, description)
+    matches = [i for i, old in enumerate(rows) if old[0] == "skill" and old[1:3] == ("local", name)]
+    if matches:
+        rows[matches[0]] = row
+    else:
+        # Local entries precede external catalogs, matching installation priority.
+        insert_at = next((i for i, old in enumerate(rows) if old[0] == "catalog" and old[1] != "local"), len(rows))
+        rows.insert(insert_at, row)
+    for i, old in enumerate(rows):
+        if old[0] == "skill" and old[2] == name and old[1] != "local":
+            rows[i] = (*old[:3], "shadowed", "local", *old[5:])
+    return rows
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root", default=default_root(), help="仓库根目录")
     parser.add_argument("--check", action="store_true", help="只检查现有 inventory.tsv 是否与当前 checkout 一致")
+    parser.add_argument("--local-skill", help="只刷新指定本地技能，保留其他缓存行；不枚举其他源码目录")
     args = parser.parse_args(argv)
 
     root = os.path.abspath(args.root)
-    text = render(build_rows(root))
+    text = render(refresh_local_skill(root, args.local_skill) if args.local_skill else build_rows(root))
     path = inventory_path(root)
 
     if args.check:
@@ -253,7 +289,8 @@ def main(argv=None):
             with open(path, encoding="utf-8") as f:
                 current = f.read()
         if current == text:
-            print("inventory 与当前 checkout 一致（%d 行）" % text.count("\n"))
+            scope = "指定本地技能登记" if args.local_skill else "当前 checkout"
+            print("inventory 与%s一致（%d 行）" % (scope, text.count("\n")))
             return 0
         old = set(current.splitlines())
         new = set(text.splitlines())

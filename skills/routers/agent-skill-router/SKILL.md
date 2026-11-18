@@ -59,6 +59,11 @@ substitutes another skill for it. Catalog-only matches (no rule) are labelled lo
 
 ## Instruction-only skills vs runtime tools
 
+For explicit model division or independent Noir tests, choose `brain-and-hands`.
+It keeps Astra/Opus as the debugging brain, uses Sol/Sonnet for ordinary tests, and
+creates a fresh Claude/Noir session for very simple exact-command tests. This lane
+does not authorize restoring the disabled legacy delegation tools.
+
 Check the `kind` field before promising an action:
 
 - `instruction`: read `SKILL.md` and follow it; no host install needed.
