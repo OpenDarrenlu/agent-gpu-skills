@@ -2,7 +2,7 @@
 """生成 agent-skill-router 的安装清单 references/inventory.tsv。
 
 清单按 install.sh 的安装顺序模拟同名占用（先到先得）：
-本地 SKILL_NAMES -> KernelWiki -> NVIDIA -> Cursor -> AMD -> sources/external-sources.conf 中 mode=skills 的来源。
+本地 SKILL_NAMES -> KernelWiki -> NVIDIA -> Cursor -> CCFA -> AMD -> sources/external-sources.conf 中 mode=skills 的来源。
 保留名（claude-delegate、codex-background）永远不计为可安装 skill。
 
 只读取各 SKILL.md 的 frontmatter（name/description），不索引 skill 正文或 references。
@@ -168,6 +168,9 @@ def build_catalogs(root):
 
     cursor = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/cursor-skills/skills"))]
     catalogs.append(("cursor-skills", "repos/cursor-skills/skills", keep(cursor)))
+
+    ccfa = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/ccfa-skills"), "ccf-*")]
+    catalogs.append(("ccfa-skills", "repos/ccfa-skills", keep(ccfa)))
 
     amd = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/amd-skills/skills"))]
     catalogs.append(("amd-skills", "repos/amd-skills/skills", keep(amd)))

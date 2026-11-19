@@ -3,7 +3,7 @@
 # 用法: bash update-repos.sh [repo_name]
 #
 # 不带参数: 更新所有 repo
-# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / tech-doc-style-chinese / zero-mismatch-rl / vllm / iket-profiling / ponytail / docs)
+# 带参数:   只更新指定 repo (triton / cutlass / deepgemm / sglang / verl / nccl / kernel-design-agents / tilelang-cuda-skills / nvidia-skills / amd-skills / cursor-skills / ccfa-skills / tech-doc-style-chinese / zero-mismatch-rl / vllm / iket-profiling / ponytail / docs)
 # docs 不在 all 中：重新抓取 CUDA/PTX/Nsight 文档、Colfax 文章库和 AMD 文档缓存，耗时较长。
 #
 # repo 存放在各自 skill 目录的 repos/ 下:
@@ -17,6 +17,7 @@
 #   repos/nvidia-skills/  (NVIDIA skills submodule)
 #   repos/amd-skills/     (AMD skills submodule)
 #   repos/cursor-skills/  (Saddss/cursor-skills submodule)
+#   repos/ccfa-skills/    (mikubaka88/CCFA-Skills submodule)
 #   repos/tilelang-cuda-skills/ (sablin39/tilelang-cuda-skills submodule)
 #   repos/tech-doc-style-chinese/ (Fenng/Tech-Doc-Style-Chinese 上游 clone，git-ignored；
 #                                  本地定制版在 skills/other/tech-doc-style-chinese/，见其 README.md)
@@ -353,6 +354,9 @@ case "$TARGET" in
     cursor-skills)
         update_submodule "cursor-skills" "repos/cursor-skills"
         ;;
+    ccfa-skills)
+        update_submodule "ccfa-skills" "repos/ccfa-skills"
+        ;;
     tilelang-cuda-skills)
         update_submodule "tilelang-cuda-skills" "repos/tilelang-cuda-skills"
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
@@ -399,6 +403,7 @@ case "$TARGET" in
         update_submodule "nvidia-skills" "repos/nvidia-skills"
         update_submodule "amd-skills" "repos/amd-skills"
         update_submodule "cursor-skills" "repos/cursor-skills"
+        update_submodule "ccfa-skills" "repos/ccfa-skills"
         update_submodule "tilelang-cuda-skills" "repos/tilelang-cuda-skills"
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule sync --recursive
         git -C "$SCRIPT_DIR/repos/tilelang-cuda-skills" submodule update --init --recursive
@@ -416,7 +421,7 @@ case "$TARGET" in
         ;;
     *)
         echo "未知 repo: $TARGET"
-        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|tech-doc-style-chinese|zero-mismatch-rl|tilelang|vllm|iket-profiling|ponytail|external|docs|all]"
+        echo "用法: bash update-repos.sh [triton|cutlass|deepgemm|sglang|verl|nccl|kernel-design-agents|tilelang-cuda-skills|veloq|nvidia-skills|amd-skills|cursor-skills|ccfa-skills|tech-doc-style-chinese|zero-mismatch-rl|tilelang|vllm|iket-profiling|ponytail|external|docs|all]"
         exit 1
         ;;
 esac
@@ -460,6 +465,14 @@ if [ -d "$SCRIPT_DIR/repos/cursor-skills" ]; then
         done
     fi
     echo "  Cursor skills 数量: $cursor_count"
+fi
+if [ -d "$SCRIPT_DIR/repos/ccfa-skills" ]; then
+    du -sh "$SCRIPT_DIR/repos/ccfa-skills" 2>/dev/null
+    ccfa_count=0
+    for d in "$SCRIPT_DIR/repos/ccfa-skills"/ccf-*/; do
+        [ -f "$d/SKILL.md" ] && ccfa_count=$((ccfa_count + 1))
+    done
+    echo "  CCFA runtime skills 数量: $ccfa_count"
 fi
 if [ -d "$SCRIPT_DIR/repos/tilelang-cuda-skills" ]; then
     du -sh "$SCRIPT_DIR/repos/tilelang-cuda-skills" 2>/dev/null

@@ -43,13 +43,13 @@
 | `llm-serving-router` | LLM serving、吞吐/延迟、容量规划与部署 |
 | `gpu-framework-router` | 框架问题与 kernel 问题之间的分流 |
 | `nsys-profile-analysis` | VeloQ 的 whole-application timeline 分析 |
-| `llm-serving-auto-benchmark` | serving workload benchmark，来自 Cursor skills |
-| `perf-workload-profiling` | workload-level profiling，来自 Cursor skills |
-| `llm-torch-profiler-analysis` | PyTorch profiler/runtime 分析，来自 Cursor skills |
-| `perf-nsight-systems` / `perf-nsight-compute-analysis` | 框架侧 Nsight 分析，来自 Cursor skills |
+| `llm-serving-auto-benchmark` | serving workload benchmark，来自 `repos/cursor-skills` |
+| `perf-workload-profiling` | workload-level profiling，来自 `repos/cursor-skills` |
+| `llm-torch-profiler-analysis` | PyTorch profiler/runtime 分析，来自 `repos/cursor-skills` |
+| `perf-nsight-systems` / `perf-nsight-compute-analysis` | 框架侧 Nsight 分析，来自 `repos/cursor-skills` |
 
-后四类外部 skill 由 `repos/cursor-skills` 或 VeloQ 提供；未初始化对应来源时，
-安装器会跳过它们，不影响本地 skill。
+上述 profiling 与 benchmark skill 来自 Cursor catalog（`repos/cursor-skills`）；`nsys-profile-analysis` /
+`ncu-profile-analysis` 仍由 VeloQ 提供，未安装时安装器会跳过，不影响本地 skill。
 
 ## Other
 
@@ -65,10 +65,26 @@
 | `giantpandallm-knowledge` | GiantPandaLLM 技术文章知识库 |
 | `zhihu-knowledge-base` | 知乎技术文章本地知识库 |
 | `ponytail` / `ponytail-review` / `ponytail-audit` | 最小完整实现、改动审查、仓库审计；来自 `repos/ponytail`，另含 debt/gain/help |
-| `mattpocock` 工程 skill（`tdd`、`grill-me`、`code-review`、`diagnosing-bugs`、`to-tickets` 等） | 来自 `repos/mattpocock-skills` 1.3.1（MIT）；与 cursor-skills 同名的改写版优先 |
+| `mattpocock` 工程 skill（`tdd`、`grill-me`、`code-review`、`diagnosing-bugs`、`to-tickets` 等） | 来自 `repos/mattpocock-skills` 1.4.0（MIT）；与 Cursor `repos/cursor-skills` 同名的 5 个由 Cursor 版本占用 |
 | `tech-doc-style-chinese` | 中文技术文档与技术原理报告（算子/推理/训练框架）：结构模板、证据等级、术语与排版检查；Fenng/Tech-Doc-Style-Chinese 的本地定制版 |
 | `claude-delegate` | 把任务委托给 Claude Code CLI；原样复制自 amElnagdy/delegate-skills（MIT） |
 | `codex-background` | `claude-delegate` 在 Codex 中所需的后台 MCP server，只为 Codex 安装；安装后需运行 `scripts/bootstrap.mjs` 注册并重启 Codex，见[根目录 README](../README.md#claude-委托) |
+
+## Research
+
+论文检索、审稿、rebuttal 与科研工作流：
+
+| Skill | 用途 |
+|---|---|
+| `ccf-literature-searcher` / `ccf-literature-monitor` | 检索、核验外部文献并跟踪会议/arXiv 动态 |
+| `ccf-paper-reviewer` / `ccf-integrity-auditor` | 评审论文主张、证据、数字与引用，不改写正文 |
+| `ccf-rebuttal-writer` / `ccf-submission-checker` | 撰写 rebuttal、检查 CCF 投稿包与会议规则 |
+| `ccf-paper-writer` / `ccf-humanization` | 起草与润色 CCF 论文正文，执行共享预检 |
+| `idea-evaluator` / `deep-research` / `pre-submission-reviewer` | Supervisor 的选题评估、综述级调研与投稿前自检 |
+
+CCFA skills 来自 `repos/ccfa-skills` submodule，Supervisor skills 来自 `sources/external-sources.conf`
+固定的 `repos/supervisor-skills` checkout。完整阶段对照与许可见
+[`skills/research/README.md`](research/README.md)。
 
 ## Routers
 
@@ -96,7 +112,7 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py
 `runtime-cli`（需要宿主安装命令，部分需要本机授权）、`user-level`（用户级 symlink，
 不由本仓库管理）。
 
-外部来源（NVIDIA、AMD、Cursor、TileLang、Ponytail、mattpocock）
+外部来源（NVIDIA、AMD、Cursor、CCFA、TileLang、Ponytail、mattpocock、Supervisor）
 的清单与获取方式见 [`sources/external-sources.conf`](../sources/external-sources.conf) 和
 [`INSTALL.md`](../INSTALL.md#外部来源)；审查与覆盖情况见
 [`docs/skills-usage-review.md`](../docs/skills-usage-review.md)。

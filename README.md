@@ -1,6 +1,6 @@
 # agent-gpu-skills
 
-GPU 开发、性能分析、框架运行时、技术写作、工程审查等 Agent Skill 集合，兼容
+GPU 开发、性能分析、框架运行时、科研与写作、工程审查等 Agent Skill 集合，兼容
 Cursor、Claude Code、Codex、Gemini CLI 与 Kimi Code CLI。
 
 本仓库是一个 skill bundle，不是应用。它提供的是“路由契约 + 可执行的 skill 文件”。在一次任务中，
@@ -24,7 +24,7 @@ agent 读取本 README，按下面的协议选出一个 skill，读它的 `SKILL
 | 请求类型 | 入口 | 说明 |
 |---|---|---|
 | 纯 GPU：写 CUDA/PTX/Triton/Gluon/CUTLASS/CuTe/GEMM/attention/reduction/fused kernel；kernel 慢、NCU/NSYS、occupancy、stall、SM/TC 利用率、roofline、persistent kernel 性能；框架/运行时、SGLang/vLLM、verl、PyTorch profiler、端到端 launch/scheduling；LLM serving、KV cache、attention backend、batching、TTFT/TBT、容量规划、部署 | 先读 `gpu-development-catchall`，再选窄路由 | 见下方窄路由表 |
-| 非 GPU、混合领域或不确定：中文技术写作、通用代码审查与设计、TDD、仓库审计，以及你无法判断领域的请求 | `agent-skill-router` | 运行下面的路由脚本 |
+| 非 GPU、混合领域或不确定：论文与文献、科研工作流、中文技术写作、通用代码审查与设计、TDD、仓库审计，以及你无法判断领域的请求 | `agent-skill-router` | 运行下面的路由脚本 |
 
 纯 GPU 请求的窄路由：
 
@@ -148,10 +148,10 @@ bash bootstrap.sh --agent kimi
 
 ```bash
 bash bootstrap.sh --agent codex \
-  --no-nvidia-skills --no-amd-skills --no-cursor-skills --no-veloq
+  --no-nvidia-skills --no-amd-skills --no-cursor-skills --no-ccfa-skills --no-veloq
 ```
 
-跳过外部来源（mattpocock/skills）：
+跳过外部来源（mattpocock/skills、supervisor-skills）：
 
 ```bash
 bash bootstrap.sh --agent codex --no-integrations
@@ -161,11 +161,11 @@ bash bootstrap.sh --agent codex --no-integrations
 
 ```bash
 bash install.sh --agent codex --dest "$TMPDIR/agent-gpu-skills-test" --no-veloq \
-  --no-nvidia-skills --no-amd-skills --no-cursor-skills
+  --no-nvidia-skills --no-amd-skills --no-cursor-skills --no-ccfa-skills
 ```
 
 请求的外部来源已固定到 commit 并写入 [`sources/external-sources.conf`](sources/external-sources.conf)。
-当前只有 `mattpocock/skills` 一个来源，不需要额外运行时 CLI。
+当前包含 `mattpocock/skills` 与 `repos/supervisor-skills`，均不需要额外运行时 CLI。
 
 独立安装 agent-desktop（不属于 `bootstrap.sh`，需要单独运行）：
 
@@ -195,8 +195,9 @@ bash update-repos.sh nccl
 bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills
 bash update-repos.sh nvidia-skills
-bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
+bash update-repos.sh amd-skills
+bash update-repos.sh ccfa-skills
 bash update-repos.sh tech-doc-style-chinese
 bash update-repos.sh zero-mismatch-rl
 bash update-repos.sh tilelang
@@ -260,19 +261,20 @@ python3 skills/routers/agent-skill-router/scripts/build_inventory.py --check
 
 ## 域地图
 
-下表给出按领域的入口与代表 skill。完整清单见 [`skills/routers/agent-skill-router/references/inventory.tsv`](skills/routers/agent-skill-router/references/inventory.tsv)（180 个可安装名称，另有 5 个同名项由 cursor 占用、2 个受保护名称）。
+下表给出按领域的入口与代表 skill。完整清单见 [`skills/routers/agent-skill-router/references/inventory.tsv`](skills/routers/agent-skill-router/references/inventory.tsv)（226 个可安装名称，另有 5 个同名项由 Cursor skill 占用、2 个受保护名称）。
 
 | 领域 | @README 入口 | 代表 skill | 来源 |
 |---|---|---|---|
 | GPU kernel 编写 | `gpu-kernel-authoring-router` | `triton-skill`、`cuda-skill`、`cutlass-skill`、`deepgemm-skill`、`writing-tilelang-kernels`、`tilelang-layout`、`tilelang-semantic` | 本地（TileLang 来自 `repos/tilelang-cuda-skills`，编译器内部来自 `skills/kernel/tilelang-repo-skills`） |
-| GPU 性能与 profiling | `gpu-performance-router` | `ncu-report-skill`（`.ncu-rep`）、`perf-nsight-systems`（`.nsys-rep`）、`persistent-kernel-scheduling`、`nv-gpu-kernel-performance-modeling` | 本地；`perf-nsight-systems` 来自 `repos/cursor-skills` |
+| GPU 性能与 profiling | `gpu-performance-router` | `ncu-report-skill`（`.ncu-rep`）、`perf-nsight-systems`（`.nsys-rep`）、`persistent-kernel-scheduling`、`nv-gpu-kernel-performance-modeling` | 本地；`perf-nsight-systems` 等 profiling skill 来自 `repos/cursor-skills` |
 | 框架与运行时 | `gpu-framework-router` | `sglang-skill`、`verl-skill`、`zero-mismatch-rl`、`train-inference-consistency`、sglang-repo-skills 精选 | 本地 |
 | LLM serving | `llm-serving-router` | `llm-serving-auto-benchmark`、`llm-serving-capacity-planner` | 本地路由；两个 benchmark 与容量 skill 来自 `repos/cursor-skills` |
 | 通信与 AMD | `gpu-development-catchall` → 对应路由 | `nccl-skill`、`gpu-communication-libraries`、`amd-gpu-docs`、`amd-instinct-isa` | 本地 |
+| 论文与文献 | `agent-skill-router` | `ccf-literature-searcher`、`ccf-paper-reviewer`、`ccf-rebuttal-writer`、`ccf-submission-checker`；Supervisor 具名 skill（如 `idea-evaluator`、`deep-research`、`pre-submission-reviewer`） | `ccf-*` 来自 `repos/ccfa-skills`；Supervisor 来自 `repos/supervisor-skills`；完整对照见 [`skills/research/README.md`](skills/research/README.md) |
 | 中文技术写作 | `agent-skill-router` | `tech-doc-style-chinese`（结构与排版）+ 领域 skill（事实） | 本地定制版 |
-| 通用工程与审查 | `agent-skill-router` | `tdd`、`code-review`、`diagnosing-bugs`、`to-tickets`、`triage`、`grill-me`（mattpocock） | `repos/mattpocock-skills`；`tdd`、`handoff` 等与 cursor 同名的由 cursor 版本占用 |
+| 通用工程与审查 | `agent-skill-router` | `tdd`、`code-review`、`diagnosing-bugs`、`to-tickets`、`triage`、`grill-me`（mattpocock） | `repos/mattpocock-skills`；`tdd`、`handoff` 等 5 个同名项由 `repos/cursor-skills` 版本占用 |
 | 最小实现与审计 | `agent-skill-router` | `ponytail-review`、`ponytail-audit` | `repos/ponytail` |
-| 模型分工、独立测试与 debug | `agent-skill-router` | `brain-and-hands`：Astra/Opus 分析 bug，Sol/Sonnet 跑普通测试，独立 Claude/Noir 跑简单测试 | 共用技能与可选 Claude 插件；[单独安装说明](skills/other/brain-and-hands/README.md) |
+| 模型分工、独立测试与 debug | `agent-skill-router` | `brain-and-hands`：Astra/Opus/Fable 分析 bug，Sol/Sonnet 或其他可用手模型跑普通测试，独立 Claude/Noir 跑简单测试；Cursor multitask 子代理按同一分工 | 共用技能与可选 Claude 插件；[单独安装说明](skills/other/brain-and-hands/README.md) |
 | 委托给 Claude Code | `agent-skill-router` 或直接点名 | `claude-delegate`（Codex 另需 `codex-background`） | 本地，见下文「Claude 委托」 |
 
 Agent Reach 不在本仓库的清单中，本 bundle 也没有提供通用网页抓取 skill。对于“用 agent reach 抓取网页”这类请求，
@@ -312,6 +314,20 @@ Agent Reach 不在本仓库的清单中，本 bundle 也没有提供通用网页
 
 ```text
 @README 估算 Qwen 服务在 4 张 GPU 上的容量规划，目标是 TTFT 小于 500ms
+```
+
+**文献检索、论文审稿与科研工作流**
+
+```text
+@README 帮我检索关于GPU调度的相关论文，并整理成文献综述提纲
+```
+
+```text
+@README 帮我 review 这篇投稿的论文草稿，只给出审稿意见，不改写
+```
+
+```text
+@README 评估这个研究 idea 的新颖性和风险，给出下一步实验建议
 ```
 
 **中文技术文章写作**
@@ -361,8 +377,9 @@ Agent Reach 不在本仓库的清单中，本 bundle 也没有提供通用网页
 
 | 来源 | 固定版本 | 说明 |
 |---|---|---|
-| NVIDIA / AMD / Cursor / TileLang / Ponytail | submodule（见 `.gitmodules`） | 通过 `update-repos.sh` 更新 |
-| mattpocock/skills | `4ae2317d…`（MIT，1.4.0） | 与 cursor-skills 同名的 5 个由 cursor 版本占用 |
+| NVIDIA / AMD / Cursor / CCFA / TileLang / Ponytail | submodule（见 `.gitmodules`） | 通过 `update-repos.sh` 更新 |
+| Supervisor-Skills | `4bd3fef3…`（CC BY-NC-SA 4.0；`drawio-reconstruction` 另为 MIT） | 论文研究 skill；`repos/supervisor-skills`，由 `sources/external-sources.conf` 固定 |
+| mattpocock/skills | `4ae2317d…`（MIT，1.4.0） | 与 Cursor `repos/cursor-skills` 同名的 5 个由 Cursor 版本占用 |
 
 ## macOS 与已有用户级副本
 
@@ -417,9 +434,11 @@ TileLang 相关的通用动作词（debug、pipeline、layout、baseline 等）�
 
 AMD ISA PDF、AMD 文档缓存和按需下载的上游源码不会提交到仓库。AMD 文档和 ISA 只在用户明确接受官方文档条款后下载到 git-ignored 本地目录。
 
-## 研究笔记
+## 研究笔记与文献工具
 
 [verl 课程笔记](notes/verl-course/README.md) 收录按源码快照编写的离线 HTML 笔记。
+论文检索、审稿、rebuttal 与科研工作流使用 `skills/research/` 中的 CCFA 和 Supervisor skills，
+随统一安装器一起安装；完整清单见 [`skills/research/README.md`](skills/research/README.md)。
 Agent 的安装副本和本机 MCP 配置不提交到仓库。
 
 ## 外部来源（sources/）

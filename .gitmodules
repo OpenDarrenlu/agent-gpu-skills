@@ -4,6 +4,9 @@
 [submodule "repos/cursor-skills"]
 	path = repos/cursor-skills
 	url = https://github.com/Saddss/cursor-skills.git
+[submodule "repos/ccfa-skills"]
+	path = repos/ccfa-skills
+	url = https://github.com/mikubaka88/CCFA-Skills.git
 [submodule "repos/nvidia-skills"]
 	path = repos/nvidia-skills
 	url = https://github.com/NVIDIA/skills.git

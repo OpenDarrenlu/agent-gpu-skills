@@ -2,76 +2,1259 @@
   "version": 1,
   "description": "agent-skill-router 的路由证据表。score = 显式点名(100) + 制品后缀(50/项) + 短语命中(weight/项，最多3项) - 排除词(20)。weight 默认 12；路由器(router) 使用 6，使具体工具胜过通用路由器。kind: instruction = 只需读 SKILL.md；runtime-cli = 需要宿主机安装 CLI 并可能需要账号认证；user-level = 用户机器上的全局 skill，不由本仓库安装。",
   "rules": [
-    {"skill": "brain-and-hands", "domain": "software-workflow", "kind": "instruction", "requires_any": ["brain-and-hands", "brain and hands", "noir", "模型分工", "model delegation", "独立测试会话"], "phrases": ["brain-and-hands", "brain and hands", "noir", "模型分工", "model delegation", "独立测试会话"], "requires": "普通技能支持 Codex/Claude；非常简单测试需已配置的 Claude CLI 与 Noir model ID（新独立 session）。不需要旧 relay/MCP。"},
-    {"skill": "ncu-report-skill", "domain": "gpu-performance", "kind": "instruction", "artifacts": [".ncu-rep"], "phrases": ["ncu", "nsight compute", "warp stall", "sass", "source counters"]},
-    {"skill": "ncu-persistent-kernel-diagnosis", "domain": "gpu-performance", "kind": "instruction", "phrases": ["persistent", "ncu"]},
-    {"skill": "perf-nsight-systems", "domain": "gpu-performance", "kind": "instruction", "artifacts": [".nsys-rep"], "phrases": ["nsys", "nsight systems", "nvtx", "launch 间隔", "cpu/gpu 重叠", "timeline"]},
-    {"skill": "nsys-profile-analysis", "domain": "gpu-performance", "kind": "runtime-cli", "artifacts": [".nsys-rep"], "phrases": ["nsys", "nsight systems", "时间线"], "requires": "VeloQ（install-veloq.sh；veloq 二进制）"},
-    {"skill": "ncu-profile-analysis", "domain": "gpu-performance", "kind": "runtime-cli", "phrases": ["ncu 报告", "ncu profile"], "requires": "VeloQ（install-veloq.sh；veloq 二进制）"},
-    {"skill": "persistent-kernel-scheduling", "domain": "gpu-performance", "kind": "instruction", "requires_any": ["persistent", "stream-k", "clc", "tail effect", "tail"], "phrases": ["persistent", "stream-k", "clc", "tail effect", "调度"]},
-    {"skill": "persistent-kernel-utilization", "domain": "gpu-performance", "kind": "instruction", "requires_any": ["persistent", "kernel", "gpu", "sm", "tensor core", "warp"], "phrases": ["pipeline bubble", "bubble", "setmaxnreg", "sm 利用率", "tc 利用率"]},
-    {"skill": "nv-gpu-kernel-performance-modeling", "domain": "gpu-performance", "kind": "instruction", "requires_any": ["gpu", "kernel", "cuda", "roofline", "triton", "tensor core"], "phrases": ["roofline", "analytical", "建模", "latency prediction", "理论上限"]},
-    {"skill": "gpu-performance-router", "domain": "gpu-performance", "kind": "instruction", "weight": 6, "needs_evidence": true, "phrases": ["为什么慢", "怎么这么慢", "kernel 慢", "性能瓶颈", "bottleneck", "occupancy", "warp stall"]},
-    {"skill": "cuda-skill", "domain": "gpu-kernel", "kind": "instruction", "artifacts": [".cu", ".cuh", ".ptx"], "phrases": ["cuda", "ptx", "cuda api", "warp shuffle", "tensor core"]},
-    {"skill": "triton-skill", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["triton", "gluon", "tl."], "not": ["tritonserver"]},
-    {"skill": "cutlass-skill", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["cutlass", "cute dsl", "cutedsl", "cute layout"]},
-    {"skill": "deepgemm-skill", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["deepgemm", "deep gemm", "grouped gemm", "moe gemm"]},
-    {"skill": "writing-tilelang-kernels", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "tile lang", "primfunc"], "not": ["调试", "debug", "优化", "profil", "设计文档"]},
-    {"skill": "debugging-tilelang-programs", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "debug", "调试", "lowering", "编译报错", "数值错误"]},
-    {"skill": "tilelang-optimization-loop", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "优化循环", "optimization loop", "基线", "候选"]},
-    {"skill": "optimizing-tilelang-programs", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "tile size", "autotune", "layout", "pipeline", "优化"]},
-    {"skill": "profiling-tilelang-programs", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "profil", "性能测"]},
-    {"skill": "torch-profiling-tilelang-programs", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "pytorch baseline", "torch profiler", "baseline"]},
-    {"skill": "testing-fwd-bwd-kernels", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "前向后向", "forward backward", "梯度", "grad"]},
-    {"skill": "writing-tilelang-design-docs", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "tile lang", "primfunc"], "phrases": ["tilelang", "设计文档", "design doc"]},
-    {"skill": "designing-with-tilefoundry", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilefoundry"], "phrases": ["tilefoundry", "hir", "placement"]},
-    {"skill": "iket-profiling", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["iket", "per-warp"]},
-    {"skill": "KernelWiki", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["kernelwiki", "blackwell", "hopper", "sm100", "upstream pr"]},
-    {"skill": "colfax-research-skill", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["colfax"]},
-    {"skill": "gpu-kernel-authoring-router", "domain": "gpu-kernel", "kind": "instruction", "weight": 6, "phrases": ["写 kernel", "写一个 kernel", "写 cuda", "算子实现", "实现算子", "custom op", "fused kernel"]},
-    {"skill": "sglang-skill", "domain": "gpu-framework", "kind": "instruction", "phrases": ["sglang"]},
-    {"skill": "kl-consistency-test", "domain": "gpu-framework", "kind": "instruction", "phrases": ["kl 一致性", "kl一致性", "prefill/decode logprob", "prefill decode logprob", "logprob kl", "kl_test"]},
-    {"skill": "add-jit-kernel", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["jit kernel", "sgl-kernel", "sglang kernel"], "not": ["triton", "tilelang"]},
-    {"skill": "add-sgl-kernel", "domain": "gpu-kernel", "kind": "instruction", "phrases": ["aot kernel", "sgl-kernel", "cuda/c++ kernel"], "not": ["triton", "tilelang"]},
-    {"skill": "debug-cuda-crash", "domain": "gpu-framework", "kind": "instruction", "phrases": ["cuda crash", "illegal memory access", "kernel api 日志", "cuda 崩溃"]},
-    {"skill": "debug-distributed-hang", "domain": "gpu-framework", "kind": "instruction", "phrases": ["分布式 hang", "推理 hang", "tp hang", "distributed hang", "py-spy"]},
-    {"skill": "sglang-prod-incident-triage", "domain": "gpu-framework", "kind": "instruction", "phrases": ["线上事故", "服务回归", "health check 失败", "queue 堆积"]},
-    {"skill": "compute-mamba-ratio", "domain": "gpu-framework", "kind": "instruction", "phrases": ["mamba ratio", "mamba memory ratio", "mamba-full-memory-ratio", "混合注意力显存"]},
-    {"skill": "write-sglang-test", "domain": "gpu-framework", "kind": "instruction", "phrases": ["sglang 测试", "写 sglang 测试", "sglang ci"]},
-    {"skill": "tilelang-layout", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "cute", "cute dsl", "cutedsl", "layout", "fragment", "swizzle"], "phrases": ["layout 推断", "layout inference", "fragment", "cute", "swizzle"]},
-    {"skill": "tilelang-semantic", "domain": "gpu-kernel", "kind": "instruction", "requires_any": ["tilelang", "cute dsl", "cutedsl", "语义", "数据竞争", "data race"], "phrases": ["语义校验", "数据竞争", "data race", "async 生命周期", "buffer 所有权"]},
-    {"skill": "verl-skill", "domain": "gpu-framework", "kind": "instruction", "phrases": ["verl", "hybridflow", "ppo", "grpo", "rollout"]},
-    {"skill": "zero-mismatch-rl", "domain": "gpu-framework", "kind": "instruction", "phrases": ["zero mismatch", "zero-mismatch", "true on-policy", "true on policy", "reinforce zero", "mlite", "c0-c10", "c0–c10", "logprob 0 diff", "bitwise 训推", "权重同步", "在线同步"]},
-    {"skill": "train-inference-consistency", "domain": "gpu-framework", "kind": "instruction", "phrases": ["batch invariance", "batch-invariant", "训推一致", "logprob", "bitwise"]},
-    {"skill": "llm-serving-router", "domain": "gpu-framework", "kind": "instruction", "weight": 6, "phrases": ["kv cache", "ttft", "tbt", "吞吐", "容量规划", "推理服务", "serving", "decode", "prefill"]},
-    {"skill": "gpu-framework-router", "domain": "gpu-framework", "kind": "instruction", "weight": 6, "requires_any": ["sglang", "vllm", "verl", "pytorch", "torch", "gpu", "serving", "推理", "rollout", "kv cache", "llm"], "phrases": ["端到端", "end-to-end", "launch overhead", "框架"]},
-    {"skill": "llm-serving-auto-benchmark", "domain": "gpu-framework", "kind": "instruction", "phrases": ["压测", "serving benchmark", "benchmark serving"]},
-    {"skill": "llm-serving-capacity-planner", "domain": "gpu-framework", "kind": "instruction", "phrases": ["容量规划", "capacity plan", "sla"]},
-    {"skill": "llm-torch-profiler-analysis", "domain": "gpu-framework", "kind": "instruction", "phrases": ["torch profiler", "profiler trace"]},
-    {"skill": "nccl-skill", "domain": "gpu-comm", "kind": "instruction", "phrases": ["nccl"]},
-    {"skill": "gpu-communication-libraries", "domain": "gpu-comm", "kind": "instruction", "weight": 8, "phrases": ["nvshmem", "rdma", "all-reduce", "allreduce", "集合通信", "多卡通信"]},
-    {"skill": "amd-gpu-docs", "domain": "amd", "kind": "instruction", "phrases": ["rocm", "hip", "amd"]},
-    {"skill": "amd-instinct-isa", "domain": "amd", "kind": "instruction", "phrases": ["cdna", "gfx950", "instinct isa", "amd isa"]},
-    {"skill": "tech-doc-style-chinese", "domain": "writing", "kind": "instruction", "requires_any": ["gpu", "cuda", "kernel", "triton", "tilelang", "算子", "推理", "训练", "nccl", "gemm", "attention", "sglang", "vllm", "kv cache", "原理报告", "性能报告", "中文技术", "技术文章", "源码解析"], "phrases": ["中文技术", "原理报告", "设计文档", "性能报告", "源码解析", "技术文章", "润色这段中文"], "not": ["论文", "paper", "rebuttal"]},
-    {"skill": "giantpandallm-knowledge", "domain": "knowledge", "kind": "instruction", "phrases": ["giantpandallm", "giantpanda"]},
-    {"skill": "zhihu-knowledge-base", "domain": "knowledge", "kind": "instruction", "phrases": ["知乎", "zhihu"]},
-    {"skill": "ponytail-review", "domain": "software", "kind": "instruction", "weight": 8, "phrases": ["代码审查", "审查代码", "review diff", "review this change", "改动审查", "review"], "not": ["论文", "paper", "kernel", "ncu", "gpu", "rebuttal"]},
-    {"skill": "review", "domain": "software", "kind": "instruction", "weight": 8, "phrases": ["code review", "pr review", "审查 pr"], "not": ["论文", "paper"]},
-    {"skill": "high-performance-code-review", "domain": "software", "kind": "instruction", "phrases": ["高性能代码审查", "performance code review"]},
-    {"skill": "ponytail", "domain": "software", "kind": "instruction", "phrases": ["过度设计", "最小实现", "minimal implementation", "简化实现"]},
-    {"skill": "ponytail-audit", "domain": "software", "kind": "instruction", "weight": 12, "phrases": ["仓库审计", "代码审计", "审计", "风险代码", "慢路径", "repo audit", "audit the repo", "audit this codebase", "audit the whole repo", "find bloat", "整个仓库"], "not": ["论文", "paper", "稿", "rebuttal", "审稿", "manuscript"]},
-    {"skill": "simplify-code", "domain": "software", "kind": "instruction", "phrases": ["simplify", "简化代码"]},
-    {"skill": "tdd", "domain": "software", "kind": "instruction", "phrases": ["tdd", "red-green", "红绿", "测试驱动", "先写测试", "test-driven"]},
-    {"skill": "improve-codebase-architecture", "domain": "software", "kind": "instruction", "weight": 8, "phrases": ["架构", "architecture review", "模块边界", "improve architecture", "重构设计"]},
-    {"skill": "diagnose", "domain": "software", "kind": "instruction", "weight": 8, "phrases": ["排查 bug", "诊断 bug", "根因分析", "reproduce", "root cause"]},
-    {"skill": "grill-with-docs", "domain": "software", "kind": "instruction", "phrases": ["grill", "拷问", "挑战设计", "stress test the plan"]},
-    {"skill": "to-issues", "domain": "software", "kind": "instruction", "phrases": ["拆成 issue", "拆 issue", "to issues", "拆分任务"]},
-    {"skill": "handoff", "domain": "software", "kind": "instruction", "phrases": ["handoff", "交接文档", "交接给"]},
-    {"skill": "codebase-onboarding", "domain": "software", "kind": "instruction", "phrases": ["onboarding", "熟悉这个代码库", "代码库结构"]},
-    {"skill": "writing-plans", "domain": "software", "kind": "instruction", "phrases": ["实施计划", "写计划", "implementation plan"]},
-    {"skill": "setup-matt-pocock-skills", "domain": "software", "kind": "instruction", "phrases": ["setup-matt-pocock", "docs/agents", "issue tracker 配置"]},
-    {"skill": "claude-delegate", "domain": "user-level", "kind": "user-level", "phrases": [], "requires": "用户级 symlink，由 research_ltz 管理；本仓库安装器不覆盖"},
-    {"skill": "codex-background", "domain": "user-level", "kind": "user-level", "phrases": [], "requires": "用户级 symlink，由 research_ltz 管理；本仓库安装器不覆盖"},
-    {"skill": "agent-desktop", "domain": "desktop-automation", "kind": "runtime-cli", "standalone": true, "runtime_bin": "agent-desktop", "requires_any": ["桌面", "desktop", "辅助功能", "accessibility", "界面树", "computer use"], "phrases": ["agent-desktop", "操作桌面", "桌面应用", "桌面自动化", "桌面 gui", "desktop gui", "desktop automation", "computer use", "accessibility tree", "界面树", "辅助功能树", "点击按钮", "click button", "读取界面", "read ui", "snapshot app"], "not": ["浏览器", "browser", "playwright", "网页", "webpage", "web page", "selenium", "puppeteer"], "requires": "独立安装，不属于 bootstrap.sh / install.sh 统一流程：bash install-agent-desktop.sh --agent codex。安装后运行时为 ~/.local/bin/agent-desktop（需要该目录在 PATH 中）。需要 macOS 辅助功能授权，安装器不请求权限"}
+    {
+      "skill": "brain-and-hands",
+      "domain": "software-workflow",
+      "kind": "instruction",
+      "requires_any": [
+        "brain-and-hands",
+        "brain and hands",
+        "noir",
+        "模型分工",
+        "model delegation",
+        "独立测试会话"
+      ],
+      "phrases": [
+        "brain-and-hands",
+        "brain and hands",
+        "noir",
+        "模型分工",
+        "model delegation",
+        "独立测试会话"
+      ],
+      "requires": "普通技能支持 Codex/Claude；非常简单测试需已配置的 Claude CLI 与 Noir model ID（新独立 session）。不需要旧 relay/MCP。"
+    },
+    {
+      "skill": "ncu-report-skill",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "artifacts": [
+        ".ncu-rep"
+      ],
+      "phrases": [
+        "ncu",
+        "nsight compute",
+        "warp stall",
+        "sass",
+        "source counters"
+      ]
+    },
+    {
+      "skill": "ncu-persistent-kernel-diagnosis",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "phrases": [
+        "persistent",
+        "ncu"
+      ]
+    },
+    {
+      "skill": "perf-nsight-systems",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "artifacts": [
+        ".nsys-rep"
+      ],
+      "phrases": [
+        "nsys",
+        "nsight systems",
+        "nvtx",
+        "launch 间隔",
+        "cpu/gpu 重叠",
+        "timeline"
+      ]
+    },
+    {
+      "skill": "nsys-profile-analysis",
+      "domain": "gpu-performance",
+      "kind": "runtime-cli",
+      "artifacts": [
+        ".nsys-rep"
+      ],
+      "phrases": [
+        "nsys",
+        "nsight systems",
+        "时间线"
+      ],
+      "requires": "VeloQ（install-veloq.sh；veloq 二进制）"
+    },
+    {
+      "skill": "ncu-profile-analysis",
+      "domain": "gpu-performance",
+      "kind": "runtime-cli",
+      "phrases": [
+        "ncu 报告",
+        "ncu profile"
+      ],
+      "requires": "VeloQ（install-veloq.sh；veloq 二进制）"
+    },
+    {
+      "skill": "persistent-kernel-scheduling",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "requires_any": [
+        "persistent",
+        "stream-k",
+        "clc",
+        "tail effect",
+        "tail"
+      ],
+      "phrases": [
+        "persistent",
+        "stream-k",
+        "clc",
+        "tail effect",
+        "调度"
+      ]
+    },
+    {
+      "skill": "persistent-kernel-utilization",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "requires_any": [
+        "persistent",
+        "kernel",
+        "gpu",
+        "sm",
+        "tensor core",
+        "warp"
+      ],
+      "phrases": [
+        "pipeline bubble",
+        "bubble",
+        "setmaxnreg",
+        "sm 利用率",
+        "tc 利用率"
+      ]
+    },
+    {
+      "skill": "nv-gpu-kernel-performance-modeling",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "requires_any": [
+        "gpu",
+        "kernel",
+        "cuda",
+        "roofline",
+        "triton",
+        "tensor core"
+      ],
+      "phrases": [
+        "roofline",
+        "analytical",
+        "建模",
+        "latency prediction",
+        "理论上限"
+      ]
+    },
+    {
+      "skill": "gpu-performance-router",
+      "domain": "gpu-performance",
+      "kind": "instruction",
+      "weight": 6,
+      "needs_evidence": true,
+      "phrases": [
+        "为什么慢",
+        "怎么这么慢",
+        "kernel 慢",
+        "性能瓶颈",
+        "bottleneck",
+        "occupancy",
+        "warp stall"
+      ]
+    },
+    {
+      "skill": "cuda-skill",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "artifacts": [
+        ".cu",
+        ".cuh",
+        ".ptx"
+      ],
+      "phrases": [
+        "cuda",
+        "ptx",
+        "cuda api",
+        "warp shuffle",
+        "tensor core"
+      ]
+    },
+    {
+      "skill": "triton-skill",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "triton",
+        "gluon",
+        "tl."
+      ],
+      "not": [
+        "tritonserver"
+      ]
+    },
+    {
+      "skill": "cutlass-skill",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "cutlass",
+        "cute dsl",
+        "cutedsl",
+        "cute layout"
+      ]
+    },
+    {
+      "skill": "deepgemm-skill",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "deepgemm",
+        "deep gemm",
+        "grouped gemm",
+        "moe gemm"
+      ]
+    },
+    {
+      "skill": "writing-tilelang-kernels",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "not": [
+        "调试",
+        "debug",
+        "优化",
+        "profil",
+        "设计文档"
+      ]
+    },
+    {
+      "skill": "debugging-tilelang-programs",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "debug",
+        "调试",
+        "lowering",
+        "编译报错",
+        "数值错误"
+      ]
+    },
+    {
+      "skill": "tilelang-optimization-loop",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "优化循环",
+        "optimization loop",
+        "基线",
+        "候选"
+      ]
+    },
+    {
+      "skill": "optimizing-tilelang-programs",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "tile size",
+        "autotune",
+        "layout",
+        "pipeline",
+        "优化"
+      ]
+    },
+    {
+      "skill": "profiling-tilelang-programs",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "profil",
+        "性能测"
+      ]
+    },
+    {
+      "skill": "torch-profiling-tilelang-programs",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "pytorch baseline",
+        "torch profiler",
+        "baseline"
+      ]
+    },
+    {
+      "skill": "testing-fwd-bwd-kernels",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "前向后向",
+        "forward backward",
+        "梯度",
+        "grad"
+      ]
+    },
+    {
+      "skill": "writing-tilelang-design-docs",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "tile lang",
+        "primfunc"
+      ],
+      "phrases": [
+        "tilelang",
+        "设计文档",
+        "design doc"
+      ]
+    },
+    {
+      "skill": "designing-with-tilefoundry",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilefoundry"
+      ],
+      "phrases": [
+        "tilefoundry",
+        "hir",
+        "placement"
+      ]
+    },
+    {
+      "skill": "iket-profiling",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "iket",
+        "per-warp"
+      ]
+    },
+    {
+      "skill": "KernelWiki",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "kernelwiki",
+        "blackwell",
+        "hopper",
+        "sm100",
+        "upstream pr"
+      ]
+    },
+    {
+      "skill": "colfax-research-skill",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "colfax"
+      ]
+    },
+    {
+      "skill": "gpu-kernel-authoring-router",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "weight": 6,
+      "phrases": [
+        "写 kernel",
+        "写一个 kernel",
+        "写 cuda",
+        "算子实现",
+        "实现算子",
+        "custom op",
+        "fused kernel"
+      ]
+    },
+    {
+      "skill": "sglang-skill",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "sglang"
+      ]
+    },
+    {
+      "skill": "kl-consistency-test",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "kl 一致性",
+        "kl一致性",
+        "prefill/decode logprob",
+        "prefill decode logprob",
+        "logprob kl",
+        "kl_test"
+      ]
+    },
+    {
+      "skill": "add-jit-kernel",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "jit kernel",
+        "sgl-kernel",
+        "sglang kernel"
+      ],
+      "not": [
+        "triton",
+        "tilelang"
+      ]
+    },
+    {
+      "skill": "add-sgl-kernel",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "phrases": [
+        "aot kernel",
+        "sgl-kernel",
+        "cuda/c++ kernel"
+      ],
+      "not": [
+        "triton",
+        "tilelang"
+      ]
+    },
+    {
+      "skill": "debug-cuda-crash",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "cuda crash",
+        "illegal memory access",
+        "kernel api 日志",
+        "cuda 崩溃"
+      ]
+    },
+    {
+      "skill": "debug-distributed-hang",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "分布式 hang",
+        "推理 hang",
+        "tp hang",
+        "distributed hang",
+        "py-spy"
+      ]
+    },
+    {
+      "skill": "sglang-prod-incident-triage",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "线上事故",
+        "服务回归",
+        "health check 失败",
+        "queue 堆积"
+      ]
+    },
+    {
+      "skill": "compute-mamba-ratio",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "mamba ratio",
+        "mamba memory ratio",
+        "mamba-full-memory-ratio",
+        "混合注意力显存"
+      ]
+    },
+    {
+      "skill": "write-sglang-test",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "sglang 测试",
+        "写 sglang 测试",
+        "sglang ci"
+      ]
+    },
+    {
+      "skill": "tilelang-layout",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "cute",
+        "cute dsl",
+        "cutedsl",
+        "layout",
+        "fragment",
+        "swizzle"
+      ],
+      "phrases": [
+        "layout 推断",
+        "layout inference",
+        "fragment",
+        "cute",
+        "swizzle"
+      ]
+    },
+    {
+      "skill": "tilelang-semantic",
+      "domain": "gpu-kernel",
+      "kind": "instruction",
+      "requires_any": [
+        "tilelang",
+        "cute dsl",
+        "cutedsl",
+        "语义",
+        "数据竞争",
+        "data race"
+      ],
+      "phrases": [
+        "语义校验",
+        "数据竞争",
+        "data race",
+        "async 生命周期",
+        "buffer 所有权"
+      ]
+    },
+    {
+      "skill": "verl-skill",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "verl",
+        "hybridflow",
+        "ppo",
+        "grpo",
+        "rollout"
+      ]
+    },
+    {
+      "skill": "zero-mismatch-rl",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "zero mismatch",
+        "zero-mismatch",
+        "true on-policy",
+        "true on policy",
+        "reinforce zero",
+        "mlite",
+        "c0-c10",
+        "c0–c10",
+        "logprob 0 diff",
+        "bitwise 训推",
+        "权重同步",
+        "在线同步"
+      ]
+    },
+    {
+      "skill": "train-inference-consistency",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "batch invariance",
+        "batch-invariant",
+        "训推一致",
+        "logprob",
+        "bitwise"
+      ]
+    },
+    {
+      "skill": "llm-serving-router",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "weight": 6,
+      "phrases": [
+        "kv cache",
+        "ttft",
+        "tbt",
+        "吞吐",
+        "容量规划",
+        "推理服务",
+        "serving",
+        "decode",
+        "prefill"
+      ]
+    },
+    {
+      "skill": "gpu-framework-router",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "weight": 6,
+      "requires_any": [
+        "sglang",
+        "vllm",
+        "verl",
+        "pytorch",
+        "torch",
+        "gpu",
+        "serving",
+        "推理",
+        "rollout",
+        "kv cache",
+        "llm"
+      ],
+      "phrases": [
+        "端到端",
+        "end-to-end",
+        "launch overhead",
+        "框架"
+      ]
+    },
+    {
+      "skill": "llm-serving-auto-benchmark",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "压测",
+        "serving benchmark",
+        "benchmark serving"
+      ]
+    },
+    {
+      "skill": "llm-serving-capacity-planner",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "容量规划",
+        "capacity plan",
+        "sla"
+      ]
+    },
+    {
+      "skill": "llm-torch-profiler-analysis",
+      "domain": "gpu-framework",
+      "kind": "instruction",
+      "phrases": [
+        "torch profiler",
+        "profiler trace"
+      ]
+    },
+    {
+      "skill": "nccl-skill",
+      "domain": "gpu-comm",
+      "kind": "instruction",
+      "phrases": [
+        "nccl"
+      ]
+    },
+    {
+      "skill": "gpu-communication-libraries",
+      "domain": "gpu-comm",
+      "kind": "instruction",
+      "weight": 8,
+      "phrases": [
+        "nvshmem",
+        "rdma",
+        "all-reduce",
+        "allreduce",
+        "集合通信",
+        "多卡通信"
+      ]
+    },
+    {
+      "skill": "amd-gpu-docs",
+      "domain": "amd",
+      "kind": "instruction",
+      "phrases": [
+        "rocm",
+        "hip",
+        "amd"
+      ]
+    },
+    {
+      "skill": "amd-instinct-isa",
+      "domain": "amd",
+      "kind": "instruction",
+      "phrases": [
+        "cdna",
+        "gfx950",
+        "instinct isa",
+        "amd isa"
+      ]
+    },
+    {
+      "skill": "ccf-literature-searcher",
+      "domain": "papers",
+      "kind": "instruction",
+      "weight": 20,
+      "requires_any": [
+        "论文",
+        "文献",
+        "paper",
+        "literature"
+      ],
+      "phrases": [
+        "文献综述",
+        "找相关论文",
+        "文献检索",
+        "literature search",
+        "检索论文",
+        "找论文",
+        "调研论文",
+        "检索",
+        "相关论文"
+      ]
+    },
+    {
+      "skill": "ccf-paper-reviewer",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "审稿",
+        "评审",
+        "审阅",
+        "review this paper",
+        "review 论文",
+        "paper review",
+        "审稿意见"
+      ],
+      "not": [
+        "代码",
+        "diff",
+        "pull request",
+        " pr "
+      ]
+    },
+    {
+      "skill": "ccf-rebuttal-writer",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "rebuttal",
+        "反驳信",
+        "回复审稿"
+      ]
+    },
+    {
+      "skill": "ccf-paper-writer",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "写论文",
+        "撰写论文",
+        "paper writing",
+        "写一篇论文",
+        "论文初稿"
+      ],
+      "not": [
+        "技术报告",
+        "原理报告"
+      ]
+    },
+    {
+      "skill": "ccf-submission-checker",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "投稿检查",
+        "submission check",
+        "投稿格式"
+      ]
+    },
+    {
+      "skill": "tech-doc-style-chinese",
+      "domain": "writing",
+      "kind": "instruction",
+      "requires_any": [
+        "gpu",
+        "cuda",
+        "kernel",
+        "triton",
+        "tilelang",
+        "算子",
+        "推理",
+        "训练",
+        "nccl",
+        "gemm",
+        "attention",
+        "sglang",
+        "vllm",
+        "kv cache",
+        "原理报告",
+        "性能报告",
+        "中文技术",
+        "技术文章",
+        "源码解析"
+      ],
+      "phrases": [
+        "中文技术",
+        "原理报告",
+        "设计文档",
+        "性能报告",
+        "源码解析",
+        "技术文章",
+        "润色这段中文"
+      ],
+      "not": [
+        "论文",
+        "paper",
+        "rebuttal"
+      ]
+    },
+    {
+      "skill": "giantpandallm-knowledge",
+      "domain": "knowledge",
+      "kind": "instruction",
+      "phrases": [
+        "giantpandallm",
+        "giantpanda"
+      ]
+    },
+    {
+      "skill": "zhihu-knowledge-base",
+      "domain": "knowledge",
+      "kind": "instruction",
+      "phrases": [
+        "知乎",
+        "zhihu"
+      ]
+    },
+    {
+      "skill": "idea-evaluator",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "idea",
+        "想法",
+        "选题",
+        "研究方向",
+        "新颖",
+        "创新"
+      ],
+      "phrases": [
+        "fatal flaw",
+        "致命缺陷",
+        "paradigm shift",
+        "范式转移"
+      ]
+    },
+    {
+      "skill": "deep-research",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "文献",
+        "论文",
+        "literature",
+        "paper",
+        "survey",
+        "相关工作"
+      ],
+      "phrases": [
+        "survey-grade",
+        "综述级",
+        "mece"
+      ]
+    },
+    {
+      "skill": "intro-drafter",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "写引言",
+        "引言怎么写",
+        "introduction paragraph",
+        "six-paragraph"
+      ]
+    },
+    {
+      "skill": "benchmark-paper-template",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "benchmark",
+        "论文",
+        "paper",
+        "评测",
+        "evaluation"
+      ],
+      "phrases": [
+        "benchmark paper",
+        "benchmark 论文",
+        "evaluation paper",
+        "construction pipeline"
+      ]
+    },
+    {
+      "skill": "tech-paper-template",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "论文",
+        "paper"
+      ],
+      "phrases": [
+        "technical paper template",
+        "技术类论文",
+        "thinking template"
+      ]
+    },
+    {
+      "skill": "figure-designer",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "论文",
+        "paper",
+        "figure",
+        "图"
+      ],
+      "phrases": [
+        "motivated example",
+        "solution overview",
+        "experimental results figure"
+      ]
+    },
+    {
+      "skill": "drawio-reconstruction",
+      "domain": "papers",
+      "kind": "instruction",
+      "artifacts": [
+        ".drawio"
+      ],
+      "phrases": [
+        "drawio",
+        "draw.io",
+        "参考图重建",
+        "reconstruct the diagram"
+      ]
+    },
+    {
+      "skill": "pre-submission-reviewer",
+      "domain": "papers",
+      "kind": "instruction",
+      "requires_any": [
+        "论文",
+        "paper",
+        "投稿",
+        "submission",
+        "manuscript"
+      ],
+      "phrases": [
+        "pre-submission review",
+        "chartjunk",
+        "logic first"
+      ]
+    },
+    {
+      "skill": "rebuttal-guidance",
+      "domain": "papers",
+      "kind": "instruction",
+      "weight": 20,
+      "requires_any": [
+        "rebuttal",
+        "审稿",
+        "reviewer",
+        "回复"
+      ],
+      "phrases": [
+        "reviewer mindset",
+        "审稿人心态",
+        "concern classification",
+        "strategy dimension"
+      ]
+    },
+    {
+      "skill": "vibe-research-workflow",
+      "domain": "papers",
+      "kind": "instruction",
+      "phrases": [
+        "vibe research",
+        "vibe writing",
+        "vibe figure"
+      ]
+    },
+    {
+      "skill": "ponytail-review",
+      "domain": "software",
+      "kind": "instruction",
+      "weight": 8,
+      "phrases": [
+        "代码审查",
+        "审查代码",
+        "review diff",
+        "review this change",
+        "改动审查",
+        "review"
+      ],
+      "not": [
+        "论文",
+        "paper",
+        "kernel",
+        "ncu",
+        "gpu",
+        "rebuttal"
+      ]
+    },
+    {
+      "skill": "review",
+      "domain": "software",
+      "kind": "instruction",
+      "weight": 8,
+      "phrases": [
+        "code review",
+        "pr review",
+        "审查 pr"
+      ],
+      "not": [
+        "论文",
+        "paper"
+      ]
+    },
+    {
+      "skill": "high-performance-code-review",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "高性能代码审查",
+        "performance code review"
+      ]
+    },
+    {
+      "skill": "ponytail",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "过度设计",
+        "最小实现",
+        "minimal implementation",
+        "简化实现"
+      ]
+    },
+    {
+      "skill": "ponytail-audit",
+      "domain": "software",
+      "kind": "instruction",
+      "weight": 12,
+      "phrases": [
+        "仓库审计",
+        "代码审计",
+        "审计",
+        "风险代码",
+        "慢路径",
+        "repo audit",
+        "audit the repo",
+        "audit this codebase",
+        "audit the whole repo",
+        "find bloat",
+        "整个仓库"
+      ],
+      "not": [
+        "论文",
+        "paper",
+        "稿",
+        "rebuttal",
+        "审稿",
+        "manuscript"
+      ]
+    },
+    {
+      "skill": "simplify-code",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "simplify",
+        "简化代码"
+      ]
+    },
+    {
+      "skill": "tdd",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "tdd",
+        "red-green",
+        "红绿",
+        "测试驱动",
+        "先写测试",
+        "test-driven"
+      ]
+    },
+    {
+      "skill": "improve-codebase-architecture",
+      "domain": "software",
+      "kind": "instruction",
+      "weight": 8,
+      "phrases": [
+        "架构",
+        "architecture review",
+        "模块边界",
+        "improve architecture",
+        "重构设计"
+      ]
+    },
+    {
+      "skill": "diagnose",
+      "domain": "software",
+      "kind": "instruction",
+      "weight": 8,
+      "phrases": [
+        "排查 bug",
+        "诊断 bug",
+        "根因分析",
+        "reproduce",
+        "root cause"
+      ]
+    },
+    {
+      "skill": "grill-with-docs",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "grill",
+        "拷问",
+        "挑战设计",
+        "stress test the plan"
+      ]
+    },
+    {
+      "skill": "to-issues",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "拆成 issue",
+        "拆 issue",
+        "to issues",
+        "拆分任务"
+      ]
+    },
+    {
+      "skill": "handoff",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "handoff",
+        "交接文档",
+        "交接给"
+      ]
+    },
+    {
+      "skill": "codebase-onboarding",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "onboarding",
+        "熟悉这个代码库",
+        "代码库结构"
+      ]
+    },
+    {
+      "skill": "writing-plans",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "实施计划",
+        "写计划",
+        "implementation plan"
+      ]
+    },
+    {
+      "skill": "setup-matt-pocock-skills",
+      "domain": "software",
+      "kind": "instruction",
+      "phrases": [
+        "setup-matt-pocock",
+        "docs/agents",
+        "issue tracker 配置"
+      ]
+    },
+    {
+      "skill": "claude-delegate",
+      "domain": "user-level",
+      "kind": "user-level",
+      "phrases": [],
+      "requires": "用户级 symlink，由 research_ltz 管理；本仓库安装器不覆盖"
+    },
+    {
+      "skill": "codex-background",
+      "domain": "user-level",
+      "kind": "user-level",
+      "phrases": [],
+      "requires": "用户级 symlink，由 research_ltz 管理；本仓库安装器不覆盖"
+    },
+    {
+      "skill": "agent-desktop",
+      "domain": "desktop-automation",
+      "kind": "runtime-cli",
+      "standalone": true,
+      "runtime_bin": "agent-desktop",
+      "requires_any": [
+        "桌面",
+        "desktop",
+        "辅助功能",
+        "accessibility",
+        "界面树",
+        "computer use"
+      ],
+      "phrases": [
+        "agent-desktop",
+        "操作桌面",
+        "桌面应用",
+        "桌面自动化",
+        "桌面 gui",
+        "desktop gui",
+        "desktop automation",
+        "computer use",
+        "accessibility tree",
+        "界面树",
+        "辅助功能树",
+        "点击按钮",
+        "click button",
+        "读取界面",
+        "read ui",
+        "snapshot app"
+      ],
+      "not": [
+        "浏览器",
+        "browser",
+        "playwright",
+        "网页",
+        "webpage",
+        "web page",
+        "selenium",
+        "puppeteer"
+      ],
+      "requires": "独立安装，不属于 bootstrap.sh / install.sh 统一流程：bash install-agent-desktop.sh --agent codex。安装后运行时为 ~/.local/bin/agent-desktop（需要该目录在 PATH 中）。需要 macOS 辅助功能授权，安装器不请求权限"
+    }
   ]
 }

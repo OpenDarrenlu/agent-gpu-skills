@@ -58,11 +58,10 @@ OUTPUT_LABELS = {"not-checked", "not-found", "on-path", "user-level", "runtime-c
                  "agent-gpu-skills"}
 NOT_SKILL_TOKENS = OUTPUT_LABELS
 
-REQUESTED_SOURCES = {"mattpocock-skills"}
+REQUESTED_SOURCES = {"mattpocock-skills", "supervisor-skills"}
 EXCLUDED_SKILLS = {
-    "ccf-literature-searcher", "ccf-paper-reviewer", "ccf-rebuttal-writer", "pdf", "docx", "pptx",
-    "zotero-cli", "sepia", "wx-cli", "reverse-engineer-anything", "deepstream-dev",
-    "deepstream-generate-pipeline", "doca-dma", "bionemo-evo2-nim",
+    "zotero-cli", "sepia", "wx-cli", "reverse-engineer-anything",
+    "deepstream-dev", "deepstream-generate-pipeline", "doca-dma", "bionemo-evo2-nim",
     "earth2studio-deterministic-forecast", "cuopt-numerical-optimization-api",
 }
 
@@ -147,10 +146,14 @@ class RouteBehaviorTest(unittest.TestCase):
         self.assertIn(result["primary"]["skill"], {"ponytail-review", "review", "code-review",
                                                     "high-performance-code-review"})
 
+    def test_paper_review_not_software_review(self):
+        self.assertPrimary(self.route("帮我 review 论文初稿"), "ccf-paper-reviewer")
+
+    def test_rebuttal_is_paper_workflow(self):
+        self.assertPrimary(self.route("帮我写 rebuttal 回复审稿人的意见"), "ccf-rebuttal-writer")
+
     def test_removed_domain_queries_no_longer_route(self):
         queries = [
-            "帮我 review 论文初稿",
-            "帮我写 rebuttal 回复审稿人的意见",
             "读这篇论文并总结方法",
             "Zotero 文库里找 attention 相关的文献",
             "帮我把这段文章去掉 AI 味，像人写的",
@@ -257,6 +260,24 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
 
     # --- 原始误路由（Codex 复核中的失败）---
 
+    def test_cuda_literature_search_is_literature_not_scheduling(self):
+        self.check("帮我做相关工作的文献检索，找 CUDA 调度的论文", "ccf-literature-searcher",
+                   forbidden_primary=TILELANG_SKILLS | {"persistent-kernel-scheduling"},
+                   no_companions=True, no_question=True)
+
+    def test_natural_literature_retrieval_holdout_with_generic_retrieval_negative_control(self):
+        # 正例：自然语言的论文检索，主题词是 GPU 调度，不应带入伴随 skill。
+        self.check("帮我检索关于GPU调度的相关论文", "ccf-literature-searcher",
+                   forbidden_primary=TILELANG_SKILLS | {"persistent-kernel-scheduling"},
+                   no_companions=True, no_question=True)
+        # 负例：没有论文或文献词的通用检索请求，不得路由到文献检索。
+        self.check("帮我检索一下订单系统的数据库索引", None,
+                   forbidden_primary={"ccf-literature-searcher"})
+
+    def test_repository_audit_is_ponytail_audit_not_paper_review(self):
+        self.check("审计一下这个仓库的风险代码和慢路径", "ponytail-audit",
+                   forbidden_primary={"ccf-paper-reviewer"}, no_question=True)
+
     # --- 相邻领域：不应被通用动作词或共享领域词捕获 ---
 
     def test_repository_audit_routes_to_ponytail_audit(self):
@@ -298,6 +319,9 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
                    forbidden_companions=TILELANG_SKILLS)
 
     # --- 其他已验证的边界（不应回退） ---
+
+    def test_chinese_paper_review_is_not_software_review(self):
+        self.check("帮我 review 论文初稿", "ccf-paper-reviewer", forbidden_primary={"ponytail-review"})
 
     def test_positive_control_persistent_kernel_scheduling_still_routes(self):
         self.check("persistent kernel 的 stream-k 调度怎么选", "persistent-kernel-scheduling")
@@ -454,6 +478,7 @@ class RuleAndInventoryIntegrityTest(unittest.TestCase):
         for source in REQUESTED_SOURCES:
             self.assertIn(source, catalogs)
         self.assertEqual(catalogs["mattpocock-skills"], "present")
+        self.assertEqual(catalogs["supervisor-skills"], "present")
 
     def test_excluded_skills_are_absent_from_rules_and_inventory(self):
         rule_skills = {r["skill"] for r in route_skill.load_rules()}
@@ -464,15 +489,16 @@ class RuleAndInventoryIntegrityTest(unittest.TestCase):
 
     def test_mattpocock_names_that_overlap_cursor_are_shadowed_not_overwritten(self):
         rows = {(r["catalog"], r["name"]): r for r in _load_inventory_rows() if r["kind"] == "skill"}
-        for name in ("tdd", "handoff", "grill-with-docs"):
+        for name in ("tdd", "handoff", "grill-with-docs", "improve-codebase-architecture",
+                     "setup-matt-pocock-skills"):
             self.assertEqual(rows[("mattpocock-skills", name)]["status"], "shadowed", name)
             self.assertEqual(rows[("mattpocock-skills", name)]["shadowed_by"], "cursor-skills", name)
             self.assertEqual(rows[("cursor-skills", name)]["status"], "installed", name)
 
     def test_broad_catalog_coverage_is_present(self):
         catalogs = {r["catalog"]: r["status"] for r in _load_inventory_rows() if r["kind"] == "catalog"}
-        for catalog in ("local", "nvidia-skills", "cursor-skills", "amd-skills", "mattpocock-skills",
-                        "kernel-design-agents"):
+        for catalog in ("local", "nvidia-skills", "cursor-skills", "ccfa-skills", "amd-skills",
+                        "mattpocock-skills", "kernel-design-agents"):
             self.assertEqual(catalogs.get(catalog), "present", catalog)
 
     def test_catchall_no_longer_has_generic_non_domain_triggers(self):
@@ -508,14 +534,14 @@ class InventoryGeneratorTest(unittest.TestCase):
 
     def _write_fixture(self):
         self._write("install.sh", (
-            "SKILL_NAMES=(\n    local-one\n    tdd\n)\n"
-            "SKILL_DIRS=(\n    skills/other/local-one\n    skills/other/tdd\n)\n"
+            "SKILL_NAMES=(\n    local-one\n    tdd\n    grill\n    claude-delegate\n)\n"
+            "SKILL_DIRS=(\n    skills/other/local-one\n    skills/other/tdd\n"
+            "    skills/other/grill\n    skills/other/claude-delegate\n)\n"
         ))
         self._skill("skills/other/local-one", "local-one", "A local skill.")
         self._skill("skills/other/tdd", "tdd", "Local TDD skill.")
-        self._skill("repos/cursor-skills/skills/tdd", "tdd", "Cursor copy.")
-        self._skill("repos/cursor-skills/skills/grill", "grill", "Cursor grill.")
-        self._skill("repos/cursor-skills/skills/claude-delegate", "claude-delegate", "Must not install.")
+        self._skill("skills/other/grill", "grill", "Local grill skill.")
+        self._skill("skills/other/claude-delegate", "claude-delegate", "Must stay protected.")
         self._write("sources/external-sources.conf", (
             "# fixture\n"
             "upstream|https://example.invalid/upstream|UNPINNED|skills|skills/engineering,skills/misc|none|fixture\n"
@@ -543,11 +569,11 @@ class InventoryGeneratorTest(unittest.TestCase):
         self._generate()
         by_key = {(r[1], r[2]): r for r in self._rows() if r[0] == "skill"}
         self.assertEqual(by_key[("local", "tdd")][3], "installed")
-        self.assertEqual(by_key[("cursor-skills", "tdd")][3], "shadowed")
         self.assertEqual(by_key[("upstream", "tdd")][3], "shadowed")
+        self.assertEqual(by_key[("upstream", "tdd")][4], "local")
         self.assertEqual(by_key[("upstream", "fresh-skill")][3], "installed")
-        self.assertEqual(by_key[("cursor-skills", "claude-delegate")][3], "protected")
-        self.assertEqual(by_key[("cursor-skills", "grill")][3], "installed")
+        self.assertEqual(by_key[("local", "claude-delegate")][3], "protected")
+        self.assertEqual(by_key[("local", "grill")][3], "installed")
 
     def test_comma_separated_dirs_and_excluded_directories(self):
         self._generate()
@@ -579,7 +605,7 @@ class InventoryGeneratorTest(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(build_inventory.main(["--root", self.root, "--check"]), 0)
 
-        self._skill("repos/cursor-skills/skills/new-cursor", "new-cursor", "Added after generation.")
+        self._skill("repos/upstream/skills/engineering/new-upstream", "new-upstream", "Added after generation.")
         with redirect_stdout(io.StringIO()):
             self.assertEqual(build_inventory.main(["--root", self.root, "--check"]), 1)
 

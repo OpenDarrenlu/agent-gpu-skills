@@ -3,11 +3,12 @@ name: agent-skill-router
 description: >
   Broad router for the whole agent-gpu-skills bundle outside the narrow GPU routers: GPU
   kernels, profiling, frameworks and serving (via the GPU routers), Chinese technical
-  writing, general software design and code review (TDD, architecture, diagnosis,
+  writing, paper and literature workflows (CCFA and Supervisor research skills),
+  general software design and code review (TDD, architecture, diagnosis,
   issues, plans), and the external mattpocock engineering skills. Use when the user
   does not name a skill and the domain is unclear or mixed, or when the task spans
   several domains. Also use when the user names a skill, to check that it is installed.
-  中文触发词：不知道用哪个 skill、技术文章润色、代码审查、TDD、架构、skill 路由。
+  中文触发词：不知道用哪个 skill、技术文章润色、论文检索、审稿、rebuttal、代码审查、TDD、架构、skill 路由。
 ---
 
 # Agent Skill Router

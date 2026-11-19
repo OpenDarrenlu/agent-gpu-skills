@@ -52,7 +52,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --no-integrations 跳过 sources/external-sources.conf 中的外部来源：不获取源码、不安装运行时 CLI、不安装其 skill"
             echo "  --dest DIR        隔离安装：只写 DIR 下的 skill 目录。不初始化 submodule、不运行 update-repos.sh、"
             echo "                    不获取外部来源、不安装运行时 CLI（这些会联网或写入真实 HOME）"
-            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills"
+            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills、--no-ccfa-skills"
             echo ""
             echo "退出码: 任一步骤（仓库更新、外部来源与运行时、install.sh 的缺失检查）失败时为非零。"
             exit 0

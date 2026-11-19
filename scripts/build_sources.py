@@ -128,6 +128,13 @@ CATALOGS = [
         "note": "同名时本地 catalog 优先（install.sh 先到先得）",
     },
     {
+        "label": "ccfa-skills",
+        "kind": "submodule",
+        "path": "repos/ccfa-skills",
+        "repo": "https://github.com/mikubaka88/CCFA-Skills.git",
+        "note": "ccf-* 含 SKILL.md 者为 runtime skill（安装名 = 目录名）；不含者为支撑目录（直接链接，不计为 skill）",
+    },
+    {
         "label": "ponytail",
         "kind": "submodule",
         "path": "repos/ponytail",

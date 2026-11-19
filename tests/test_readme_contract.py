@@ -65,6 +65,8 @@ def inventory_names():
 
 # README 中非 GPU 的 @README 示例 → 期望的主 skill。键是示例文本中一段稳定的子串，必须在 README 中出现。
 NON_GPU_EXAMPLES = {
+    "帮我检索关于GPU调度的相关论文": "ccf-literature-searcher",
+    "帮我 review 这篇投稿的论文草稿": "ccf-paper-reviewer",
     "润色这篇中文技术原理报告": "tech-doc-style-chinese",
     "用 TDD 给这个函数补测试": "tdd",
     "review 这个 PR 的代码改动": "ponytail-review",

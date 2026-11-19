@@ -29,7 +29,7 @@ SCRIPTS = ["bootstrap.sh", "install.sh", "install-external.sh", "install-veloq.s
 REQUESTED = {
     "mattpocock-skills": ("skills", "skills/engineering,skills/productivity,skills/misc", "none"),
 }
-GATE_FLAGS = ["--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills"]
+GATE_FLAGS = ["--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills", "--no-ccfa-skills"]
 GIT_ID = ["-c", "user.name=agent-gpu-skills-test", "-c", "user.email=test@example.invalid"]
 
 # 这几个集成测试针对真实 checkout 运行安装器；vLLM/NCCL 的稀疏源码 checkout
@@ -586,9 +586,8 @@ class InventoryParityTest(unittest.TestCase):
                     expected.add(row["name"])
         self.assertTrue(expected)
         dest = os.path.join(tempdir(self, "dest-"), "skills")
-        run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq", "--no-nvidia-skills",
-             "--no-amd-skills", "--no-cursor-skills"], cwd=REPO,
-            env=dict(os.environ, HOME=tempdir(self, "home-")))
+        run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq"] + GATE_FLAGS,
+            cwd=REPO, env=dict(os.environ, HOME=tempdir(self, "home-")))
         missing = sorted(n for n in expected if not os.path.isfile(os.path.join(dest, n, "SKILL.md")))
         self.assertEqual(missing, [])
 

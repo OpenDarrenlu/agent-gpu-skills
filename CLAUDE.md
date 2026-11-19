@@ -18,6 +18,9 @@ This repository is an Agent Skill bundle, not an application. Read
   non-GPU specialties.
 - `skills/routers/`: catch-all and domain routers, plus `agent-skill-router`
   (broad router, generated inventory, and `scripts/route_skill.py`).
+- `skills/research/`: navigation links for the CCFA paper-workflow submodule
+  (`repos/ccfa-skills`) and Supervisor research skills
+  (`repos/supervisor-skills`, pinned in `sources/external-sources.conf`).
 - `repos/`: external skill catalogs as git submodules, plus git-ignored
   checkouts of the external sources listed in `sources/external-sources.conf`.
 - `sources/external-sources.conf`: tracked manifest of non-submodule external
@@ -45,6 +48,7 @@ bash bootstrap.sh --agent codex
 bash update-repos.sh triton
 bash update-repos.sh kernel-design-agents
 bash update-repos.sh tilelang-cuda-skills
+bash update-repos.sh ccfa-skills
 bash update-repos.sh nvidia-skills
 bash update-repos.sh tech-doc-style-chinese   # upstream clone, for diffing only
 bash update-repos.sh vllm                     # pinned sparse vLLM checkout for train-inference-consistency

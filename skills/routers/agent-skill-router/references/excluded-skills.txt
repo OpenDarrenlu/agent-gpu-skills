@@ -1,34 +1,14 @@
 # Skills excluded from agent-gpu-skills installs and router inventory.
 # One exact skill name per line; # comments. Generated from the unrelated-domain review.
 
-## ccfa-skills (20)
-ccf-common
-ccf-experiment-designer
-ccf-humanization
-ccf-idea-optimizer
-ccf-idea-reviewer
-ccf-integrity-auditor
-ccf-literature-monitor
-ccf-literature-searcher
-ccf-paper-reviewer
-ccf-paper-to-exemplar
-ccf-paper-writer
-ccf-pipeline-orchestrator
-ccf-project-scaffolder
-ccf-rebuttal-writer
-ccf-research-engineer
-ccf-skill-forger
-ccf-submission-checker
-ccf-visual-composer
-frontend-design
-xlsx
-
-## cursor-skills (5)
+## cursor-skills (7)
 academic-figure-workflow
 docx
+frontend-design
 pdf
 pptx
 prototype
+xlsx
 
 ## local (3)
 salary-negotiation-agent
@@ -464,20 +444,6 @@ sepia-recreate
 sepia-refactor
 sepia-review
 sepia-write
-
-## supervisor-skills (12)
-benchmark-paper-template
-deep-research
-drawio-reconstruction
-figure-designer
-idea-evaluator
-intro-drafter
-paper-polish
-paper-writer
-pre-submission-reviewer
-rebuttal-guidance
-tech-paper-template
-vibe-research-workflow
 
 ## wx-cli (1)
 wx-cli

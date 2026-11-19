@@ -59,7 +59,7 @@ bash bootstrap.sh --agent cursor --copy
 | 选项 | 行为 |
 |---|---|
 | `--no-update` | 跳过 `update-repos.sh`；仍初始化缺失的 submodule，并补齐缺失的外部来源 |
-| `--no-integrations` | 跳过 `sources/external-sources.conf` 中的外部来源（获取与 skill） |
+| `--no-integrations` | 跳过 `sources/external-sources.conf` 中的外部来源（获取与 skill；当前为 mattpocock/skills、supervisor-skills） |
 | `--dest DIR` | 隔离安装：只写 `DIR`。不初始化 submodule、不跑 `update-repos.sh`、不获取外部来源、不安装运行时、不修改受 git 跟踪的路由清单，不写真实 HOME |
 
 ## 外部来源
@@ -69,6 +69,7 @@ bash bootstrap.sh --agent cursor --copy
 | 来源 | 远端 | 检出 commit | 安装模式 | 运行时（需宿主执行） |
 |---|---|---|---|---|
 | mattpocock-skills | `mattpocock/skills` | `4ae2317d…` | skills（engineering、productivity、misc） | 无 |
+| supervisor-skills | `HKUSTDial/Supervisor-Skills` | `4bd3fef3…` | skills（论文研究与写作） | 无 |
 
 完整来源、许可与版本说明见 [`sources/external-sources.conf`](sources/external-sources.conf) 与 [`docs/skills-usage-review.md`](docs/skills-usage-review.md) §2。
 
@@ -100,17 +101,17 @@ bash bootstrap.sh --agent codex --no-update
 - 必需：Git、Bash（系统 Bash 3.2 可用）、Python 3（路由清单与测试）。
 - 不保证在空白机器上直接可用：需要用户自行安装上述工具。
 
-同名 skill 按先到先得：本地 skill → KernelWiki → NVIDIA → cursor-skills → AMD → 外部来源。被占用或受保护的名称不会被覆盖，计入对应 catalog 的“跳过同名或受保护”数量；用户级 symlink（如 `claude-delegate`、`codex-background`）以及任何指向本仓库之外的顶层 symlink 都不会被替换。
+同名 skill 按先到先得：本地 skill → KernelWiki → NVIDIA → Cursor → CCFA → AMD → 外部来源。被占用或受保护的名称不会被覆盖，计入对应 catalog 的“跳过同名或受保护”数量；用户级 symlink（如 `claude-delegate`、`codex-background`）以及任何指向本仓库之外的顶层 symlink 都不会被替换。
 
 如果需要手动分步执行：
 
 ```bash
-# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/AMD/Cursor skills + veloq 二进制
+# 1. 获取源码 repo（DeepGEMM 含递归依赖，其余为 sparse checkout）+ NVIDIA/Cursor/AMD/CCFA skills + veloq 二进制
 bash update-repos.sh
 
 # 2. 安装 skill (默认 Cursor，用 --agent claude/codex/gemini 安装到其他工具)
 #    同时安装 VeloQ（veloq 二进制 + nsys/ncu-profile-analysis skill）
-#    同时安装 TileLang skills、NVIDIA skills、AMD skills、Cursor skills、GPU router skills
+#    同时安装 TileLang skills、NVIDIA skills、Cursor skills、AMD skills、CCFA skills、GPU router skills
 bash install.sh
 
 # 不想要 VeloQ 时:
@@ -321,8 +322,9 @@ bash update-repos.sh sglang
 bash update-repos.sh verl
 bash update-repos.sh nccl
 bash update-repos.sh nvidia-skills
-bash update-repos.sh amd-skills
 bash update-repos.sh cursor-skills
+bash update-repos.sh amd-skills
+bash update-repos.sh ccfa-skills
 
 # 只更新 veloq 二进制（skill 用 veloq self-update 或重跑 install.sh）
 bash update-repos.sh veloq
