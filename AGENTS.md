@@ -87,7 +87,7 @@ producing detailed advice or code.
 
 ### Other
 
-- 模型分工与独立测试：`brain-and-hands`。Astra/Opus 保持主会话并分析代码和测试失败；Sol/Sonnet 执行普通测试；非常简单测试通过新的独立 Claude/Noir session 完成。按 `references/models.md` 选择同家族最新可用版本，不恢复旧 relay。
+- 模型分工与独立测试：`brain-and-hands`。Astra、Opus 或 Fable 做设计、含糊诊断和最终核对；已经写明且逻辑不算特别复杂的 multitask 子代理用最新 Sonnet 或其他 hand 模型，并自己作为 hand，这档可以比普通 hand 稍高。非常简单测试通过新的独立 Claude/Noir session 完成。全局会话以 `global/AGENTS.md` 第 12 节为准。按 `references/models.md` 选择同家族最新可用版本，不恢复旧 relay。
 
 - 论文检索、审稿、rebuttal 与投稿检查：`ccf-literature-searcher`、`ccf-paper-reviewer`、
   `ccf-rebuttal-writer`、`ccf-submission-checker` 等 CCFA skill（`repos/ccfa-skills`）；
