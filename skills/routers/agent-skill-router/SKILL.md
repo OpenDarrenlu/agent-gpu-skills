@@ -2,15 +2,12 @@
 name: agent-skill-router
 description: >
   Broad router for the whole agent-gpu-skills bundle outside the narrow GPU routers: GPU
-  kernels, profiling, frameworks and serving (via the GPU routers), scientific papers
-  (paper reading, literature search, paper review, rebuttal, submission checks, Zotero
-  libraries), Chinese technical writing, general software design and code review (TDD,
-  architecture, diagnosis, issues, plans), and the four integrations added in
-  sources/external-sources.conf (WeChat wx-cli, mattpocock skills, sepia, rea). Use when the
-  user does not name a skill and the domain is unclear or mixed, or when the task spans
+  kernels, profiling, frameworks and serving (via the GPU routers), Chinese technical
+  writing, general software design and code review (TDD, architecture, diagnosis,
+  issues, plans), and the external mattpocock engineering skills. Use when the user
+  does not name a skill and the domain is unclear or mixed, or when the task spans
   several domains. Also use when the user names a skill, to check that it is installed.
-  中文触发词：不知道用哪个 skill、论文/文献/Zotero/审稿/rebuttal、技术文章润色、代码审查、
-  TDD、架构、微信聊天记录、skill 路由。
+  中文触发词：不知道用哪个 skill、技术文章润色、代码审查、TDD、架构、skill 路由。
 ---
 
 # Agent Skill Router
@@ -30,8 +27,7 @@ bundle before answering. It does not answer the domain question itself.
    python3 scripts/route_skill.py "<request>" --json   # when parsing the result
    ```
 
-   Pass real artifacts (`.ncu-rep`, `.nsys-rep`, `.pdf`, `.docx`, `.bib`, `.cu`) with
-   `--artifact`; file types outrank keywords.
+   Pass real artifacts (`.ncu-rep`, `.nsys-rep`, `.cu`) with `--artifact`; file types outrank keywords.
 3. **Read only what was chosen.** Open the primary `SKILL.md` (and at most two companion
    `SKILL.md` files). Do not load `references/inventory.tsv` or the rules file into the
    context; grep them when you need a specific name.
@@ -68,20 +64,13 @@ Check the `kind` field before promising an action:
 
 - `instruction`: read `SKILL.md` and follow it; no host install needed.
 - `runtime-cli`: needs a command on PATH and may need local configuration or account
-  authorization (for example `zotero-cli config`, the `veloq` binary, `wx-cli`). Report
-  the prerequisite; never fake a result when the command is missing.
+  authorization (for example the `veloq` binary). Report the prerequisite; never fake a
+  result when the command is missing.
 - `user-level`: a machine-global skill outside this repository (`claude-delegate`,
   `codex-background`). Do not install, overwrite, or re-link it from this bundle.
 
 ## Gates
 
-- **WeChat (`wx-cli`)**: a direct request from the user to query their local WeChat data is
-  the authorization for that ordinary query; do not ask for a second confirmation. Sending,
-  editing, or deleting messages, or reading beyond what the request names, needs an explicit
-  instruction in the current request. Never run `sudo wx init`, codesign, tccutil, or restart
-  WeChat as part of routing; those are separate user-authorized setup steps.
-- **Zotero and paper libraries**: these are the user's own references. Read and search
-  them as needed; do not write, delete, or re-import items unless asked.
 - **Writing and review outputs**: show the draft; do not submit, publish, or send.
 - **Credentials and accounts**: never ask for or store secrets in a skill. Tell the user the
   exact command to run themselves.

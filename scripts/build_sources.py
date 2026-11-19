@@ -121,13 +121,6 @@ CATALOGS = [
         "note": "安装前检查其 skills/ 目录；本仓库只安装 skills/，不安装其他目录",
     },
     {
-        "label": "ccfa-skills",
-        "kind": "submodule",
-        "path": "repos/ccfa-skills",
-        "repo": "https://github.com/mikubaka88/CCFA-Skills.git",
-        "note": "ccf-* 含 SKILL.md 者为 runtime skill（安装名 = 目录名）；不含者为支撑目录（直接链接，不计为 skill）",
-    },
-    {
         "label": "cursor-skills",
         "kind": "submodule",
         "path": "repos/cursor-skills",
@@ -187,13 +180,6 @@ LOCAL_ORIGINS = {
         "evidence": "skills/kernel/iket-profiling/UPSTREAM.md",
         "note": "UPSTREAM.md 声明安装来源为 humanfia/iket-profiling-skill（无 pin）；内容是 NVIDIA CUTLASS 官方 IKET 文档的摘要，NVIDIA 文档是参考来源，不是本 skill 的 origin",
     },
-    "salary-negotiation-skill": {
-        "class": "external-declared",
-        "repo": "https://github.com/Ssupercoder/Salary-Negotiation-Skill",
-        "ref": "2688ef8e4931ab3c069593967ceeed1f79186b3e",
-        "evidence": "skills/other/salary-negotiation-skill/UPSTREAM.md",
-        "note": "MIT；UPSTREAM.md 记载源路径 谈薪skill_easy/ 与 ref 2688ef8e（文档文字，本次未在线核对）；本地 SKILL.md 保留出处",
-    },
     "ncu-report-skill": {
         "class": "external-declared",
         "repo": "https://github.com/mit-han-lab/ncu-report-skill",
@@ -214,13 +200,6 @@ LOCAL_ORIGINS = {
         "ref": "",
         "evidence": "sources/local-provenance.md（codex-background 节）",
         "note": "MIT，版权人 Ahmed Mohammed (amElnagdy)；本次审计未确立上游 URL（unknown）；保留本地补丁，用户级保留名，安装器不覆盖",
-    },
-    "zotero-cli": {
-        "class": "external-declared",
-        "repo": "https://github.com/54yyyu/zotero-mcp",
-        "ref": "",
-        "evidence": "sources/local-provenance.md（zotero-cli 节）",
-        "note": "2026-11-12 编排器核验：安装包 zotero-mcp-server 0.15.0 声明 Homepage https://github.com/54yyyu/zotero-mcp；skill 由 `zotero-mcp install-skill` 生成（AGENTS.md 托管块）。本地 skill 与包内模板未逐字核对（baseline equality unknown）",
     },
 }
 
@@ -561,7 +540,7 @@ def render(skills, roots):
         L.append(read(LOG).rstrip("\n"))
         L.append("")
 
-    return "\n".join(L) + "\n"
+    return "\n".join(L).rstrip("\n") + "\n"
 
 
 def refresh_local_source(name):

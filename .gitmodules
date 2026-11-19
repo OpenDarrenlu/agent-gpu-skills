@@ -11,9 +11,6 @@
 	path = repos/amd-skills
 	url = https://github.com/amd/skills.git
 	branch = main
-[submodule "repos/ccfa-skills"]
-	path = repos/ccfa-skills
-	url = https://github.com/mikubaka88/CCFA-Skills.git
 [submodule "repos/tilelang-cuda-skills"]
 	path = repos/tilelang-cuda-skills
 	url = https://github.com/sablin39/tilelang-cuda-skills.git

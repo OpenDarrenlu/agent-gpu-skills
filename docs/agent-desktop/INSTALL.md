@@ -2,7 +2,7 @@
 
 `install-agent-desktop.sh` 把上游 [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) 的 `agent-desktop` skill 与匹配的 npm 运行时安装到用户级位置。
 
-这是一个独立脚本，**不属于统一安装流程**：`install.sh`、`bootstrap.sh`、`install-external.sh`、`install-rea-mcp.sh` 都不调用它，`sources/external-sources.conf` 也不登记它。只有显式运行 `install-agent-desktop.sh` 才会安装。
+这是一个独立脚本，**不属于统一安装流程**：`install.sh`、`bootstrap.sh`、`install-external.sh` 都不调用它，`sources/external-sources.conf` 也不登记它。只有显式运行 `install-agent-desktop.sh` 才会安装。
 
 ## 固定版本与来源
 

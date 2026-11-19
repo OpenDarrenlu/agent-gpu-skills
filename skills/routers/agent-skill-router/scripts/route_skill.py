@@ -90,12 +90,12 @@ def _ascii_term(term):
 
 
 def phrase_hit(phrase, text):
-    """ASCII 短语按词边界匹配；中文短语按子串匹配。text 已转小写。"""
+    """ASCII 短语按词边界匹配；下划线视为标识符分隔符，中文短语按子串匹配。text 已转小写。"""
     term = phrase.lower().strip()
     if not term:
         return False
     if _ascii_term(term):
-        pattern = r"(?<![a-z0-9_])" + re.escape(term) + r"(?![a-z0-9_])"
+        pattern = r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])"
         return re.search(pattern, text) is not None
     return term in text
 

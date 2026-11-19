@@ -1,6 +1,6 @@
 #!/bin/bash
 # Agent Skill 安装脚本
-# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills] [--no-integrations]
+# 用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-integrations]
 #
 # 默认安装到 Cursor。使用 --agent 选择目标工具。
 #
@@ -32,7 +32,6 @@ INSTALL_TILELANG=true
 INSTALL_NVIDIA=true
 INSTALL_AMD=true
 INSTALL_CURSOR_SKILLS=true
-INSTALL_CCFA_SKILLS=true
 INSTALL_INTEGRATIONS=true
 
 while [[ $# -gt 0 ]]; do
@@ -45,16 +44,15 @@ while [[ $# -gt 0 ]]; do
         --no-nvidia-skills) INSTALL_NVIDIA=false; shift ;;
         --no-amd-skills) INSTALL_AMD=false; shift ;;
         --no-cursor-skills) INSTALL_CURSOR_SKILLS=false; shift ;;
-        --no-ccfa-skills) INSTALL_CCFA_SKILLS=false; shift ;;
         --no-integrations) INSTALL_INTEGRATIONS=false; shift ;;
         -h|--help)
-            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-ccfa-skills] [--no-integrations]"
+            echo "用法: bash install.sh [--agent cursor|claude|codex|gemini|kimi] [--dest DIR] [--copy] [--no-veloq] [--no-tilelang-skills] [--no-nvidia-skills] [--no-amd-skills] [--no-cursor-skills] [--no-integrations]"
             echo ""
             echo "首次安装（一条命令，推荐）:"
             echo "  bash bootstrap.sh --agent codex  # 获取 submodule/外部来源、安装运行时 CLI，再安装 skills"
             echo ""
             echo "只安装 skill（不获取源码、不安装运行时）:"
-            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor/CCFA skills)"
+            echo "  bash update-repos.sh    # 获取源码 repo (含 veloq 二进制 + NVIDIA/AMD/Cursor skills)"
             echo "  bash install.sh         # 安装到 Cursor (默认，已验证)"
             echo ""
             echo "安装到其他工具 (未验证，如遇问题让对应 AI 协助排查):"
@@ -71,7 +69,6 @@ while [[ $# -gt 0 ]]; do
             echo "  --no-nvidia-skills 跳过 NVIDIA 官方 skills（200+ 个，可能较多）"
             echo "  --no-amd-skills   跳过 AMD 官方 skills（来自 amd/skills）"
             echo "  --no-cursor-skills 跳过 Saddss/cursor-skills 仓库中的 skills"
-            echo "  --no-ccfa-skills  跳过 mikubaka88/CCFA-Skills 论文研究 skills"
             echo "  --no-integrations 跳过 sources/external-sources.conf 中的外部来源（如 mattpocock-skills）"
             exit 0
             ;;
@@ -159,9 +156,7 @@ SKILL_NAMES=(
     tilelang-ascend
     giantpandallm-knowledge
     zhihu-knowledge-base
-    salary-negotiation-skill
     tech-doc-style-chinese
-    zotero-cli
     brain-and-hands
     ponytail
     ponytail-review
@@ -225,9 +220,7 @@ SKILL_DIRS=(
     skills/kernel/tilelang-repo-skills/tilelang-ascend
     skills/other/giantpandallm-knowledge
     skills/other/zhihu-knowledge-base
-    skills/other/salary-negotiation-skill
     skills/other/tech-doc-style-chinese
-    skills/other/zotero-cli
     skills/other/brain-and-hands
     repos/ponytail/skills/ponytail
     repos/ponytail/skills/ponytail-review
@@ -244,6 +237,29 @@ is_local_skill() {
     local name="$1"
     for n in "${SKILL_NAMES[@]}"; do
         [ "$n" = "$name" ] && return 0
+    done
+    return 1
+}
+
+# 与当前 LLM infra 工作无关的 skill 排除清单：不安装、不验证、不占用同名。
+EXCLUDED_SKILL_NAMES=()
+load_excluded_skill_names() {
+    local file="$SCRIPT_DIR/skills/routers/agent-skill-router/references/excluded-skills.txt"
+    local line name
+    [ -f "$file" ] || return 0
+    while IFS= read -r line || [ -n "$line" ]; do
+        line="${line%%#*}"
+        name="${line#"${line%%[![:space:]]*}"}"
+        name="${name%"${name##*[![:space:]]}"}"
+        [ -n "$name" ] && EXCLUDED_SKILL_NAMES+=("$name")
+    done < "$file"
+}
+load_excluded_skill_names
+
+is_excluded_name() {
+    local n
+    for n in "${EXCLUDED_SKILL_NAMES[@]}"; do
+        [ "$n" = "$1" ] && return 0
     done
     return 1
 }
@@ -357,6 +373,9 @@ place_catalog_skill() {
     if claimed_source "$name" >/dev/null; then
         return 1
     fi
+    if is_excluded_name "$name"; then
+        return 1
+    fi
     if is_protected_name "$name"; then
         echo "  跳过: ${name} 为受保护的用户级名称，catalog 不得占用（${catalog}）"
         return 1
@@ -371,7 +390,7 @@ place_catalog_skill() {
 
     if [ "$COPY_MODE" = true ]; then
         # 只复制可见的 skill 载荷。隐藏项（.git、.claude、.agents）属于仓库或 agent 配置，不进入用户 skill 目录；
-        # 根目录即 skill 的仓库（如 wx-cli）因此不会把 Git 元数据复制过去。
+        # 根目录即 skill 的仓库因此不会把 Git 元数据复制过去。
         mkdir -p "$target"
         for item in "$src"/*; do
             cp -R "$item" "$target/"
@@ -407,7 +426,7 @@ runtime_usable() {
 }
 
 # 外部来源的 skill 名：取 SKILL.md frontmatter 的 name，缺省时取目录的真实名称。
-# 用于 skills_dir 为 "." 的仓库根 SKILL.md（wx-cli），目录基名此时是 "."。build_inventory.py 使用同一规则。
+# 用于 skills_dir 为 "." 的仓库根 SKILL.md，目录基名此时是 "."。build_inventory.py 使用同一规则。
 frontmatter_skill_name() {
     local dir="$1" name
     name="$(sed -n 's/^name:[[:space:]]*//p' "$dir/SKILL.md" | head -1 | tr -d "\"' \r")"
@@ -417,7 +436,7 @@ frontmatter_skill_name() {
     esac
 }
 
-# sources/external-sources.conf 中 mode=skills 的来源（sepia、wx-cli、rea、mattpocock-skills）。
+# sources/external-sources.conf 中 mode=skills 的来源（mattpocock-skills）。
 # skills_dir 可用逗号列出多个目录；递归查找 SKILL.md；同名先到先得。
 # 缺失、pending 与运行时检查由 verify_conf_sources 报告。
 install_conf_catalogs() {
@@ -444,7 +463,7 @@ install_conf_catalogs() {
                 echo "  跳过: $root 不存在（运行 bash install-external.sh 获取）"
                 continue
             fi
-            # -H：源根若是 symlink（如 repos/rea/runtime-skills 指向 npm 全局包）也要进入；不跟随子目录中的 symlink。
+            # 源根若是 symlink（如 runtime-skills 指向 npm 全局包）也要进入；不跟随子目录中的 symlink。
             while IFS= read -r skill_md; do
                 skill_dir="$(dirname "$skill_md")"
                 skill_name="$(frontmatter_skill_name "$skill_dir")"
@@ -621,7 +640,7 @@ install_to_agent() {
                 local skill_name
                 skill_name="$(basename "$skill_dir")"
 
-                # 同名先到先得：本地 skill 最先登记；同一 catalog 内的重复目录（如 nvidia-skill-finder）只装第一个
+                # 同名先到先得：本地 skill 最先登记；同一 catalog 内的重复目录只装第一个
                 if place_catalog_skill "nvidia-skills" "$skill_dir" "$skill_name"; then
                     nvidia_installed=$((nvidia_installed + 1))
                 else
@@ -672,63 +691,6 @@ install_to_agent() {
             echo "--- Cursor skills ---"
             echo "  跳过: 未找到 repos/cursor-skills/skills"
             echo "  提示: 运行 'git submodule update --init repos/cursor-skills' 或 'bash update-repos.sh cursor-skills'"
-            echo ""
-        fi
-    fi
-
-    # CCFA Skills 自动遍历安装。上游完整安装语义是复制所有 ccf-* 目录：
-    # 其中 17 个目录是 runtime skill，ccf-latex-templates 是项目脚手架依赖。
-    if [ "$INSTALL_CCFA_SKILLS" = true ]; then
-        ensure_submodule_path "ccfa-skills" "repos/ccfa-skills" "repos/ccfa-skills/ccf-common/SKILL.md" || true
-
-        local ccfa_base="$SCRIPT_DIR/repos/ccfa-skills"
-        local ccfa_installed=0
-        local ccfa_support_installed=0
-        local ccfa_skipped=0
-
-        if [ -d "$ccfa_base" ]; then
-            for ccfa_dir in "$ccfa_base"/ccf-*; do
-                [ -d "$ccfa_dir" ] || continue
-
-                local entry_name
-                entry_name="$(basename "$ccfa_dir")"
-                local target="$SKILL_DIR/$entry_name"
-
-                if [ -f "$ccfa_dir/SKILL.md" ]; then
-                    if place_catalog_skill "ccfa-skills" "$ccfa_dir" "$entry_name"; then
-                        ccfa_installed=$((ccfa_installed + 1))
-                    else
-                        ccfa_skipped=$((ccfa_skipped + 1))
-                    fi
-                    continue
-                fi
-
-                # 支撑目录不参与 skill 发现，混合模式可直接链接整个目录。
-                can_replace_target "$entry_name" "$target" || continue
-                if [ -L "$target" ]; then
-                    rm "$target"
-                elif [ -d "$target" ]; then
-                    rm -rf "$target"
-                elif [ -e "$target" ]; then
-                    rm "$target"
-                fi
-                if [ "$COPY_MODE" = true ]; then
-                    cp -r "$ccfa_dir" "$target"
-                else
-                    ln -s "$ccfa_dir" "$target"
-                fi
-                ccfa_support_installed=$((ccfa_support_installed + 1))
-            done
-
-            echo "--- CCFA Skills ($ccfa_installed 个) ---"
-            echo "  已安装 $ccfa_installed 个 CCFA runtime skill"
-            echo "  已安装 $ccfa_support_installed 个 CCFA 支撑目录"
-            echo "  (跳过与本地 skill 同名的 $ccfa_skipped 个)"
-            echo ""
-        else
-            echo "--- CCFA Skills ---"
-            echo "  跳过: 未找到 repos/ccfa-skills"
-            echo "  提示: 运行 'git submodule update --init repos/ccfa-skills' 或 'bash update-repos.sh ccfa-skills'"
             echo ""
         fi
     fi
@@ -825,8 +787,11 @@ verify_conf_sources() {
                 fi
                 found_here=0
                 while IFS= read -r skill_md; do
-                    found_here=$((found_here + 1))
                     skill_name="$(frontmatter_skill_name "$(dirname "$skill_md")")"
+                    if is_excluded_name "$skill_name"; then
+                        continue
+                    fi
+                    found_here=$((found_here + 1))
                     if [ -e "$SKILL_DIR/$skill_name/SKILL.md" ]; then
                         ok=$((ok + 1))
                     else
@@ -1091,39 +1056,6 @@ verify_agent() {
         if [ $cursor_ok -gt 0 ] || [ $cursor_missing -gt 0 ]; then
             echo "  OK: Cursor skills $cursor_ok 个已安装, $cursor_missing 个缺失"
             PASS=$((PASS + 1))
-        fi
-    fi
-
-    # CCFA Skills 验证（包含无 SKILL.md 的 ccf-latex-templates 支撑目录）
-    if [ "$INSTALL_CCFA_SKILLS" = true ]; then
-        local ccfa_base="$SCRIPT_DIR/repos/ccfa-skills"
-        local ccfa_ok=0 ccfa_missing=0 ccfa_support_ok=0
-        if [ -d "$ccfa_base" ]; then
-            for ccfa_dir in "$ccfa_base"/ccf-*; do
-                [ -d "$ccfa_dir" ] || continue
-                local entry_name
-                entry_name="$(basename "$ccfa_dir")"
-                if [ -f "$ccfa_dir/SKILL.md" ]; then
-                    if [ -e "$SKILL_DIR/$entry_name/SKILL.md" ]; then
-                        ccfa_ok=$((ccfa_ok + 1))
-                    else
-                        ccfa_missing=$((ccfa_missing + 1))
-                    fi
-                elif [ -e "$SKILL_DIR/$entry_name" ]; then
-                    ccfa_support_ok=$((ccfa_support_ok + 1))
-                else
-                    ccfa_missing=$((ccfa_missing + 1))
-                fi
-            done
-        else
-            ccfa_missing=$((ccfa_missing + 1))
-        fi
-        if [ $ccfa_missing -eq 0 ] && [ $ccfa_ok -gt 0 ]; then
-            echo "  OK: CCFA Skills $ccfa_ok 个、支撑目录 $ccfa_support_ok 个已安装"
-            PASS=$((PASS + 1))
-        else
-            echo "  缺失: CCFA Skills $ccfa_missing 项（已安装 runtime skill $ccfa_ok 个）"
-            FAIL=$((FAIL + 1))
         fi
     fi
 

@@ -130,16 +130,10 @@ class StatusTests(unittest.TestCase):
 
 class ProvenanceTests(unittest.TestCase):
     def test_declared_locals_are_external_not_original(self):
-        for name in ("iket-profiling", "salary-negotiation-skill", "ncu-report-skill"):
+        for name in ("iket-profiling", "ncu-report-skill"):
             s = by_name(name)
             self.assertEqual(s["class"], "external-declared", name)
             self.assertTrue(s["url"].startswith("https://github.com/"), name)
-
-    def test_zotero_origin_from_installed_package_metadata(self):
-        s = by_name("zotero-cli")
-        self.assertEqual(s["class"], "external-declared")
-        self.assertEqual(s["url"], "https://github.com/54yyyu/zotero-mcp")
-        self.assertIn("baseline equality unknown", s["note"])
 
     def test_claude_delegate_origin_from_tracked_note_and_stays_protected(self):
         # 来源事实记录在 tracked 的 sources/local-provenance.md，而非 git-ignored 的 skills-lock.json
@@ -173,17 +167,10 @@ class ProvenanceTests(unittest.TestCase):
                 self.assertTrue(HEX40.match(origin["ref"]), name)
                 self.assertIn(origin["ref"], read(path), name)
 
-    def test_zotero_origin_is_recorded_in_tracked_note(self):
-        note = read(os.path.join(REPO, PROVENANCE))
-        self.assertIn("zotero-mcp-server", note)
-        self.assertIn("0.15.0", note)
-        self.assertIn("https://github.com/54yyyu/zotero-mcp", note)
-
     def test_declared_refs_are_only_from_documents(self):
         # 不编造 hash：没有文档记载 ref 的条目 ref 必须为空
         self.assertEqual(M.LOCAL_ORIGINS["iket-profiling"]["ref"], "")
         self.assertEqual(M.LOCAL_ORIGINS["ncu-report-skill"]["ref"], "")
-        self.assertEqual(M.LOCAL_ORIGINS["zotero-cli"]["ref"], "")
         self.assertEqual(M.LOCAL_ORIGINS["claude-delegate"]["ref"], "")
 
     def test_no_entry_claims_local_original(self):

@@ -16,10 +16,3 @@
 
 - 本次审计未确立上游 URL（unknown）。LICENSE 与 claude-delegate 相同版权人，但这不足以确立来源。
 - 本地修改：保留；用户级保留名，安装器不覆盖。
-
-## zotero-cli（external-declared）
-
-- 证据：已安装包元数据（仓库外）。包名 `zotero-mcp-server`，版本 `0.15.0`，`METADATA` 的 `Project-URL: Homepage` 为 `https://github.com/54yyyu/zotero-mcp`。
-- 核验方式：编排器读取该元数据并记录；本次未读取包内文件。
-- 本地 skill 与包内模板的一致性：未核对（baseline equality unknown）。
-- skill 由 `zotero-mcp install-skill` 生成（AGENTS.md 托管块）。

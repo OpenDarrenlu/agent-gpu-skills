@@ -32,7 +32,7 @@ SKILL_FILES = [
     "references/commands-system.md",
     "references/workflows.md",
 ]
-UNIFIED_FILES = ["install.sh", "bootstrap.sh", "install-external.sh", "install-rea-mcp.sh",
+UNIFIED_FILES = ["install.sh", "bootstrap.sh", "install-external.sh",
                  "install-veloq.sh", "update-repos.sh", os.path.join("sources", "external-sources.conf"),
                  os.path.join("scripts", "build_sources.py")]
 GIT_ID = ["-c", "user.name=agent-gpu-skills-test", "-c", "user.email=test@example.invalid"]

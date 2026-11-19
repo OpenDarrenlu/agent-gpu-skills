@@ -251,7 +251,7 @@ class InstallationTests(unittest.TestCase):
                 target = Path(directory) / host
                 result = subprocess.run(["bash", str(root / "install.sh"), "--agent", host, "--dest", str(target),
                     "--no-veloq", "--no-tilelang-skills", "--no-nvidia-skills", "--no-amd-skills",
-                    "--no-cursor-skills", "--no-ccfa-skills", "--no-integrations"], capture_output=True, text=True, timeout=15)
+                    "--no-cursor-skills", "--no-integrations"], capture_output=True, text=True, timeout=15)
                 self.assertEqual(result.returncode, 0, result.stderr + result.stdout[-3000:])
                 installed = target / "brain-and-hands"
                 self.assertEqual((installed / ".brain-and-hands-source").read_text().strip(), str(source))

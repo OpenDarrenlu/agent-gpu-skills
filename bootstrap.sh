@@ -15,7 +15,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AGENT="cursor"
 RUN_UPDATE=true
 INTEGRATIONS=true
-REA_MCP=true
 DEST_DIR=""
 INSTALL_ARGS=()
 
@@ -38,10 +37,6 @@ while [[ $# -gt 0 ]]; do
             INTEGRATIONS=false
             shift
             ;;
-        --no-rea-mcp)
-            REA_MCP=false
-            shift
-            ;;
         -h|--help)
             echo "用法: bash bootstrap.sh [--agent cursor|claude|codex|gemini|kimi] [选项] [install.sh 其他选项]"
             echo ""
@@ -54,11 +49,10 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "选项:"
             echo "  --no-update       跳过 update-repos.sh（不拉取已有仓库的新版本）。仍会补齐缺失的 submodule 与外部来源"
-            echo "  --no-integrations 跳过 sources/external-sources.conf 中的外部来源：不获取源码、不安装运行时 CLI、不安装其 skill、不注册 REA MCP"
-            echo "  --no-rea-mcp      跳过 REA MCP 注册（只对 codex 生效；使用 REA 自身的 rea setup --client codex --skill=false --yes）"
+            echo "  --no-integrations 跳过 sources/external-sources.conf 中的外部来源：不获取源码、不安装运行时 CLI、不安装其 skill"
             echo "  --dest DIR        隔离安装：只写 DIR 下的 skill 目录。不初始化 submodule、不运行 update-repos.sh、"
             echo "                    不获取外部来源、不安装运行时 CLI（这些会联网或写入真实 HOME）"
-            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills、--no-ccfa-skills"
+            echo "  其他参数会原样传给 install.sh，例如 --copy、--no-veloq、--no-nvidia-skills、--no-amd-skills、--no-cursor-skills"
             echo ""
             echo "退出码: 任一步骤（仓库更新、外部来源与运行时、install.sh 的缺失检查）失败时为非零。"
             exit 0
@@ -126,12 +120,12 @@ elif [ "$FETCH" = true ]; then
     echo ""
 fi
 
-# npm 运行时的稳定入口是 $HOME/.local/bin 中的 managed launcher。只在本进程内前置，让后续的安装验证与
-# REA MCP 注册优先使用它；不修改用户的全局 PATH 或 shell 配置。--dest 与 --no-integrations 不会走到这里。
+# npm 运行时的稳定入口是 $HOME/.local/bin 中的 managed launcher。只在本进程内前置，让后续的安装验证
+# 优先使用它；不修改用户的全局 PATH 或 shell 配置。--dest 与 --no-integrations 不会走到这里。
 if [ "$FETCH" = true ]; then
     case ":$PATH:" in
         *":$HOME/.local/bin:"*) ;;
-        *) echo "提示: $HOME/.local/bin 不在 PATH 中。npm 运行时（wx、rea）的稳定入口位于该目录，请自行把它加入 shell 配置（安装器不修改）。" ;;
+        *) echo "提示: $HOME/.local/bin 不在 PATH 中。npm 运行时的稳定入口位于该目录，请自行把它加入 shell 配置（安装器不修改）。" ;;
     esac
     export PATH="$HOME/.local/bin:$PATH"
 fi
@@ -141,15 +135,6 @@ echo "安装 skills"
 echo "================================"
 bash "$SCRIPT_DIR/install.sh" --agent "$AGENT" "${INSTALL_ARGS[@]}" || STATUS=$?
 echo ""
-
-# REA MCP：只在非 --dest、未 --no-integrations、未 --no-rea-mcp 时执行；只注册 codex。
-if [ "$FETCH" = true ] && [ "$REA_MCP" = true ]; then
-    echo "================================"
-    echo "REA MCP（仅 codex；由清单中的 rea-agents 运行时决定是否执行）"
-    echo "================================"
-    bash "$SCRIPT_DIR/install-rea-mcp.sh" --agent "$AGENT" || STATUS=$?
-    echo ""
-fi
 
 # 路由清单：在所有来源、CLI 与 skill 准备完成之后重新生成，使新来源在同一次运行中即可被路由器找到。
 # --dest 隔离安装不修改受 git 跟踪的 inventory.tsv，只提示。

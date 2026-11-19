@@ -4,9 +4,9 @@
   python3 -m unittest discover -s tests -p 'test_skills_router.py' -v
 
 测试分四类:
-  1. route_skill 行为：显式点名（覆盖清单全部 skill）、制品 vs 关键词、实现 vs 性能、论文阅读 vs 通用写作、
-     审稿 vs 代码审查、微信授权门槛、REA 与 sepia、catalog 回退的置信度。
-  2. 清单与真实 checkout 的一致性：四个请求来源的 pin 与 skill 来源；规则引用的 skill 必须可安装或声明 requires。
+  1. route_skill 行为：显式点名（覆盖清单全部 skill）、制品 vs 关键词、实现 vs 性能、
+     中文技术写作 vs 通用代码审查、catalog 回退的置信度，以及已删除领域的不误路由。
+  2. 清单与真实 checkout 的一致性：请求来源的 pin 与 skill 来源；规则引用的 skill 必须可安装或声明 requires。
   3. availability 标签：source / skill_copy / runtime 三者分别判断，不混用。
   4. build_inventory 使用临时 fixture 树：同名先到先得、保留名、根目录 SKILL.md 取 frontmatter 名、
      逗号分隔目录、runtime-skills 缺失、--check 过期检测。
@@ -58,7 +58,13 @@ OUTPUT_LABELS = {"not-checked", "not-found", "on-path", "user-level", "runtime-c
                  "agent-gpu-skills"}
 NOT_SKILL_TOKENS = OUTPUT_LABELS
 
-REQUESTED_SOURCES = {"sepia", "wx-cli", "rea", "mattpocock-skills"}
+REQUESTED_SOURCES = {"mattpocock-skills"}
+EXCLUDED_SKILLS = {
+    "ccf-literature-searcher", "ccf-paper-reviewer", "ccf-rebuttal-writer", "pdf", "docx", "pptx",
+    "zotero-cli", "sepia", "wx-cli", "reverse-engineer-anything", "deepstream-dev",
+    "deepstream-generate-pipeline", "doca-dma", "bionemo-evo2-nim",
+    "earth2studio-deterministic-forecast", "cuopt-numerical-optimization-api",
+}
 
 
 def _load_inventory_rows():
@@ -141,64 +147,31 @@ class RouteBehaviorTest(unittest.TestCase):
         self.assertIn(result["primary"]["skill"], {"ponytail-review", "review", "code-review",
                                                     "high-performance-code-review"})
 
-    def test_paper_review_not_software_review(self):
-        self.assertPrimary(self.route("帮我 review 论文初稿"), "ccf-paper-reviewer")
-
-    def test_rebuttal_is_paper_workflow(self):
-        self.assertPrimary(self.route("帮我写 rebuttal 回复审稿人的意见"), "ccf-rebuttal-writer")
+    def test_removed_domain_queries_no_longer_route(self):
+        queries = [
+            "帮我 review 论文初稿",
+            "帮我写 rebuttal 回复审稿人的意见",
+            "读这篇论文并总结方法",
+            "Zotero 文库里找 attention 相关的文献",
+            "帮我把这段文章去掉 AI 味，像人写的",
+            "帮我逆向分析这个 Electron 应用的 asar 包",
+            "帮我导出微信群里昨天的聊天记录，我已经授权",
+            "用 deepstream 搭一个视频分析 pipeline",
+            "在 BlueField DPU 上配置 DOCA DMA",
+            "用 Evo 2 NIM 生成一段 DNA 序列",
+            "用 earth2studio 跑一个天气预报 forecast",
+            "用 cuOpt 求解一个 MILP 混合整数规划",
+        ]
+        for query in queries:
+            self.assertIsNone(self.route(query)["primary"], query)
 
     def test_chinese_technical_report_is_writing_skill_not_paper_writer(self):
         self.assertPrimary(self.route("帮我润色这段中文技术报告，是 kernel 原理报告"), "tech-doc-style-chinese")
-
-    def test_paper_reading_with_pdf_artifact_uses_pdf_skill(self):
-        self.assertPrimary(self.route("读这篇论文并总结方法", ["papers/attention.pdf"]), "pdf")
-
-    def test_zotero_library_request_routes_to_zotero(self):
-        result = self.route("Zotero 文库里找 attention 相关的文献")
-        self.assertPrimary(result, "zotero-cli")
-        self.assertEqual(result["primary"]["availability"]["runtime_bin"], "zotero-cli")
-
-    def test_de_ai_writing_routes_to_sepia(self):
-        result = self.route("帮我把这段文章去掉 AI 味，像人写的")
-        self.assertPrimary(result, "sepia")
-        self.assertIn("../sepia/SKILL.md", result["primary"]["requires"])
 
     def inventory_without(self, name):
         inventory = dict(self.inventory)
         inventory.pop(name, None)
         return inventory
-
-    def test_reverse_engineering_routes_to_rea_skill_with_runtime_requirement(self):
-        # 清单中没有 REA skill（runtime-skills 尚未链接）时：标记为 absent，并给出 requires。
-        result = route_skill.route("帮我逆向分析这个 Electron 应用的 asar 包", rules=self.rules,
-                                   inventory=self.inventory_without("reverse-engineer-anything"))
-        self.assertPrimary(result, "reverse-engineer-anything", status="absent")
-        self.assertIn("rea-agents@6.8.0", result["primary"]["requires"])
-        self.assertEqual(result["primary"]["availability"]["runtime_bin"], "rea")
-
-    def test_reverse_engineering_is_installable_once_runtime_skills_exist(self):
-        inventory = dict(self.inventory)
-        inventory["reverse-engineer-anything"] = {"status": "installed", "catalog": "rea",
-                                                  "source": "repos/rea/runtime-skills/reverse-engineer-anything",
-                                                  "description": "Reverse engineer."}
-        result = route_skill.route("帮我逆向分析这个 Electron 应用的 asar 包", rules=self.rules,
-                                   inventory=inventory)
-        self.assertPrimary(result, "reverse-engineer-anything", status="installable")
-
-    def test_wechat_request_routes_with_direct_authorization_gate(self):
-        result = self.route("帮我导出微信群里昨天的聊天记录，我已经授权")
-        self.assertPrimary(result, "wx-cli")
-        gate = result["primary"]["gate"]
-        self.assertIn("无需再次确认", gate)
-        self.assertIn("不运行 sudo wx init", gate)
-        self.assertEqual(result["primary"]["availability"]["runtime_bin"], "wx")
-
-    def test_explicit_uninstalled_skill_is_not_substituted(self):
-        result = route_skill.route("用 reverse-engineer-anything skill 帮我整理一下这个包", rules=self.rules,
-                                   inventory=self.inventory_without("reverse-engineer-anything"))
-        self.assertPrimary(result, "reverse-engineer-anything", status="absent")
-        self.assertEqual(result["companions"], [])
-        self.assertIn("不会替换", " ".join(result["notes"]))
 
     def test_user_level_delegate_skill_is_never_installable(self):
         result = self.route("用 codex-background skill 跑这个任务")
@@ -233,19 +206,19 @@ class RouteBehaviorTest(unittest.TestCase):
     def test_availability_separates_source_copy_and_runtime(self):
         root = tempfile.mkdtemp(prefix="skill-copy-")
         self.addCleanup(shutil.rmtree, root, True)
-        os.makedirs(os.path.join(root, "zotero-cli"))
-        with open(os.path.join(root, "zotero-cli", "SKILL.md"), "w", encoding="utf-8") as f:
-            f.write("---\nname: zotero-cli\n---\n")
-        result = self.route("Zotero 文库里找文献", skill_roots=[root])
+        os.makedirs(os.path.join(root, "ncu-report-skill"))
+        with open(os.path.join(root, "ncu-report-skill", "SKILL.md"), "w", encoding="utf-8") as f:
+            f.write("---\nname: ncu-report-skill\n---\n")
+        result = self.route("分析这个 ncu 报告为什么 kernel 慢", skill_roots=[root])
         avail = result["primary"]["availability"]
         self.assertEqual(avail["source"], "installable")
         self.assertEqual(avail["skill_copy"], "found")
-        self.assertIn(avail["runtime"], {"on-path", "missing"})
+        self.assertEqual(avail["runtime"], "n/a")
 
     def test_missing_copy_is_reported_not_guessed(self):
         root = tempfile.mkdtemp(prefix="empty-skills-")
         self.addCleanup(shutil.rmtree, root, True)
-        result = self.route("Zotero 文库里找文献", skill_roots=[root])
+        result = self.route("分析这个 ncu 报告为什么 kernel 慢", skill_roots=[root])
         self.assertEqual(result["primary"]["availability"]["skill_copy"], "not-found")
 
 
@@ -284,42 +257,10 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
 
     # --- 原始误路由（Codex 复核中的失败）---
 
-    def test_cuda_literature_search_is_literature_not_scheduling(self):
-        self.check("帮我做相关工作的文献检索，找 CUDA 调度的论文", "ccf-literature-searcher",
-                   forbidden_primary=TILELANG_SKILLS | {"persistent-kernel-scheduling"},
-                   no_companions=True, no_question=True)
-
-    def test_natural_literature_retrieval_holdout_with_generic_retrieval_negative_control(self):
-        # 正例：自然语言的论文检索，主题词是 GPU 调度，不应带入伴随 skill。
-        self.check("帮我检索关于GPU调度的相关论文", "ccf-literature-searcher",
-                   forbidden_primary=TILELANG_SKILLS | {"persistent-kernel-scheduling"},
-                   no_companions=True, no_question=True)
-        # 负例：没有论文或文献词的通用检索请求，不得路由到文献检索。
-        self.check("帮我检索一下订单系统的数据库索引", None,
-                   forbidden_primary={"ccf-literature-searcher"})
-
-    def test_repository_audit_is_ponytail_audit_not_paper_review(self):
-        self.check("审计一下这个仓库的风险代码和慢路径", "ponytail-audit",
-                   forbidden_primary={"ccf-paper-reviewer"}, no_question=True)
-
-    def test_deepstream_video_pipeline_is_deepstream_not_tilelang(self):
-        self.check("用 deepstream 搭一个视频分析 pipeline", "deepstream-generate-pipeline",
-                   forbidden_primary=TILELANG_SKILLS, forbidden_companions=TILELANG_SKILLS)
-
-    def test_doca_dma_names_the_specialist_skill(self):
-        self.check("在 BlueField DPU 上配置 DOCA DMA", "doca-dma", no_companions=True)
-
-    def test_evo2_request_names_the_bionemo_specialist(self):
-        self.check("用 Evo 2 NIM 生成一段 DNA 序列", "bionemo-evo2-nim")
-
-    def test_earth2_forecast_names_the_earth2_specialist(self):
-        self.check("用 earth2studio 跑一个天气预报 forecast", "earth2studio-deterministic-forecast",
-                   forbidden_companions={"earth2studio-create-prognostic"})
-
-    def test_cuopt_milp_names_the_cuopt_specialist(self):
-        self.check("用 cuOpt 求解一个 MILP 混合整数规划", "cuopt-numerical-optimization-api")
-
     # --- 相邻领域：不应被通用动作词或共享领域词捕获 ---
+
+    def test_repository_audit_routes_to_ponytail_audit(self):
+        self.check("审计一下这个仓库的风险代码和慢路径", "ponytail-audit", no_question=True)
 
     def test_triton_numerical_debugging_stays_on_triton(self):
         self.check("帮我调试这个 Triton kernel 的数值误差", "triton-skill",
@@ -327,7 +268,7 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
 
     def test_generic_service_pipeline_design_doc_has_no_gpu_or_writing_capture(self):
         self.check("帮我设计一个订单服务的数据 pipeline，写设计文档，并做 layout 和 baseline 对比", None,
-                   forbidden_primary=TILELANG_SKILLS | {"tech-doc-style-chinese", "tao-run-automl-deft-pipeline"},
+                   forbidden_primary=TILELANG_SKILLS | {"tech-doc-style-chinese"},
                    forbidden_companions=TILELANG_SKILLS)
 
     def test_generic_cpu_thread_scheduling_is_not_gpu_scheduling(self):
@@ -351,9 +292,6 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
         self.check("用 $writing-tilelang-kernels 帮我看看这个 sample", "writing-tilelang-kernels",
                    no_companions=True)
 
-    def test_explicit_deepstream_dev_overrides_generate_pipeline(self):
-        self.check("用 $deepstream-dev 帮我写一个 pyservicemaker 程序", "deepstream-dev")
-
     def test_actual_ncu_artifact_wins_even_with_generic_words(self):
         self.check("这个 kernel 为什么慢，帮我分析一下 pipeline 和 layout 的问题", "ncu-report-skill",
                    artifacts=["prof/run.ncu-rep"], forbidden_primary=TILELANG_SKILLS,
@@ -361,17 +299,11 @@ class RoutingRegressionMatrixTest(unittest.TestCase):
 
     # --- 其他已验证的边界（不应回退） ---
 
-    def test_chinese_paper_review_is_not_software_review(self):
-        self.check("帮我 review 论文初稿", "ccf-paper-reviewer", forbidden_primary={"ponytail-review"})
-
     def test_positive_control_persistent_kernel_scheduling_still_routes(self):
         self.check("persistent kernel 的 stream-k 调度怎么选", "persistent-kernel-scheduling")
 
     def test_positive_control_tilelang_layout_with_tilelang_term_still_routes(self):
         self.check("tilelang 的 layout 怎么优化", "optimizing-tilelang-programs")
-
-    def test_zotero_request_routes_to_zotero_cli(self):
-        self.check("我的 Zotero 文库里找 attention 的文献", "zotero-cli", no_companions=True)
 
     def test_explicit_unknown_skill_is_not_substituted(self):
         # 点名的名称不在清单中：不得把它替换为其他 skill。
@@ -487,8 +419,8 @@ class RuleAndInventoryIntegrityTest(unittest.TestCase):
     def test_rule_kinds_and_runtime_bins_are_consistent(self):
         for rule in route_skill.load_rules():
             self.assertIn(rule.get("kind", "instruction"), {"instruction", "runtime-cli", "user-level"}, rule["skill"])
-            if rule.get("kind") == "runtime-cli" and rule["skill"] in ("wx-cli", "rea", "zotero-cli"):
-                self.assertTrue(rule.get("runtime_bin"), rule["skill"])
+            if rule.get("kind") == "runtime-cli":
+                self.assertTrue(rule.get("runtime_bin") or rule.get("requires"), rule["skill"])
 
     def test_router_skill_names_resolve_or_are_optional(self):
         installed = _installed_names()
@@ -517,33 +449,29 @@ class RuleAndInventoryIntegrityTest(unittest.TestCase):
         self.assertNotIn("claude-delegate", installed)
         self.assertNotIn("codex-background", installed)
 
-    def test_four_requested_sources_are_inventoried(self):
+    def test_requested_sources_are_inventoried(self):
         catalogs = {r["catalog"]: r["status"] for r in _load_inventory_rows() if r["kind"] == "catalog"}
         for source in REQUESTED_SOURCES:
             self.assertIn(source, catalogs)
-        self.assertEqual(catalogs["sepia"], "present")
-        self.assertEqual(catalogs["wx-cli"], "present")
         self.assertEqual(catalogs["mattpocock-skills"], "present")
-        # rea 的 skill 来自 npm 包链接出的 runtime-skills，只有运行安装器后才存在。
-        rea_present = os.path.isdir(os.path.join(REPO, "repos", "rea", "runtime-skills"))
-        self.assertEqual(catalogs["rea"], "present" if rea_present else "absent")
 
-    def test_sepia_siblings_and_wechat_root_skill_are_named_from_frontmatter(self):
-        names = _installed_names()
-        for name in ("sepia", "sepia-write", "sepia-review", "sepia-refactor", "sepia-recreate", "sepia-hemingway",
-                     "wx-cli"):
-            self.assertEqual(names.get(name), "sepia" if name.startswith("sepia") else "wx-cli", name)
+    def test_excluded_skills_are_absent_from_rules_and_inventory(self):
+        rule_skills = {r["skill"] for r in route_skill.load_rules()}
+        inventory_names = {r["name"] for r in _load_inventory_rows() if r["kind"] == "skill"}
+        for name in EXCLUDED_SKILLS:
+            self.assertNotIn(name, rule_skills, name)
+            self.assertNotIn(name, inventory_names, name)
 
     def test_mattpocock_names_that_overlap_cursor_are_shadowed_not_overwritten(self):
         rows = {(r["catalog"], r["name"]): r for r in _load_inventory_rows() if r["kind"] == "skill"}
-        for name in ("tdd", "handoff", "prototype", "grill-with-docs"):
+        for name in ("tdd", "handoff", "grill-with-docs"):
             self.assertEqual(rows[("mattpocock-skills", name)]["status"], "shadowed", name)
             self.assertEqual(rows[("mattpocock-skills", name)]["shadowed_by"], "cursor-skills", name)
             self.assertEqual(rows[("cursor-skills", name)]["status"], "installed", name)
 
     def test_broad_catalog_coverage_is_present(self):
         catalogs = {r["catalog"]: r["status"] for r in _load_inventory_rows() if r["kind"] == "catalog"}
-        for catalog in ("local", "nvidia-skills", "cursor-skills", "amd-skills", "ccfa-skills",
+        for catalog in ("local", "nvidia-skills", "cursor-skills", "amd-skills", "mattpocock-skills",
                         "kernel-design-agents"):
             self.assertEqual(catalogs.get(catalog), "present", catalog)
 

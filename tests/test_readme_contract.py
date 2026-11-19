@@ -28,7 +28,7 @@ import route_skill  # noqa: E402
 
 OPTION_SOURCES = [
     "bootstrap.sh", "install.sh", "update-repos.sh", "install-veloq.sh", "install-external.sh",
-    "install-rea-mcp.sh", os.path.join("scripts", "node-preflight.sh"),
+    os.path.join("scripts", "node-preflight.sh"),
     os.path.join("skills", "routers", "agent-skill-router", "scripts", "route_skill.py"),
     os.path.join("skills", "routers", "agent-skill-router", "scripts", "build_inventory.py"),
 ]
@@ -65,23 +65,11 @@ def inventory_names():
 
 # README 中非 GPU 的 @README 示例 → 期望的主 skill。键是示例文本中一段稳定的子串，必须在 README 中出现。
 NON_GPU_EXAMPLES = {
-    "帮我检索关于GPU调度的相关论文": "ccf-literature-searcher",
-    "我的 Zotero 文库里找 attention 相关的文献": "zotero-cli",
-    "帮我 review 这篇投稿的论文草稿": "ccf-paper-reviewer",
     "润色这篇中文技术原理报告": "tech-doc-style-chinese",
     "用 TDD 给这个函数补测试": "tdd",
     "review 这个 PR 的代码改动": "ponytail-review",
     "审计一下这个仓库的风险代码和慢路径": "ponytail-audit",
-    "把这段文字去掉 AI 味": "sepia",
-    "帮我逆向分析这个 Electron 应用的 asar 包": "reverse-engineer-anything",
-    "帮我总结一下我微信群昨天的聊天记录": "wx-cli",
-    "用 deepstream 搭一个视频分析 pipeline": "deepstream-generate-pipeline",
-    "在 BlueField DPU 上配置 DOCA DMA": "doca-dma",
-    "用 Evo 2 NIM 生成一段 DNA 序列": "bionemo-evo2-nim",
-    "用 earth2studio 跑一个天气预报 forecast": "earth2studio-deterministic-forecast",
-    "用 cuOpt 求解一个 MILP 混合整数规划": "cuopt-numerical-optimization-api",
     "用 $tdd skill 给这个函数补测试": "tdd",
-    "用 $deepstream-dev 帮我写一个 pyservicemaker 程序": "deepstream-dev",
 }
 
 

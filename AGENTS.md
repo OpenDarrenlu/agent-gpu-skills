@@ -1,9 +1,9 @@
 # Agent Guidance
 
 This repository is an Agent Skill bundle. Local skills are organized under
-`skills/kernel`, `skills/framework`, `skills/other`, `skills/routers`, and
-`skills/research`; external catalogs remain under `repos/` and are installed
-without being copied into this repository.
+`skills/kernel`, `skills/framework`, `skills/other`, and `skills/routers`;
+external catalogs remain under `repos/` and are installed without being copied
+into this repository.
 
 ## Routing
 
@@ -24,13 +24,11 @@ narrowest route:
 - `llm-serving-router`: LLM serving, KV cache, attention backends, batching,
   capacity planning, TTFT/TBT, deployment, and serving benchmarks.
 
-For mixed or non-GPU work, use `agent-skill-router`. It covers papers and
-literature (Zotero, paper review, rebuttal, submission checks), Chinese technical
+For mixed or non-GPU work, use `agent-skill-router`. It covers Chinese technical
 writing, general code review and software design (TDD, architecture, diagnosis,
-issues, plans), WeChat data (only with explicit authorization), and the
-sources in `sources/external-sources.conf`. Run its `scripts/route_skill.py` for
-the primary skill and at most two companions, then read only the chosen
-`SKILL.md` files.
+issues, plans), and the sources in `sources/external-sources.conf`. Run its
+`scripts/route_skill.py` for the primary skill and at most two companions, then
+read only the chosen `SKILL.md` files.
 
 If a router points to a downstream skill, read that skill's `SKILL.md` before
 producing detailed advice or code.
@@ -99,11 +97,6 @@ producing detailed advice or code.
 - NCCL/NVSHMEM/RDMA/collectives: `gpu-communication-libraries` or `nccl-skill`
 - Local technical article retrieval: `zhihu-knowledge-base` or
   `giantpandallm-knowledge`
-- Research-paper workflow: the matching `ccf-*` skill in `repos/ccfa-skills` by
-  default; Supervisor-Skills (`repos/supervisor-skills`) for its named skills
-  (`idea-evaluator`, `deep-research`, `intro-drafter`, `pre-submission-reviewer`,
-  and others). The group is compared in `skills/research/README.md`.
-- Salary/offer negotiation: `salary-negotiation-skill`
 - Chinese technical writing (kernel/inference/training 原理报告, design docs,
   performance reports, source walkthroughs, screenshot-to-article, API docs,
   runbooks): `tech-doc-style-chinese` (local GPU-customized override of
@@ -132,15 +125,3 @@ any pinned source, read the matching entry there; after updating, regenerate
   source maps.
 - For Chinese reports and articles, combine the domain skill (facts, evidence)
   with `tech-doc-style-chinese` (structure, evidence levels, typography).
-
-<!-- BEGIN zotero-cli skill (managed by `zotero-mcp install-skill`) -->
-
-## Zotero library access
-
-Read and write a Zotero library from the shell with the `zotero-cli` command - search papers by keyword or meaning, read PDF full text and page ranges, get and set metadata, manage collections, tags, notes and annotations, add items by DOI/URL/ISBN, and export bibliographies. Use whenever the user asks about their Zotero library, references, citations, papers they have saved, or their reading notes.
-
-Read `skills/other/zotero-cli/SKILL.md` before using it. Prefer it over the Zotero MCP server when you have shell access: the MCP tool schemas cost ~13k tokens of context on every request, this costs only what you run.
-
-Quick check that it is set up: `zotero-cli config`. Pass `--json` whenever you will parse the output.
-
-<!-- END zotero-cli skill -->

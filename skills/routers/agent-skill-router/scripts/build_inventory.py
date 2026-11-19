@@ -2,7 +2,7 @@
 """生成 agent-skill-router 的安装清单 references/inventory.tsv。
 
 清单按 install.sh 的安装顺序模拟同名占用（先到先得）：
-本地 SKILL_NAMES -> KernelWiki -> NVIDIA -> Cursor -> CCFA -> AMD -> sources/external-sources.conf 中 mode=skills 的来源。
+本地 SKILL_NAMES -> KernelWiki -> NVIDIA -> Cursor -> AMD -> sources/external-sources.conf 中 mode=skills 的来源。
 保留名（claude-delegate、codex-background）永远不计为可安装 skill。
 
 只读取各 SKILL.md 的 frontmatter（name/description），不索引 skill 正文或 references。
@@ -25,6 +25,7 @@ import re
 import sys
 
 PROTECTED_NAMES = ("claude-delegate", "codex-background")
+EXCLUDED_REL = "skills/routers/agent-skill-router/references/excluded-skills.txt"
 DESC_LIMIT = 140
 HEADER = (
     "# 由 skills/routers/agent-skill-router/scripts/build_inventory.py 生成；请勿手工编辑。\n"
@@ -125,32 +126,51 @@ def read_conf_rows(root):
     return rows
 
 
+def load_excluded_names(root):
+    """精确 skill 名排除清单：不安装、不进 inventory、不参与同名占用。"""
+    path = os.path.join(root, EXCLUDED_REL)
+    names = set()
+    if not os.path.isfile(path):
+        return names
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.split("#", 1)[0].strip()
+            if line:
+                names.add(line)
+    return names
+
+
+def candidate_name(skill_dir, install_name):
+    return install_name or os.path.basename(os.path.abspath(skill_dir))
+
+
 def build_catalogs(root):
     """返回 [(catalog_id, catalog_root_rel, [(skill_dir_abs, install_name_or_None)] , present)]，顺序即安装优先级。"""
     catalogs = []
+    excluded = load_excluded_names(root)
+
+    def keep(candidates):
+        return [(d, n) for d, n in candidates if candidate_name(d, n) not in excluded]
 
     local = []
     for name, rel in read_install_arrays(root):
         local.append((os.path.join(root, rel), name))
-    catalogs.append(("local", "install.sh:SKILL_DIRS", local))
+    catalogs.append(("local", "install.sh:SKILL_DIRS", keep(local)))
 
     kernelwiki = os.path.join(root, "kernel-design-agents", "skills", "KernelWiki")
     catalogs.append(("kernel-design-agents", "kernel-design-agents/skills/KernelWiki",
-                     [(kernelwiki, "KernelWiki")] if os.path.isfile(os.path.join(kernelwiki, "SKILL.md")) else []))
+                     keep([(kernelwiki, "KernelWiki")]) if os.path.isfile(os.path.join(kernelwiki, "SKILL.md")) else []))
 
     nvidia = []
     for base in ("repos/nvidia-skills/skills", "repos/nvidia-skills/plugins/nvidia-skills/skills"):
         nvidia += [(d, None) for d in skill_dirs_under(os.path.join(root, base))]
-    catalogs.append(("nvidia-skills", "repos/nvidia-skills", nvidia))
+    catalogs.append(("nvidia-skills", "repos/nvidia-skills", keep(nvidia)))
 
     cursor = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/cursor-skills/skills"))]
-    catalogs.append(("cursor-skills", "repos/cursor-skills/skills", cursor))
-
-    ccfa = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/ccfa-skills"), "ccf-*")]
-    catalogs.append(("ccfa-skills", "repos/ccfa-skills", ccfa))
+    catalogs.append(("cursor-skills", "repos/cursor-skills/skills", keep(cursor)))
 
     amd = [(d, None) for d in skill_dirs_under(os.path.join(root, "repos/amd-skills/skills"))]
-    catalogs.append(("amd-skills", "repos/amd-skills/skills", amd))
+    catalogs.append(("amd-skills", "repos/amd-skills/skills", keep(amd)))
 
     # pending 来源没有可安装的 skill（尚未检视），仍列为 absent，便于路由器说明缺口。
     # skills_dir 可用逗号列出多个目录；skill 名取 frontmatter name（与 install.sh 的 frontmatter_skill_name 一致）。
@@ -167,7 +187,7 @@ def build_catalogs(root):
             rels.append(rel)
             for d in recursive_skill_dirs(os.path.join(root, rel)):
                 dirs.append((d, frontmatter_name(d)))
-        catalogs.append((name, ", ".join(rels), dirs))
+        catalogs.append((name, ", ".join(rels), keep(dirs)))
     return catalogs
 
 
@@ -198,6 +218,7 @@ def describe(skill_dir, install_name):
 def build_rows(root):
     rows = []
     claimed = {}
+    excluded = load_excluded_names(root)
     for catalog_id, catalog_rel, candidates in build_catalogs(root):
         present = bool(candidates)
         rows.append(("catalog", catalog_id, "-", "present" if present else "absent", "-", catalog_rel, "-"))
@@ -205,9 +226,12 @@ def build_rows(root):
             if not os.path.isfile(os.path.join(skill_dir, "SKILL.md")):
                 # 本地 SKILL_DIRS 指向的目录缺文件：不占用名称。
                 name = install_name or os.path.basename(skill_dir)
-                rows.append(("skill", catalog_id, name, "missing-source", "-", _rel(root, skill_dir), "-"))
+                if name not in excluded:
+                    rows.append(("skill", catalog_id, name, "missing-source", "-", _rel(root, skill_dir), "-"))
                 continue
             name, description = describe(skill_dir, install_name)
+            if name in excluded:
+                continue
             source = _rel(root, skill_dir)
             if name in PROTECTED_NAMES:
                 rows.append(("skill", catalog_id, name, "protected", "-", source, description))
@@ -250,7 +274,7 @@ def read_cached_rows(root):
 def refresh_local_skill(root, name):
     """Refresh one explicitly declared local skill; preserve other cached rows."""
     declared = dict(read_install_arrays(root))
-    if name not in declared or name in PROTECTED_NAMES:
+    if name not in declared or name in PROTECTED_NAMES or name in load_excluded_names(root):
         raise ValueError("--local-skill must name an unprotected install.sh local skill")
     source = declared[name]
     path = os.path.join(root, source, "SKILL.md")

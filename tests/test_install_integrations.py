@@ -6,7 +6,7 @@
 约定:
   - 会写文件的测试只使用临时目录：HOME 指向临时目录，--dest 指向临时目录。
   - 外部来源的“远端”用本地 git 仓库；npm 与 uv 用 PATH 中的桩程序，不访问网络、不安装真实 CLI。
-  - 对真实 manifest 的断言（四个请求来源的 pin 与 checkout）只读取，不修改 repos/。
+  - 对真实 manifest 的断言只读取，不修改 repos/。
   - 缺失/失败场景全部使用 fixture，因此不会因为真实来源被更新或删除而失效。
 """
 
@@ -24,16 +24,20 @@ sys.path.insert(0, os.path.join(REPO, "skills", "routers", "agent-skill-router",
 import build_inventory  # noqa: E402
 
 CONF_REL = os.path.join("sources", "external-sources.conf")
-SCRIPTS = ["bootstrap.sh", "install.sh", "install-external.sh", "install-rea-mcp.sh", "install-veloq.sh",
+SCRIPTS = ["bootstrap.sh", "install.sh", "install-external.sh", "install-veloq.sh",
            "update-repos.sh", os.path.join("scripts", "node-preflight.sh")]
 REQUESTED = {
-    "sepia": ("skills", "skills", "none"),
-    "wx-cli": ("skills", ".", "npm:@jackwener/wx-cli@0.3.0:wx"),
-    "rea": ("skills", "runtime-skills", "npm:rea-agents@6.8.0:rea"),
     "mattpocock-skills": ("skills", "skills/engineering,skills/productivity,skills/misc", "none"),
 }
-GATE_FLAGS = ["--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills", "--no-ccfa-skills"]
+GATE_FLAGS = ["--no-nvidia-skills", "--no-amd-skills", "--no-cursor-skills"]
 GIT_ID = ["-c", "user.name=agent-gpu-skills-test", "-c", "user.email=test@example.invalid"]
+
+# 这几个集成测试针对真实 checkout 运行安装器；vLLM/NCCL 的稀疏源码 checkout
+# 由 update-repos.sh 获取，缺失时安装器会如实报告缺失并返回非零。
+REAL_SOURCE_READY = all(os.path.exists(os.path.join(REPO, path)) for path in (
+    "skills/framework/train-inference-consistency/repos/vllm",
+    "skills/kernel/nccl-skill/repos/nccl",
+))
 
 
 def run(args, cwd, env=None):
@@ -153,7 +157,7 @@ def read_conf(path):
 
 
 class StaticManifestTest(unittest.TestCase):
-    """真实 manifest：四个请求来源必须已固定、已检出，并且 skill 来源路径存在。"""
+    """真实 manifest：请求来源必须已固定、已检出，并且 skill 来源路径存在。"""
 
     def setUp(self):
         self.rows = {r[0]: r for r in read_conf(os.path.join(REPO, CONF_REL))}
@@ -192,19 +196,10 @@ class StaticManifestTest(unittest.TestCase):
             self.assertEqual(head, self.rows[name][2], name)
 
     def test_real_skill_source_paths_exist(self):
-        self.assertTrue(os.path.isfile(os.path.join(REPO, "repos", "sepia", "skills", "sepia", "SKILL.md")))
-        self.assertTrue(os.path.isfile(os.path.join(REPO, "repos", "sepia", "skills", "sepia-write", "SKILL.md")))
-        self.assertTrue(os.path.isfile(os.path.join(REPO, "repos", "wx-cli", "SKILL.md")))
         self.assertTrue(os.path.isfile(os.path.join(REPO, "repos", "mattpocock-skills", "skills", "engineering",
                                                     "tdd", "SKILL.md")))
         for sd in REQUESTED["mattpocock-skills"][1].split(","):
             self.assertTrue(os.path.isdir(os.path.join(REPO, "repos", "mattpocock-skills", sd)), sd)
-
-    def test_rea_npm_pin_matches_pinned_source_version(self):
-        # rea 的 skill 来自 npm 包；npm 版本必须与被固定的源码版本一致。
-        with open(os.path.join(REPO, "repos", "rea", ".release-please-manifest.json"), encoding="utf-8") as f:
-            source_version = re.search(r'"\.":\s*"([^"]+)"', f.read()).group(1)
-        self.assertEqual(REQUESTED["rea"][2], "npm:rea-agents@%s:rea" % source_version)
 
     def test_help_documents_dest_and_integration_flags(self):
         rc, out = run(["bash", "install.sh", "--help"], cwd=REPO)
@@ -223,9 +218,10 @@ class IsolatedInstallTest(unittest.TestCase):
     def setUp(self):
         self.home = tempdir(self, "home-")
         self.outside = tempdir(self, "outside-")
-        # 只保留系统工具：本机 PATH 中可能已有 wx/rea 的 launcher，会改变“运行时缺失”的前提。
+        # 只保留系统工具：本机 PATH 中可能已有其他 launcher，会改变“运行时缺失”的前提。
         self.env = dict(os.environ, HOME=self.home, PATH="/usr/bin:/bin")
 
+    @unittest.skipUnless(REAL_SOURCE_READY, "vLLM/NCCL 稀疏源码 checkout 不存在")
     def test_dest_install_skips_veloq_and_never_writes_home(self):
         dest = os.path.join(tempdir(self, "dest-"), "skills")
         before = snapshot(self.home)
@@ -237,33 +233,25 @@ class IsolatedInstallTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(dest, "agent-skill-router", "SKILL.md")))
         self.assertEqual(rc, 0, out[-2000:])
 
+    @unittest.skipUnless(REAL_SOURCE_READY, "vLLM/NCCL 稀疏源码 checkout 不存在")
     def test_dest_installs_present_external_sources_and_reports_missing_runtime_as_optional(self):
         dest = os.path.join(tempdir(self, "dest-"), "skills")
         rc, out = run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq"] + GATE_FLAGS,
                       cwd=REPO, env=self.env)
-        self.assertTrue(os.path.isfile(os.path.join(dest, "sepia", "SKILL.md")))
-        self.assertTrue(os.path.isfile(os.path.join(dest, "sepia-write", "SKILL.md")))
-        self.assertTrue(os.path.isfile(os.path.join(dest, "wx-cli", "SKILL.md")))
         self.assertTrue(os.path.isfile(os.path.join(dest, "grill-me", "SKILL.md")))
-        self.assertIn("可选缺失: 外部来源", out)
+        self.assertIn("外部来源: mattpocock-skills", out)
+        self.assertIn("OK: 外部来源 skill", out)
         self.assertNotIn("安装未完成", out)
         self.assertEqual(rc, 0, out[-2000:])
 
-    def test_real_install_fails_when_requested_runtimes_are_missing(self):
-        rc, out = run(["bash", "install.sh", "--agent", "codex", "--no-veloq"] + GATE_FLAGS,
-                      cwd=REPO, env=self.env)
-        self.assertNotEqual(rc, 0)
-        self.assertIn("运行时命令", out)
-        self.assertIn("安装未完成", out)
-        self.assertNotIn("安装完成.", out)
-
+    @unittest.skipUnless(REAL_SOURCE_READY, "vLLM/NCCL 稀疏源码 checkout 不存在")
     def test_no_integrations_flag_skips_external_section(self):
         dest = os.path.join(tempdir(self, "dest-"), "skills")
         rc, out = run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq",
                        "--no-integrations"] + GATE_FLAGS, cwd=REPO, env=self.env)
         self.assertEqual(rc, 0, out[-2000:])
         self.assertNotIn("外部来源", out)
-        self.assertFalse(os.path.exists(os.path.join(dest, "sepia")))
+        self.assertFalse(os.path.exists(os.path.join(dest, "grill-me")))
 
     def test_user_level_delegate_symlinks_survive_real_install(self):
         skills_dir = os.path.join(self.home, ".agents", "skills")
@@ -302,12 +290,12 @@ class FixtureCatalogCollisionTest(unittest.TestCase):
         # 根目录 SKILL.md（目录名 root-src，frontmatter 名 root-skill）
         write(os.path.join(self.fixture, "repos", "root-src", "SKILL.md"), skill_md("root-skill", "root"))
         # runtime-skills 缺失：不得安装，也不得伪造成功
-        os.makedirs(os.path.join(self.fixture, "repos", "rea-like"))
+        os.makedirs(os.path.join(self.fixture, "repos", "runtime-src"))
         write(os.path.join(self.fixture, CONF_REL), conf_text([
             "upstream-a|https://example.invalid/a|UNPINNED|skills|skills|none|fixture",
             "upstream-b|https://example.invalid/b|UNPINNED|skills|skills|none|fixture",
             "root-src|https://example.invalid/r|UNPINNED|skills|.|none|fixture",
-            "rea-like|https://example.invalid/rea|UNPINNED|skills|runtime-skills|npm:fake-pkg@1.0.0:fake-bin|fixture",
+            "runtime-src|https://example.invalid/runtime|UNPINNED|skills|runtime-skills|npm:fake-pkg@1.0.0:fake-bin|fixture",
         ]))
         user_alpha = os.path.join(self.outside, "alpha-user")
         write(os.path.join(user_alpha, "SKILL.md"), skill_md("alpha", "user owned"))
@@ -338,7 +326,7 @@ class FixtureCatalogCollisionTest(unittest.TestCase):
     def test_missing_runtime_skills_root_is_skipped_and_reported(self):
         rc, out = self._install()
         self.assertIn("跳过:", out)
-        self.assertFalse(os.path.exists(os.path.join(self.dest, "rea-like")))
+        self.assertFalse(os.path.exists(os.path.join(self.dest, "runtime-src")))
         self.assertIn("运行时命令 'fake-bin'", out)
 
     def test_user_symlink_with_same_name_is_preserved(self):
@@ -534,14 +522,14 @@ class RootSymlinkSourceTest(unittest.TestCase):
         self.global_root = tempdir(self, "npm-global-")
         shutil.copy(os.path.join(REPO, "install.sh"), os.path.join(self.fixture, "install.sh"))
         write(os.path.join(self.fixture, "skills", "kernel", "cuda-skill", "SKILL.md"), skill_md("cuda-skill", "x"))
-        self.skills = os.path.join(self.global_root, "lib", "node_modules", "rea-agents", "skills")
-        write(os.path.join(self.skills, "reverse-engineer-anything", "SKILL.md"),
-              skill_md("reverse-engineer-anything", "REA runtime skill"))
-        self.link = os.path.join(self.fixture, "repos", "rea-like", "runtime-skills")
+        self.skills = os.path.join(self.global_root, "lib", "node_modules", "fixture-runtime", "skills")
+        write(os.path.join(self.skills, "runtime-fixture-skill", "SKILL.md"),
+              skill_md("runtime-fixture-skill", "fixture runtime skill"))
+        self.link = os.path.join(self.fixture, "repos", "runtime-src", "runtime-skills")
         os.makedirs(os.path.dirname(self.link))
         os.symlink(self.skills, self.link)
         write(os.path.join(self.fixture, CONF_REL), conf_text([
-            "rea-like|https://example.invalid/rea|UNPINNED|skills|runtime-skills|none|fixture",
+            "runtime-src|https://example.invalid/runtime|UNPINNED|skills|runtime-skills|none|fixture",
         ]))
         self.dest = os.path.join(tempdir(self, "dest-"), "skills")
         self.home = tempdir(self, "home-")
@@ -557,7 +545,7 @@ class RootSymlinkSourceTest(unittest.TestCase):
 
     def test_symlink_source_root_is_enumerated_and_installed(self):
         rc, out = self._dest_install()
-        self.assertTrue(os.path.isfile(os.path.join(self.dest, "reverse-engineer-anything", "SKILL.md")), out[-1500:])
+        self.assertTrue(os.path.isfile(os.path.join(self.dest, "runtime-fixture-skill", "SKILL.md")), out[-1500:])
         self.assertIn("已安装 1 个 skill", out)
 
     def test_existing_but_empty_source_root_is_reported_missing_not_success(self):
@@ -567,7 +555,7 @@ class RootSymlinkSourceTest(unittest.TestCase):
         rc, out = self._real_install()
         self.assertNotEqual(rc, 0)
         self.assertIn("中没有 SKILL.md", out)
-        self.assertFalse(os.path.exists(os.path.join(self.home, ".codex", "skills", "reverse-engineer-anything")))
+        self.assertFalse(os.path.exists(os.path.join(self.home, ".codex", "skills", "runtime-fixture-skill")))
 
     def test_dangling_source_root_is_reported_missing(self):
         os.remove(self.link)
@@ -582,9 +570,7 @@ class InventoryParityTest(unittest.TestCase):
 
     def test_dest_install_matches_inventory_installed_names_for_present_catalogs(self):
         inventory = os.path.join(REPO, "skills", "routers", "agent-skill-router", "references", "inventory.tsv")
-        catalogs = {"local", "kernel-design-agents", "sepia", "wx-cli", "mattpocock-skills"}
-        if os.path.isdir(os.path.join(REPO, "repos", "rea", "runtime-skills")):
-            catalogs.add("rea")
+        catalogs = {"local", "kernel-design-agents", "mattpocock-skills"}
         expected = set()
         with open(inventory, encoding="utf-8") as f:
             columns = None
@@ -601,7 +587,7 @@ class InventoryParityTest(unittest.TestCase):
         self.assertTrue(expected)
         dest = os.path.join(tempdir(self, "dest-"), "skills")
         run(["bash", "install.sh", "--agent", "codex", "--dest", dest, "--no-veloq", "--no-nvidia-skills",
-             "--no-amd-skills", "--no-cursor-skills", "--no-ccfa-skills"], cwd=REPO,
+             "--no-amd-skills", "--no-cursor-skills"], cwd=REPO,
             env=dict(os.environ, HOME=tempdir(self, "home-")))
         missing = sorted(n for n in expected if not os.path.isfile(os.path.join(dest, n, "SKILL.md")))
         self.assertEqual(missing, [])
@@ -729,7 +715,7 @@ class FreshCheckoutTest(unittest.TestCase):
 
 
 class RootSkillCopyTest(unittest.TestCase):
-    """--copy 下根目录即 skill 的仓库（wx-cli 形态）：只复制 skill 载荷，不复制 Git 与 agent 配置。"""
+    """--copy 下根目录即 skill 的仓库：只复制 skill 载荷，不复制 Git 与 agent 配置。"""
 
     def setUp(self):
         self.fixture = tempdir(self, "fixture-")
@@ -864,110 +850,8 @@ class ProtectedNameTest(unittest.TestCase):
         self.assertNotIn('node "', out)
 
 
-class ReaMcpTest(unittest.TestCase):
-    """install-rea-mcp.sh：只为 codex 注册，使用 REA 自身的 setup；Node 预检；失败必须冒泡。"""
-
-    def setUp(self):
-        self.fresh = tempdir(self, "fresh-")
-        copy_helpers(self.fresh, ["install-rea-mcp.sh"])
-        self.bin = tempdir(self, "bin-")
-        self.home = tempdir(self, "home-")
-        self.log = os.path.join(self.bin, "rea.log")
-        self.delegate_target = tempdir(self, "delegate-")
-        os.makedirs(os.path.join(self.home, ".agents", "skills"))
-        os.symlink(self.delegate_target, os.path.join(self.home, ".agents", "skills", "claude-delegate"))
-        write(os.path.join(self.home, ".codex", "config.toml"),
-              "[mcp_servers.other]\ncommand = \"other\"\n")
-        self.config_before = snapshot(self.home)
-        with open(os.path.join(self.home, ".codex", "config.toml"), encoding="utf-8") as f:
-            self.config_text = f.read()
-        node_stub(self.bin, "v24.22.1")
-        write(os.path.join(self.fresh, CONF_REL), conf_text([
-            "rea-fix|https://example.invalid/rea|UNPINNED|skills|runtime-skills|npm:rea-agents@6.7.0:fake-rea|fixture",
-        ]))
-        self._rea(exit_code=0)
-
-    def _rea(self, exit_code=0):
-        write_stub(os.path.join(self.bin, "fake-rea"),
-                   'echo "$@" >> \'%s\'\nif [ "$1" = setup ]; then echo \'{"status":"ok"}\'; exit %d; fi\n'
-                   % (self.log, exit_code))
-
-    def _env(self, path=None):
-        return dict(os.environ, HOME=self.home, PATH=self.bin + os.pathsep + os.environ["PATH"])
-
-    def _run(self, *args):
-        return run(["bash", "install-rea-mcp.sh"] + list(args), cwd=self.fresh, env=self._env())
-
-    def test_registers_codex_with_scoped_noninteractive_command(self):
-        rc, out = self._run("--agent", "codex")
-        self.assertEqual(rc, 0, out)
-        with open(self.log, encoding="utf-8") as f:
-            self.assertEqual(f.read().strip(), "setup --client codex --skill=false --yes --json")
-
-    def test_other_agents_are_not_registered(self):
-        rc, out = self._run("--agent", "cursor")
-        self.assertEqual(rc, 0)
-        self.assertIn("仅注册到 codex", out)
-        self.assertFalse(os.path.exists(self.log))
-
-    def test_unrelated_codex_config_and_delegate_symlink_are_untouched(self):
-        rc, out = self._run("--agent", "codex")
-        self.assertEqual(rc, 0, out)
-        with open(os.path.join(self.home, ".codex", "config.toml"), encoding="utf-8") as f:
-            self.assertEqual(f.read(), self.config_text)
-        link = os.path.join(self.home, ".agents", "skills", "claude-delegate")
-        self.assertEqual(os.readlink(link), self.delegate_target)
-
-    def test_setup_failure_propagates_as_nonzero(self):
-        self._rea(exit_code=3)
-        rc, out = self._run("--agent", "codex")
-        self.assertNotEqual(rc, 0)
-        self.assertIn("rea setup 失败", out)
-
-    def test_incompatible_node_is_blocked_before_registration(self):
-        node_stub(self.bin, "v24.10.0")
-        rc, out = self._run("--agent", "codex")
-        self.assertNotEqual(rc, 0)
-        self.assertIn("不满足已安装 rea-agents 包的 engines", out)
-        self.assertIn("PATH=$HOME/.nvm/versions/node/v24.22.1/bin", out)
-        self.assertFalse(os.path.exists(self.log))
-
-    def test_node_preflight_follows_published_rea_engines_boundaries(self):
-        # 已发布 rea-agents@6.8.0 的 engines: ^22.23.4 || ^24.22.1 || >=26.12.1
-        accepted = ("v22.23.4", "v24.22.1", "v24.30.0", "v26.12.1", "v27.0.0")
-        rejected = ("v21.9.0", "v22.23.3", "v23.5.0", "v24.22.0", "v25.1.0", "v26.12.0", "v26.0.0")
-        for version in accepted:
-            node_stub(self.bin, version)
-            rc, out = self._run("--agent", "codex")
-            self.assertEqual(rc, 0, "%s should be accepted: %s" % (version, out))
-        if os.path.exists(self.log):
-            os.remove(self.log)
-        for version in rejected:
-            node_stub(self.bin, version)
-            rc, out = self._run("--agent", "codex")
-            self.assertNotEqual(rc, 0, "%s should be rejected" % version)
-            self.assertIn("不满足已安装 rea-agents 包的 engines", out)
-            self.assertFalse(os.path.exists(self.log))
-
-    def test_missing_rea_binary_fails_when_manifest_requests_it(self):
-        os.remove(os.path.join(self.bin, "fake-rea"))
-        env = dict(os.environ, HOME=self.home, PATH="/usr/bin:/bin")
-        rc, out = run(["bash", "install-rea-mcp.sh", "--agent", "codex"], cwd=self.fresh, env=env)
-        self.assertNotEqual(rc, 0)
-        self.assertIn("找不到 'fake-rea'", out)
-
-    def test_no_rea_row_means_nothing_to_register(self):
-        write(os.path.join(self.fresh, CONF_REL), conf_text([
-            "other|https://example.invalid/o|UNPINNED|none|-|none|fixture",
-        ]))
-        rc, out = self._run("--agent", "codex")
-        self.assertEqual(rc, 0)
-        self.assertIn("跳过", out)
-        self.assertFalse(os.path.exists(self.log))
-
-
-class BootstrapReaAndInventoryTest(unittest.TestCase):
-    """单次 bootstrap 的 REA 注册门控，以及新来源在同一次运行中即可被路由。"""
+class BootstrapInventoryTest(unittest.TestCase):
+    """单次 bootstrap 后，新来源即可被路由；--dest 不修改受跟踪的清单。"""
 
     def setUp(self):
         self.remote, self.sha = make_remote(self, "fixture-catalog", {
@@ -979,10 +863,7 @@ class BootstrapReaAndInventoryTest(unittest.TestCase):
                         os.path.join(self.fresh, "skills", "routers", "agent-skill-router"))
         write(os.path.join(self.fresh, "skills", "kernel", "cuda-skill", "SKILL.md"), skill_md("cuda-skill", "x"))
         self.home = tempdir(self, "home-")
-        self.bin = tempdir(self, "bin-")
-        node_stub(self.bin, "v24.22.1")
-        self.rea_log = os.path.join(self.bin, "rea.log")
-        self.env = dict(os.environ, HOME=self.home, PATH=self.bin + os.pathsep + os.environ["PATH"])
+        self.env = dict(os.environ, HOME=self.home)
 
     def _conf(self, rows):
         write(os.path.join(self.fresh, CONF_REL), conf_text(rows))
@@ -1010,22 +891,11 @@ class BootstrapReaAndInventoryTest(unittest.TestCase):
         self.assertIn("路由清单", out)
         self.assertIn("已写入", out)
 
-    def test_rea_mcp_is_skipped_by_no_integrations_and_dest(self):
-        # install.sh 的验证会调用 fake-rea --version，因此只断言没有 setup 调用。
-        self._conf(["rea-fix|https://example.invalid/rea|UNPINNED|skills|runtime-skills|npm:rea-agents@6.7.0:fake-rea|fixture"])
-        write_stub(os.path.join(self.bin, "fake-rea"), 'echo "$@" >> \'%s\'\nexit 0\n' % self.rea_log)
-        self._bootstrap("--no-update", "--no-integrations")
-        self.assertNotIn("setup", self._log_text())
-        dest = os.path.join(tempdir(self, "dest-"), "skills")
-        run(["bash", "bootstrap.sh", "--agent", "codex", "--dest", dest, "--no-veloq"] + GATE_FLAGS,
-            cwd=self.fresh, env=self.env)
-        self.assertNotIn("setup", self._log_text())
-
-    def _log_text(self):
-        if not os.path.exists(self.rea_log):
-            return ""
-        with open(self.rea_log, encoding="utf-8") as f:
-            return f.read()
+    def test_no_integrations_does_not_clone_source(self):
+        self._conf(["fixture-catalog|%s|%s|skills|skills|none|fixture" % (self.remote, self.sha)])
+        rc, out = self._bootstrap("--no-update", "--no-integrations")
+        self.assertFalse(os.path.exists(os.path.join(self.fresh, "repos", "fixture-catalog")))
+        self.assertNotIn("fixture-catalog", out)
 
     def test_dest_bootstrap_does_not_modify_tracked_inventory(self):
         inventory = os.path.join(self.fresh, "skills", "routers", "agent-skill-router", "references",
@@ -1038,27 +908,6 @@ class BootstrapReaAndInventoryTest(unittest.TestCase):
             cwd=self.fresh, env=self.env)
         with open(inventory, "rb") as f:
             self.assertEqual(f.read(), before)
-
-    def test_rea_mcp_failure_propagates_through_bootstrap(self):
-        self._conf(["rea-fix|%s|%s|skills|runtime-skills|npm:rea-agents@6.7.0:fake-rea|fixture"
-                    % (self.remote, self.sha)])
-        self._stub_npm_and_rea(setup_exit=3)
-        rc, out = self._bootstrap("--no-update")
-        self.assertNotEqual(rc, 0)
-        self.assertIn("rea setup 失败", out)
-        self.assertIn("Bootstrap 未完成", out)
-
-    def _stub_npm_and_rea(self, setup_exit):
-        global_root = tempdir(self, "npm-global-")
-        pkg = os.path.join(global_root, "node_modules")
-        write_stub(os.path.join(self.bin, "npm"),
-                   'echo "$@" >> \'%s\'\nif [ "$1" = root ]; then echo \'%s\'; exit 0; fi\n'
-                   'if [ "$1" = install ]; then\n  mkdir -p \'%s\'/rea-agents/skills/fixture-skill\n'
-                   '  printf -- \'---\\nname: fixture-skill\\n---\\n\' > \'%s\'/rea-agents/skills/fixture-skill/SKILL.md\n'
-                   '  exit 0\nfi\nexit 1\n' % (self.rea_log, pkg, pkg, pkg))
-        write_stub(os.path.join(self.bin, "fake-rea"),
-                   'echo "$@" >> \'%s\'\nif [ "$1" = setup ]; then exit %d; fi\nexit 0\n'
-                   % (self.rea_log, setup_exit))
 
 
 if __name__ == "__main__":
