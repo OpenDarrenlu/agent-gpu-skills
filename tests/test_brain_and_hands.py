@@ -311,7 +311,7 @@ class InstallationTests(unittest.TestCase):
 
     def test_isolated_install_for_both_hosts_preserves_complete_skill(self):
         with tempfile.TemporaryDirectory(prefix="bah-install-test-", dir=DEVLOG) as directory:
-            for host in ("codex", "claude"):
+            for host in ("codex", "claude", "cursor"):
                 target = Path(directory) / host
                 command = ["bash", str(REPO / "install-brain-and-hands.sh"), "--agent", host, "--dest", str(target)]
                 subprocess.run(command, check=True, capture_output=True)

@@ -603,7 +603,7 @@ install_to_agent() {
             continue
         fi
         # 使用已验证的单技能安装器，保持来源标记并避免重复按 skills-dir 加载插件。
-        if [ "$skill_name" = brain-and-hands ] && { [ "$agent" = codex ] || [ "$agent" = claude ]; }; then
+        if [ "$skill_name" = brain-and-hands ] && { [ "$agent" = codex ] || [ "$agent" = claude ] || [ "$agent" = cursor ]; }; then
             bash "$SCRIPT_DIR/install-brain-and-hands.sh" --agent "$agent" --dest "$SKILL_DIR"
             claim_skill "$skill_name" "local"
             continue

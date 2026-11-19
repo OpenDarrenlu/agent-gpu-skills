@@ -1,5 +1,5 @@
 #!/bin/bash
-# 单独安装 Codex/Claude 共用技能；--agent claude 同时启用官方本地插件。
+# 单独安装 Codex/Claude/Cursor 共用技能；--agent claude 同时启用官方本地插件。
 # --dest 隔离安装不调用 Claude、不改宿主配置，也不枚举其他技能目录。
 
 set -eu
@@ -16,13 +16,14 @@ while [ "$#" -gt 0 ]; do
         --agent) AGENT="${2:?--agent 缺少值}"; shift 2 ;;
         --dest) DEST="${2:?--dest 缺少值}"; shift 2 ;;
         --uninstall) UNINSTALL=true; shift ;;
-        --help|-h) echo '用法: bash install-brain-and-hands.sh [--agent codex|claude] [--dest DIR] [--uninstall]'; exit 0 ;;
+        --help|-h) echo '用法: bash install-brain-and-hands.sh [--agent codex|claude|cursor] [--dest DIR] [--uninstall]'; exit 0 ;;
         *) echo "未知参数: $1" >&2; exit 2 ;;
     esac
 done
 case "$AGENT" in
     codex) DEFAULT_DEST="${CODEX_HOME:-$HOME/.codex}/skills" ;;
     claude) DEFAULT_DEST="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills" ;;
+    cursor) DEFAULT_DEST="${HOME}/.cursor/skills" ;;
     *) echo "不支持的 agent: $AGENT" >&2; exit 2 ;;
 esac
 

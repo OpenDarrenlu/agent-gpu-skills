@@ -15,6 +15,7 @@ Cursor 的 multitask 子代理在任务已写明、逻辑不算特别复杂时�
 ```bash
 bash install-brain-and-hands.sh --agent codex   # 只安装这一技能
 bash install-brain-and-hands.sh --agent claude  # 安装技能和 Claude 插件
+bash install-brain-and-hands.sh --agent cursor  # 安装到 ~/.cursor/skills
 bash install-brain-and-hands.sh --agent codex --dest /absolute/devlog/skill-check
 ```
 
@@ -22,7 +23,8 @@ bash install-brain-and-hands.sh --agent codex --dest /absolute/devlog/skill-chec
 `--dest` 仅写目标技能，不调用 Claude、不注册插件。Claude 插件注册继续使用官方
 `claude plugin` 命令，不手工改全局配置；卸载用相同 `--agent` 加 `--uninstall`。
 技能副本省略 .claude-plugin，避免 Claude 同时按 skills-dir 重复加载插件；插件从仓库源目录注册。
-安装后的 Codex 新会话可发现 `$brain-and-hands`；当前会话可直接读取本文件旁的 SKILL.md。
+安装后的 Codex、Claude 与 Cursor 新会话都能发现该技能；当前会话可直接读取本文件旁的 SKILL.md。
+三个宿主共用同一份文件，Cursor 另由 `.cursor/rules/brain-and-hands-multitask.mdc` 指到本技能。
 
 ## 实际路由
 
