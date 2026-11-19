@@ -1,6 +1,6 @@
 # 全局 Agent 配置
 
-`AGENTS.md` 是 Claude Code 与 Codex 共用的全局开发习惯配置。它被软链接为：
+`AGENTS.md` 是 Claude Code 与 Codex 共用的全局开发习惯配置，其中第 12 节是 Cursor multitask 的模型分工，与 `/root/code/.cursor/rules/brain-and-hands-multitask.mdc` 保持同一规则。它被软链接为：
 
 - `~/.claude/CLAUDE.md` → `global/AGENTS.md`
 - `~/.codex/AGENTS.md` → `global/AGENTS.md`

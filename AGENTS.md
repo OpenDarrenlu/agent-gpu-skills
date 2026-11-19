@@ -89,6 +89,11 @@ producing detailed advice or code.
 
 - 模型分工与独立测试：`brain-and-hands`。Astra/Opus 保持主会话并分析代码和测试失败；Sol/Sonnet 执行普通测试；非常简单测试通过新的独立 Claude/Noir session 完成。按 `references/models.md` 选择同家族最新可用版本，不恢复旧 relay。
 
+- 论文检索、审稿、rebuttal 与投稿检查：`ccf-literature-searcher`、`ccf-paper-reviewer`、
+  `ccf-rebuttal-writer`、`ccf-submission-checker` 等 CCFA skill（`repos/ccfa-skills`）；
+  选题评估、综述调研、论文写作与投稿前自检使用 Supervisor skill
+  （`repos/supervisor-skills`）。完整对照见 `skills/research/README.md`。
+
 - 简化实现、避免过度设计、通用代码审查与仓库审计：`ponytail` /
   `ponytail-review` / `ponytail-audit`（来自 `repos/ponytail/skills`；GPU 事实与性能结论仍使用领域 skill）。
 

@@ -12,7 +12,7 @@
 - 先正确性、后性能：没有 profile、A/B 或 bitwise 证据，不宣称优化有效，也不预设加速比例。
 - 保持简洁：代码、注释、测试、commit、MR 和汇报都只保留必要内容；能一次校验的不要重复兜底，
   不用 `getattr` 默认值掩盖真实字段，不为展示进度制造文档。
-- 不复杂的任务交给便宜/免费模型或新 session；Claude 主会话保留给设计、诊断和复杂实现。
+- 不复杂、以及已经写明且逻辑不算特别复杂的任务交给 hand 模型；这档比普通 hand 稍高，仍由 hand 执行。设计、含糊诊断和最终核对留在 Astra、Opus 或 Fable 主会话。分工见第 12 节。
 - 长任务拆成可独立验收的阶段；连续两次同因失败时停下，依据证据换方案或报告阻碍。
 - 命令、任务或子代理明显变慢、异常等待或资源争用时，主动做轻量、有界的排查
   （相关进程、CPU、内存、I/O、GPU、网络或服务状态）；正常运行的长任务不因耗时而中止。
@@ -137,6 +137,7 @@
 - 唯一例外：brain-and-hands 的非常简单测试路径，使用插件 `scripts/run_simple_test.py`
   创建全新的独立 Claude/a7n Noir session。该 session 不恢复旧上下文，不使用工具、插件、hooks、
   MCP 或进一步委派，也不做实现、设计、研究或复杂 debug。
+- Cursor multitask 的 hand 子代理不是这条例外，也不走禁用的 Claude 委派；模型分工按第 12 节。
 - 不安装、注册或恢复上述禁用的委派技能和 MCP，也不要求用户为此重载 MCP。
 
 ## 10. 进展汇报
@@ -153,3 +154,16 @@
 - 修改本文件后，确认 `~/.claude/CLAUDE.md` 与 `~/.codex/AGENTS.md` 均指向本文件。
 - `/root/code/devlog`、队列名、集群名和镜像 tag 等是本机/项目约定；换主机时只调整这些路径，
   不改变通用工作规则。
+
+## 12. 模型分工与 Cursor multitask
+
+与 `/root/code/.cursor/rules/brain-and-hands-multitask.mdc` 保持同一规则。技能正文在
+`/root/code/agent-gpu-skills/skills/other/brain-and-hands/SKILL.md`。加载本配置的主会话和子代理，
+包括 Cursor multitask 子代理，都按此执行；子代理不继承父会话里被省略的内容。
+
+- 大脑只做开放设计、含糊失败的根因判断，以及最终 diff 核对。这些留在当前的 Fable、Opus 或 Astra。
+- 任务已经写明、逻辑不算特别复杂时，multitask 子代理用 hand 模型，并且自己就作为 hand。这档比普通 hand 稍高：跨几个文件、构建、GPU 运行，或只做局部机械判断，仍然算 hand。不要因为它比单条命令更大就改用 Fable 或 Opus。
+- 派子代理时必须带上述技能的绝对路径、角色（brain 或 hand）和明确的 `model`。`model` 来自本会话可用模型列表，先用该技能的 `scripts/route_task.py --host cursor` 解析。
+- hand 默认用列表里最新的 Sonnet。只读事实默认用最新的 Haiku。列表里没有该家族时，显式指定其他非大脑模型，例如 `deepseek-v41-flash-1017-high` 或 `grok-4.7-high-fast`，也可以是列表里的 Gemini、Muse 或其他非大脑 slug。不要省略 `model`，也不要用 `generalPurpose` 继承父模型来充当手。
+- 跑在 hand 模型上就是 hand：完成交代的任务，不要再派子代理。Fable 或 Opus 只在设计、含糊诊断和最终核对时继续派 hand；交给它的任务若落在上面这档，就自己作为 hand 做完。
+- 极简、命令已经写死的测试仍走该技能的独立 Noir 会话，不走 Cursor Task。
