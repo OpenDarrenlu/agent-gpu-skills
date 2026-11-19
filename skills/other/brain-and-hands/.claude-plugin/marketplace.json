@@ -9,8 +9,8 @@
     {
       "name": "brain-and-hands",
       "source": "./",
-      "description": "Astra/Opus debugging brain, Sol/Sonnet tests, and independent Claude/Noir simple-test sessions.",
-      "version": "0.3.0",
+      "description": "Astra, Opus, or Fable debugging brain, available hand models for tests, and independent Claude/Noir simple-test sessions. Cursor multitask subagents use the same roles.",
+      "version": "0.3.2",
       "license": "MIT",
       "keywords": [
         "subagents",

@@ -81,6 +81,56 @@ class ModelTests(unittest.TestCase):
         for task, model in (("debug", "opus"), ("test", "sonnet"), ("scout", "haiku")):
             self.assertEqual(self.route("claude", task)["model"], model)
 
+    def test_fable_is_a_brain_on_claude(self):
+        for pin in ("fable", "claude-fable-5-2-high"):
+            result = self.route("claude", "debug", model=pin)
+            self.assertEqual(result["family"], "fable")
+            self.assertEqual(result["session"], "main")
+        with self.assertRaises(ValueError):
+            self.route("claude", "test", model="fable")
+
+    def cursor_catalog(self):
+        path = Path(self.tmp.name) / "cursor.json"
+        path.write_text(json.dumps({"models": [
+            {"slug": "claude-fable-5-1-thinking-high"}, {"slug": "claude-fable-5-2-high"},
+            {"slug": "claude-opus-4-8-thinking-high"}, {"slug": "claude-opus-5-5-high"},
+            {"slug": "claude-sonnet-4-8-thinking-high"}, {"slug": "claude-sonnet-5-5-high"},
+            {"slug": "deepseek-v41-flash-1017-high"}, {"slug": "grok-4.7-high-fast"},
+            {"slug": "gemini-4-neon-high"}, {"slug": "muse-wonder-1.0-high"}]}))
+        return path
+
+    def test_cursor_defaults_to_latest_sonnet_and_keeps_the_brain(self):
+        catalog = self.cursor_catalog()
+        hand = route_task.resolve("cursor", "test", catalog, environ={})
+        self.assertEqual(hand["model"], "claude-sonnet-5-5-high")
+        brain = route_task.resolve("cursor", "debug", catalog, environ={})
+        self.assertEqual(brain["session"], "main")
+        self.assertEqual(brain["family"], "fable-or-opus")
+
+    def test_cursor_accepts_available_hand_models_and_rejects_brains(self):
+        catalog = self.cursor_catalog()
+        for slug in ("deepseek-v41-flash-1017-high", "grok-4.7-high-fast", "gemini-4-neon-high", "muse-wonder-1.0-high"):
+            result = route_task.resolve("cursor", "scout", catalog, slug, {})
+            self.assertEqual(result["model"], slug)
+            self.assertNotEqual(result["family"], "fable")
+        launched = route_task.resolve("cursor", "debug", catalog, "claude-fable-5-2-high", {})
+        self.assertEqual(launched["session"], "brain-subagent")
+        with self.assertRaises(ValueError):
+            route_task.resolve("cursor", "test", catalog, "claude-opus-5-5-high", {})
+        with self.assertRaises(ValueError):
+            route_task.resolve("cursor", "worker", catalog, "not-a-listed-model", {})
+
+    def test_cursor_scout_without_haiku_names_the_other_hands(self):
+        with self.assertRaisesRegex(ValueError, "deepseek-v41-flash-1017-high"):
+            route_task.resolve("cursor", "scout", self.cursor_catalog(), environ={})
+
+    def test_multitask_rule_covers_hand_band_and_noir_lane(self):
+        skill = (SKILL / "SKILL.md").read_text()
+        section = skill[skill.index("## Cursor multitask"):]
+        for phrase in ("higher than an ordinary hand", "Fable, Opus, or Astra",
+                       "does not launch subagents", "--host cursor", "Noir"):
+            self.assertIn(phrase, section)
+
     def test_missing_family_fails_without_fallback(self):
         self.catalog.write_text('{"models":[{"slug":"gpt-9-luna"}]}')
         with self.assertRaises(ValueError):

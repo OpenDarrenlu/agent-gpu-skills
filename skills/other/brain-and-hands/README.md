@@ -1,8 +1,10 @@
-# brain-and-hands（本地修改版 0.3.0）
+# brain-and-hands（本地修改版 0.3.2）
 
-支持 Codex 和 Claude 的技能，同时保留 Claude 插件入口。主会话 Astra/Opus 负责决策、
-代码分析、测试结果分析和修复；Sol/Sonnet 执行普通测试；Terra/Haiku 只查事实。
-非常简单的测试从任一宿主创建独立 Claude session，使用 a7n Noir。
+支持 Codex、Claude 和 Cursor 的技能，同时保留 Claude 插件入口。主会话 Astra、Opus
+或 Fable 负责决策、代码分析、测试结果分析和修复；Sol、最新 Sonnet，或当前会话可用的
+其他手模型（DeepSeek V4 Flash 1017、Grok 4.7 等）执行普通测试；Terra、最新 Haiku
+只查事实。非常简单的测试从任一宿主创建独立 Claude session，使用 a7n Noir。
+Cursor 的 multitask 子代理在任务已写明、逻辑不算特别复杂时用 hand 模型并作为 hand，这档可以比普通 hand 稍高。Fable/Opus 子代理只负责设计、含糊诊断和最终核对，并可以继续派这样的 hand。
 
 - 上游：https://github.com/prograsec/brain-and-hands，基线 `2b30b09798a5bb8fd91f1402905f1fb4a524b05e`（MIT，见 LICENSE）。2026-11-18 `git ls-remote HEAD` 核验相同。
 - 原文：`README.upstream.md`；规范入口：`SKILL.md`。
@@ -25,8 +27,11 @@ bash install-brain-and-hands.sh --agent codex --dest /absolute/devlog/skill-chec
 ## 实际路由
 
 `scripts/route_task.py` 从指定的模型目录选择同家族最新可用版本。2026-11-18 本机为
-`gpt-6-astra` / `gpt-6.1-sol` / `gpt-6.1-terra`。Claude 使用 provider 的 opus/sonnet/haiku
-别名；显式版本和环境覆盖优先。缓存可用不等于原生子代理工具可用，见 `references/models.md`。
+`gpt-6-astra` / `gpt-6.1-sol` / `gpt-6.1-terra`。Claude 使用 provider 的 opus、fable、
+sonnet、haiku 别名，其中 fable 与 opus 都是大脑。Cursor 使用 `--host cursor` 和当前会话
+的可用模型列表：默认手是列表里最新的 Sonnet 或 Haiku；列表里没有该家族时不自动换模型，
+调用方显式指定 DeepSeek、Grok、Gemini、Muse 或其他非大脑 slug。显式版本和环境覆盖优先。
+缓存可用不等于原生子代理工具可用，见 `references/models.md`。
 
 `scripts/run_simple_test.py` 只执行调用者给定的测试 argv，记录真实退出码，再启动无工具的
 独立 Noir session 总结证据。Noir 不生成 shell、不改测试、不分析根因。Noir 的 gateway ID

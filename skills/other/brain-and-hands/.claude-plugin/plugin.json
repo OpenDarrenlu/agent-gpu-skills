@@ -1,7 +1,7 @@
 {
   "name": "brain-and-hands",
-  "description": "Codex Astra / Claude Opus as the brain, Sol / Sonnet for ordinary tests, Terra / Haiku for facts, and fresh independent Claude / a7n Noir sessions for very simple tests. Strong models analyze code and test failures.",
-  "version": "0.3.0",
+  "description": "Astra, Opus, or Fable as the brain; Sol, Sonnet, or another available hand model for ordinary tests; Terra or Haiku for facts; fresh independent Claude / a7n Noir sessions for very simple tests. Cursor multitask subagents use the same roles.",
+  "version": "0.3.2",
   "author": {
     "name": "Prograsec"
   },
@@ -14,6 +14,8 @@
     "cost",
     "tokens",
     "opus",
+    "fable",
+    "cursor",
     "sonnet",
     "haiku",
     "computer-use",
