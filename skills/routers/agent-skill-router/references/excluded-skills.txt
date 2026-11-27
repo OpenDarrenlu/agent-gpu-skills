@@ -15,7 +15,7 @@ salary-negotiation-agent
 salary-negotiation-skill
 zotero-cli
 
-## nvidia-skills (417)
+## nvidia-skills (427)
 accelerated-computing-cudf
 ambient-healthcare-agent-with-nemotron-voice-agent
 amc-run-rtsp-calibration
@@ -248,6 +248,9 @@ jetson-video-capability
 jetson-video-pipeline
 jetson-video-recipe
 jetson-video-setup
+mcore-create-issue
+mcore-linting-and-formatting
+mcore-split-pr
 medtech-model-evidence-export
 nemo-fabric-build-adapter
 nemo-fabric-integrate
@@ -262,6 +265,10 @@ nemo-relay-plugin-adaptive-tuning
 nemo-relay-plugin-build
 nemo-relay-plugin-observability
 nemo-retriever
+nemo-retriever-mcp
+nemo-rl-brev-etiquette
+nemo-rl-docs
+nemo-rl-session-memory
 nemoclaw-user-guide
 nemotron-asr-finetune
 nemotron-customize
@@ -433,6 +440,9 @@ vss-search-archive
 vss-setup-behavior-analytics
 vss-setup-video-analytics-api
 vss-summarize-video
+warp-compile-time-optimizer
+warp-debug-gradients
+warp-eval
 
 ## rea (1)
 reverse-engineer-anything

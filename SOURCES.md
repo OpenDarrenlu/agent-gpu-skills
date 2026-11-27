@@ -23,7 +23,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 
 | 状态 | 数量 | 含义 |
 | --- | --- | --- |
-| installed | 226 | 来源可安装（install.sh 选中并可装入，不表示已安装到宿主） |
+| installed | 216 | 来源可安装（install.sh 选中并可装入，不表示已安装到宿主） |
 | shadowed | 5 | 同名已被先到来源占用，不安装 |
 | protected | 2 | 用户级保留名，不计为可安装 |
 | missing-source | 0 | 本地缺文件 |
@@ -42,14 +42,14 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `skills/framework/train-inference-consistency` | vendored | https://github.com/vllm-project/vllm | `2d8efee9a73366d6b4e753780af32443d2fef91a` | 1 |
 | `skills/other/brain-and-hands` | vendored | https://github.com/prograsec/brain-and-hands | `2b30b09798a5bb8fd91f1402905f1fb4a524b05e` | 1 |
 | `skills/other/tech-doc-style-chinese` | vendored | https://github.com/Fenng/Tech-Doc-Style-Chinese | `b119d01c9bb7cd132b3c62fafdff34227c4410d1` | 1 |
-| `nvidia-skills` | catalog | https://github.com/NVIDIA/skills | `fce3cca4170be75e82c64920654d56ee2811b005` | 59 |
+| `nvidia-skills` | catalog | https://github.com/NVIDIA/skills | `fce3cca4170be75e82c64920654d56ee2811b005` | 49 |
 | `amd-skills` | catalog | https://github.com/amd/skills | `9eba3192f6793237eaeacfabd61fb0bd557e53cf` | 17 |
 | `cursor-skills` | catalog | https://github.com/Saddss/cursor-skills | `400c165e7a6afac09e0f84aab85bcc20f37252f5` | 34 |
 | `ccfa-skills` | catalog | https://github.com/mikubaka88/CCFA-Skills | `91ca9e2801698466f934b557a75ce46db8ba46b5` | 18 |
 | `ponytail` | catalog | https://github.com/DietrichGebert/ponytail | `96608e078b2d5ea607c5c3b8b5a54d1c1fba6846` | 6 |
 | `tilelang-cuda-skills` | catalog | https://github.com/sablin39/tilelang-cuda-skills | `842d1dc7d684861d2da241cb3e51137a47d5cad6` | 9 |
 | `kernel-design-agents` | catalog | https://github.com/OpenDarrenlu/kernel-design-agents | `2e49985e277f65ad6c07d31b943cf78628e06e98` | 1 |
-| `tech-doc-style-chinese (clone)` | catalog | https://github.com/Fenng/Tech-Doc-Style-Chinese | `` | 0 |
+| `tech-doc-style-chinese (clone)` | catalog | https://github.com/Fenng/Tech-Doc-Style-Chinese | `b119d01c9bb7cd132b3c62fafdff34227c4410d1` | 0 |
 | `mattpocock-skills` | external | https://github.com/mattpocock/skills | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d` | 25 |
 | `supervisor-skills` | external | https://github.com/HKUSTDial/Supervisor-Skills | `4bd3fef393e5ffc891c74309a5ef6c5ad3ad12c8` | 12 |
 | `veloq` | optional-runtime | https://github.com/lucifer1004/veloq | 未固定（main） | 2 |
@@ -58,7 +58,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 
 | 安装名 | 状态 | 占用者 | 类别 | 上游链接 | ref | 本地路径 | 说明 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `KernelWiki` | installed | - | nested | https://github.com/mit-han-lab/KernelWiki/tree/76d27b56f804e7e7295d4c570e1e5d7eef4b0a75 | 76d27b56f804 | `kernel-design-agents/skills/KernelWiki` | install.sh 安装的 KernelWiki 来自此嵌套目录；origin=https://github.com/mit-han-lab/KernelWiki；.gitmodules=https://github.com/mit-han-lab/KernelWiki |
+| `KernelWiki` | installed | - | nested | https://github.com/DongyunZou/KernelWiki/tree/76d27b56f804e7e7295d4c570e1e5d7eef4b0a75 | 76d27b56f804 | `kernel-design-agents/skills/KernelWiki` | install.sh 安装的 KernelWiki 来自此嵌套目录；origin=https://github.com/DongyunZou/KernelWiki；.gitmodules=https://github.com/mit-han-lab/KernelWiki |
 | `add-jit-kernel` | installed | - | vendored | https://github.com/sgl-project/sglang/tree/3bcde0c80eeb07b40d3334c4b3d7341602efd089/.agents/skills/add-jit-kernel | 3bcde0c80eeb | `skills/framework/sglang-repo-skills/add-jit-kernel` | 无（全部逐字复制） |
 | `add-sgl-kernel` | installed | - | vendored | https://github.com/sgl-project/sglang/tree/3bcde0c80eeb07b40d3334c4b3d7341602efd089/.agents/skills/add-sgl-kernel | 3bcde0c80eeb | `skills/framework/sglang-repo-skills/add-sgl-kernel` | 无（全部逐字复制） |
 | `agent-skill-router` | installed | - | unknown | - | - | `skills/routers/agent-skill-router` | 本次审计未确立来源（未逐一读取该目录全部文件，不断言其无上游声明） |
@@ -67,7 +67,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `amd-instinct-isa` | installed | - | unknown | - | - | `skills/other/amd-instinct-isa` | 本次审计未确立来源（未逐一读取该目录全部文件，不断言其无上游声明） |
 | `ask-matt` | installed | - | external | https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/ask-matt | 4ae2317ddb22 | `repos/mattpocock-skills/skills/engineering/ask-matt` | - |
 | `benchmark-paper-template` | installed | - | external | https://github.com/HKUSTDial/Supervisor-Skills/tree/4bd3fef393e5ffc891c74309a5ef6c5ad3ad12c8/skills/benchmark-paper-template | 4bd3fef393e5 | `repos/supervisor-skills/skills/benchmark-paper-template` | - |
-| `brain-and-hands` | installed | - | vendored | https://github.com/prograsec/brain-and-hands/tree/2b30b09798a5bb8fd91f1402905f1fb4a524b05e | 2b30b09798a5 | `skills/other/brain-and-hands` | 本地修改版 0.3.2（见其 README.md）：新增 Codex/Claude/Cursor 共用 SKILL.md、模型解析器（含 --host cursor 与 Fable 大脑）、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md |
+| `brain-and-hands` | installed | - | vendored | https://github.com/prograsec/brain-and-hands/tree/2b30b09798a5bb8fd91f1402905f1fb4a524b05e | 2b30b09798a5 | `skills/other/brain-and-hands` | 本地修改版 0.3.0（见其 README.md）：新增 Codex/Claude 共用 SKILL.md、模型解析器、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md |
 | `brainstorming` | installed | - | catalog | https://github.com/Saddss/cursor-skills/tree/400c165e7a6afac09e0f84aab85bcc20f37252f5/skills/brainstorming | 400c165e7a6a | `repos/cursor-skills/skills/brainstorming` | - |
 | `ccf-common` | installed | - | catalog | https://github.com/mikubaka88/CCFA-Skills/tree/91ca9e2801698466f934b557a75ce46db8ba46b5/ccf-common | 91ca9e280169 | `repos/ccfa-skills/ccf-common` | - |
 | `ccf-experiment-designer` | installed | - | catalog | https://github.com/mikubaka88/CCFA-Skills/tree/91ca9e2801698466f934b557a75ce46db8ba46b5/ccf-experiment-designer | 91ca9e280169 | `repos/ccfa-skills/ccf-experiment-designer` | - |
@@ -154,10 +154,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `local-ai-app-integration` | installed | - | catalog | https://github.com/amd/skills/tree/9eba3192f6793237eaeacfabd61fb0bd557e53cf/skills/local-ai-app-integration | 9eba3192f679 | `repos/amd-skills/skills/local-ai-app-integration` | - |
 | `local-ai-use` | installed | - | catalog | https://github.com/amd/skills/tree/9eba3192f6793237eaeacfabd61fb0bd557e53cf/skills/local-ai-use | 9eba3192f679 | `repos/amd-skills/skills/local-ai-use` | - |
 | `magpie-kernel-evaluator` | installed | - | catalog | https://github.com/amd/skills/tree/9eba3192f6793237eaeacfabd61fb0bd557e53cf/skills/magpie-kernel-evaluator | 9eba3192f679 | `repos/amd-skills/skills/magpie-kernel-evaluator` | - |
-| `mcore-create-issue` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/mcore-create-issue | fce3cca4170b | `repos/nvidia-skills/skills/mcore-create-issue` | - |
-| `mcore-linting-and-formatting` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/mcore-linting-and-formatting | fce3cca4170b | `repos/nvidia-skills/skills/mcore-linting-and-formatting` | - |
 | `mcore-run-on-slurm` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/mcore-run-on-slurm | fce3cca4170b | `repos/nvidia-skills/skills/mcore-run-on-slurm` | - |
-| `mcore-split-pr` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/mcore-split-pr | fce3cca4170b | `repos/nvidia-skills/skills/mcore-split-pr` | - |
 | `mcore-testing` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/mcore-testing | fce3cca4170b | `repos/nvidia-skills/skills/mcore-testing` | - |
 | `migrate-to-shoehorn` | installed | - | external | https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/misc/migrate-to-shoehorn | 4ae2317ddb22 | `repos/mattpocock-skills/skills/misc/migrate-to-shoehorn` | - |
 | `model-compute-simulation` | installed | - | catalog | https://github.com/Saddss/cursor-skills/tree/400c165e7a6afac09e0f84aab85bcc20f37252f5/skills/model-compute-simulation | 400c165e7a6a | `repos/cursor-skills/skills/model-compute-simulation` | - |
@@ -190,11 +187,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `nemo-mbridge-perf-tp-dp-comm-overlap` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-mbridge-perf-tp-dp-comm-overlap | fce3cca4170b | `repos/nvidia-skills/skills/nemo-mbridge-perf-tp-dp-comm-overlap` | - |
 | `nemo-mbridge-recipe-recommender` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-mbridge-recipe-recommender | fce3cca4170b | `repos/nvidia-skills/skills/nemo-mbridge-recipe-recommender` | - |
 | `nemo-mbridge-resiliency` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-mbridge-resiliency | fce3cca4170b | `repos/nvidia-skills/skills/nemo-mbridge-resiliency` | - |
-| `nemo-retriever-mcp` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-retriever-mcp | fce3cca4170b | `repos/nvidia-skills/skills/nemo-retriever-mcp` | - |
 | `nemo-rl-auto-research` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-rl-auto-research | fce3cca4170b | `repos/nvidia-skills/skills/nemo-rl-auto-research` | - |
-| `nemo-rl-brev-etiquette` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-rl-brev-etiquette | fce3cca4170b | `repos/nvidia-skills/skills/nemo-rl-brev-etiquette` | - |
-| `nemo-rl-docs` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-rl-docs | fce3cca4170b | `repos/nvidia-skills/skills/nemo-rl-docs` | - |
-| `nemo-rl-session-memory` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nemo-rl-session-memory | fce3cca4170b | `repos/nvidia-skills/skills/nemo-rl-session-memory` | - |
 | `nsys-profile-analysis` | optional-runtime | - | optional-runtime | https://github.com/lucifer1004/veloq | - | `install-veloq.sh` | install-veloq.sh 从 raw.githubusercontent.com/lucifer1004/veloq/main/scripts/install.sh 安装（main，无 pin）；--no-veloq 跳过 |
 | `nv-gpu-kernel-performance-modeling` | installed | - | unknown | - | - | `skills/kernel/nv-gpu-kernel-performance-modeling` | 本次审计未确立来源（未逐一读取该目录全部文件，不断言其无上游声明） |
 | `nvshmem-collect-performance-data` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/nvshmem-collect-performance-data | fce3cca4170b | `repos/nvidia-skills/skills/nvshmem-collect-performance-data` | - |
@@ -281,9 +274,6 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 | `verl-skill` | installed | - | unknown | - | - | `skills/framework/verl-skill` | 本次审计未确立来源（未逐一读取该目录全部文件，不断言其无上游声明） |
 | `vibe-research-workflow` | installed | - | external | https://github.com/HKUSTDial/Supervisor-Skills/tree/4bd3fef393e5ffc891c74309a5ef6c5ad3ad12c8/skills/vibe-research-workflow | 4bd3fef393e5 | `repos/supervisor-skills/skills/vibe-research-workflow` | - |
 | `wait-what` | installed | - | external | https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/wait-what | 4ae2317ddb22 | `repos/mattpocock-skills/skills/productivity/wait-what` | - |
-| `warp-compile-time-optimizer` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/warp-compile-time-optimizer | fce3cca4170b | `repos/nvidia-skills/skills/warp-compile-time-optimizer` | - |
-| `warp-debug-gradients` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/warp-debug-gradients | fce3cca4170b | `repos/nvidia-skills/skills/warp-debug-gradients` | - |
-| `warp-eval` | installed | - | catalog | https://github.com/NVIDIA/skills/tree/fce3cca4170be75e82c64920654d56ee2811b005/skills/warp-eval | fce3cca4170b | `repos/nvidia-skills/skills/warp-eval` | - |
 | `wayfinder` | installed | - | external | https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/wayfinder | 4ae2317ddb22 | `repos/mattpocock-skills/skills/engineering/wayfinder` | - |
 | `wizard` | installed | - | external | https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/wizard | 4ae2317ddb22 | `repos/mattpocock-skills/skills/engineering/wizard` | - |
 | `write-sglang-test` | installed | - | vendored | https://github.com/sgl-project/sglang/tree/3bcde0c80eeb07b40d3334c4b3d7341602efd089/.agents/skills/write-sglang-test | 3bcde0c80eeb | `skills/framework/sglang-repo-skills/write-sglang-test` | 无（全部逐字复制） |
@@ -298,8 +288,8 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 
 | 嵌套路径 | 父 checkout | 实际 origin / 来源 | gitlink ref | 安装 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| `kernel-design-agents/skills/KernelWiki` | `kernel-design-agents` | https://github.com/mit-han-lab/KernelWiki | `76d27b56f804e7e7295d4c570e1e5d7eef4b0a75` | KernelWiki | install.sh 安装的 KernelWiki 来自此嵌套目录 |
-| `kernel-design-agents/skills/ncu-report-skill` | `kernel-design-agents` | https://github.com/mit-han-lab/ncu-report-skill | `d1887948c7d53690cfe6605f59c1329b8a1c6bb5` | 否 | 未安装；本仓库 skills/kernel/ncu-report-skill 为本地副本，来源见第 5 节 |
+| `kernel-design-agents/skills/KernelWiki` | `kernel-design-agents` | https://github.com/DongyunZou/KernelWiki | `76d27b56f804e7e7295d4c570e1e5d7eef4b0a75` | KernelWiki | install.sh 安装的 KernelWiki 来自此嵌套目录 |
+| `kernel-design-agents/skills/ncu-report-skill` | `kernel-design-agents` | https://github.com/DongyunZou/ncu-report-skill | `d1887948c7d53690cfe6605f59c1329b8a1c6bb5` | 否 | 未安装；本仓库 skills/kernel/ncu-report-skill 为本地副本，来源见第 5 节 |
 | `repos/tilelang-cuda-skills/external/TileFoundry` | `repos/tilelang-cuda-skills` | https://github.com/tile-ai/TileFoundry | `3a6a4c035e907ae8b0abe9c132e5098b1910b92d` | 否 | 未安装（tilelang-cuda-skills 的嵌套 submodule） |
 | `repos/tilelang-cuda-skills/external/TileFoundry/third_party/cutlass` | `repos/tilelang-cuda-skills/external/TileFoundry` | https://github.com/NVIDIA/cutlass | `e406c186f510a15091cce01f782020ceb7ba8eb5` | 否 | 未安装（TileFoundry 的嵌套 submodule） |
 
@@ -322,7 +312,7 @@ skill 的发现、同名先到先得与状态来自 `skills/routers/agent-skill-
 - **`skills/kernel/tilelang-repo-skills`**（tilelang-repo-skills）：无（全部逐字复制）。未收录上游 tilelang-build / tilelang-dev-guide / tilelang-simplification / tilelang-submit-pr / tilelang-tvm-ir
 - **`skills/framework/zero-mismatch-rl`**（zero-mismatch-rl）：SKILL.md 与 README.md 为本地新增入口与说明；skill/、cases/、LICENSE、README.upstream.md 逐字复制。skill/ 与 cases/ 必须保持同级（skill/guides 中以 ../../../cases/... 引用案例）
 - **`skills/framework/train-inference-consistency`**（train-inference-consistency）：SKILL.md 增加中文触发词、vLLM 文档链接改为本目录稀疏 clone、增加 zero-mismatch-rl 交叉引用与来源注释；新增 README.md 与 LICENSE；其余为上游逐字复制。2026-11-08 审计时的上游 tip 不含 .agents/skills/train-inference-consistency；保留本地固定副本（不覆盖）；未来需网络恢复后重新检查上游是否恢复该路径
-- **`skills/other/brain-and-hands`**（brain-and-hands）：本地修改版 0.3.2（见其 README.md）：新增 Codex/Claude/Cursor 共用 SKILL.md、模型解析器（含 --host cursor 与 Fable 大脑）、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md。install.sh 安装普通 skill；install-brain-and-hands.sh 可单独安装（--agent codex|claude|cursor），--agent claude 另注册插件；同步上游逐文件 merge，不恢复禁用的旧 relay
+- **`skills/other/brain-and-hands`**（brain-and-hands）：本地修改版 0.3.0（见其 README.md）：新增 Codex/Claude 共用 SKILL.md、模型解析器、独立 Noir 测试 runner、参考文档和 tester/debugger；grunt 改成 Noir 测试角色；delegate 复用根入口；角色与 hook 修正规则；保留上游 LICENSE、图标、hooks.json 和 README.upstream.md。install.sh 安装普通 skill；install-brain-and-hands.sh 可单独安装，--agent claude 另注册插件；同步上游逐文件 merge，不恢复禁用的旧 relay
 - **`skills/other/tech-doc-style-chinese`**（tech-doc-style-chinese）：本地定制覆盖版（修改对照见其 README.md）；上游 clone 在 repos/tech-doc-style-chinese（git-ignored）。同步上游必须按其 README.md 的步骤 merge，不能直接覆盖本地修改的文件
 
 2026-11-08 审计时上游 tip 不含路径的 vendored 副本（如 train-inference-consistency）保留本地固定副本，不得以上游缺失为由删除本地 skill。
